@@ -10,7 +10,6 @@ namespace ConsoleRenderer
     {
 
         /* TEXT FRAME BUFFER FOR FAST RENDERING */
-        /* by Kuba Maruszczyk - based on stack overflow sample regarding interop services */
         [DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         static extern SafeFileHandle CreateFile(
             string fileName,
