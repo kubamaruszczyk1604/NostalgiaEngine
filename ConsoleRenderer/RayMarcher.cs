@@ -16,7 +16,7 @@ using System.Diagnostics;
 
 namespace ConsoleRenderer
 {
-
+    
     struct Ray
     {
         public Vector3 Direction;
@@ -45,7 +45,18 @@ namespace ConsoleRenderer
 
     partial class RayMarcher
     {
-
+        private int[] m_Map = {
+        1,1,1,1,1,1,1,1,1,1,
+        1,0,0,0,0,0,0,0,0,1,
+        1,0,0,0,0,0,0,0,0,1,
+        1,0,1,0,0,0,0,0,0,1,
+        1,0,0,0,0,2,0,0,0,1,
+        1,0,1,0,0,0,0,1,0,1,
+        1,0,0,0,0,0,0,1,0,1,
+        1,0,1,0,0,0,1,0,0,1,
+        1,0,0,0,1,0,0,0,0,1,
+        1,1,1,1,1,1,1,1,1,1
+        };
 
         const int MAX_MARCHING_STEPS = 255;
         public const float MIN_DIST = 1.0f;
@@ -87,13 +98,14 @@ namespace ConsoleRenderer
             Console.SetWindowSize(width + 10, height + 4);
             m_AspectRatio = (float)m_ScrWidth / (float)m_ScrHeight;
             m_Fov = 80 * DEG_TO_RAD;
-            m_FovDist = (float)Math.Tan(m_Fov * 0.5f * M_PI / (180.0f * DEG_TO_RAD));
+            m_FovDist = (float)Math.Tan(m_Fov * 0.5f * M_PI / (180.0f * DEG_TO_RAD)); 
 
             m_RenderableObjects = new List<RenderObject>();
         }
-
+        float xTest = 0.0f;
         public void RenderLoop()
         {
+            
             FrameTimer.Update();
             //Initial setup
             Console.CursorVisible = false;
@@ -106,6 +118,7 @@ namespace ConsoleRenderer
 
             while (true)//Render Loop
             {
+                xTest += 0.1f * FrameTimer.GetDeltaTime();
                 Console.SetCursorPosition(5, 1);
                 FrameTimer.Update();
                 Console.ForegroundColor = ConsoleColor.Red;
@@ -129,7 +142,7 @@ namespace ConsoleRenderer
                         for (int x = 0; x < m_ScrWidth; ++x)
                         {
 
-                            Draw(x, scanLine);// Write to buffer
+                            Draw2(x, scanLine);// Write to buffer
 
                         }
 
@@ -145,6 +158,78 @@ namespace ConsoleRenderer
             }
         }
 
+        int GetCoord(int x, int y)
+        {
+            return (10 * y) + x;
+        }
+
+        int GetCell(Vector2 p)
+        {
+            int x = (int)p.X;
+            int y = (int)p.Y;
+            if (x > (int)10 - 1.0) return 0;
+            if (y > (int)10 - 1.0) return 0;
+
+            if (x < 0) return 0;
+            if (y < 0) return 0;
+
+            return m_Map[GetCoord(x, y)];
+        }
+        const float cDepth = 10.0f;
+        private void Draw2(int x, int y)
+        {
+            float pixelX = x - m_ScrWidth / 2;
+            float pixelY = -(y - m_ScrHeight / 2);
+
+            float px = pixelX / ((float)m_ScrWidth)/ 2.0f;
+            float py = pixelY / ((float)m_ScrHeight)/ 2.0f;
+            px *= m_FovDist; // TO DO: consider aspect ratio 
+            py *= m_FovDist;
+
+            
+
+            Vector2 pos = new Vector2(3.0f + (float)Math.Sin(xTest) * 4.0f, 1.0f);
+            Vector3 dir = new Vector3(0.0f, 1.0f,0.0f);
+            dir *= Matrix3.CreateRotationZ(px *0.2f);
+            dir = Vector3.Normalize(dir);
+            
+            
+            float t = 0.0f;
+            const float stp = 0.005f;
+            bool hit = false;
+
+            while ((t < cDepth) && !hit)
+            {
+                Vector2 ray = pos + dir.Xy * t;
+                int cell = GetCell(ray);
+                t += stp;
+                if (cell != 0) 
+                    hit = true;
+            }
+            float ceiling = 1.0f / t;
+            float floorp = -1.0f / t;
+            if (hit)
+            {
+                ProduceShadedColor(out char ch, out short col, 1.0f-(t / cDepth), 0x0000, 0x0001);
+                Buffer.AddAsync(ch, col, x, y);
+                
+            }
+            else
+            {
+                Buffer.AddAsync((char)Block.Weak, 0x0000 | 0x0000, x, y);
+            }
+
+            if (py > ceiling) Buffer.AddAsync((char)Block.Weak, 0x0000 | 0x0000, x, y);
+            if (py < floorp) Buffer.AddAsync((char)Block.Weak, 0x0000 | 0x0000, x, y);
+
+        }
+
+
+
+
+
+
+
         private void Draw(int x, int y)
         {
             float pixelX = x - m_ScrWidth / 2;
@@ -155,6 +240,7 @@ namespace ConsoleRenderer
             px *= m_FovDist; // TO DO: consider aspect ratio 
             py *= m_FovDist;
 
+            //px *= (float)m_ScrWidth / (float)m_ScrHeight;
             Ray ray;
             ray.Orgin = m_EyePosition;
             ray.Direction = Vector3.Normalize(new Vector3(px, py, 1f));
