@@ -65,6 +65,7 @@
     <Compile Include="Buffer.cs" />
     <Compile Include="FrameTimer.cs" />
     <Compile Include="Helper.cs" />
+    <Compile Include="Input.cs" />
     <Compile Include="Material.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

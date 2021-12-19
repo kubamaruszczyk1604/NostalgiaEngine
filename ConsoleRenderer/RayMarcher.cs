@@ -46,7 +46,7 @@ namespace ConsoleRenderer
     partial class RayMarcher
     {
         private int[] m_Map = {
-        1,1,1,1,1,1,1,1,1,1,
+        1,0,0,0,0,0,0,0,0,1,
         1,0,0,0,0,0,0,0,0,1,
         1,0,0,0,0,0,0,0,0,1,
         1,0,1,0,0,0,0,0,0,1,
@@ -93,41 +93,69 @@ namespace ConsoleRenderer
 
         public RayMarcher(int width, int height)
         {
+            ConsoleHelper.SetCurrentFont("Consolas", 6);
             m_ScrWidth = width;
             m_ScrHeight = height;
             Console.SetWindowSize(width + 10, height + 4);
             m_AspectRatio = (float)m_ScrWidth / (float)m_ScrHeight;
-            m_Fov = 80 * DEG_TO_RAD;
-            m_FovDist = (float)Math.Tan(m_Fov * 0.5f * M_PI / (180.0f * DEG_TO_RAD)); 
+            m_Fov = 150 * DEG_TO_RAD;
+            m_FovDist = (float)Math.Tan(m_Fov * 0.5f * M_PI / (180.0f * DEG_TO_RAD));
 
             m_RenderableObjects = new List<RenderObject>();
+
+            Input.ev_KeyPressed += KeyPress;
+        }
+        Vector2 m_ViewerPos = new Vector2(3.0f, 1.0f);
+        Vector2 m_ViewerDir = new Vector2(0.0f, 1.0f);
+        void KeyPress(ConsoleKeyInfo keyInfo)
+        {
+            if (keyInfo.Key == ConsoleKey.LeftArrow)
+            {
+                Vector3 tmp = new Vector3(m_ViewerDir.X, m_ViewerDir.Y, 0.0f) * Matrix3.CreateRotationZ(-0.1f);
+                m_ViewerDir = Vector2.Normalize(tmp.Xy);
+            }
+            else if (keyInfo.Key == ConsoleKey.RightArrow)
+            {
+                Vector3 tmp = new Vector3(m_ViewerDir.X, m_ViewerDir.Y, 0.0f) * Matrix3.CreateRotationZ(0.1f);
+                m_ViewerDir = Vector2.Normalize(tmp.Xy);
+            }
+            else if (keyInfo.Key == ConsoleKey.UpArrow)
+            {
+                //m_ViewerPos.Y += 0.1f;
+                m_ViewerPos += m_ViewerDir * 0.1f;
+            }
+            else if (keyInfo.Key == ConsoleKey.DownArrow)
+            {
+                m_ViewerPos -= m_ViewerDir * 0.1f;
+            }
         }
         float xTest = 0.0f;
         public void RenderLoop()
         {
-            
+
             FrameTimer.Update();
             //Initial setup
             Console.CursorVisible = false;
             Console.Clear();
             Buffer.Initialize((short)m_ScrWidth, (short)m_ScrHeight);
             Console.ForegroundColor = ConsoleColor.DarkGray;
-           // Console.BackgroundColor = ConsoleColor.White;
+            // Console.BackgroundColor = ConsoleColor.White;
             string title = " WINDOWS CONSOLE 3D GRAPHICS RENDERING ENGINE";
             Console.Write(title);
 
             while (true)//Render Loop
             {
+               
                 xTest += 0.1f * FrameTimer.GetDeltaTime();
                 Console.SetCursorPosition(5, 1);
-                FrameTimer.Update();
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.BackgroundColor = ConsoleColor.Gray;
-                Console.Write(" FPS: "+ FrameTimer.GetFPS() + "   FRAME TIME: " + FrameTimer.GetDeltaTime()+"s ");
-                
-             
-                var resetEvent = new ManualResetEvent(false); // Will be reset when buffer is ready to be swaped
+                //FrameTimer.Update();
+                //Console.ForegroundColor = ConsoleColor.Red;
+                //Console.BackgroundColor = ConsoleColor.Gray;
+                //Console.Write(" FPS: " + FrameTimer.GetFPS() + "   FRAME TIME: " + FrameTimer.GetDeltaTime() + "s ");
 
+
+                var resetEvent = new ManualResetEvent(false); // Will be reset when buffer is ready to be swaped
+                
                 //For each scanline..
                 for (int y = 0; y < m_ScrHeight; ++y)
                 {
@@ -153,7 +181,7 @@ namespace ConsoleRenderer
                 //Thread.Sleep(10);
                 resetEvent.WaitOne();
                 // Cycle counter hack :D
-                m_TotalTime +=  FrameTimer.GetDeltaTime()*1.2f;
+                m_TotalTime += FrameTimer.GetDeltaTime() * 1.2f;
                 Buffer.Swap();
             }
         }
@@ -176,26 +204,28 @@ namespace ConsoleRenderer
             return m_Map[GetCoord(x, y)];
         }
         const float cDepth = 10.0f;
+
+
         private void Draw2(int x, int y)
         {
             float pixelX = x - m_ScrWidth / 2;
             float pixelY = -(y - m_ScrHeight / 2);
 
-            float px = pixelX / ((float)m_ScrWidth)/ 2.0f;
-            float py = pixelY / ((float)m_ScrHeight)/ 2.0f;
+            float px = pixelX / ((float)m_ScrWidth) / 2.0f;
+            float py = pixelY / ((float)m_ScrHeight) / 2.0f;
             px *= m_FovDist; // TO DO: consider aspect ratio 
             py *= m_FovDist;
 
-            
 
-            Vector2 pos = new Vector2(3.0f + (float)Math.Sin(xTest) * 4.0f, 1.0f);
-            Vector3 dir = new Vector3(0.0f, 1.0f,0.0f);
-            dir *= Matrix3.CreateRotationZ(px *0.2f);
+
+            Vector2 pos = m_ViewerPos;// new Vector2(3.0f + (float)Math.Sin(xTest) * 4.0f, 1.0f);
+            Vector3 dir = new Vector3(m_ViewerDir.X, m_ViewerDir.Y, 0.0f);
+            dir *= Matrix3.CreateRotationZ(px * 0.63f);
             dir = Vector3.Normalize(dir);
-            
-            
+
+
             float t = 0.0f;
-            const float stp = 0.005f;
+            const float stp = 0.06f;
             bool hit = false;
 
             while ((t < cDepth) && !hit)
@@ -203,24 +233,29 @@ namespace ConsoleRenderer
                 Vector2 ray = pos + dir.Xy * t;
                 int cell = GetCell(ray);
                 t += stp;
-                if (cell != 0) 
+                if (cell != 0)
                     hit = true;
             }
-            float ceiling = 1.0f / t;
-            float floorp = -1.0f / t;
+            float ceiling = (1.0f / t);
+            float floorp = (-1.0f / t);
+
             if (hit)
             {
-                ProduceShadedColor(out char ch, out short col, 1.0f-(t / cDepth), 0x0000, 0x0001);
+                float intensity = 1.0f - (t / cDepth);
+                intensity *= intensity;
+                //intensity += 0.1f;
+                ProduceShadedColor(out char ch, out short col,intensity, FOREGROUND_INTENSITY, BACKGROUND_INTENSITY);
+               // SetScreenColors.SetColor(ConsoleColor.Gray, 100, 0, 0);
                 Buffer.AddAsync(ch, col, x, y);
-                
             }
             else
             {
-                Buffer.AddAsync((char)Block.Weak, 0x0000 | 0x0000, x, y);
+                Buffer.AddAsync((char)Block.Solid, 0x0000 | 0x0000, x, y);
             }
 
-            if (py > ceiling) Buffer.AddAsync((char)Block.Weak, 0x0000 | 0x0000, x, y);
-            if (py < floorp) Buffer.AddAsync((char)Block.Weak, 0x0000 | 0x0000, x, y);
+            ProduceShadedColor(out char cha, out short cola,Math.Abs(py) , FOREGROUND_BLUE,BACKGROUND_BLUE);
+            if (py > ceiling) Buffer.AddAsync(cha,cola , x, y);
+            if (py < floorp) Buffer.AddAsync((char)Block.Weak, 0x0000 | 0x0002, x, y);
 
         }
 
@@ -407,57 +442,46 @@ namespace ConsoleRenderer
         {
             block = (char)Block.Solid;
             bitCol = 0;
-            if (intensity > 0 && intensity < 0.04)
+            if (intensity > 0 && intensity < 0.3)
             {
                 block = (char)Block.Weak;
-                bitCol = 0;
+                bitCol = bColor;
             }
-            if (intensity > 0.04 && intensity < 0.15)
-            {
-                block = (char)Block.Weak;
-                bitCol = fColor;
-            }
-            else if (intensity > 0.15 && intensity <= 0.2)
+            else if (intensity > 0.3 && intensity < 0.5)
             {
                 block = (char)Block.Middle;
-                bitCol = fColor;
+                bitCol = bColor;
             }
-
-            else if (intensity > 0.2 && intensity <= 0.26)
+            else if (intensity > 0.5 && intensity <= 0.7)
             {
                 block = (char)Block.Strong;
-                bitCol = fColor;
+                bitCol = bColor;
             }
 
-            else if (intensity > 0.26 && intensity <= 0.35)
+            else if (intensity > 0.7 && intensity <= 0.9)
             {
                 block = (char)Block.Weak;
                 bitCol = (short)(fColor | bColor);
             }
 
-            else if (intensity > 0.35 && intensity <= 0.45)
-            {
-                block = (char)Block.Weak;
-                bitCol = (short)(fColor | bColor | FOREGROUND_INTENSITY);
-            }
 
-            else if (intensity > 0.45 && intensity <= 0.55)
+            else if (intensity > 0.9 && intensity <= 0.98)
             {
                 block = (char)Block.Middle;
-                bitCol = (short)(fColor | bColor | FOREGROUND_INTENSITY);
+                bitCol = (short)(fColor | bColor);
             }
-            else if (intensity > 0.55 && intensity <= 0.61)
+            else if (intensity > 0.98)
             {
                 block = (char)Block.Strong;
-                bitCol = (short)(fColor | bColor | FOREGROUND_INTENSITY);
+                bitCol = (short)(fColor | bColor );
             }
 
 
-            else if (intensity > 0.61)
-            {
-                block = (char)Block.Solid;
-                bitCol = (short)(fColor | FOREGROUND_INTENSITY);
-            }
+            //else if (intensity > 0.91)
+            //{
+            //    block = (char)Block.Solid;
+            //    bitCol = (short)(FOREGROUND_INTENSITY);
+            //}
 
         }
 

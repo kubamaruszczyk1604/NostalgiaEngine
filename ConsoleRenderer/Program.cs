@@ -164,29 +164,30 @@ namespace ConsoleRenderer
             unlitMat.ColorA = 0 ;
             unlitMat.ColorB = 0;
             unlitMat.BlockType = Block.Weak;
-           
 
-            RayMarcher rm = new RayMarcher(100, 40);
+            Input.Start();
+           
+            RayMarcher rm = new RayMarcher(300, 120);
         
 
-            Sphere sphere = new Sphere(greenLitMat);
-            rm.m_RenderableObjects.Add(sphere);
+            //Sphere sphere = new Sphere(greenLitMat);
+            //rm.m_RenderableObjects.Add(sphere);
 
-            CeilingFloor plane = new CeilingFloor(redLitMat);
-            rm.m_RenderableObjects.Add(plane);
+            //CeilingFloor plane = new CeilingFloor(redLitMat);
+            //rm.m_RenderableObjects.Add(plane);
 
-            Box cube = new Box(cyanLitMat);
-            rm.m_RenderableObjects.Add(cube);
+            //Box cube = new Box(cyanLitMat);
+            //rm.m_RenderableObjects.Add(cube);
 
-            SideWalls walls = new SideWalls(grayLitMat);
-            rm.m_RenderableObjects.Add(walls);
+            //SideWalls walls = new SideWalls(grayLitMat);
+            //rm.m_RenderableObjects.Add(walls);
 
-            Torus torus = new Torus(redLitMat);
-            rm.m_RenderableObjects.Add(torus);
+            //Torus torus = new Torus(redLitMat);
+            //rm.m_RenderableObjects.Add(torus);
 
 
             rm.RenderLoop();
-
+            Input.Stop();
 
         }
     }
