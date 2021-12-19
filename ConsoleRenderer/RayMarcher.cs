@@ -11,8 +11,7 @@ using System.Diagnostics;
 
 
 
-// WINDOWS CONSOLE RENDERER BASED ON RAY MARCHING TECHNIQUE 
-// BY KUBA MARUSZCZYK
+
 
 namespace ConsoleRenderer
 {
@@ -64,11 +63,8 @@ namespace ConsoleRenderer
         const float EPSILON = 0.01f;
         const float DEG_TO_RAD = 0.017453292519943295769236907684886f;
         const float M_PI = 3.14159265358979323846f;
+        const float DEPTH = 10.0f;
 
-
-        private const float m_cNearPlane = 1;
-        private const float m_cFarPlane = 1000;
-        private Vector3 m_EyePosition = new Vector3(0, 0, -6);
 
 
         private int m_ScrWidth;
@@ -93,10 +89,13 @@ namespace ConsoleRenderer
 
         public RayMarcher(int width, int height)
         {
-            ConsoleHelper.SetCurrentFont("Consolas", 6);
             m_ScrWidth = width;
             m_ScrHeight = height;
-            Console.SetWindowSize(width + 10, height + 4);
+
+            Buffer.Initialize((short)m_ScrWidth, (short)m_ScrHeight,6);
+
+
+            
             m_AspectRatio = (float)m_ScrWidth / (float)m_ScrHeight;
             m_Fov = 150 * DEG_TO_RAD;
             m_FovDist = (float)Math.Tan(m_Fov * 0.5f * M_PI / (180.0f * DEG_TO_RAD));
@@ -129,30 +128,29 @@ namespace ConsoleRenderer
                 m_ViewerPos -= m_ViewerDir * 0.1f;
             }
         }
-        float xTest = 0.0f;
+
         public void RenderLoop()
         {
 
             FrameTimer.Update();
             //Initial setup
-            Console.CursorVisible = false;
-            Console.Clear();
-            Buffer.Initialize((short)m_ScrWidth, (short)m_ScrHeight);
+
+            
+            
             Console.ForegroundColor = ConsoleColor.DarkGray;
             // Console.BackgroundColor = ConsoleColor.White;
             string title = " WINDOWS CONSOLE 3D GRAPHICS RENDERING ENGINE";
-            Console.Write(title);
 
             while (true)//Render Loop
             {
                
-                xTest += 0.1f * FrameTimer.GetDeltaTime();
+                
                 Console.SetCursorPosition(5, 1);
-                //FrameTimer.Update();
+                FrameTimer.Update();
                 //Console.ForegroundColor = ConsoleColor.Red;
                 //Console.BackgroundColor = ConsoleColor.Gray;
                 //Console.Write(" FPS: " + FrameTimer.GetFPS() + "   FRAME TIME: " + FrameTimer.GetDeltaTime() + "s ");
-
+                Console.Title = " FPS: " + FrameTimer.GetFPS() + "   FRAME TIME: " + FrameTimer.GetDeltaTime() + "s ";
 
                 var resetEvent = new ManualResetEvent(false); // Will be reset when buffer is ready to be swaped
                 
@@ -170,7 +168,7 @@ namespace ConsoleRenderer
                         for (int x = 0; x < m_ScrWidth; ++x)
                         {
 
-                            Draw2(x, scanLine);// Write to buffer
+                            Draw(x, scanLine);// Write to buffer
 
                         }
 
@@ -186,6 +184,64 @@ namespace ConsoleRenderer
             }
         }
 
+
+
+        public void RenderLoop2()
+        {
+
+            FrameTimer.Update();
+            //Initial setup
+
+
+
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            // Console.BackgroundColor = ConsoleColor.White;
+            string title = " WINDOWS CONSOLE 3D GRAPHICS RENDERING ENGINE";
+
+            while (true)//Render Loop
+            {
+
+
+                Console.SetCursorPosition(5, 1);
+                FrameTimer.Update();
+                //Console.ForegroundColor = ConsoleColor.Red;
+                //Console.BackgroundColor = ConsoleColor.Gray;
+                //Console.Write();
+                Console.Title = " FPS: " + FrameTimer.GetFPS() + "   FRAME TIME: " + FrameTimer.GetDeltaTime() + "s ";
+
+                var resetEvent = new ManualResetEvent(false); // Will be reset when buffer is ready to be swaped
+
+                //For each column..
+                for (int x = 0; x < m_ScrWidth; ++x)
+                {
+                    // Queue new task
+                    ThreadPool.QueueUserWorkItem(
+                       new WaitCallback(
+                     delegate (object state)
+                     {
+                         object[] array = state as object[];
+                         int column = Convert.ToInt32(array[0]);
+
+                         for (int y = 0; y < m_ScrHeight; ++y)
+                         {
+
+                             Draw(column, y);// Write to buffer
+
+                         }
+
+                         if (column == m_ScrWidth - 1) resetEvent.Set();
+                     }), new object[] { x });
+                }
+
+                //Thread.Sleep(10);
+                resetEvent.WaitOne();
+                // Cycle counter hack :D
+                m_TotalTime += FrameTimer.GetDeltaTime() * 1.2f;
+                Buffer.Swap();
+            }
+        }
+
+
         int GetCoord(int x, int y)
         {
             return (10 * y) + x;
@@ -195,18 +251,18 @@ namespace ConsoleRenderer
         {
             int x = (int)p.X;
             int y = (int)p.Y;
-            if (x > (int)10 - 1.0) return 0;
-            if (y > (int)10 - 1.0) return 0;
+            if (x > (int)DEPTH - 1.0) return 0;
+            if (y > (int)DEPTH - 1.0) return 0;
 
             if (x < 0) return 0;
             if (y < 0) return 0;
 
             return m_Map[GetCoord(x, y)];
         }
-        const float cDepth = 10.0f;
+        
 
 
-        private void Draw2(int x, int y)
+        private void Draw(int x, int y)
         {
             float pixelX = x - m_ScrWidth / 2;
             float pixelY = -(y - m_ScrHeight / 2);
@@ -220,7 +276,7 @@ namespace ConsoleRenderer
 
             Vector2 pos = m_ViewerPos;// new Vector2(3.0f + (float)Math.Sin(xTest) * 4.0f, 1.0f);
             Vector3 dir = new Vector3(m_ViewerDir.X, m_ViewerDir.Y, 0.0f);
-            dir *= Matrix3.CreateRotationZ(px * 0.63f);
+            dir *= Matrix3.CreateRotationZ(px*0.63f);
             dir = Vector3.Normalize(dir);
 
 
@@ -228,7 +284,7 @@ namespace ConsoleRenderer
             const float stp = 0.06f;
             bool hit = false;
 
-            while ((t < cDepth) && !hit)
+            while ((t < DEPTH) && !hit)
             {
                 Vector2 ray = pos + dir.Xy * t;
                 int cell = GetCell(ray);
@@ -241,7 +297,7 @@ namespace ConsoleRenderer
 
             if (hit)
             {
-                float intensity = 1.0f - (t / cDepth);
+                float intensity = 1.0f - (t / DEPTH);
                 intensity *= intensity;
                 //intensity += 0.1f;
                 ProduceShadedColor(out char ch, out short col,intensity, FOREGROUND_INTENSITY, BACKGROUND_INTENSITY);
@@ -253,7 +309,8 @@ namespace ConsoleRenderer
                 Buffer.AddAsync((char)Block.Solid, 0x0000 | 0x0000, x, y);
             }
 
-            ProduceShadedColor(out char cha, out short cola,Math.Abs(py) , FOREGROUND_BLUE,BACKGROUND_BLUE);
+           // ProduceShadedColor(out char cha, out short cola,Math.Abs(py) , FOREGROUND_BLUE,BACKGROUND_BLUE);
+            ComputeColourChar(out char cha, out short cola, Math.Abs(py), (short)COLOUR.BG_BLACK, (short)COLOUR.FG_BLUE);
             if (py > ceiling) Buffer.AddAsync(cha,cola , x, y);
             if (py < floorp) Buffer.AddAsync((char)Block.Weak, 0x0000 | 0x0002, x, y);
 
@@ -265,68 +322,8 @@ namespace ConsoleRenderer
 
 
 
-        private void Draw(int x, int y)
-        {
-            float pixelX = x - m_ScrWidth / 2;
-            float pixelY = -(y - m_ScrHeight / 2);
-
-            float px = pixelX / ((float)m_ScrWidth) / 2.0f;
-            float py = pixelY / ((float)m_ScrHeight) / 2.0f;
-            px *= m_FovDist; // TO DO: consider aspect ratio 
-            py *= m_FovDist;
-
-            //px *= (float)m_ScrWidth / (float)m_ScrHeight;
-            Ray ray;
-            ray.Orgin = m_EyePosition;
-            ray.Direction = Vector3.Normalize(new Vector3(px, py, 1f));
-            int hitIndex;
-            //Get shortest
-            float shortestDistance = CalculateShortestDistance(ref ray, MIN_DIST, MAX_DIST, out hitIndex);
-            //Check for hits
-            if (shortestDistance > (MAX_DIST - EPSILON)) // NO HIT
-            {
-                //Buffer.Add((char)219, 0x0001 | 0x0000);
-                Buffer.AddAsync((char)219, 0x0001 | 0x0000, x, y);
-            }
-            else //HIT
-            {
-                Vector3 hitPoint = ray.Orgin + ray.Direction.Normalized() * shortestDistance;
-
-                Material currentMat = m_RenderableObjects[hitIndex].RenderMaterial;
-
-                if (currentMat.IsLit()) // If material requires lighting
-                {
-                    short colA = ((LitMaterial)currentMat).ColorA;
-                    short colB = ((LitMaterial)currentMat).ColorB;
-
-                    Vector3 normal = EstimateNormalRM(hitPoint);
-                    float lIntensity = CalculateLight((new Vector3(00, 1, -3) - hitPoint).Normalized(), normal);
-                    lIntensity = Helper.Min(lIntensity, 1.0f);
-                    char c = (char)0;
-                    short bm = 0;
-                    ProduceShadedColor(out c, out bm, lIntensity, colA, colB);
-                    //Buffer.Add(c, bm);
-                    Buffer.AddAsync(c, bm, x, y);
 
 
-                }
-                else // othewise paint it
-                {
-                    short colA = ((UnlitMaterial)currentMat).ColorA;
-                    short colB = ((UnlitMaterial)currentMat).ColorB;
-                    Block bl = ((UnlitMaterial)currentMat).BlockType;
-                    // Buffer.Add((char)bl, (short)(colA|colB));
-                    Buffer.AddAsync((char)bl, (short)(colA | colB), x, y);
-                }
-
-            }
-
-
-        }
-
-
-
-        // Marching baby
         private float CalculateShortestDistance(ref Ray ray, float start, float end, out int hitIndex)
         {
             float depth = start;
@@ -334,7 +331,7 @@ namespace ConsoleRenderer
             for (int i = 0; i < MAX_MARCHING_STEPS; ++i)
             {
                 float dist = SceneSDF(ray.Orgin + depth * ray.Direction, false, out hitIndex);
-                if (dist < EPSILON) // hit baby
+                if (dist < EPSILON) // hit
                 {
                     return depth;
                 }
@@ -390,7 +387,7 @@ namespace ConsoleRenderer
         }
 
 
-        /* LIGHTING EQUATION */
+        
 
         float CalculateLight(Vector3 lightDir, Vector3 normal)
         {
@@ -438,6 +435,25 @@ namespace ConsoleRenderer
 
         /* COLOR INTRNSITY CREATOR FOR LIGHT */
         //TO DO: NEEDS A BETTER WEIGHTING
+        void ComputeColourChar(out char block, out short bitCol, float intensity, short bColor, short fColor)
+        {
+            block = (char)Block.Solid;
+            bitCol = 0;
+
+            block = (char)Block.Solid;
+            bitCol = (short)(bColor|fColor);
+            intensity = Helper.Min(intensity, 1.0f) - 0.01f;
+            int index = (int)(intensity * 4.0f);
+
+
+            block = (char)BLOCKS.BLOCK_ARR[index];
+            bitCol = (short)(bColor | fColor);
+
+        }
+
+
+        /* COLOR INTRNSITY CREATOR FOR LIGHT */
+        //TO DO: NEEDS A BETTER WEIGHTING
         void ProduceShadedColor(out char block, out short bitCol, float intensity, short bColor, short fColor)
         {
             block = (char)Block.Solid;
@@ -473,7 +489,7 @@ namespace ConsoleRenderer
             else if (intensity > 0.98)
             {
                 block = (char)Block.Strong;
-                bitCol = (short)(fColor | bColor );
+                bitCol = (short)(fColor | bColor);
             }
 
 

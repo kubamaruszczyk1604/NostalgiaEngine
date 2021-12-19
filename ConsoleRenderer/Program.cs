@@ -136,6 +136,8 @@ namespace ConsoleRenderer
 
         static void Main(string[] args)
         {
+            //Console.WriteLine(0x2588);
+            //Console.ReadLine();
             DeleteMenu(GetSystemMenu(GetConsoleWindow(), false), SC_MINIMIZE, MF_BYCOMMAND);
             DeleteMenu(GetSystemMenu(GetConsoleWindow(), false), SC_SIZE, MF_BYCOMMAND);
             DeleteMenu(GetSystemMenu(GetConsoleWindow(), false), SC_MAXIMIZE, MF_BYCOMMAND);
@@ -168,7 +170,7 @@ namespace ConsoleRenderer
             Input.Start();
            
             RayMarcher rm = new RayMarcher(300, 120);
-        
+
 
             //Sphere sphere = new Sphere(greenLitMat);
             //rm.m_RenderableObjects.Add(sphere);
@@ -185,8 +187,8 @@ namespace ConsoleRenderer
             //Torus torus = new Torus(redLitMat);
             //rm.m_RenderableObjects.Add(torus);
 
-
-            rm.RenderLoop();
+            
+            rm.RenderLoop2();
             Input.Stop();
 
         }
