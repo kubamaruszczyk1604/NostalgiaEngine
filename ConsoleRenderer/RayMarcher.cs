@@ -129,60 +129,7 @@ namespace ConsoleRenderer
             }
         }
 
-        public void RenderLoop()
-        {
 
-            FrameTimer.Update();
-            //Initial setup
-
-            
-            
-            Console.ForegroundColor = ConsoleColor.DarkGray;
-            // Console.BackgroundColor = ConsoleColor.White;
-            string title = " WINDOWS CONSOLE 3D GRAPHICS RENDERING ENGINE";
-
-            while (true)//Render Loop
-            {
-               
-                
-                Console.SetCursorPosition(5, 1);
-                FrameTimer.Update();
-                //Console.ForegroundColor = ConsoleColor.Red;
-                //Console.BackgroundColor = ConsoleColor.Gray;
-                //Console.Write(" FPS: " + FrameTimer.GetFPS() + "   FRAME TIME: " + FrameTimer.GetDeltaTime() + "s ");
-                Console.Title = " FPS: " + FrameTimer.GetFPS() + "   FRAME TIME: " + FrameTimer.GetDeltaTime() + "s ";
-
-                var resetEvent = new ManualResetEvent(false); // Will be reset when buffer is ready to be swaped
-                
-                //For each scanline..
-                for (int y = 0; y < m_ScrHeight; ++y)
-                {
-                    // Queue new task
-                    ThreadPool.QueueUserWorkItem(
-                       new WaitCallback(
-                     delegate (object state)
-                    {
-                        object[] array = state as object[];
-                        int scanLine = Convert.ToInt32(array[0]);
-
-                        for (int x = 0; x < m_ScrWidth; ++x)
-                        {
-
-                            Draw(x, scanLine);// Write to buffer
-
-                        }
-
-                        if (scanLine == m_ScrHeight - 1) resetEvent.Set();
-                    }), new object[] { y });
-                }
-
-                //Thread.Sleep(10);
-                resetEvent.WaitOne();
-                // Cycle counter hack :D
-                m_TotalTime += FrameTimer.GetDeltaTime() * 1.2f;
-                Buffer.Swap();
-            }
-        }
 
 
 
@@ -196,7 +143,6 @@ namespace ConsoleRenderer
 
             Console.ForegroundColor = ConsoleColor.DarkGray;
             // Console.BackgroundColor = ConsoleColor.White;
-            string title = " WINDOWS CONSOLE 3D GRAPHICS RENDERING ENGINE";
 
             while (true)//Render Loop
             {
@@ -204,9 +150,6 @@ namespace ConsoleRenderer
 
                 Console.SetCursorPosition(5, 1);
                 FrameTimer.Update();
-                //Console.ForegroundColor = ConsoleColor.Red;
-                //Console.BackgroundColor = ConsoleColor.Gray;
-                //Console.Write();
                 Console.Title = " FPS: " + FrameTimer.GetFPS() + "   FRAME TIME: " + FrameTimer.GetDeltaTime() + "s ";
 
                 var resetEvent = new ManualResetEvent(false); // Will be reset when buffer is ready to be swaped
@@ -222,12 +165,7 @@ namespace ConsoleRenderer
                          object[] array = state as object[];
                          int column = Convert.ToInt32(array[0]);
 
-                         for (int y = 0; y < m_ScrHeight; ++y)
-                         {
-
-                             Draw(column, y);// Write to buffer
-
-                         }
+                         Draw(column);
 
                          if (column == m_ScrWidth - 1) resetEvent.Set();
                      }), new object[] { x });
@@ -262,26 +200,22 @@ namespace ConsoleRenderer
         
 
 
-        private void Draw(int x, int y)
+        private void Draw(int x)
         {
             float pixelX = x - m_ScrWidth / 2;
-            float pixelY = -(y - m_ScrHeight / 2);
-
             float px = pixelX / ((float)m_ScrWidth) / 2.0f;
-            float py = pixelY / ((float)m_ScrHeight) / 2.0f;
             px *= m_FovDist; // TO DO: consider aspect ratio 
-            py *= m_FovDist;
 
 
-
-            Vector2 pos = m_ViewerPos;// new Vector2(3.0f + (float)Math.Sin(xTest) * 4.0f, 1.0f);
+            Vector2 pos = m_ViewerPos;
             Vector3 dir = new Vector3(m_ViewerDir.X, m_ViewerDir.Y, 0.0f);
-            dir *= Matrix3.CreateRotationZ(px*0.63f);
+            dir *= Matrix3.CreateRotationZ(px * 0.63f);
             dir = Vector3.Normalize(dir);
 
 
+
             float t = 0.0f;
-            const float stp = 0.06f;
+            const float stp = 0.05f;
             bool hit = false;
 
             while ((t < DEPTH) && !hit)
@@ -294,29 +228,51 @@ namespace ConsoleRenderer
             }
             float ceiling = (1.0f / t);
             float floorp = (-1.0f / t);
+            float intensity = 1.0f - (t / DEPTH);
+            intensity *= intensity;
 
-            if (hit)
+            for (int y = 0; y < m_ScrHeight; ++y)
             {
-                float intensity = 1.0f - (t / DEPTH);
-                intensity *= intensity;
-                //intensity += 0.1f;
-                ProduceShadedColor(out char ch, out short col,intensity, FOREGROUND_INTENSITY, BACKGROUND_INTENSITY);
-               // SetScreenColors.SetColor(ConsoleColor.Gray, 100, 0, 0);
-                Buffer.AddAsync(ch, col, x, y);
-            }
-            else
-            {
-                Buffer.AddAsync((char)Block.Solid, 0x0000 | 0x0000, x, y);
-            }
 
-           // ProduceShadedColor(out char cha, out short cola,Math.Abs(py) , FOREGROUND_BLUE,BACKGROUND_BLUE);
-            ComputeColourChar(out char cha, out short cola, Math.Abs(py), (short)COLOUR.BG_BLACK, (short)COLOUR.FG_BLUE);
-            if (py > ceiling) Buffer.AddAsync(cha,cola , x, y);
-            if (py < floorp) Buffer.AddAsync((char)Block.Weak, 0x0000 | 0x0002, x, y);
+                float pixelY = -(y - m_ScrHeight / 2);
+                float py = pixelY / ((float)m_ScrHeight) / 2.0f;
+                py *= m_FovDist;
+                ComputeColourChar(out char ceilChar, out short ceilCol, Math.Abs(py), (short)COLOUR.BG_BLACK, (short)COLOUR.FG_BLUE);
+
+                if (hit)
+                {
+
+                    ProduceShadedColor(out char wallChar, out short wallCol, intensity, FOREGROUND_INTENSITY, BACKGROUND_INTENSITY);
+
+                    if (py > ceiling) //draw ceiling
+                    {
+                        
+                        Buffer.AddAsync(ceilChar, ceilCol, x, y);
+                    }
+                    else if (py < floorp)
+                    {
+                        Buffer.AddAsync((char)Block.Weak, 0x0000 | 0x0002, x, y);
+                    }
+                    else
+                    {
+                        Buffer.AddAsync(wallChar, wallCol, x, y);
+                    }
+
+                }
+                else
+                {
+
+                    if (py > ceiling) Buffer.AddAsync(ceilChar, ceilCol, x, y);
+                    else if (py < floorp) Buffer.AddAsync((char)Block.Weak, 0x0000 | 0x0002, x, y);
+                    else Buffer.AddAsync((char)Block.Weak, 0x0000 | 0x0000, x, y);
+                }
+
+
+            }
 
         }
 
-
+       
 
 
 
