@@ -75,13 +75,16 @@ namespace ConsoleRenderer
         static int m_sHeight;
         static CharInfo[] buf;
         static SmallRect rect;
-
+        static Coord wh;
+        static Coord orgin;
         static int m_sBuffPtr;
 
         static public bool Initialize(short width, short height, short pixelSize)
         {
             m_sWidth = width;
             m_sHeight = height;
+            wh = new Coord() { X = (short)m_sWidth, Y = (short)m_sHeight };
+            orgin = new Coord() { X = 0, Y = 0 };
             m_sBuffPtr = 0;
             try
             {
@@ -132,10 +135,7 @@ namespace ConsoleRenderer
 
         static public void Swap()
         {
-            WriteConsoleOutput(m_ConsoleHandle, buf,
-                         new Coord() { X = (short)m_sWidth, Y = (short)m_sHeight },
-                         new Coord() { X = 0, Y = 0 },
-                         ref rect);
+            WriteConsoleOutput(m_ConsoleHandle, buf, wh, orgin, ref rect);
 
             m_sBuffPtr = 0;
         }

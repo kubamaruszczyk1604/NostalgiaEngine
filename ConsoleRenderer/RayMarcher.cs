@@ -168,14 +168,13 @@ namespace ConsoleRenderer
 
                          Draw(column);
 
-                         if (column == m_ScrWidth - 1) resetEvent.Set();
+                         if (column >= m_ScrWidth - 1) resetEvent.Set();
                      }), new object[] { x });
                 }
 
                 //Thread.Sleep(10);
                 resetEvent.WaitOne();
-                // Cycle counter hack :D
-                m_TotalTime += FrameTimer.GetDeltaTime() * 1.2f;
+                m_TotalTime += FrameTimer.GetDeltaTime() * 1.02f;
                 Buffer.Swap();
             }
         }
@@ -216,7 +215,7 @@ namespace ConsoleRenderer
 
 
             float t = 0.0f;
-            const float stp = 0.05f;
+            const float stp = 0.1f;
             bool hit = false;
             Vector2 ray = Vector2.Zero;
             while ((t < DEPTH) && !hit)
