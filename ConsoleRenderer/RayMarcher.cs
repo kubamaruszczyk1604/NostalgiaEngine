@@ -46,9 +46,9 @@ namespace ConsoleRenderer
     {
         private int[] m_Map = {
         1,0,0,0,0,0,0,0,0,1,
-        1,0,0,0,0,0,0,0,0,1,
-        1,0,0,0,0,0,0,0,0,1,
-        1,0,1,0,0,0,0,0,0,1,
+        1,0,0,0,0,1,0,0,0,1,
+        1,0,0,0,0,0,1,0,0,1,
+        1,0,1,0,0,0,0,1,0,1,
         1,0,0,0,0,2,0,0,0,1,
         1,0,1,0,0,0,0,1,0,1,
         1,0,0,0,0,0,0,1,0,1,
@@ -97,8 +97,9 @@ namespace ConsoleRenderer
 
             
             m_AspectRatio = (float)m_ScrWidth / (float)m_ScrHeight;
-            m_Fov = 150 * DEG_TO_RAD;
-            m_FovDist = (float)Math.Tan(m_Fov * 0.5f * M_PI / (180.0f * DEG_TO_RAD));
+            m_Fov = 80.0f * DEG_TO_RAD;
+            m_FovDist = (float)Math.Tan(m_Fov);
+           // float test =  0.5f * M_PI / (180.0f * DEG_TO_RAD);
 
             m_RenderableObjects = new List<RenderObject>();
 
@@ -204,12 +205,12 @@ namespace ConsoleRenderer
         {
             float pixelX = x - m_ScrWidth / 2;
             float px = pixelX / ((float)m_ScrWidth) / 2.0f;
-            px *= m_FovDist; // TO DO: consider aspect ratio 
+            px *= m_Fov; // TO DO: consider aspect ratio 
 
 
             Vector2 pos = m_ViewerPos;
             Vector3 dir = new Vector3(m_ViewerDir.X, m_ViewerDir.Y, 0.0f);
-            dir *= Matrix3.CreateRotationZ(px * 0.63f);
+            dir *= Matrix3.CreateRotationZ(px);
             dir = Vector3.Normalize(dir);
 
 
@@ -217,10 +218,10 @@ namespace ConsoleRenderer
             float t = 0.0f;
             const float stp = 0.05f;
             bool hit = false;
-
+            Vector2 ray = Vector2.Zero;
             while ((t < DEPTH) && !hit)
             {
-                Vector2 ray = pos + dir.Xy * t;
+                ray = pos + dir.Xy * t;
                 int cell = GetCell(ray);
                 t += stp;
                 if (cell != 0)
@@ -236,13 +237,19 @@ namespace ConsoleRenderer
 
                 float pixelY = -(y - m_ScrHeight / 2);
                 float py = pixelY / ((float)m_ScrHeight) / 2.0f;
-                py *= m_FovDist;
-                ComputeColourChar(out char ceilChar, out short ceilCol, Math.Abs(py), (short)COLOUR.BG_BLACK, (short)COLOUR.FG_BLUE);
+                py *= m_Fov*2.0f;
+                ProduceShadedColor(out char ceilChar, out short ceilCol, Math.Abs(py), (short)COLOUR.FG_BLUE, (short)COLOUR.BG_BLUE);
 
                 if (hit)
                 {
 
                     ProduceShadedColor(out char wallChar, out short wallCol, intensity, FOREGROUND_INTENSITY, BACKGROUND_INTENSITY);
+                    float rayFract = (ray.X - (float)Math.Floor(ray.X) - (ray.Y - (float)Math.Floor(ray.Y)));
+                    if(Math.Abs(rayFract) < 0.05f || Math.Abs(rayFract) > 0.95f)
+                    {
+                        wallChar = (char)Block.Strong;
+                        wallCol = 0;
+                    }
 
                     if (py > ceiling) //draw ceiling
                     {
