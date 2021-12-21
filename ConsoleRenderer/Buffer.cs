@@ -30,6 +30,19 @@ namespace ConsoleRenderer
           Coord dwBufferCoord,
           ref SmallRect lpWriteRegion);
 
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        internal static extern IntPtr GetStdHandle(int nStdHandle);
+
+
+        [return: MarshalAs(UnmanagedType.Bool)]
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        internal static extern bool SetCurrentConsoleFontEx(IntPtr hConsoleOutput, bool MaximumWindow, ref FontInfoEx ConsoleCurrentFontEx);
+
+        [return: MarshalAs(UnmanagedType.Bool)]
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        internal static extern bool GetCurrentConsoleFontEx(IntPtr hConsoleOutput, bool MaximumWindow, ref FontInfoEx ConsoleCurrentFontEx);
+
         [StructLayout(LayoutKind.Sequential)]
         public struct Coord
         {
@@ -70,26 +83,54 @@ namespace ConsoleRenderer
             public short Bottom;
         }
 
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        public struct FontInfoEx
+        {
+            internal int cbSize;
+            internal int FontIndex;
+            public short FontWidth;
+            public short FontSize;
+            public int FontFamily;
+            public int FontWeight;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+            //[MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.wc, SizeConst = 32)]
+            public string FontName;
+        }
+
         static SafeFileHandle m_ConsoleHandle;
         static int m_sWidth;
         static int m_sHeight;
-        static CharInfo[] buf;
+        static CharInfo[] m_Bufer;
         static SmallRect rect;
         static Coord wh;
         static Coord orgin;
         static int m_sBuffPtr;
 
-        static public bool Initialize(short width, short height, short pixelSize)
+        static public bool Initialize(short width, short height, short pixelW, short pixelH)
         {
             m_sWidth = width;
             m_sHeight = height;
             wh = new Coord() { X = (short)m_sWidth, Y = (short)m_sHeight };
             orgin = new Coord() { X = 0, Y = 0 };
             m_sBuffPtr = 0;
+            m_ConsoleHandle = CreateFile("CONOUT$", 0x40000000, 2, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero);
+            if (m_ConsoleHandle.IsInvalid) return false;
             try
             {
 
-                ConsoleHelper.SetCurrentFont("Consolas", pixelSize);
+                // ConsoleHelper.SetCurrentFont("Consolas", pixelSize);
+                FontInfoEx set = new FontInfoEx
+                {
+                    cbSize = Marshal.SizeOf<FontInfoEx>(),
+                    FontIndex = 0,
+                    FontFamily = 0x00,
+                    //FontName = font,
+                    FontWeight = 400,
+                    FontSize = pixelW,
+                    FontWidth = pixelH
+                };
+                SetCurrentConsoleFontEx(m_ConsoleHandle.DangerousGetHandle(), false, ref set);
                 Console.SetWindowSize(width + 10, height + 4);
             }
             catch
@@ -97,10 +138,9 @@ namespace ConsoleRenderer
                 return false;
             }
            
-            m_ConsoleHandle = CreateFile("CONOUT$", 0x40000000, 2, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero);
-            if (m_ConsoleHandle.IsInvalid) return false;
+
             
-            buf = new CharInfo[width * height];
+            m_Bufer = new CharInfo[width * height];
             rect = new SmallRect() { Left = 5, Top = 2, Right = (short)(width + 5), Bottom = (short)(height + 2) };
             
             Console.CursorVisible = false;
@@ -111,10 +151,10 @@ namespace ConsoleRenderer
         static public void AddSequentialy(char c, short color)
         {
 
-            buf[m_sBuffPtr].Attributes = color;
-            buf[m_sBuffPtr].Char.AsciiChar = (byte)c;
+            m_Bufer[m_sBuffPtr].Attributes = color;
+            m_Bufer[m_sBuffPtr].Char.AsciiChar = (byte)c;
             m_sBuffPtr++;
-            if (m_sBuffPtr >= buf.Length) m_sBuffPtr = 0;
+            if (m_sBuffPtr >= m_Bufer.Length) m_sBuffPtr = 0;
 
         }
 
@@ -123,19 +163,19 @@ namespace ConsoleRenderer
 
 
             int index = m_sWidth * (y) + x;
-            if (index >= buf.Length)
+            if (index >= m_Bufer.Length)
             {
                 index = 0;
                 //throw new Exception("DLUGOSC JEST: " + index.ToString());
             }
-            buf[index].Attributes = color;
-            buf[index].Char.AsciiChar = (byte)c;
+            m_Bufer[index].Attributes = color;
+            m_Bufer[index].Char.AsciiChar = (byte)c;
 
         }
 
         static public void Swap()
         {
-            WriteConsoleOutput(m_ConsoleHandle, buf, wh, orgin, ref rect);
+            WriteConsoleOutput(m_ConsoleHandle, m_Bufer, wh, orgin, ref rect);
 
             m_sBuffPtr = 0;
         }
@@ -167,7 +207,7 @@ namespace ConsoleRenderer
         {
             internal int cbSize;
             internal int FontIndex;
-            internal short FontWidth;
+            public short FontWidth;
             public short FontSize;
             public int FontFamily;
             public int FontWeight;
@@ -192,10 +232,11 @@ namespace ConsoleRenderer
                 {
                     cbSize = Marshal.SizeOf<FontInfo>(),
                     FontIndex = 0,
-                    FontFamily = FixedWidthTrueType,
-                    FontName = font,
+                    //FontFamily = FixedWidthTrueType,
+                   // FontName = font,
                     FontWeight = 400,
-                    FontSize = fontSize > 0 ? fontSize : before.FontSize
+                    FontSize = fontSize > 0 ? fontSize : before.FontSize,
+                    FontWidth = fontSize
                 };
 
                 // Get some settings from current font.

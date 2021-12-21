@@ -169,7 +169,7 @@ namespace ConsoleRenderer
 
             Input.Start();
            
-            RayMarcher rm = new RayMarcher(300, 100);
+            RayMarcher rm = new RayMarcher(150, 100);
 
 
             //Sphere sphere = new Sphere(greenLitMat);

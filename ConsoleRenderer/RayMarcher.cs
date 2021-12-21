@@ -92,7 +92,7 @@ namespace ConsoleRenderer
             m_ScrWidth = width;
             m_ScrHeight = height;
 
-            Buffer.Initialize((short)m_ScrWidth, (short)m_ScrHeight,6);
+            Buffer.Initialize((short)m_ScrWidth, (short)m_ScrHeight,5,5);
 
 
             
@@ -105,6 +105,9 @@ namespace ConsoleRenderer
 
             Input.ev_KeyPressed += KeyPress;
         }
+
+
+
         Vector2 m_ViewerPos = new Vector2(3.0f, 1.0f);
         Vector2 m_ViewerDir = new Vector2(0.0f, 1.0f);
         void KeyPress(ConsoleKeyInfo keyInfo)
@@ -215,7 +218,7 @@ namespace ConsoleRenderer
 
 
             float t = 0.0f;
-            const float stp = 0.1f;
+            const float stp = 0.001f;
             bool hit = false;
             Vector2 ray = Vector2.Zero;
             while ((t < DEPTH) && !hit)
