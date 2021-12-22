@@ -158,8 +158,9 @@ namespace ConsoleRenderer
 
                 //Thread.Sleep(10);
                 resetEvent.WaitOne();
-                m_TotalTime += FrameTimer.GetDeltaTime() * 1.02f;
+                
                 Buffer.Swap();
+                m_TotalTime += FrameTimer.GetDeltaTime();
             }
         }
 
