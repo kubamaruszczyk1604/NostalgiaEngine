@@ -144,26 +144,7 @@ namespace ConsoleRenderer
         public const short FOREGROUND_WHITE = 0x0004 | 0x0001 | 0x0002;
     }
 
-    interface Material
-    {
-        bool IsLit();
-    }
 
-    struct LitMaterial : Material
-    {
-        const bool m_LitFlag = true;
-        public bool IsLit() { return m_LitFlag; }
-        public short ColorA;
-        public short ColorB;
-    }
 
-    struct UnlitMaterial : Material
-    {
-        const bool m_LitFlag = false;
-        public bool IsLit() { return m_LitFlag; }
-        public short ColorA;
-        public short ColorB;
-        public Block BlockType;
-    }
 
 }

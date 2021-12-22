@@ -22,28 +22,12 @@ namespace ConsoleRenderer
         public Vector3 Orgin;
     }
 
-    class RenderObject
-    {
-        public Material RenderMaterial;
-        public float CalculatedDistance;
 
-
-
-        public RenderObject(Material renderMaterial)
-        {
-
-            RenderMaterial = renderMaterial;
-        }
-
-        virtual public float CalculateDistance(Vector3 hitPoint, float deltaTime)
-        {
-            CalculatedDistance = RayMarcher.MAX_DIST;
-            return CalculatedDistance;
-        }
-    }
 
     partial class RayMarcher
     {
+        private int m_MapWidth = 10;
+        private int m_MapHeight = 10;
         private int[] m_Map = {
         1,0,0,0,0,0,0,0,0,1,
         1,0,0,0,0,1,0,0,0,1,
@@ -61,8 +45,8 @@ namespace ConsoleRenderer
         public const float MIN_DIST = 1.0f;
         public const float MAX_DIST = 1000.0f;
         const float EPSILON = 0.01f;
-        const float DEG_TO_RAD = 0.017453292519943295769236907684886f;
-        const float M_PI = 3.14159265358979323846f;
+        const float DEG_TO_RAD = 0.0174532f;
+        const float M_PI = 3.1415926535f;
         const float DEPTH = 10.0f;
 
 
@@ -83,8 +67,6 @@ namespace ConsoleRenderer
             { return m_TotalTime; }
         }
 
-        //ALL OBJECTS TO BE RENDERED
-        public List<RenderObject> m_RenderableObjects;
 
 
         public RayMarcher(int width, int height)
@@ -99,10 +81,6 @@ namespace ConsoleRenderer
             m_AspectRatio = (float)m_ScrWidth / (float)m_ScrHeight;
             m_Fov = 80.0f * DEG_TO_RAD;
             m_FovDist = (float)Math.Tan(m_Fov);
-           // float test =  0.5f * M_PI / (180.0f * DEG_TO_RAD);
-
-            m_RenderableObjects = new List<RenderObject>();
-
             Input.ev_KeyPressed += KeyPress;
         }
 
@@ -110,17 +88,20 @@ namespace ConsoleRenderer
 
         Vector2 m_ViewerPos = new Vector2(3.0f, 1.0f);
         Vector2 m_ViewerDir = new Vector2(0.0f, 1.0f);
+        float m_PlayerRotation = 0.0f;
         void KeyPress(ConsoleKeyInfo keyInfo)
         {
             if (keyInfo.Key == ConsoleKey.LeftArrow)
             {
                 Vector3 tmp = new Vector3(m_ViewerDir.X, m_ViewerDir.Y, 0.0f) * Matrix3.CreateRotationZ(-0.05f);
                 m_ViewerDir = Vector2.Normalize(tmp.Xy);
+                m_PlayerRotation -= 0.05f;
             }
             else if (keyInfo.Key == ConsoleKey.RightArrow)
             {
                 Vector3 tmp = new Vector3(m_ViewerDir.X, m_ViewerDir.Y, 0.0f) * Matrix3.CreateRotationZ(0.05f);
                 m_ViewerDir = Vector2.Normalize(tmp.Xy);
+                m_PlayerRotation += 0.05f;
             }
             else if (keyInfo.Key == ConsoleKey.UpArrow)
             {
@@ -212,6 +193,7 @@ namespace ConsoleRenderer
 
             Vector2 pos = m_ViewerPos;
             Vector3 dir = new Vector3(m_ViewerDir.X, m_ViewerDir.Y, 0.0f);
+           // Vector3 dir = new Vector3((float)Math.Sin(m_PlayerRotation), (float)Math.Cos(m_PlayerRotation), 0.0f);
             dir *= Matrix3.CreateRotationZ(px);
             dir = Vector3.Normalize(dir);
 
@@ -240,20 +222,27 @@ namespace ConsoleRenderer
                 float pixelY = -(y - m_ScrHeight / 2);
                 float py = pixelY / ((float)m_ScrHeight) / 2.0f;
                 py *= m_Fov*2.0f;
-                ProduceShadedColor(out char ceilChar, out short ceilCol, Math.Abs(py), (short)ColorMask.FG_BLUE, (short)ColorMask.BG_BLUE);
-                ColorSample floorSample = ColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkGray, 0.1f);
+                //Vector3 d = new Vector3(m_ScrWidth / 2, m_ScrHeight + 65, 0) - new Vector3(x,y,0);
+                //float fd = (1.0f-d.LengthFast/m_ScrHeight);
+
+                //ColorSample floorSample = ColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkGray, fd);
+                ColorSample floorSample = ColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkGreen, Math.Abs(py*0.75f) - Math.Abs(px*0.1f));
+
+
+                ColorSample ceilSample = ColorSample.MakeCol(ConsoleColor.DarkRed, ConsoleColor.DarkMagenta, Math.Abs(py)-0.1f);
+                if (py < 0.3f + (float)Math.Sin(px * 30 + m_PlayerRotation*20) * 0.1f)
+                {
+                    ceilSample = ColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkGray, Math.Abs(py));
+                }
+                //(float)Math.Sin(px * 40) * 0.1f
 
                 if (hit)
                 {
 
-                    //ProduceShadedColor(out char wallChar, out short wallCol, intensity, FOREGROUND_INTENSITY, BACKGROUND_INTENSITY);
-                    
-
-
                     if (py > ceiling) //draw ceiling
                     {
                         
-                        Buffer.AddAsync(ceilChar, ceilCol, x, y);
+                        Buffer.AddAsync(ceilSample.Character, ceilSample.BitMask, x, y);
                     }
                     else if (py < floorp)
                     {
@@ -261,7 +250,7 @@ namespace ConsoleRenderer
                     }
                     else
                     {
-                        ColorSample csample = ColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkMagenta, intensity);
+                        ColorSample csample = ColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkBlue, intensity);
                         char wallChar = csample.Character;
                         short wallCol = csample.BitMask;
                         float rayFract = (ray.X - (float)Math.Floor(ray.X) - (ray.Y - (float)Math.Floor(ray.Y)));
@@ -277,7 +266,7 @@ namespace ConsoleRenderer
                 else
                 {
 
-                    if (py > ceiling) Buffer.AddAsync(ceilChar, ceilCol, x, y);
+                    if (py > ceiling) Buffer.AddAsync(ceilSample.Character, ceilSample.BitMask, x, y);
                     else if (py < floorp) Buffer.AddAsync(floorSample.Character, floorSample.BitMask, x, y);
                     else Buffer.AddAsync((char)Block.Weak, 0x0000 | 0x0000, x, y);
                 }
@@ -314,73 +303,6 @@ namespace ConsoleRenderer
 
         }
 
-
-
-
-
-        private float CalculateShortestDistance(ref Ray ray, float start, float end, out int hitIndex)
-        {
-            float depth = start;
-            hitIndex = 0;
-            for (int i = 0; i < MAX_MARCHING_STEPS; ++i)
-            {
-                float dist = SceneSDF(ray.Orgin + depth * ray.Direction, false, out hitIndex);
-                if (dist < EPSILON) // hit
-                {
-                    return depth;
-                }
-                depth += dist;
-                if (depth >= end) // overrun
-                {
-                    return end;
-                }
-            }
-            return end;
-        }
-
-
-        // Shortes distance for single hit in the scene - GIVES THE NEAREST HIT
-        float SceneSDF(Vector3 rayHit, bool normalPass, out int hitIndex)
-        {
-            hitIndex = 0;
-            //Shortest distance total - ALWAYS WILL BE THE NEAREST HIT!
-            float nearestHit = MAX_DIST + 10; // 10000 so the next union will always override it
-            if (m_RenderableObjects.Count == 0) return nearestHit; //way faaar :D
-                                                                   // rayHit += new Vector3(0, 0, (float)Math.Sin(CycleCount)*10);
-            rayHit *= Matrix3.CreateRotationY((float)Math.Sin(TotalTime * 0.8) * 0.06f);
-            // rayHit *= Matrix3.CreateRotationX((float)Math.Cos(CycleCount*0.2) * 0.1f);
-            for (int i = 0; i < m_RenderableObjects.Count; ++i)
-            {
-                float currentDist = m_RenderableObjects[i].CalculateDistance(rayHit, FrameTimer.GetDeltaTime());
-                nearestHit = Op_Union(nearestHit, currentDist);
-
-                if (!normalPass)
-                {
-                    if (nearestHit == currentDist)
-                    {
-                        // m_FisrtHitIndex = i;
-                        hitIndex = i;
-                    }
-                }
-            }
-
-            return nearestHit;
-        }
-
-
-
-        Vector3 EstimateNormalRM(Vector3 p)
-        {
-            int dummy;
-            return
-               new Vector3(
-                SceneSDF(new Vector3(p.X + EPSILON, p.Y, p.Z), true, out dummy) - SceneSDF(new Vector3(p.X - EPSILON, p.Y, p.Z), true, out dummy),
-                SceneSDF(new Vector3(p.X, p.Y + EPSILON, p.Z), true, out dummy) - SceneSDF(new Vector3(p.X, p.Y - EPSILON, p.Z), true, out dummy),
-                SceneSDF(new Vector3(p.X, p.Y, p.Z + EPSILON), true, out dummy) - SceneSDF(new Vector3(p.X, p.Y, p.Z - EPSILON), true, out dummy)
-                ).Normalized();
-        }
-
-
         
 
         float CalculateLight(Vector3 lightDir, Vector3 normal)
@@ -397,103 +319,13 @@ namespace ConsoleRenderer
 
 
 
-        /* DISTANCE PRIMITIVES */
-
-        static public float DistanceSphere(Vector3 p, float s)
-        {
-
-            float ret = p.Length - s;
-            return ret;
-        }
-
-        static public float DistanceBox(Vector3 p, Vector3 b)
-        {
-            Vector3 d = Helper.Abs(p);
-            d -= b;
-            return Helper.Min(Helper.Max(d.X, Helper.Max(d.Y, d.Z)), 0.0f) + (Helper.Max(d, 0.0f)).Length;
-        }
-
-        static public float DistanceTorus(Vector3 p, Vector2 t)
-        {
-            Vector2 q = new Vector2(p.Xz.Length - t.X, p.Y);
-            return q.Length - t.Y;
-        }
 
 
-        /*  OPERATIONS */
-        static public float Op_Union(float d1, float d2)
-        {
-            return Helper.Min(d1, d2);
-        }
+
+        
 
 
-        /* COLOR INTRNSITY CREATOR FOR LIGHT */
-        //TO DO: NEEDS A BETTER WEIGHTING
-        void ComputeColourChar(out char block, out short bitCol, float intensity, short bColor, short fColor)
-        {
-            block = (char)Block.Solid;
-            bitCol = 0;
-
-            block = (char)Block.Solid;
-            bitCol = (short)(bColor|fColor);
-            intensity = Helper.Min(intensity, 1.0f) - 0.01f;
-            int index = (int)(intensity * 4.0f);
-
-
-            block = (char)BLOCKS.BLOCK_ARR[index];
-            bitCol = (short)(bColor | fColor);
-
-        }
-
-
-        /* COLOR INTRNSITY CREATOR FOR LIGHT */
-        //TO DO: NEEDS A BETTER WEIGHTING
-        void ProduceShadedColor(out char block, out short bitCol, float intensity, short bColor, short fColor)
-        {
-            block = (char)Block.Solid;
-            bitCol = 0;
-            if (intensity > 0 && intensity < 0.3)
-            {
-                block = (char)Block.Weak;
-                bitCol = bColor;
-            }
-            else if (intensity > 0.3 && intensity < 0.5)
-            {
-                block = (char)Block.Middle;
-                bitCol = bColor;
-            }
-            else if (intensity > 0.5 && intensity <= 0.7)
-            {
-                block = (char)Block.Strong;
-                bitCol = bColor;
-            }
-
-            else if (intensity > 0.7 && intensity <= 0.9)
-            {
-                block = (char)Block.Weak;
-                bitCol = (short)(fColor | bColor);
-            }
-
-
-            else if (intensity > 0.9 && intensity <= 0.98)
-            {
-                block = (char)Block.Middle;
-                bitCol = (short)(fColor | bColor);
-            }
-            else if (intensity > 0.98)
-            {
-                block = (char)Block.Strong;
-                bitCol = (short)(fColor | bColor);
-            }
-
-
-            //else if (intensity > 0.91)
-            //{
-            //    block = (char)Block.Solid;
-            //    bitCol = (short)(FOREGROUND_INTENSITY);
-            //}
-
-        }
+  
 
     }
 
