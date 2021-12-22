@@ -92,7 +92,7 @@ namespace ConsoleRenderer
             m_ScrWidth = width;
             m_ScrHeight = height;
 
-            Buffer.Initialize((short)m_ScrWidth, (short)m_ScrHeight,5,5);
+            Buffer.Initialize((short)m_ScrWidth, (short)m_ScrHeight,4,4);
 
 
             
@@ -114,12 +114,12 @@ namespace ConsoleRenderer
         {
             if (keyInfo.Key == ConsoleKey.LeftArrow)
             {
-                Vector3 tmp = new Vector3(m_ViewerDir.X, m_ViewerDir.Y, 0.0f) * Matrix3.CreateRotationZ(-0.1f);
+                Vector3 tmp = new Vector3(m_ViewerDir.X, m_ViewerDir.Y, 0.0f) * Matrix3.CreateRotationZ(-0.05f);
                 m_ViewerDir = Vector2.Normalize(tmp.Xy);
             }
             else if (keyInfo.Key == ConsoleKey.RightArrow)
             {
-                Vector3 tmp = new Vector3(m_ViewerDir.X, m_ViewerDir.Y, 0.0f) * Matrix3.CreateRotationZ(0.1f);
+                Vector3 tmp = new Vector3(m_ViewerDir.X, m_ViewerDir.Y, 0.0f) * Matrix3.CreateRotationZ(0.05f);
                 m_ViewerDir = Vector2.Normalize(tmp.Xy);
             }
             else if (keyInfo.Key == ConsoleKey.UpArrow)
@@ -218,7 +218,7 @@ namespace ConsoleRenderer
 
 
             float t = 0.0f;
-            const float stp = 0.001f;
+            const float stp = 0.01f;
             bool hit = false;
             Vector2 ray = Vector2.Zero;
             while ((t < DEPTH) && !hit)
@@ -232,7 +232,7 @@ namespace ConsoleRenderer
             float ceiling = (1.0f / t);
             float floorp = (-1.0f / t);
             float intensity = 1.0f - (t / DEPTH);
-            intensity *= intensity;
+            //intensity *= intensity;
 
             for (int y = 0; y < m_ScrHeight; ++y)
             {
@@ -240,18 +240,15 @@ namespace ConsoleRenderer
                 float pixelY = -(y - m_ScrHeight / 2);
                 float py = pixelY / ((float)m_ScrHeight) / 2.0f;
                 py *= m_Fov*2.0f;
-                ProduceShadedColor(out char ceilChar, out short ceilCol, Math.Abs(py), (short)COLOUR.FG_BLUE, (short)COLOUR.BG_BLUE);
+                ProduceShadedColor(out char ceilChar, out short ceilCol, Math.Abs(py), (short)ColorMask.FG_BLUE, (short)ColorMask.BG_BLUE);
+                ColorSample floorSample = ColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkGray, 0.1f);
 
                 if (hit)
                 {
 
-                    ProduceShadedColor(out char wallChar, out short wallCol, intensity, FOREGROUND_INTENSITY, BACKGROUND_INTENSITY);
-                    float rayFract = (ray.X - (float)Math.Floor(ray.X) - (ray.Y - (float)Math.Floor(ray.Y)));
-                    if(Math.Abs(rayFract) < 0.05f || Math.Abs(rayFract) > 0.95f)
-                    {
-                        wallChar = (char)Block.Strong;
-                        wallCol = 0;
-                    }
+                    //ProduceShadedColor(out char wallChar, out short wallCol, intensity, FOREGROUND_INTENSITY, BACKGROUND_INTENSITY);
+                    
+
 
                     if (py > ceiling) //draw ceiling
                     {
@@ -260,10 +257,19 @@ namespace ConsoleRenderer
                     }
                     else if (py < floorp)
                     {
-                        Buffer.AddAsync((char)Block.Weak, 0x0000 | 0x0002, x, y);
+                        Buffer.AddAsync(floorSample.Character, floorSample.BitMask, x, y);
                     }
                     else
                     {
+                        ColorSample csample = ColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkMagenta, intensity);
+                        char wallChar = csample.Character;
+                        short wallCol = csample.BitMask;
+                        float rayFract = (ray.X - (float)Math.Floor(ray.X) - (ray.Y - (float)Math.Floor(ray.Y)));
+                        if (Math.Abs(rayFract) < 0.05f || Math.Abs(rayFract) > 0.95f)
+                        {
+                            wallChar = (char)Block.Strong;
+                            wallCol = 0;
+                        }
                         Buffer.AddAsync(wallChar, wallCol, x, y);
                     }
 
@@ -272,7 +278,7 @@ namespace ConsoleRenderer
                 {
 
                     if (py > ceiling) Buffer.AddAsync(ceilChar, ceilCol, x, y);
-                    else if (py < floorp) Buffer.AddAsync((char)Block.Weak, 0x0000 | 0x0002, x, y);
+                    else if (py < floorp) Buffer.AddAsync(floorSample.Character, floorSample.BitMask, x, y);
                     else Buffer.AddAsync((char)Block.Weak, 0x0000 | 0x0000, x, y);
                 }
 
@@ -281,9 +287,32 @@ namespace ConsoleRenderer
 
         }
 
-       
+        
+
+        private void Draw2(int x)
+        {
+
+            float u = (float)x / 250.0f;
+            ColorSample csample = ColorSample.MakeCol(ConsoleColor.White, ConsoleColor.Black, u);
+
+            for (int y = 0; y < m_ScrHeight; ++y)
+            {
+                Buffer.AddAsync(csample.Character, csample.BitMask, x, y);
+                //int index = (int)((((float)x) / 150.0f) * 5.0f);
+                ////ProduceShadedColor(out char ceilChar, out short ceilCol, Math.Abs(py), (short)COLOUR.FG_BLUE, (short)COLOUR.BG_BLUE);
+                //if (y < 70)
+                //    Buffer.AddAsync((char)BLOCKS.BLOCK_ARR[index], (short)(ColorMask.BG_WHITE | ColorMask.FG_BLUE), x, y);
+                //else
+                //{
+                //    int ind = (5 - index);
+                //    Buffer.AddAsync((char)BLOCKS.BLOCK_ARR[ind > 4 ? 4 : ind], (short)(ColorMask.BG_BLUE | ColorMask.FG_WHITE), x, y);
+
+                //}
 
 
+            }
+
+        }
 
 
 
