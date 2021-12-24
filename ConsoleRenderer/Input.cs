@@ -709,9 +709,6 @@ namespace ConsoleRenderer
         public static extern int GetAsyncKeyState(
          [MarshalAs(UnmanagedType.U4)] int vKey);
 
-
-
-
         
         public static bool CheckKeyDown(ConsoleKey key)
         {
@@ -724,11 +721,6 @@ namespace ConsoleRenderer
             return (((output << 16) != 0) && ((output & 1) != 0));
         }
 
-        private static void FlushKeyboard()
-        {
-            while (Console.KeyAvailable)
-                Console.ReadKey();
-        }
 
     }
 }

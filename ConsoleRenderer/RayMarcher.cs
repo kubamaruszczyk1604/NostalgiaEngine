@@ -51,13 +51,12 @@ namespace ConsoleRenderer
         1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
         };
 
-        const int MAX_MARCHING_STEPS = 255;
-        public const float MIN_DIST = 1.0f;
-        public const float MAX_DIST = 1000.0f;
         const float EPSILON = 0.01f;
         const float DEG_TO_RAD = 0.0174532f;
         const float M_PI = 3.1415926535f;
         const float DEPTH = 24.0f;
+        const float ROTATION_SPEED = 1.5f;
+        const float MOVEMENT_SPEED = 6.0f;
 
 
 
@@ -66,7 +65,6 @@ namespace ConsoleRenderer
 
         private float m_AspectRatio;
         private float m_Fov;
-        private float m_FovDist;
 
         static private float m_TotalTime = 0;
 
@@ -79,19 +77,19 @@ namespace ConsoleRenderer
 
 
 
-        public RayMarcher(int width, int height)
+        public RayMarcher(int width, int height,int pixelW, int pixelH)
         {
 
             m_ScrWidth = width;
             m_ScrHeight = height;
 
-            Buffer.Initialize((short)m_ScrWidth, (short)m_ScrHeight,4,4);
+            Buffer.Initialize((short)m_ScrWidth, (short)m_ScrHeight, (short)pixelW,(short) pixelH);
 
 
             
             m_AspectRatio = (float)m_ScrWidth / (float)m_ScrHeight;
             m_Fov = 80.0f * DEG_TO_RAD;
-            m_FovDist = (float)Math.Tan(m_Fov);
+            //m_FovDist = (float)Math.Tan(m_Fov);
             //Input_old.ev_KeyPressed += KeyPress;
         }
 
@@ -104,26 +102,30 @@ namespace ConsoleRenderer
 
         void KeyPress()
         {
+
+            float deltaT = FrameTimer.GetDeltaTime();
             if (Input.CheckKeyDown(ConsoleKey.LeftArrow))
             {
-                Vector3 tmp = new Vector3(m_ViewerDir.X, m_ViewerDir.Y, 0.0f) * Matrix3.CreateRotationZ(-0.05f);
-                m_ViewerDir = Vector2.Normalize(tmp.Xy);
-                m_PlayerRotation -= 0.05f;
+                float deltaR = -ROTATION_SPEED * deltaT;
+                m_PlayerRotation += deltaR;
+                Rotate(ref m_ViewerDir, deltaR);
+                Vector2.NormalizeFast(m_ViewerDir);
             }
              if (Input.CheckKeyDown(ConsoleKey.RightArrow))
             {
-                Vector3 tmp = new Vector3(m_ViewerDir.X, m_ViewerDir.Y, 0.0f) * Matrix3.CreateRotationZ(0.05f);
-                m_ViewerDir = Vector2.Normalize(tmp.Xy);
-                m_PlayerRotation += 0.05f;
+                float deltaR = ROTATION_SPEED * deltaT;
+                m_PlayerRotation += deltaR;
+                Rotate(ref m_ViewerDir, deltaR);
+                Vector2.NormalizeFast(m_ViewerDir);
             }
             if (Input.CheckKeyDown(ConsoleKey.UpArrow))
             {
-                //m_ViewerPos.Y += 0.1f;
-                m_ViewerPos += m_ViewerDir * 0.1f;
+                
+                m_ViewerPos += m_ViewerDir * MOVEMENT_SPEED * deltaT;
             }
             if (Input.CheckKeyDown(ConsoleKey.DownArrow))
             {
-                m_ViewerPos -= m_ViewerDir * 0.1f;
+                m_ViewerPos -= m_ViewerDir * MOVEMENT_SPEED * deltaT;
             }
         }
 
@@ -139,7 +141,7 @@ namespace ConsoleRenderer
 
 
 
-            Console.ForegroundColor = ConsoleColor.DarkGray;
+           // Console.ForegroundColor = ConsoleColor.DarkGray;
             // Console.BackgroundColor = ConsoleColor.White;
 
             while (true)//Render Loop
@@ -155,6 +157,7 @@ namespace ConsoleRenderer
                 //For each column..
                 for (int x = 0; x < m_ScrWidth; ++x)
                 {
+                    //Draw4(x);
                     // Queue new task
                     ThreadPool.QueueUserWorkItem(
                        new WaitCallback(
@@ -171,7 +174,7 @@ namespace ConsoleRenderer
 
                 //Thread.Sleep(10);
                 resetEvent.WaitOne();
-                
+               // Console.ReadLine();
                 Buffer.Swap();
                 m_TotalTime += FrameTimer.GetDeltaTime();
             }
@@ -187,29 +190,47 @@ namespace ConsoleRenderer
         {
             int x = (int)p.X;
             int y = (int)p.Y;
-            if (x > m_MapWidth - 1.0) return 0;
-            if (y > m_MapHeight - 1.0) return 0;
-
-            if (x < 0) return 0;
-            if (y < 0) return 0;
-
+            if ((x > m_MapWidth - 1.0) || (x < 0)) return 0;
+            if ((y > m_MapHeight - 1.0) || (y < 0)) return 0;
             return m_Map[GetCoord(x, y)];
         }
-        
 
-
-        private void Draw(int x)
+        void Rotate(ref Vector2 v, float theta)
         {
-            float pixelX = x - m_ScrWidth / 2;
-            float px = pixelX / ((float)m_ScrWidth) / 2.0f;
+            float s = (float)Math.Sin(theta);
+            float c = (float)Math.Cos(theta);
+            v.X = v.X * c - v.Y * s;
+            v.Y = v.X * s + v.Y * c;
+        }
+
+        private void Draw4(int x)
+        {
+            // float pixelX = x - m_ScrWidth / 2;
+            //float px = pixelX / ((float)m_ScrWidth) / 2.0f;
+
+            float px = (((float)x / (float)m_ScrWidth) - 0.5f) * 2.0f;
+            Console.WriteLine(px);
+
+            //px *= m_Fov; // TO DO: consider aspect ratio 
+
+
+
+        }
+
+            private void Draw(int x)
+        {
+            // float pixelX = x - m_ScrWidth / 2;
+            //float px = pixelX / ((float)m_ScrWidth) / 2.0f;
+
+            float px = (((float)x / (float)m_ScrWidth) -0.5f)*0.5f;
+
             px *= m_Fov; // TO DO: consider aspect ratio 
 
 
-            Vector2 pos = m_ViewerPos;
-            Vector3 dir = new Vector3(m_ViewerDir.X, m_ViewerDir.Y, 0.0f);
-           // Vector3 dir = new Vector3((float)Math.Sin(m_PlayerRotation), (float)Math.Cos(m_PlayerRotation), 0.0f);
-            dir *= Matrix3.CreateRotationZ(px);
-            dir = Vector3.Normalize(dir);
+            //Vector2 pos = m_ViewerPos;
+            Vector2 dir = new Vector2(m_ViewerDir.X, m_ViewerDir.Y);
+            Rotate(ref dir, px);
+            dir = Vector2.Normalize(dir);
 
 
 
@@ -219,7 +240,7 @@ namespace ConsoleRenderer
             Vector2 ray = Vector2.Zero;
             while ((t < DEPTH) && !hit)
             {
-                ray = pos + dir.Xy * t;
+                ray = m_ViewerPos + dir * t;
                 int cell = GetCell(ray);
                 t += stp;
                 if (cell != 0)
@@ -246,7 +267,7 @@ namespace ConsoleRenderer
                 {
                     ceilSample = ColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkGray, Math.Abs(py*0.75f) - Math.Abs(px * 0.1f));
                 }
-                //(float)Math.Sin(px * 40) * 0.1f
+                
 
                 if (hit)
                 {
@@ -270,11 +291,11 @@ namespace ConsoleRenderer
                         char wallChar = csample.Character;
                         short wallCol = csample.BitMask;
                         
-                        if (Math.Abs(rayFract) < 0.05f || Math.Abs(rayFract) > 0.95f)
-                        {
-                            wallChar = (char)Block.Strong;
-                            wallCol = 0;
-                        }
+                        //if (Math.Abs(rayFract) < 0.05f || Math.Abs(rayFract) > 0.95f)
+                        //{
+                        //    wallChar = (char)Block.Strong;
+                        //    wallCol = 0;
+                        //}
                         Buffer.AddAsync(wallChar, wallCol, x, y);
                     }
 

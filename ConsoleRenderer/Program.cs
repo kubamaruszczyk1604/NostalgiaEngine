@@ -29,8 +29,6 @@ namespace ConsoleRenderer
 
         static void Main(string[] args)
         {
-            //Console.WriteLine(0x2588);
-            //Console.ReadLine();
             DeleteMenu(GetSystemMenu(GetConsoleWindow(), false), SC_MINIMIZE, MF_BYCOMMAND);
             DeleteMenu(GetSystemMenu(GetConsoleWindow(), false), SC_SIZE, MF_BYCOMMAND);
             DeleteMenu(GetSystemMenu(GetConsoleWindow(), false), SC_MAXIMIZE, MF_BYCOMMAND);
@@ -40,12 +38,8 @@ namespace ConsoleRenderer
 
 
 
-            RayMarcher rm = new RayMarcher(250, 170);
-
-
-            //int t = (0x0005 << 4);
-            // Console.WriteLine(t);
-            //Console.ReadLine();
+            RayMarcher rm = new RayMarcher(300, 200,4,4);
+            Buffer.HalfTemporalResolution = true;
 
             rm.Play();
   
