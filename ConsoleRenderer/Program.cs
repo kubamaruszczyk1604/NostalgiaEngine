@@ -39,7 +39,7 @@ namespace ConsoleRenderer
 
 
             RayMarcher rm = new RayMarcher(300, 200,4,4);
-            Buffer.HalfTemporalResolution = true;
+            //Buffer.HalfTemporalResolution = true;
 
             rm.Play();
   

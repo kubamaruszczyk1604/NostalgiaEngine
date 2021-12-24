@@ -715,6 +715,11 @@ namespace ConsoleRenderer
             return ((GetAsyncKeyState((int)key) << 16) !=0);
         }
 
+        public static bool CheckKeyDown(int key)
+        {
+            return ((GetAsyncKeyState(key) << 16) != 0);
+        }
+
         public static bool CheckKeyPress(ConsoleKey key)
         {
             int output = GetAsyncKeyState((int)key);

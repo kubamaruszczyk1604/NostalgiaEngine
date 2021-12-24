@@ -56,7 +56,7 @@ namespace ConsoleRenderer
         const float M_PI = 3.1415926535f;
         const float DEPTH = 24.0f;
         const float ROTATION_SPEED = 1.5f;
-        const float MOVEMENT_SPEED = 6.0f;
+        const float MOVEMENT_SPEED = 10.0f;
 
 
 
@@ -106,27 +106,57 @@ namespace ConsoleRenderer
             float deltaT = FrameTimer.GetDeltaTime();
             if (Input.CheckKeyDown(ConsoleKey.LeftArrow))
             {
-                float deltaR = -ROTATION_SPEED * deltaT;
-                m_PlayerRotation += deltaR;
-                Rotate(ref m_ViewerDir, deltaR);
-                Vector2.NormalizeFast(m_ViewerDir);
+                Vector2 direction = m_ViewerDir;
+                if (Input.CheckKeyDown(0xA2))
+                {
+                    float tx = direction.X;
+                    direction.X = -direction.Y;
+                    direction.Y = tx;
+                    m_ViewerPos -= direction * MOVEMENT_SPEED * deltaT;
+
+                }
+                else
+                {
+                    float deltaR = -ROTATION_SPEED * deltaT;
+                    m_PlayerRotation += deltaR;
+                    Rotate(ref m_ViewerDir, deltaR);
+                    Vector2.NormalizeFast(m_ViewerDir);
+                }
+
+
             }
              if (Input.CheckKeyDown(ConsoleKey.RightArrow))
             {
-                float deltaR = ROTATION_SPEED * deltaT;
-                m_PlayerRotation += deltaR;
-                Rotate(ref m_ViewerDir, deltaR);
-                Vector2.NormalizeFast(m_ViewerDir);
+
+                Vector2 direction = m_ViewerDir;
+                if (Input.CheckKeyDown(0xA2))
+                {
+                    float tx = direction.X;
+                    direction.X = -direction.Y;
+                    direction.Y = tx;
+                    m_ViewerPos += direction * MOVEMENT_SPEED * deltaT;
+
+                }
+                else
+                {
+                    float deltaR = ROTATION_SPEED * deltaT;
+                    m_PlayerRotation += deltaR;
+                    Rotate(ref m_ViewerDir, deltaR);
+                    Vector2.NormalizeFast(m_ViewerDir);
+                }
             }
+
+
+
             if (Input.CheckKeyDown(ConsoleKey.UpArrow))
             {
-                
                 m_ViewerPos += m_ViewerDir * MOVEMENT_SPEED * deltaT;
             }
             if (Input.CheckKeyDown(ConsoleKey.DownArrow))
             {
                 m_ViewerPos -= m_ViewerDir * MOVEMENT_SPEED * deltaT;
             }
+           
         }
 
 
