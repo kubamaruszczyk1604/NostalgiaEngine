@@ -29,29 +29,26 @@ namespace ConsoleRenderer
         private int m_MapWidth = 20;
         private int m_MapHeight =20;
         private int[] m_Map = {
-        1,0,0,0,0,0,0,0,0,0, 1,1,1,1,1,1,0,0,0,0,
-        1,0,0,0,0,1,0,0,0,1, 1,0,0,0,0,0,0,0,0,0,
-        1,0,0,0,0,0,1,0,0,1, 1,0,0,0,0,0,0,0,0,0,
-        1,0,1,0,0,0,0,1,0,1, 1,0,0,0,0,0,0,0,0,0,
-        1,0,0,0,0,2,0,0,0,0, 1,0,0,0,0,0,0,0,0,0,
-        1,0,1,0,0,0,0,1,0,0 ,1,0,0,0,0,0,0,0,0,0,
-        1,0,0,0,0,0,0,1,0,0 ,1,0,0,0,0,0,0,0,0,0,
-        1,0,1,0,0,0,1,0,0,1, 1,0,0,0,0,0,0,0,0,0,
-        1,0,0,0,1,0,0,0,0,1, 1,0,0,0,0,0,0,0,0,0,
-        1,1,1,0,0,1,0,0,0,0, 1,0,0,0,0,0,0,0,0,0,
-
-
-
-        1,0,0,0,0,0,0,0,0,0, 1,0,0,0,0,0,0,0,0,0,
-        1,0,0,0,0,1,0,0,0,1, 1,0,0,0,0,0,0,0,0,0,
-        1,0,0,0,0,0,1,0,0,1, 1,0,0,0,0,0,0,0,0,0,
-        1,0,1,0,0,0,0,1,0,1, 1,0,0,0,0,0,0,0,0,0,
-        1,0,0,0,0,2,0,0,0,0, 1,0,0,0,0,0,0,0,0,0,
-        1,0,1,0,0,0,0,1,0,0 ,1,0,0,0,0,0,0,0,0,0,
-        1,0,0,0,0,0,0,1,0,0 ,1,0,0,0,0,0,0,0,0,0,
-        1,0,1,0,0,0,1,0,0,1, 1,0,0,0,0,0,0,0,0,0,
-        1,0,0,0,1,0,0,0,0,1, 1,0,0,0,0,0,0,0,0,0,
-        1,1,1,1,1,1,1,1,1,1, 1,0,0,0,0,0,0,0,0,0
+        1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,1,
+        1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+        1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+        1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+        1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+        1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+        1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+        1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+        1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+        1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+        1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+        1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+        1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+        1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+        1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+        1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+        1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+        1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+        1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+        1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
         };
 
         const int MAX_MARCHING_STEPS = 255;
@@ -60,7 +57,7 @@ namespace ConsoleRenderer
         const float EPSILON = 0.01f;
         const float DEG_TO_RAD = 0.0174532f;
         const float M_PI = 3.1415926535f;
-        const float DEPTH = 20.0f;
+        const float DEPTH = 24.0f;
 
 
 
@@ -84,6 +81,7 @@ namespace ConsoleRenderer
 
         public RayMarcher(int width, int height)
         {
+
             m_ScrWidth = width;
             m_ScrHeight = height;
 
@@ -94,7 +92,7 @@ namespace ConsoleRenderer
             m_AspectRatio = (float)m_ScrWidth / (float)m_ScrHeight;
             m_Fov = 80.0f * DEG_TO_RAD;
             m_FovDist = (float)Math.Tan(m_Fov);
-            Input.ev_KeyPressed += KeyPress;
+            //Input_old.ev_KeyPressed += KeyPress;
         }
 
 
@@ -102,26 +100,28 @@ namespace ConsoleRenderer
         Vector2 m_ViewerPos = new Vector2(3.0f, 1.0f);
         Vector2 m_ViewerDir = new Vector2(0.0f, 1.0f);
         float m_PlayerRotation = 0.0f;
-        void KeyPress(ConsoleKeyInfo keyInfo)
+
+
+        void KeyPress()
         {
-            if (keyInfo.Key == ConsoleKey.LeftArrow)
+            if (Input.CheckKeyDown(ConsoleKey.LeftArrow))
             {
                 Vector3 tmp = new Vector3(m_ViewerDir.X, m_ViewerDir.Y, 0.0f) * Matrix3.CreateRotationZ(-0.05f);
                 m_ViewerDir = Vector2.Normalize(tmp.Xy);
                 m_PlayerRotation -= 0.05f;
             }
-            else if (keyInfo.Key == ConsoleKey.RightArrow)
+             if (Input.CheckKeyDown(ConsoleKey.RightArrow))
             {
                 Vector3 tmp = new Vector3(m_ViewerDir.X, m_ViewerDir.Y, 0.0f) * Matrix3.CreateRotationZ(0.05f);
                 m_ViewerDir = Vector2.Normalize(tmp.Xy);
                 m_PlayerRotation += 0.05f;
             }
-            else if (keyInfo.Key == ConsoleKey.UpArrow)
+            if (Input.CheckKeyDown(ConsoleKey.UpArrow))
             {
                 //m_ViewerPos.Y += 0.1f;
                 m_ViewerPos += m_ViewerDir * 0.1f;
             }
-            else if (keyInfo.Key == ConsoleKey.DownArrow)
+            if (Input.CheckKeyDown(ConsoleKey.DownArrow))
             {
                 m_ViewerPos -= m_ViewerDir * 0.1f;
             }
@@ -131,7 +131,7 @@ namespace ConsoleRenderer
 
 
 
-        public void RenderLoop2()
+        public void Play()
         {
 
             FrameTimer.Update();
@@ -145,7 +145,7 @@ namespace ConsoleRenderer
             while (true)//Render Loop
             {
 
-
+                KeyPress();
                 Console.SetCursorPosition(5, 1);
                 FrameTimer.Update();
                 Console.Title = " FPS: " + FrameTimer.GetFPS() + "   FRAME TIME: " + FrameTimer.GetDeltaTime() + "s ";
@@ -180,15 +180,15 @@ namespace ConsoleRenderer
 
         int GetCoord(int x, int y)
         {
-            return (10 * y) + x;
+            return (m_MapWidth * y) + x;
         }
 
         int GetCell(Vector2 p)
         {
             int x = (int)p.X;
             int y = (int)p.Y;
-            if (x > (int)DEPTH - 1.0) return 0;
-            if (y > (int)DEPTH - 1.0) return 0;
+            if (x > m_MapWidth - 1.0) return 0;
+            if (y > m_MapHeight - 1.0) return 0;
 
             if (x < 0) return 0;
             if (y < 0) return 0;
@@ -270,10 +270,10 @@ namespace ConsoleRenderer
                         char wallChar = csample.Character;
                         short wallCol = csample.BitMask;
                         
-                        //if (Math.Abs(rayFract) < 0.05f || Math.Abs(rayFract) > 0.95f)
+                        if (Math.Abs(rayFract) < 0.05f || Math.Abs(rayFract) > 0.95f)
                         {
-                           // wallChar = (char)Block.Strong;
-                           // wallCol = 0;
+                            wallChar = (char)Block.Strong;
+                            wallCol = 0;
                         }
                         Buffer.AddAsync(wallChar, wallCol, x, y);
                     }

@@ -38,17 +38,17 @@ namespace ConsoleRenderer
            
 
 
-            Input.Start();
 
-            RayMarcher rm = new RayMarcher(320, 200);
+
+            RayMarcher rm = new RayMarcher(250, 170);
 
 
             //int t = (0x0005 << 4);
-           // Console.WriteLine(t);
+            // Console.WriteLine(t);
             //Console.ReadLine();
-            
-            rm.RenderLoop2();
-            Input.Stop();
+
+            rm.Play();
+  
 
         }
     }
