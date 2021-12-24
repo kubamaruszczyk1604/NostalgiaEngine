@@ -172,9 +172,11 @@ namespace ConsoleRenderer
             m_Bufer[index].Char.AsciiChar = (byte)c;
 
         }
-
+        static int i = 0;
         static public void Swap()
         {
+            i = 1 -i;
+           //if(i == 1)
             WriteConsoleOutput(m_ConsoleHandle, m_Bufer, wh, orgin, ref rect);
 
             m_sBuffPtr = 0;

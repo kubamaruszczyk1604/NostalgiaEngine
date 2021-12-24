@@ -26,19 +26,32 @@ namespace ConsoleRenderer
 
     partial class RayMarcher
     {
-        private int m_MapWidth = 10;
-        private int m_MapHeight = 10;
+        private int m_MapWidth = 20;
+        private int m_MapHeight =20;
         private int[] m_Map = {
-        1,0,0,0,0,0,0,0,0,1,
-        1,0,0,0,0,1,0,0,0,1,
-        1,0,0,0,0,0,1,0,0,1,
-        1,0,1,0,0,0,0,1,0,1,
-        1,0,0,0,0,2,0,0,0,1,
-        1,0,1,0,0,0,0,1,0,1,
-        1,0,0,0,0,0,0,1,0,1,
-        1,0,1,0,0,0,1,0,0,1,
-        1,0,0,0,1,0,0,0,0,1,
-        1,1,1,1,1,1,1,1,1,1
+        1,0,0,0,0,0,0,0,0,0, 1,1,1,1,1,1,0,0,0,0,
+        1,0,0,0,0,1,0,0,0,1, 1,0,0,0,0,0,0,0,0,0,
+        1,0,0,0,0,0,1,0,0,1, 1,0,0,0,0,0,0,0,0,0,
+        1,0,1,0,0,0,0,1,0,1, 1,0,0,0,0,0,0,0,0,0,
+        1,0,0,0,0,2,0,0,0,0, 1,0,0,0,0,0,0,0,0,0,
+        1,0,1,0,0,0,0,1,0,0 ,1,0,0,0,0,0,0,0,0,0,
+        1,0,0,0,0,0,0,1,0,0 ,1,0,0,0,0,0,0,0,0,0,
+        1,0,1,0,0,0,1,0,0,1, 1,0,0,0,0,0,0,0,0,0,
+        1,0,0,0,1,0,0,0,0,1, 1,0,0,0,0,0,0,0,0,0,
+        1,1,1,0,0,1,0,0,0,0, 1,0,0,0,0,0,0,0,0,0,
+
+
+
+        1,0,0,0,0,0,0,0,0,0, 1,0,0,0,0,0,0,0,0,0,
+        1,0,0,0,0,1,0,0,0,1, 1,0,0,0,0,0,0,0,0,0,
+        1,0,0,0,0,0,1,0,0,1, 1,0,0,0,0,0,0,0,0,0,
+        1,0,1,0,0,0,0,1,0,1, 1,0,0,0,0,0,0,0,0,0,
+        1,0,0,0,0,2,0,0,0,0, 1,0,0,0,0,0,0,0,0,0,
+        1,0,1,0,0,0,0,1,0,0 ,1,0,0,0,0,0,0,0,0,0,
+        1,0,0,0,0,0,0,1,0,0 ,1,0,0,0,0,0,0,0,0,0,
+        1,0,1,0,0,0,1,0,0,1, 1,0,0,0,0,0,0,0,0,0,
+        1,0,0,0,1,0,0,0,0,1, 1,0,0,0,0,0,0,0,0,0,
+        1,1,1,1,1,1,1,1,1,1, 1,0,0,0,0,0,0,0,0,0
         };
 
         const int MAX_MARCHING_STEPS = 255;
@@ -47,7 +60,7 @@ namespace ConsoleRenderer
         const float EPSILON = 0.01f;
         const float DEG_TO_RAD = 0.0174532f;
         const float M_PI = 3.1415926535f;
-        const float DEPTH = 10.0f;
+        const float DEPTH = 20.0f;
 
 
 
@@ -223,17 +236,15 @@ namespace ConsoleRenderer
                 float pixelY = -(y - m_ScrHeight / 2);
                 float py = pixelY / ((float)m_ScrHeight) / 2.0f;
                 py *= m_Fov*2.0f;
-                //Vector3 d = new Vector3(m_ScrWidth / 2, m_ScrHeight + 65, 0) - new Vector3(x,y,0);
-                //float fd = (1.0f-d.LengthFast/m_ScrHeight);
 
                 //ColorSample floorSample = ColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkGray, fd);
                 ColorSample floorSample = ColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkGreen, Math.Abs(py*0.75f) - Math.Abs(px*0.1f));
 
 
                 ColorSample ceilSample = ColorSample.MakeCol(ConsoleColor.DarkRed, ConsoleColor.DarkMagenta, Math.Abs(py)-0.1f);
-                if (py < 0.3f + (float)Math.Sin(px * 30 + m_PlayerRotation*20) * 0.1f)
+                if (py < 0.3f + (float)Math.Sin(px * 10 + m_PlayerRotation*4) * 0.1f)
                 {
-                    ceilSample = ColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkGray, Math.Abs(py));
+                    ceilSample = ColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkGray, Math.Abs(py*0.75f) - Math.Abs(px * 0.1f));
                 }
                 //(float)Math.Sin(px * 40) * 0.1f
 
@@ -251,14 +262,18 @@ namespace ConsoleRenderer
                     }
                     else
                     {
-                        ColorSample csample = ColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkBlue, intensity);
+                        float rayFract = (ray.X - (float)Math.Floor(ray.X) -(ray.Y - (float)Math.Floor(ray.Y)));
+                        rayFract = Math.Abs(rayFract);
+
+                        //ColorSample csample = ColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkBlue, intensity);
+                        ColorSample csample = tex.Sample(rayFract, py / (floorp - ceiling) + 0.5f, intensity);
                         char wallChar = csample.Character;
                         short wallCol = csample.BitMask;
-                        float rayFract = (ray.X - (float)Math.Floor(ray.X) - (ray.Y - (float)Math.Floor(ray.Y)));
-                        if (Math.Abs(rayFract) < 0.05f || Math.Abs(rayFract) > 0.95f)
+                        
+                        //if (Math.Abs(rayFract) < 0.05f || Math.Abs(rayFract) > 0.95f)
                         {
-                            wallChar = (char)Block.Strong;
-                            wallCol = 0;
+                           // wallChar = (char)Block.Strong;
+                           // wallCol = 0;
                         }
                         Buffer.AddAsync(wallChar, wallCol, x, y);
                     }
@@ -304,7 +319,25 @@ namespace ConsoleRenderer
 
         }
 
-        
+        Texture16 tex = Texture16.LoadFromFile($"C:/Users/Kuba/Desktop/eng/test.txt");
+        private void Draw3(int x)
+        {
+
+            float u = (float)x / 250.0f;
+            
+
+            for (int y = 0; y < m_ScrHeight; ++y)
+            {
+                float v = (float)y / 150.0f;
+                ColorSample csample = tex.Sample(u, v,0.1f+u);
+                Buffer.AddAsync(csample.Character, csample.BitMask, x, y);
+
+
+
+            }
+
+        }
+
 
         float CalculateLight(Vector3 lightDir, Vector3 normal)
         {

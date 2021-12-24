@@ -35,10 +35,12 @@ namespace ConsoleRenderer
             DeleteMenu(GetSystemMenu(GetConsoleWindow(), false), SC_SIZE, MF_BYCOMMAND);
             DeleteMenu(GetSystemMenu(GetConsoleWindow(), false), SC_MAXIMIZE, MF_BYCOMMAND);
 
+           
+
 
             Input.Start();
 
-            RayMarcher rm = new RayMarcher(250, 150);
+            RayMarcher rm = new RayMarcher(320, 200);
 
 
             //int t = (0x0005 << 4);

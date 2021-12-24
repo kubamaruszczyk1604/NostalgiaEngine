@@ -86,8 +86,8 @@ namespace ConsoleRenderer
             int FG2 = ((int)col2) << 4;
 
             int[] pairs = new int[] { BG1 | FG2, BG2 | FG1 };
-            float tFract = t - (float)Math.Floor(t);
-            tFract = tFract >= 0 ? tFract : 1.0f - tFract; //mirror
+            float tFract = t >= 1.0f? 1.0f: t - (float)Math.Floor(t);
+            tFract = tFract <= 0 ? 0.0f:tFract; //clamp
             //tFract = Math.Abs(tFract); // repeat
             int index = (int)(tFract * (float)MAX_COL_COUNT);
             index = index >= (MAX_COL_COUNT - 1) ? (MAX_COL_COUNT - 1) : index;
