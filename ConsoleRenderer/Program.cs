@@ -33,11 +33,6 @@ namespace ConsoleRenderer
             DeleteMenu(GetSystemMenu(GetConsoleWindow(), false), SC_SIZE, MF_BYCOMMAND);
             DeleteMenu(GetSystemMenu(GetConsoleWindow(), false), SC_MAXIMIZE, MF_BYCOMMAND);
 
-           
-
-
-
-
             RayMarcher rm = new RayMarcher(300, 200,4,4);
             //Buffer.HalfTemporalResolution = true;
 
