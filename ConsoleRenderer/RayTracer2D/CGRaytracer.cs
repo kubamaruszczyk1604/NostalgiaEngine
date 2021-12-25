@@ -43,7 +43,7 @@ namespace ConsoleRenderer
         const float M_PI = 3.1415926535f;
         const float DEPTH = 24.0f;
         const float ROTATION_SPEED = 1.5f;
-        const float MOVEMENT_SPEED = 10.0f;
+        const float MOVEMENT_SPEED = 4.0f;
 
 
 
