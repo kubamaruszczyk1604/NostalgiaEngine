@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 using System.Threading;
 using OpenTK;
 using System.Diagnostics;
+using ConsoleRenderer.Core;
 
 namespace ConsoleRenderer
 {
     public class CGEngine
     {
+
         private CGApp m_App;
         private bool m_Running;
         private float m_Delta;
@@ -25,7 +27,7 @@ namespace ConsoleRenderer
 
         public CGEngine(string title, int scrW, int scrH, int pixelW, int pixelH)
         {
-            
+            WindowControl.DisableConsoleWindowButtons();
             m_Running = false;
             ScreenWidth = scrW;
             ScreenHeight = scrH;
@@ -38,7 +40,7 @@ namespace ConsoleRenderer
         public void Start(CGApp app)
         {
             m_App = app;
-            Buffer.Initialize((short)ScreenWidth, (short)ScreenHeight, (short)PixelWidth, (short)PixelHeight);
+            CGBuffer.Initialize((short)ScreenWidth, (short)ScreenHeight, (short)PixelWidth, (short)PixelHeight);
             m_Running = true;
             m_App.OnStart();
 
@@ -46,9 +48,9 @@ namespace ConsoleRenderer
             {
 
                 Console.SetCursorPosition(5, 1);
-                Console.Title = Title + " FPS: " + FrameTimer.GetFPS() + "   FRAME TIME: " + m_Delta + "s ";
+                Console.Title = Title + " FPS: " + CGFrameTimer.GetFPS() + "   FRAME TIME: " + m_Delta + "s ";
 
-                m_App.OnUpdate(FrameTimer.GetDeltaTime());
+                m_App.OnUpdate(CGFrameTimer.GetDeltaTime());
                 var resetEvent = new ManualResetEvent(false); // Will be reset when buffer is ready to be swaped
 
                 //For each column..
@@ -71,11 +73,11 @@ namespace ConsoleRenderer
 
                 resetEvent.WaitOne();
                 m_App.OnPostDraw();
-                Buffer.Swap();
+                CGBuffer.Swap();
 
-                RunningTime += FrameTimer.GetDeltaTime();
-                m_Delta = FrameTimer.GetDeltaTime();
-                FrameTimer.Update();
+                RunningTime += CGFrameTimer.GetDeltaTime();
+                m_Delta = CGFrameTimer.GetDeltaTime();
+                CGFrameTimer.Update();
 
             }
             m_App.OnExit();

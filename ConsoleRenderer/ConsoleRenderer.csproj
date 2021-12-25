@@ -62,18 +62,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Buffer.cs" />
+    <Compile Include="Core\Buffer.cs" />
     <Compile Include="CGApp.cs" />
     <Compile Include="CGEngine.cs" />
-    <Compile Include="FrameTimer.cs" />
-    <Compile Include="Helper.cs" />
-    <Compile Include="Input.cs" />
-    <Compile Include="Material.cs" />
+    <Compile Include="Core\FrameTimer.cs" />
+    <Compile Include="Core\Helper.cs" />
+    <Compile Include="Core\Input.cs" />
+    <Compile Include="Core\Material.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RayMarcher.cs" />
     <Compile Include="RayTracer2D\CGRaytracer.cs" />
-    <Compile Include="Texture16.cs" />
+    <Compile Include="Core\Texture16.cs" />
+    <Compile Include="Core\WindowControl.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -92,6 +93,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

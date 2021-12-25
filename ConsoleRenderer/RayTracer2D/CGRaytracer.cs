@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OpenTK;
+using ConsoleRenderer.Core;
 
 namespace ConsoleRenderer
 {
@@ -55,7 +56,7 @@ namespace ConsoleRenderer
         Vector2 m_ViewerPos = new Vector2(3.0f, 1.0f);
         Vector2 m_ViewerDir = new Vector2(0.0f, 1.0f);
         float m_PlayerRotation = 0.0f;
-        Texture16 m_WallTex;
+        CGTexture16 m_WallTex;
 
 
         override public void OnStart()
@@ -64,18 +65,18 @@ namespace ConsoleRenderer
             m_ScrHeight = CGEngine.ScreenHeight;
             m_AspectRatio = (float)m_ScrWidth / (float)m_ScrHeight;
             m_Fov = 80.0f * DEG_TO_RAD;
-            m_WallTex = Texture16.LoadFromFile($"C:/Users/Kuba/Desktop/eng/test.txt");
-            Buffer.HalfTemporalResolution = true;
+            m_WallTex = CGTexture16.LoadFromFile($"C:/Users/Kuba/Desktop/eng/test.txt");
+            CGBuffer.HalfTemporalResolution = true;
         }
 
         override public void OnUpdate(float dt)
         {
             
             float deltaT = dt;
-            if (Input.CheckKeyDown(ConsoleKey.LeftArrow))
+            if (CGInput.CheckKeyDown(ConsoleKey.LeftArrow))
             {
                 Vector2 direction = m_ViewerDir;
-                if (Input.CheckKeyDown(0xA2))
+                if (CGInput.CheckKeyDown(0xA2))
                 {
                     float tx = direction.X;
                     direction.X = -direction.Y;
@@ -87,17 +88,17 @@ namespace ConsoleRenderer
                 {
                     float deltaR = -ROTATION_SPEED * deltaT;
                     m_PlayerRotation += deltaR;
-                    Helper.Rotate(ref m_ViewerDir, deltaR);
+                    CGHelper.Rotate(ref m_ViewerDir, deltaR);
                     Vector2.NormalizeFast(m_ViewerDir);
                 }
 
 
             }
-            if (Input.CheckKeyDown(ConsoleKey.RightArrow))
+            if (CGInput.CheckKeyDown(ConsoleKey.RightArrow))
             {
 
                 Vector2 direction = m_ViewerDir;
-                if (Input.CheckKeyDown(0xA2))
+                if (CGInput.CheckKeyDown(0xA2))
                 {
                     float tx = direction.X;
                     direction.X = -direction.Y;
@@ -109,18 +110,18 @@ namespace ConsoleRenderer
                 {
                     float deltaR = ROTATION_SPEED * deltaT;
                     m_PlayerRotation += deltaR;
-                    Helper.Rotate(ref m_ViewerDir, deltaR);
+                    CGHelper.Rotate(ref m_ViewerDir, deltaR);
                     Vector2.NormalizeFast(m_ViewerDir);
                 }
             }
 
 
 
-            if (Input.CheckKeyDown(ConsoleKey.UpArrow))
+            if (CGInput.CheckKeyDown(ConsoleKey.UpArrow))
             {
                 m_ViewerPos += m_ViewerDir * MOVEMENT_SPEED * deltaT;
             }
-            if (Input.CheckKeyDown(ConsoleKey.DownArrow))
+            if (CGInput.CheckKeyDown(ConsoleKey.DownArrow))
             {
                 m_ViewerPos -= m_ViewerDir * MOVEMENT_SPEED * deltaT;
             }
@@ -135,7 +136,7 @@ namespace ConsoleRenderer
             px *= m_Fov; // TO DO: consider aspect ratio 
 
             Vector2 dir = new Vector2(m_ViewerDir.X, m_ViewerDir.Y);
-            Helper.Rotate(ref dir, px);
+            CGHelper.Rotate(ref dir, px);
             dir = Vector2.NormalizeFast(dir);
 
             float t = 0.0f;
@@ -163,13 +164,13 @@ namespace ConsoleRenderer
                 py *= m_Fov * 2.0f;
 
                 //ColorSample floorSample = ColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkGray, fd);
-                ColorSample floorSample = ColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkGreen, Math.Abs(py * 1.2f) - Math.Abs(px * 0.1f));
+                CGColorSample floorSample = CGColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkGreen, Math.Abs(py * 1.2f) - Math.Abs(px * 0.1f));
 
 
-                ColorSample ceilSample = ColorSample.MakeCol(ConsoleColor.DarkRed, ConsoleColor.DarkMagenta, Math.Abs(py) - 0.1f);
+                CGColorSample ceilSample = CGColorSample.MakeCol(ConsoleColor.DarkRed, ConsoleColor.DarkMagenta, Math.Abs(py) - 0.1f);
                 if (py < 0.3f + (float)Math.Sin(px * 10 + m_PlayerRotation * 4) * 0.1f)
                 {
-                    ceilSample = ColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkGray, Math.Abs(py * 0.75f) - Math.Abs(px * 0.1f));
+                    ceilSample = CGColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkGray, Math.Abs(py * 0.75f) - Math.Abs(px * 0.1f));
                 }
 
 
@@ -179,11 +180,11 @@ namespace ConsoleRenderer
                     if (py > ceiling) //draw ceiling
                     {
 
-                        Buffer.AddAsync(ceilSample.Character, ceilSample.BitMask, x, y);
+                        CGBuffer.AddAsync(ceilSample.Character, ceilSample.BitMask, x, y);
                     }
                     else if (py < floorp)
                     {
-                        Buffer.AddAsync(floorSample.Character, floorSample.BitMask, x, y);
+                        CGBuffer.AddAsync(floorSample.Character, floorSample.BitMask, x, y);
                     }
                     else
                     {
@@ -191,7 +192,7 @@ namespace ConsoleRenderer
                         rayFract = Math.Abs(rayFract);
 
                         //ColorSample csample = ColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkBlue, intensity);
-                        ColorSample csample = m_WallTex.Sample(rayFract, py / (floorp - ceiling) + 0.5f, intensity);
+                        CGColorSample csample = m_WallTex.Sample(rayFract, py / (floorp - ceiling) + 0.5f, intensity);
                         char wallChar = csample.Character;
                         short wallCol = csample.BitMask;
 
@@ -200,16 +201,16 @@ namespace ConsoleRenderer
                         //    wallChar = (char)Block.Strong;
                         //    wallCol = 0;
                         //}
-                        Buffer.AddAsync(wallChar, wallCol, x, y);
+                        CGBuffer.AddAsync(wallChar, wallCol, x, y);
                     }
 
                 }
                 else
                 {
 
-                    if (py > ceiling) Buffer.AddAsync(ceilSample.Character, ceilSample.BitMask, x, y);
-                    else if (py < floorp) Buffer.AddAsync(floorSample.Character, floorSample.BitMask, x, y);
-                    else Buffer.AddAsync((char)Block.Weak, 0x0000 | 0x0000, x, y);
+                    if (py > ceiling) CGBuffer.AddAsync(ceilSample.Character, ceilSample.BitMask, x, y);
+                    else if (py < floorp) CGBuffer.AddAsync(floorSample.Character, floorSample.BitMask, x, y);
+                    else CGBuffer.AddAsync((char)CGBlock.Weak, 0x0000 | 0x0000, x, y);
                 }
 
 

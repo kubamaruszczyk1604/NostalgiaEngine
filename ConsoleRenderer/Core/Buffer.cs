@@ -4,9 +4,9 @@ using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 using OpenTK;
 
-namespace ConsoleRenderer
+namespace ConsoleRenderer.Core
 {
-    class Buffer
+    public class CGBuffer
     {
 
 

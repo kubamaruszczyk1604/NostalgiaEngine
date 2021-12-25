@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using OpenTK;
 using System.Diagnostics;
-
+using ConsoleRenderer.Core;
 
 
 
@@ -81,7 +81,7 @@ namespace ConsoleRenderer
             m_ScrWidth = width;
             m_ScrHeight = height;
 
-            Buffer.Initialize((short)m_ScrWidth, (short)m_ScrHeight, (short)pixelW,(short) pixelH);
+            CGBuffer.Initialize((short)m_ScrWidth, (short)m_ScrHeight, (short)pixelW,(short) pixelH);
 
 
             
@@ -101,11 +101,11 @@ namespace ConsoleRenderer
         void KeyPress()
         {
 
-            float deltaT = FrameTimer.GetDeltaTime();
-            if (Input.CheckKeyDown(ConsoleKey.LeftArrow))
+            float deltaT = CGFrameTimer.GetDeltaTime();
+            if (CGInput.CheckKeyDown(ConsoleKey.LeftArrow))
             {
                 Vector2 direction = m_ViewerDir;
-                if (Input.CheckKeyDown(0xA2))
+                if (CGInput.CheckKeyDown(0xA2))
                 {
                     float tx = direction.X;
                     direction.X = -direction.Y;
@@ -123,11 +123,11 @@ namespace ConsoleRenderer
 
 
             }
-             if (Input.CheckKeyDown(ConsoleKey.RightArrow))
+             if (CGInput.CheckKeyDown(ConsoleKey.RightArrow))
             {
 
                 Vector2 direction = m_ViewerDir;
-                if (Input.CheckKeyDown(0xA2))
+                if (CGInput.CheckKeyDown(0xA2))
                 {
                     float tx = direction.X;
                     direction.X = -direction.Y;
@@ -146,11 +146,11 @@ namespace ConsoleRenderer
 
 
 
-            if (Input.CheckKeyDown(ConsoleKey.UpArrow))
+            if (CGInput.CheckKeyDown(ConsoleKey.UpArrow))
             {
                 m_ViewerPos += m_ViewerDir * MOVEMENT_SPEED * deltaT;
             }
-            if (Input.CheckKeyDown(ConsoleKey.DownArrow))
+            if (CGInput.CheckKeyDown(ConsoleKey.DownArrow))
             {
                 m_ViewerPos -= m_ViewerDir * MOVEMENT_SPEED * deltaT;
             }
@@ -164,7 +164,7 @@ namespace ConsoleRenderer
         public void Play()
         {
 
-            FrameTimer.Update();
+            CGFrameTimer.Update();
             //Initial setup
 
 
@@ -177,7 +177,7 @@ namespace ConsoleRenderer
 
                 KeyPress();
                 Console.SetCursorPosition(5, 1);
-                Console.Title = " FPS: " + FrameTimer.GetFPS() + "   FRAME TIME: " + lastDelta + "s ";
+                Console.Title = " FPS: " + CGFrameTimer.GetFPS() + "   FRAME TIME: " + lastDelta + "s ";
 
                 var resetEvent = new ManualResetEvent(false); // Will be reset when buffer is ready to be swaped
 
@@ -201,11 +201,11 @@ namespace ConsoleRenderer
 
                 //Thread.Sleep(10);
                 resetEvent.WaitOne();
-                Buffer.Swap();
+                CGBuffer.Swap();
 
-                m_TotalTime += FrameTimer.GetDeltaTime();
-                lastDelta = FrameTimer.GetDeltaTime();
-                FrameTimer.Update();
+                m_TotalTime += CGFrameTimer.GetDeltaTime();
+                lastDelta = CGFrameTimer.GetDeltaTime();
+                CGFrameTimer.Update();
 
             }
         }
@@ -289,13 +289,13 @@ namespace ConsoleRenderer
                 py *= m_Fov*2.0f;
 
                 //ColorSample floorSample = ColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkGray, fd);
-                ColorSample floorSample = ColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkGreen, Math.Abs(py*1.2f) - Math.Abs(px*0.1f));
+                CGColorSample floorSample = CGColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkGreen, Math.Abs(py*1.2f) - Math.Abs(px*0.1f));
 
 
-                ColorSample ceilSample = ColorSample.MakeCol(ConsoleColor.DarkRed, ConsoleColor.DarkMagenta, Math.Abs(py)-0.1f);
+                CGColorSample ceilSample = CGColorSample.MakeCol(ConsoleColor.DarkRed, ConsoleColor.DarkMagenta, Math.Abs(py)-0.1f);
                 if (py < 0.3f + (float)Math.Sin(px * 10 + m_PlayerRotation*4) * 0.1f)
                 {
-                    ceilSample = ColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkGray, Math.Abs(py*0.75f) - Math.Abs(px * 0.1f));
+                    ceilSample = CGColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkGray, Math.Abs(py*0.75f) - Math.Abs(px * 0.1f));
                 }
                 
 
@@ -305,11 +305,11 @@ namespace ConsoleRenderer
                     if (py > ceiling) //draw ceiling
                     {
                         
-                        Buffer.AddAsync(ceilSample.Character, ceilSample.BitMask, x, y);
+                        CGBuffer.AddAsync(ceilSample.Character, ceilSample.BitMask, x, y);
                     }
                     else if (py < floorp)
                     {
-                        Buffer.AddAsync(floorSample.Character, floorSample.BitMask, x, y);
+                        CGBuffer.AddAsync(floorSample.Character, floorSample.BitMask, x, y);
                     }
                     else
                     {
@@ -317,7 +317,7 @@ namespace ConsoleRenderer
                         rayFract = Math.Abs(rayFract);
 
                         //ColorSample csample = ColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkBlue, intensity);
-                        ColorSample csample = tex.Sample(rayFract, py / (floorp - ceiling) + 0.5f, intensity);
+                        CGColorSample csample = tex.Sample(rayFract, py / (floorp - ceiling) + 0.5f, intensity);
                         char wallChar = csample.Character;
                         short wallCol = csample.BitMask;
                         
@@ -326,16 +326,16 @@ namespace ConsoleRenderer
                         //    wallChar = (char)Block.Strong;
                         //    wallCol = 0;
                         //}
-                        Buffer.AddAsync(wallChar, wallCol, x, y);
+                        CGBuffer.AddAsync(wallChar, wallCol, x, y);
                     }
 
                 }
                 else
                 {
 
-                    if (py > ceiling) Buffer.AddAsync(ceilSample.Character, ceilSample.BitMask, x, y);
-                    else if (py < floorp) Buffer.AddAsync(floorSample.Character, floorSample.BitMask, x, y);
-                    else Buffer.AddAsync((char)Block.Weak, 0x0000 | 0x0000, x, y);
+                    if (py > ceiling) CGBuffer.AddAsync(ceilSample.Character, ceilSample.BitMask, x, y);
+                    else if (py < floorp) CGBuffer.AddAsync(floorSample.Character, floorSample.BitMask, x, y);
+                    else CGBuffer.AddAsync((char)CGBlock.Weak, 0x0000 | 0x0000, x, y);
                 }
 
 
@@ -349,11 +349,11 @@ namespace ConsoleRenderer
         {
 
             float u = (float)x / 250.0f;
-            ColorSample csample = ColorSample.MakeCol(ConsoleColor.White, ConsoleColor.Black, u);
+            CGColorSample csample = CGColorSample.MakeCol(ConsoleColor.White, ConsoleColor.Black, u);
 
             for (int y = 0; y < m_ScrHeight; ++y)
             {
-                Buffer.AddAsync(csample.Character, csample.BitMask, x, y);
+                CGBuffer.AddAsync(csample.Character, csample.BitMask, x, y);
                 //int index = (int)((((float)x) / 150.0f) * 5.0f);
                 ////ProduceShadedColor(out char ceilChar, out short ceilCol, Math.Abs(py), (short)COLOUR.FG_BLUE, (short)COLOUR.BG_BLUE);
                 //if (y < 70)
@@ -370,7 +370,7 @@ namespace ConsoleRenderer
 
         }
 
-        Texture16 tex = Texture16.LoadFromFile($"C:/Users/Kuba/Desktop/eng/test.txt");
+        CGTexture16 tex = CGTexture16.LoadFromFile($"C:/Users/Kuba/Desktop/eng/test.txt");
         private void Draw3(int x)
         {
 
@@ -380,8 +380,8 @@ namespace ConsoleRenderer
             for (int y = 0; y < m_ScrHeight; ++y)
             {
                 float v = (float)y / 150.0f;
-                ColorSample csample = tex.Sample(u, v,0.1f+u);
-                Buffer.AddAsync(csample.Character, csample.BitMask, x, y);
+                CGColorSample csample = tex.Sample(u, v,0.1f+u);
+                CGBuffer.AddAsync(csample.Character, csample.BitMask, x, y);
 
 
 

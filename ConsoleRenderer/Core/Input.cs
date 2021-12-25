@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 
 
-namespace ConsoleRenderer
+namespace ConsoleRenderer.Core
 {
 
     //enum VK : int
@@ -703,7 +703,7 @@ namespace ConsoleRenderer
     //}
   
 
-    class Input
+    public class CGInput
     {
         [DllImport("user32.dll")]
         public static extern int GetAsyncKeyState(

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleRenderer
+namespace ConsoleRenderer.Core
 {
-    class FrameTimer
+    public class CGFrameTimer
     {
         private static long s_LastFpsCapture = System.Environment.TickCount;
         private static long s_LastCallTime = System.Environment.TickCount;

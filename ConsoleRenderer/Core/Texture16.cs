@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleRenderer
+namespace ConsoleRenderer.Core
 {
-    class Texture16
+    class CGTexture16
     {
         public int Width { get; private set; }
         public int Height { get; private set; }
@@ -17,7 +17,7 @@ namespace ConsoleRenderer
 
 
 
-        private Texture16()
+        private CGTexture16()
         {
            
         }
@@ -80,10 +80,10 @@ namespace ConsoleRenderer
             return true;
         }
 
-        public static Texture16 LoadFromFile(string file)
+        public static CGTexture16 LoadFromFile(string file)
         {
 
-            Texture16 texture = new Texture16();
+            CGTexture16 texture = new CGTexture16();
             if(texture.ReadFromFile(file))
             {
                 return texture;
@@ -91,7 +91,7 @@ namespace ConsoleRenderer
             return null;
         }
 
-        public ColorSample Sample(float u, float v, float intensity)
+        public CGColorSample Sample(float u, float v, float intensity)
         {
             int x = (int)(u * (float)Width);
             if (x >= (Width - 1)) x = Width - 1; 
@@ -101,7 +101,7 @@ namespace ConsoleRenderer
             int index = y * Width + x;
             int col = m_Data[index];
 
-            return ColorSample.MakeCol(ConsoleColor.Black, (ConsoleColor)col,intensity);
+            return CGColorSample.MakeCol(ConsoleColor.Black, (ConsoleColor)col,intensity);
         }
 
     }

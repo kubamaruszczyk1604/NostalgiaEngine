@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OpenTK;
-namespace ConsoleRenderer
+namespace ConsoleRenderer.Core
 {
-    class Helper
+    public class CGHelper
     {
 
         static public float Min(float a, float b)
