@@ -5,8 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 using OpenTK;
-using OpenTK.Graphics;
-using OpenTK.Graphics.OpenGL;
 using System.Diagnostics;
 
 
@@ -173,21 +171,20 @@ namespace ConsoleRenderer
 
            // Console.ForegroundColor = ConsoleColor.DarkGray;
             // Console.BackgroundColor = ConsoleColor.White;
-
+            float lastDelta = 0.0f;
             while (true)//Render Loop
             {
 
                 KeyPress();
                 Console.SetCursorPosition(5, 1);
-                FrameTimer.Update();
-                Console.Title = " FPS: " + FrameTimer.GetFPS() + "   FRAME TIME: " + FrameTimer.GetDeltaTime() + "s ";
+                Console.Title = " FPS: " + FrameTimer.GetFPS() + "   FRAME TIME: " + lastDelta + "s ";
 
                 var resetEvent = new ManualResetEvent(false); // Will be reset when buffer is ready to be swaped
 
                 //For each column..
                 for (int x = 0; x < m_ScrWidth; ++x)
                 {
-                    //Draw4(x);
+                   // Draw(x);
                     // Queue new task
                     ThreadPool.QueueUserWorkItem(
                        new WaitCallback(
@@ -204,9 +201,12 @@ namespace ConsoleRenderer
 
                 //Thread.Sleep(10);
                 resetEvent.WaitOne();
-               // Console.ReadLine();
                 Buffer.Swap();
+
                 m_TotalTime += FrameTimer.GetDeltaTime();
+                lastDelta = FrameTimer.GetDeltaTime();
+                FrameTimer.Update();
+
             }
         }
 

@@ -63,6 +63,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Buffer.cs" />
+    <Compile Include="CGApp.cs" />
+    <Compile Include="CGEngine.cs" />
     <Compile Include="FrameTimer.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="Input.cs" />
@@ -70,6 +72,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RayMarcher.cs" />
+    <Compile Include="RayTracer2D\CGRaytracer.cs" />
     <Compile Include="Texture16.cs" />
   </ItemGroup>
   <ItemGroup>

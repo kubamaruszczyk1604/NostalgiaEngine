@@ -76,6 +76,14 @@ namespace ConsoleRenderer
             return a;
         }
 
+        static public void Rotate(ref Vector2 v, float theta)
+        {
+            float s = (float)Math.Sin(theta);
+            float c = (float)Math.Cos(theta);
+            v.X = v.X * c - v.Y * s;
+            v.Y = v.X * s + v.Y * c;
+        }
+
 
     }
 }
