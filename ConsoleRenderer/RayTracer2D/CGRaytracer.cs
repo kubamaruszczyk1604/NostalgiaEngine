@@ -65,7 +65,7 @@ namespace ConsoleRenderer
             m_AspectRatio = (float)m_ScrWidth / (float)m_ScrHeight;
             m_Fov = 80.0f * DEG_TO_RAD;
             m_WallTex = Texture16.LoadFromFile($"C:/Users/Kuba/Desktop/eng/test.txt");
-           // Buffer.HalfTemporalResolution = true;
+            Buffer.HalfTemporalResolution = true;
         }
 
         override public void OnUpdate(float dt)

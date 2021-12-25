@@ -163,7 +163,6 @@ namespace ConsoleRenderer
         static public void AddAsync(char c, short color, int x, int y)
         {
 
-
             int index = m_sWidth * (y) + x;
             if (index >= m_Bufer.Length)
             {
