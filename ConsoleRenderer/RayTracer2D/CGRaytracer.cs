@@ -127,19 +127,16 @@ namespace ConsoleRenderer
 
         }
 
+
         override public void OnDrawPerColumn(int x)
         {
             float px = (((float)x / (float)m_ScrWidth) - 0.5f) * 0.5f;
 
             px *= m_Fov; // TO DO: consider aspect ratio 
 
-
-            //Vector2 pos = m_ViewerPos;
             Vector2 dir = new Vector2(m_ViewerDir.X, m_ViewerDir.Y);
             Helper.Rotate(ref dir, px);
-            dir = Vector2.Normalize(dir);
-
-
+            dir = Vector2.NormalizeFast(dir);
 
             float t = 0.0f;
             const float stp = 0.01f;
