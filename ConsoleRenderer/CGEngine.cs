@@ -45,7 +45,7 @@ namespace ConsoleRenderer
             while(m_Running)
             {
 
-                //Console.SetCursorPosition(5, 1);
+                Console.SetCursorPosition(5, 1);
                 Console.Title = Title + " FPS: " + FrameTimer.GetFPS() + "   FRAME TIME: " + m_Delta + "s ";
 
                 m_App.OnUpdate(FrameTimer.GetDeltaTime());

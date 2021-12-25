@@ -61,16 +61,16 @@ namespace ConsoleRenderer
         override public void OnStart()
         {
             m_ScrWidth = CGEngine.ScreenWidth;
-            m_ScrHeight = CGEngine.ScreenWidth;
+            m_ScrHeight = CGEngine.ScreenHeight;
             m_AspectRatio = (float)m_ScrWidth / (float)m_ScrHeight;
             m_Fov = 80.0f * DEG_TO_RAD;
             m_WallTex = Texture16.LoadFromFile($"C:/Users/Kuba/Desktop/eng/test.txt");
-            Buffer.HalfTemporalResolution = true;
+           // Buffer.HalfTemporalResolution = true;
         }
 
         override public void OnUpdate(float dt)
         {
-
+            
             float deltaT = dt;
             if (Input.CheckKeyDown(ConsoleKey.LeftArrow))
             {
@@ -129,13 +129,12 @@ namespace ConsoleRenderer
 
         override public void OnDrawPerColumn(int x)
         {
-            // float pixelX = x - m_ScrWidth / 2;
-            //float px = pixelX / ((float)m_ScrWidth) / 2.0f;
-
             float px = (((float)x / (float)m_ScrWidth) - 0.5f) * 0.5f;
 
-            px *= m_Fov; 
+            px *= m_Fov; // TO DO: consider aspect ratio 
 
+
+            //Vector2 pos = m_ViewerPos;
             Vector2 dir = new Vector2(m_ViewerDir.X, m_ViewerDir.Y);
             Helper.Rotate(ref dir, px);
             dir = Vector2.Normalize(dir);
