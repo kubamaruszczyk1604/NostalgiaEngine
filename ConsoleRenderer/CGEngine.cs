@@ -47,7 +47,7 @@ namespace ConsoleRenderer
             while(m_Running)
             {
 
-                Console.SetCursorPosition(5, 1);
+                //Console.SetCursorPosition(5, 1);
                 Console.Title = Title + " FPS: " + CGFrameTimer.GetFPS() + "   FRAME TIME: " + m_Delta + "s ";
 
                 m_App.OnUpdate(CGFrameTimer.GetDeltaTime());
@@ -56,7 +56,6 @@ namespace ConsoleRenderer
                 //For each column..
                 for (int x = 0; x < ScreenWidth; ++x)
                 {
-                    
                     // Queue new task
                     ThreadPool.QueueUserWorkItem(
                        new WaitCallback(
@@ -72,6 +71,7 @@ namespace ConsoleRenderer
                 }
 
                 resetEvent.WaitOne();
+                
                 m_App.OnPostDraw();
                 CGBuffer.Swap();
 

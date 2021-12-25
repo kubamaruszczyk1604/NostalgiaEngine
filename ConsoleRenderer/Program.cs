@@ -21,7 +21,7 @@ namespace ConsoleRenderer
            // Buffer.HalfTemporalResolution = true;
 
            // rm.Play();
-            CGRaytracer tracer = new CGRaytracer();
+            CGRaytracer2D tracer = new CGRaytracer2D();
             CGEngine engine = new CGEngine("Test", 300, 200, 4, 4);
 
             engine.Start(tracer);
