@@ -159,7 +159,7 @@ namespace ConsoleRenderer
                 py *= m_Fov * 2.0f;
 
                 //ColorSample floorSample = ColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkGray, fd);
-                CGColorSample floorSample = CGColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkGreen, Math.Abs(py * 1.2f) - Math.Abs(px * 0.1f));
+                CGColorSample floorSample = CGColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkGreen, Math.Abs(py * 1.4f) -Math.Abs(px * 0.1f));
 
 
                 CGColorSample ceilSample = CGColorSample.MakeCol(ConsoleColor.DarkRed, ConsoleColor.DarkMagenta, Math.Abs(py) - 0.1f);
@@ -193,7 +193,7 @@ namespace ConsoleRenderer
 
                         //if (Math.Abs(rayFract) < 0.05f || Math.Abs(rayFract) > 0.95f)
                         //{
-                        //    wallChar = (char)Block.Strong;
+                        //    wallChar = (char)CGBlock.Strong;
                         //    wallCol = 0;
                         //}
                         CGBuffer.AddAsync(wallChar, wallCol, x, y);
@@ -237,11 +237,9 @@ namespace ConsoleRenderer
                         CGBuffer.AddAsync('#', 8, (int)imgW - x, (int)imgH - y);
                     }
 
-                    Vector2 diff = m_ViewerPos - mapXY;
-                    float len = diff.LengthFast;
-                    Vector2 A = new Vector2(-0.75f, -0.75f);
-                    Vector2 B = new Vector2(0.0f, 0.98f);
-                    Vector2 C = new Vector2(0.75f, -0.75f);
+                    Vector2 A = new Vector2(-0.65f, -0.65f);
+                    Vector2 B = new Vector2(0.0f, 1.28f);
+                    Vector2 C = new Vector2(0.65f, -0.65f);
 
                     CGHelper.Rotate(ref A, m_PlayerRotation);
                     CGHelper.Rotate(ref B, m_PlayerRotation);
@@ -251,14 +249,8 @@ namespace ConsoleRenderer
                     C += m_ViewerPos;
                     if (CGHelper.InTriangle(mapXY,A,B,C))
                     {
-                        CGBuffer.AddAsync('@', 1 << 4, (int)imgW - x, (int)imgH - y);
+                        CGBuffer.AddAsync('@', 13 << 4, (int)imgW - x, (int)imgH - y);
                     }
-                    //if (len < 0.75f)
-                    //{
-
-                    //    CGBuffer.AddAsync('@', 1 << 4, (int)imgW - x, (int)imgH - y);
-
-                    //}
 
                 }
             }

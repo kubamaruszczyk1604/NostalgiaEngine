@@ -3,7 +3,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 using OpenTK;
-
+using System.Threading;
 namespace ConsoleRenderer.Core
 {
     public class CGBuffer
@@ -189,7 +189,7 @@ namespace ConsoleRenderer.Core
         }
 
     }
-
+    
     
     static class ConsoleHelper
     {
