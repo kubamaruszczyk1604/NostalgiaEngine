@@ -168,7 +168,6 @@ namespace ConsoleRenderer
                     ceilSample = CGColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkGray, Math.Abs(py * 0.75f) - Math.Abs(px * 0.1f));
                 }
 
-
                 if (hit)
                 {
 
