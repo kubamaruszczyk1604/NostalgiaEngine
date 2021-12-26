@@ -66,7 +66,7 @@ namespace ConsoleRenderer
             m_AspectRatio = (float)m_ScrWidth / (float)m_ScrHeight;
             m_Fov = 80.0f * DEG_TO_RAD;
             m_WallTex = CGTexture16.LoadFromFile($"C:/Users/Kuba/Desktop/eng/test.txt");
-            CGBuffer.HalfTemporalResolution = true;
+           // CGBuffer.HalfTemporalResolution = true;
         }
 
         override public void OnUpdate(float dt)
@@ -75,13 +75,10 @@ namespace ConsoleRenderer
             float deltaT = dt;
             if (CGInput.CheckKeyDown(ConsoleKey.LeftArrow))
             {
-                Vector2 direction = m_ViewerDir;
+               
                 if (CGInput.CheckKeyDown(0xA2))
                 {
-                    float tx = direction.X;
-                    direction.X = -direction.Y;
-                    direction.Y = tx;
-                    m_ViewerPos -= direction * MOVEMENT_SPEED * deltaT;
+                    m_ViewerPos -= CGHelper.FindNormal(m_ViewerDir) * MOVEMENT_SPEED * deltaT;
 
                 }
                 else
@@ -97,13 +94,10 @@ namespace ConsoleRenderer
             if (CGInput.CheckKeyDown(ConsoleKey.RightArrow))
             {
 
-                Vector2 direction = m_ViewerDir;
                 if (CGInput.CheckKeyDown(0xA2))
                 {
-                    float tx = direction.X;
-                    direction.X = -direction.Y;
-                    direction.Y = tx;
-                    m_ViewerPos += direction * MOVEMENT_SPEED * deltaT;
+
+                    m_ViewerPos += CGHelper.FindNormal(m_ViewerDir) * MOVEMENT_SPEED * deltaT;
 
                 }
                 else
@@ -245,16 +239,27 @@ namespace ConsoleRenderer
 
                     Vector2 diff = m_ViewerPos - mapXY;
                     float len = diff.LengthFast;
-                    if (len < 0.75f && len > 0.4f)
-                    {
+                    Vector2 A = new Vector2(-0.75f, -0.75f);
+                    Vector2 B = new Vector2(0.0f, 0.98f);
+                    Vector2 C = new Vector2(0.75f, -0.75f);
 
-                        CGBuffer.AddAsync('@', 1<<4, (int)imgW - x, (int)imgH - y);
-
-                    }
-                    else if (len <= 0.4f)
+                    CGHelper.Rotate(ref A, m_PlayerRotation);
+                    CGHelper.Rotate(ref B, m_PlayerRotation);
+                    CGHelper.Rotate(ref C, m_PlayerRotation);
+                    A +=m_ViewerPos;
+                    B += m_ViewerPos;
+                    C += m_ViewerPos;
+                    if (CGHelper.InTriangle(mapXY,A,B,C))
                     {
-                        CGBuffer.AddAsync('@', 13<<4, (int)imgW - x, (int)imgH - y);
+                        CGBuffer.AddAsync('@', 1 << 4, (int)imgW - x, (int)imgH - y);
                     }
+                    //if (len < 0.75f)
+                    //{
+
+                    //    CGBuffer.AddAsync('@', 1 << 4, (int)imgW - x, (int)imgH - y);
+
+                    //}
+
                 }
             }
 

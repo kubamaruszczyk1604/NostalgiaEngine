@@ -94,7 +94,6 @@ namespace ConsoleRenderer.Core
             public int FontFamily;
             public int FontWeight;
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
-            //[MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.wc, SizeConst = 32)]
             public string FontName;
         }
 
@@ -103,9 +102,9 @@ namespace ConsoleRenderer.Core
         static int m_sWidth;
         static int m_sHeight;
         static CharInfo[] m_Bufer;
-        static SmallRect rect;
-        static Coord wh;
-        static Coord orgin;
+        static SmallRect m_ConsoleRect;
+        static Coord m_ScrTopLeft;
+        static Coord m_ScrBottomRight;
         static int m_sBuffPtr;
 
         static public bool Initialize(short width, short height, short pixelW, short pixelH)
@@ -113,8 +112,8 @@ namespace ConsoleRenderer.Core
             HalfTemporalResolution = false;
             m_sWidth = width;
             m_sHeight = height;
-            wh = new Coord() { X = (short)m_sWidth, Y = (short)m_sHeight };
-            orgin = new Coord() { X = 0, Y = 0 };
+            m_ScrBottomRight = new Coord() { X = (short)m_sWidth, Y = (short)m_sHeight };
+            m_ScrTopLeft = new Coord() { X = 0, Y = 0 };
             m_sBuffPtr = 0;
             m_ConsoleHandle = CreateFile("CONOUT$", 0x40000000, 2, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero);
             if (m_ConsoleHandle.IsInvalid) return false;
@@ -143,7 +142,7 @@ namespace ConsoleRenderer.Core
 
             
             m_Bufer = new CharInfo[width * height];
-            rect = new SmallRect() { Left = 5, Top = 2, Right = (short)(width + 5), Bottom = (short)(height + 2) };
+            m_ConsoleRect = new SmallRect() { Left = 5, Top = 2, Right = (short)(width + 5), Bottom = (short)(height + 2) };
             
             Console.CursorVisible = false;
             Console.Clear();
@@ -179,11 +178,11 @@ namespace ConsoleRenderer.Core
             i = 1 -i;
             if (HalfTemporalResolution)
             {
-                if (i == 1) WriteConsoleOutput(m_ConsoleHandle, m_Bufer, wh, orgin, ref rect);
+                if (i == 1) WriteConsoleOutput(m_ConsoleHandle, m_Bufer, m_ScrBottomRight, m_ScrTopLeft, ref m_ConsoleRect);
             }
             else
             {
-                WriteConsoleOutput(m_ConsoleHandle, m_Bufer, wh, orgin, ref rect);
+                WriteConsoleOutput(m_ConsoleHandle, m_Bufer, m_ScrBottomRight, m_ScrTopLeft, ref m_ConsoleRect);
             }
 
             m_sBuffPtr = 0;

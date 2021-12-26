@@ -22,7 +22,7 @@ namespace ConsoleRenderer
 
            // rm.Play();
             CGRaytracer2D tracer = new CGRaytracer2D();
-            CGEngine engine = new CGEngine("Test", 300, 200, 4, 4);
+            CGEngine engine = new CGEngine("Test", 320, 200, 4, 4);
 
             engine.Start(tracer);
 

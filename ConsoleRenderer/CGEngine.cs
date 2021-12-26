@@ -23,7 +23,8 @@ namespace ConsoleRenderer
         static public int PixelWidth { get; private set; }
         static public int PixelHeight { get; private set; }
         public float RunningTime { get; private set; }
-
+        Thread m_buffThread;
+        object locker = new object();
 
         public CGEngine(string title, int scrW, int scrH, int pixelW, int pixelH)
         {
@@ -35,6 +36,18 @@ namespace ConsoleRenderer
             PixelHeight = pixelH;
             Title = title;
             m_Delta = 0.0f;
+            //m_buffThread = new Thread(new ThreadStart(BufferSwapWorker));
+
+        }
+
+        private void BufferSwapWorker()
+        {
+            while(true)
+            {
+                CGBuffer.Swap();
+
+            }
+            
         }
 
         public void Start(CGApp app)
@@ -43,16 +56,21 @@ namespace ConsoleRenderer
             CGBuffer.Initialize((short)ScreenWidth, (short)ScreenHeight, (short)PixelWidth, (short)PixelHeight);
             m_Running = true;
             m_App.OnStart();
-
-            while(m_Running)
+           // m_buffThread.Start();
+            //m_buffThread.Suspend();
+            while (m_Running)
             {
-
+                
+                CGFrameTimer.Update();
+                m_Delta = CGFrameTimer.GetDeltaTime();
                 //Console.SetCursorPosition(5, 1);
                 Console.Title = Title + " FPS: " + CGFrameTimer.GetFPS() + "   FRAME TIME: " + m_Delta + "s ";
 
+
                 m_App.OnUpdate(CGFrameTimer.GetDeltaTime());
                 var resetEvent = new ManualResetEvent(false); // Will be reset when buffer is ready to be swaped
-
+               
+                //m_buffThread.Suspend();
                 //For each column..
                 for (int x = 0; x < ScreenWidth; ++x)
                 {
@@ -69,16 +87,16 @@ namespace ConsoleRenderer
                          if (column >= ScreenWidth - 1) resetEvent.Set();
                      }), new object[] { x });
                 }
-
-                resetEvent.WaitOne();
                 
+                resetEvent.WaitOne();
+
                 m_App.OnPostDraw();
+
+                //m_buffThread.Resume();
                 CGBuffer.Swap();
 
                 RunningTime += CGFrameTimer.GetDeltaTime();
-                m_Delta = CGFrameTimer.GetDeltaTime();
-                CGFrameTimer.Update();
-
+               
             }
             m_App.OnExit();
 
