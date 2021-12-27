@@ -12,6 +12,11 @@ namespace ConsoleRenderer
 {
     public class CGEngine
     {
+        private readonly int DEFAULT_SCR_W = 120;
+        private readonly int DEFAULT_SCR_H = 80;
+        private readonly int DEFAULT_PIXEL_W = 6;
+        private readonly int DEFAULT_PIXEL_H = 6;
+
 
         private CGApp m_App;
         private bool m_Running;
@@ -23,18 +28,12 @@ namespace ConsoleRenderer
         static public int PixelWidth { get; private set; }
         static public int PixelHeight { get; private set; }
         public float RunningTime { get; private set; }
-        Thread m_buffThread;
         object locker = new object();
 
-        public CGEngine(string title, int scrW, int scrH, int pixelW, int pixelH)
+        public CGEngine()
         {
             WindowControl.DisableConsoleWindowButtons();
             m_Running = false;
-            ScreenWidth = scrW;
-            ScreenHeight = scrH;
-            PixelWidth = pixelW;
-            PixelHeight = pixelH;
-            Title = title;
             m_Delta = 0.0f;
             //m_buffThread = new Thread(new ThreadStart(BufferSwapWorker));
 
@@ -53,6 +52,13 @@ namespace ConsoleRenderer
         public void Start(CGApp app)
         {
             m_App = app;
+            m_App.OnInitialize();
+            ScreenWidth = m_App.ScreenWidth > 10 ? m_App.ScreenWidth : DEFAULT_SCR_W;
+            ScreenHeight = m_App.ScreenHeight > 10 ? m_App.ScreenHeight : DEFAULT_SCR_H;
+            PixelWidth = m_App.PixelWidth > 0 ? m_App.PixelWidth : DEFAULT_PIXEL_W;
+            PixelHeight = m_App.PixelHeight > 0 ? m_App.PixelHeight : DEFAULT_PIXEL_H;
+            Title = "D";
+
             CGBuffer.Initialize((short)ScreenWidth, (short)ScreenHeight, (short)PixelWidth, (short)PixelHeight);
             m_Running = true;
             m_App.OnStart();
@@ -64,7 +70,7 @@ namespace ConsoleRenderer
                 CGFrameTimer.Update();
                 m_Delta = CGFrameTimer.GetDeltaTime();
                 //Console.SetCursorPosition(5, 1);
-                Console.Title = Title + " FPS: " + CGFrameTimer.GetFPS() + "   FRAME TIME: " + m_Delta + "s ";
+              //  Console.Title = Title + " FPS: " + CGFrameTimer.GetFPS() + "   FRAME TIME: " + m_Delta + "s ";
 
 
                 m_App.OnUpdate(CGFrameTimer.GetDeltaTime());

@@ -46,10 +46,6 @@ namespace ConsoleRenderer
         const float MOVEMENT_SPEED = 4.0f;
 
 
-
-        private int m_ScrWidth;
-        private int m_ScrHeight;
-
         private float m_AspectRatio;
         private float m_Fov;
 
@@ -58,12 +54,18 @@ namespace ConsoleRenderer
         float m_PlayerRotation = 0.0f;
         CGTexture16 m_WallTex;
 
+        public override void OnInitialize()
+        {
+            ScreenWidth = 320;
+            ScreenHeight = 200;
+            PixelWidth = 4;
+            PixelHeight = 4;
+
+        }
 
         override public void OnStart()
         {
-            m_ScrWidth = CGEngine.ScreenWidth;
-            m_ScrHeight = CGEngine.ScreenHeight;
-            m_AspectRatio = (float)m_ScrWidth / (float)m_ScrHeight;
+            m_AspectRatio = (float)ScreenWidth / (float)ScreenHeight;
             m_Fov = 80.0f * DEG_TO_RAD;
             m_WallTex = CGTexture16.LoadFromFile($"C:/Users/Kuba/Desktop/eng/test.txt");
            // CGBuffer.HalfTemporalResolution = true;
@@ -126,7 +128,7 @@ namespace ConsoleRenderer
 
         override public void OnDrawPerColumn(int x)
         {
-            float px = (((float)x / (float)m_ScrWidth) - 0.5f) * 0.5f;
+            float px = (((float)x / (float)ScreenWidth) - 0.5f) * 0.5f;
 
             px *= m_Fov; // TO DO: consider aspect ratio 
 
@@ -151,11 +153,11 @@ namespace ConsoleRenderer
             float intensity = 1.0f - (t / DEPTH);
             //intensity *= intensity;
 
-            for (int y = 0; y < m_ScrHeight; ++y)
+            for (int y = 0; y < ScreenHeight; ++y)
             {
 
-                float pixelY = -(y - m_ScrHeight / 2);
-                float py = pixelY / ((float)m_ScrHeight) / 2.0f;
+                float pixelY = -(y - ScreenHeight / 2);
+                float py = pixelY / ((float)ScreenHeight) / 2.0f;
                 py *= m_Fov * 2.0f;
 
                 //ColorSample floorSample = ColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkGray, fd);
@@ -214,8 +216,8 @@ namespace ConsoleRenderer
 
         public override void OnPostDraw()
         {
-            float imgW = (0.25f * m_ScrWidth);
-            float imgH = (0.25f * m_ScrWidth);
+            float imgW = (0.25f * ScreenWidth);
+            float imgH = (0.25f * ScreenWidth);
 
             Vector2 mapXY = Vector2.Zero;
             for (int x = 0; x < imgW; ++x)

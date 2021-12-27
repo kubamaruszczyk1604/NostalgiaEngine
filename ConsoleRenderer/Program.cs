@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenTK;
 using System.Runtime.InteropServices;
-
+using ConsoleRenderer.TextureEditor;
 namespace ConsoleRenderer
 {
 
@@ -21,10 +21,10 @@ namespace ConsoleRenderer
            // Buffer.HalfTemporalResolution = true;
 
            // rm.Play();
-            CGRaytracer2D tracer = new CGRaytracer2D();
-            CGEngine engine = new CGEngine("Test", 320, 200, 4, 4);
-
-            engine.Start(tracer);
+           // CGRaytracer2D tracer = new CGRaytracer2D();
+            CGEngine engine = new CGEngine();
+            CGTextureEditor ed = new CGTextureEditor();
+            engine.Start(ed);
 
 
 
