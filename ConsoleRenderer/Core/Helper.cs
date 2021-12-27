@@ -79,10 +79,10 @@ namespace ConsoleRenderer.Core
         /// <param name="c">intersection height with y axis </param>
         static public void FindLineEquation(Vector2 p1, Vector2 p2, out float a, out float c)
         {
-            //gradient, or rise over run
+            //gradient
             a = (p2.Y - p1.Y) / (p2.X - p1.X);
-            // y = ax + c, hence c = y -ax
-            c = p1.Y - p1.X * a; // p2.Y - p2.X*a would of course also be valid
+            // y = ax + c, so c = y -ax
+            c = p1.Y - p1.X * a; // p2.Y - p2.X*a would also be valid
            
         }
 
@@ -97,7 +97,16 @@ namespace ConsoleRenderer.Core
             return false;
         }
 
+        public static bool InRectangle(Vector2 p, Vector2 topLeft, float W, float H)
+        {
+            return ((p.X > topLeft.X) && (p.X < (topLeft.X + W)) &&
+                (p.Y > topLeft.Y) && (p.Y < (topLeft.Y + H)));
+        }
 
+        public static float DistToLine(float m, float c)
+        {
+            return 0;
+        }
 
 
         static public Vector4 Abs(Vector4 a)
