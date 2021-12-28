@@ -29,12 +29,17 @@ namespace ConsoleRenderer.TextureEditor
         private int m_cursorX;
         private int m_cursorY;
 
+        private int m_ImageW;
+        private int m_ImageH;
+
         public override void OnInitialize()
         {
-            ScreenWidth = 100;
+            ScreenWidth = 110;
             ScreenHeight = 80;
-            PixelWidth = 10;
-            PixelHeight = 10;
+            PixelWidth = 8;
+            PixelHeight = 8;
+            m_ImageW = 100;
+            m_ImageH = 68;
         }
         public override void OnStart()
         {
@@ -94,7 +99,7 @@ namespace ConsoleRenderer.TextureEditor
                 DrawPalette(x, y);
 
 
-                if (CGHelper.InRectangle(new Vector2(x,y),new Vector2(2,10), ScreenWidth-5,ScreenHeight-20))
+                if (CGHelper.InRectangle(new Vector2(x,y),new Vector2(2,10), m_ImageW,m_ImageH))
                 {
                     CGColorSample csample = CGColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkGray, 0.1f);
 
