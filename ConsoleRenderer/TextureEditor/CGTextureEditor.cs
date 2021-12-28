@@ -9,7 +9,7 @@ using OpenTK;
 
 namespace ConsoleRenderer.TextureEditor
 {
-    class CGTextureEditor:CGApp
+    class CGTextureEditor : CGApp
     {
 
 
@@ -18,21 +18,36 @@ namespace ConsoleRenderer.TextureEditor
         // GetCursorPos() makes everything possible
         static extern bool GetCursorPos(ref Point lpPoint);
 
-        
+
         struct Point
         {
             public int X;
             public int Y;
+        }
 
+        class Pixel
+        {
+            public int X;
+            public int Y;
+            public int Col;
+
+            public Pixel(int x, int y, int col)
+            {
+                X = x;
+                Y = y;
+                Col = col;
+            }
         }
 
         private readonly Vector2 c_ColorPanelPos = new Vector2(2, 0);
+        private readonly Vector2 c_DrawingCanvasPos = new Vector2(1, 10);
         private readonly int c_ColorWindowWidth = 6;
         private readonly int c_ColorWindowHeight = 8;
         private readonly int c_MinImageH = 5;
         private readonly int c_MinImageW = 5;
         private readonly int c_MaxImageW = 100;
         private readonly int c_MaxImageH = 70;
+
 
 
 
@@ -46,6 +61,7 @@ namespace ConsoleRenderer.TextureEditor
 
 
         private int SelectedColor;
+        private List<Pixel> m_ImageData;
 
         public override void OnInitialize()
         {
@@ -56,6 +72,7 @@ namespace ConsoleRenderer.TextureEditor
             m_ImageW = 100;
             m_ImageH = 68;
             SelectedColor = 10;
+            m_ImageData = new List<Pixel>();
         }
         public override void OnStart()
         {
@@ -67,9 +84,9 @@ namespace ConsoleRenderer.TextureEditor
             //Point p = new Point();
             //GetCursorPos(ref p);
             //Console.Title = p.X.ToString();
-            if(CGInput.CheckKeyPress(ConsoleKey.UpArrow))
+            if (CGInput.CheckKeyPress(ConsoleKey.UpArrow))
             {
-                if(CGInput.CheckKeyDown((ConsoleKey)0xA2))
+                if (CGInput.CheckKeyDown((ConsoleKey)0xA2))
                 {
                     m_ImageH--;
                     if (m_ImageH < c_MinImageH) m_ImageH = c_MinImageH;
@@ -79,7 +96,7 @@ namespace ConsoleRenderer.TextureEditor
                 {
                     m_cursorY -= 1;
                 }
-                
+
             }
             if (CGInput.CheckKeyPress(ConsoleKey.DownArrow))
             {
@@ -107,7 +124,7 @@ namespace ConsoleRenderer.TextureEditor
                 {
                     m_cursorX -= 1;
                 }
-                
+
             }
             if (CGInput.CheckKeyPress(ConsoleKey.RightArrow))
             {
@@ -122,16 +139,30 @@ namespace ConsoleRenderer.TextureEditor
                     m_cursorX += 1;
                 }
             }
-            m_cursorY = m_cursorY % ScreenHeight;
+            m_cursorY = m_cursorY % m_ImageH;
             if (m_cursorY < 0) m_cursorY = 0;
 
-            m_cursorX = m_cursorX % ScreenWidth;
+            m_cursorX = m_cursorX % m_ImageW;
             if (m_cursorX < 0) m_cursorX = 0;
 
             if (CGInput.CheckKeyPress(ConsoleKey.C))
             {
                 SelectedColor++;
                 SelectedColor %= 16;
+            }
+
+            if (CGInput.CheckKeyDown(ConsoleKey.Spacebar))
+            {
+                Pixel p = m_ImageData.Find(o => (o.X == m_cursorX && o.Y == m_cursorY));
+                if (p != null)
+                {
+                    p.Col = SelectedColor;
+                }
+                else
+                {
+
+                    m_ImageData.Add(new Pixel(m_cursorX, m_cursorY, SelectedColor));
+                }
             }
 
         }
@@ -141,7 +172,7 @@ namespace ConsoleRenderer.TextureEditor
             Vector2 pixelPos = new Vector2(x, y);
             for (int i = 0; i < 16; ++i)
             {
-                if (CGHelper.InRectangle(pixelPos, new Vector2(c_ColorWindowWidth * (i), 0) + c_ColorPanelPos, c_ColorWindowWidth,c_ColorWindowHeight))
+                if (CGHelper.InRectangle(pixelPos, new Vector2(c_ColorWindowWidth * (i), 0) + c_ColorPanelPos, c_ColorWindowWidth, c_ColorWindowHeight))
                 {
                     CGBuffer.AddAsync(' ', (short)((i) << 4), x, y);
                 }
@@ -153,6 +184,11 @@ namespace ConsoleRenderer.TextureEditor
                 CGBuffer.AddAsync((char)CGBlock.Middle, (short)((15)), x, y);
             }
         }
+
+
+
+
+
         public override void OnDrawPerColumn(int x)
         {
 
@@ -165,7 +201,7 @@ namespace ConsoleRenderer.TextureEditor
                 DrawPalette(x, y);
 
 
-                if (CGHelper.InRectangle(new Vector2(x,y),new Vector2(1,10), m_ImageW+1,m_ImageH+1))
+                if (CGHelper.InRectangle(new Vector2(x, y), c_DrawingCanvasPos, m_ImageW + 1, m_ImageH + 1))
                 {
                     CGColorSample csample = CGColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkGray, 0.1f);
 
@@ -175,7 +211,19 @@ namespace ConsoleRenderer.TextureEditor
         }
         public override void OnPostDraw()
         {
-            CGBuffer.AddAsync('&', (short)((int)ConsoleColor.DarkMagenta << 4), m_cursorX, m_cursorY);
+
+
+            for (int i = 0; i < m_ImageData.Count; ++i)
+            {
+                if (m_ImageData[i].X >= m_ImageW) continue;
+                if (m_ImageData[i].Y >= m_ImageH) continue;
+                CGBuffer.AddAsync(' ', (short)(m_ImageData[i].Col << 4),
+                    (int)c_DrawingCanvasPos.X + m_ImageData[i].X + 1,
+                    (int)c_DrawingCanvasPos.Y + m_ImageData[i].Y + 1);
+            }
+
+            CGBuffer.AddAsync('&', (short)(((int)SelectedColor << 4) | ((SelectedColor == 0) ? 15 : 0)),
+                             (int)c_DrawingCanvasPos.X + m_cursorX + 1, (int)c_DrawingCanvasPos.Y + m_cursorY + 1);
         }
         public override void OnExit() { }
     }
