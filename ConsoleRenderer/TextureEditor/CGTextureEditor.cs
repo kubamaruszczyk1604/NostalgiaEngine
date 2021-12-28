@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ConsoleRenderer.Core;
 using System.Runtime.InteropServices;
+using OpenTK;
 
 namespace ConsoleRenderer.TextureEditor
 {
@@ -17,7 +18,7 @@ namespace ConsoleRenderer.TextureEditor
         // GetCursorPos() makes everything possible
         static extern bool GetCursorPos(ref Point lpPoint);
 
-
+        
         struct Point
         {
             public int X;
@@ -25,38 +26,86 @@ namespace ConsoleRenderer.TextureEditor
 
         }
 
+        private int m_cursorX;
+        private int m_cursorY;
 
         public override void OnInitialize()
         {
-            ScreenWidth = 140;
-            ScreenHeight = 100;
-            PixelWidth = 8;
-            PixelHeight = 8;
+            ScreenWidth = 100;
+            ScreenHeight = 80;
+            PixelWidth = 10;
+            PixelHeight = 10;
         }
         public override void OnStart()
         {
-
+            WindowControl.DisableConsoleWindowButtons();
 
         }
         public override void OnUpdate(float deltaTime)
         {
-            Point p = new Point();
-            GetCursorPos(ref p);
-            Console.Title = p.X.ToString();
+            //Point p = new Point();
+            //GetCursorPos(ref p);
+            //Console.Title = p.X.ToString();
+            if(CGInput.CheckKeyPress(ConsoleKey.UpArrow))
+            {
+                m_cursorY -= 1;
+            }
+            if (CGInput.CheckKeyPress(ConsoleKey.DownArrow))
+            {
+                m_cursorY += 1;
+            }
+            if (CGInput.CheckKeyPress(ConsoleKey.LeftArrow))
+            {
+                m_cursorX -= 1;
+            }
+            if (CGInput.CheckKeyPress(ConsoleKey.RightArrow))
+            {
+                m_cursorX += 1;
+            }
+            m_cursorY = m_cursorY % ScreenHeight;
+            if (m_cursorY < 0) m_cursorY = 0;
 
+            m_cursorX = m_cursorX % ScreenWidth;
+            if (m_cursorX < 0) m_cursorX = 0;
+
+        }
+
+        private void DrawPalette(int x, int y)
+        {
+
+            for (int i = 0; i < 16; ++i)
+            {
+                if (CGHelper.InRectangle(new Vector2(x, y), new Vector2(6 * (i), 0), 6, 8))
+                {
+                    CGBuffer.AddAsync(' ', (short)((i) << 4), x, y);
+                }
+
+            }
         }
         public override void OnDrawPerColumn(int x)
         {
 
-            float u = (float)x / CGEngine.ScreenWidth;
-            CGColorSample csample = CGColorSample.MakeCol(ConsoleColor.White, ConsoleColor.Black, u);
-
             for (int y = 0; y < CGEngine.ScreenHeight; ++y)
             {
-                CGBuffer.AddAsync(csample.Character, csample.BitMask, x, y);
+
+                CGBuffer.AddAsync((char)CGBlock.Weak, (short)ConsoleColor.DarkBlue, x, y);
+
+
+                DrawPalette(x, y);
+
+
+                if (CGHelper.InRectangle(new Vector2(x,y),new Vector2(2,10), ScreenWidth-5,ScreenHeight-20))
+                {
+                    CGColorSample csample = CGColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkGray, 0.1f);
+
+                    CGBuffer.AddAsync(csample.Character, csample.BitMask, x, y);
+                }
             }
         }
-        public override void OnPostDraw() { }
+        public override void OnPostDraw()
+        {
+            CGBuffer.AddAsync('&', (short)((int)ConsoleColor.DarkMagenta << 4), m_cursorX, m_cursorY);
+        }
         public override void OnExit() { }
     }
 }

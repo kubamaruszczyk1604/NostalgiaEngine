@@ -80,7 +80,7 @@ namespace ConsoleRenderer.Core
         static public void FindLineEquation(Vector2 p1, Vector2 p2, out float a, out float c)
         {
             //gradient
-            a = (p2.Y - p1.Y) / (p2.X - p1.X);
+            a = (p2.Y - p1.Y) / ((p2.X - p1.X)+0.01f);
             // y = ax + c, so c = y -ax
             c = p1.Y - p1.X * a; // p2.Y - p2.X*a would also be valid
            
@@ -97,17 +97,47 @@ namespace ConsoleRenderer.Core
             return false;
         }
 
-        public static bool InRectangle(Vector2 p, Vector2 topLeft, float W, float H)
+        public static bool InRectangle(Vector2 p, Vector2 orgin, float W, float H)
         {
-            return ((p.X > topLeft.X) && (p.X < (topLeft.X + W)) &&
-                (p.Y > topLeft.Y) && (p.Y < (topLeft.Y + H)));
+            return ((p.X > orgin.X) && (p.X < (orgin.X + W)) &&
+                (p.Y > orgin.Y) && (p.Y < (orgin.Y + H)));
         }
 
-        public static float DistToLine(float m, float c)
+        public static float DistToLine(Vector2 p, float a, float c)
         {
-            return 0;
+            if (a == 0) a = 0.001f;
+            //1. find perpendicular line that passes thourgh p
+            float aPerpendicular = -1.0f / a;
+            float cPerpendicular = p.Y - aPerpendicular * p.X;
+
+            //2. Find intersection point
+            float interX = (c - cPerpendicular) / (aPerpendicular - a);
+            Vector2 intersection = new Vector2(interX, a * interX + c);
+
+            //3. Distance between p and intersection is on the perp
+            return (p - intersection).LengthFast;
         }
 
+        public static float DistToLine(Vector2 p ,Vector2 A, Vector2 B)
+        {
+            FindLineEquation(A, B, out float a, out float c);
+            return DistToLine(p, a, c);
+        }
+
+        public static bool IsOnLine(Vector2 p, Vector2 A, Vector2 B, float thickness = 1.0f)
+        {
+            float lowX = A.X < B.X ? A.X : B.X;
+            float hiX = A.X > B.X ? A.X : B.X;
+            float lowY = A.Y < B.Y ? A.Y : B.Y;
+            float hiY = A.Y > B.Y ? A.Y : B.Y;
+
+            if ((p.X >= lowX) && (p.X <= hiX) &&
+                 (p.Y >= lowY) && (p.Y <= hiY))
+            {
+                return  DistToLine(p, A, B) < thickness ? true : false;
+            }
+            return false;
+        }
 
         static public Vector4 Abs(Vector4 a)
         {

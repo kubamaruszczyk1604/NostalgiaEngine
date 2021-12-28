@@ -69,8 +69,9 @@ namespace ConsoleRenderer
                 
                 CGFrameTimer.Update();
                 m_Delta = CGFrameTimer.GetDeltaTime();
-                //Console.SetCursorPosition(5, 1);
-              //  Console.Title = Title + " FPS: " + CGFrameTimer.GetFPS() + "   FRAME TIME: " + m_Delta + "s ";
+                Console.SetCursorPosition(5, 1);
+               Console.Title = Title + " @"+ ScreenWidth.ToString() + "x" +  ScreenHeight.ToString() + 
+                    " FPS: " + CGFrameTimer.GetFPS() + "   FRAME TIME: " + m_Delta + "s ";
 
 
                 m_App.OnUpdate(CGFrameTimer.GetDeltaTime());
