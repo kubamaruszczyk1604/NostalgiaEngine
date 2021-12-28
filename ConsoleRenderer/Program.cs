@@ -27,7 +27,6 @@ namespace ConsoleRenderer
             engine.Start(ed);
 
 
-
         }
     }
 }

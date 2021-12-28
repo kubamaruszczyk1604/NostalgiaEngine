@@ -18,6 +18,16 @@ namespace ConsoleRenderer.Core
         [DllImport("kernel32.dll", ExactSpelling = true)]
         private static extern IntPtr GetConsoleWindow();
 
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        static extern IntPtr GetStdHandle(int nStdHandle);
+
+        [DllImport("kernel32.dll")]
+        static extern bool GetConsoleMode(IntPtr hConsoleHandle, out uint lpMode);
+
+        [DllImport("kernel32.dll")]
+        static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint dwMode);
+
         static public readonly int MF_BYCOMMAND = 0x00000000;
         static public readonly int SC_CLOSE = 0xF060;
         static public readonly int SC_MINIMIZE = 0xF020;
@@ -25,16 +35,18 @@ namespace ConsoleRenderer.Core
         static public readonly int SC_VSCROLL = 0xF070;
         static public readonly int SC_HSCROLL = 0xF080;
         static public readonly int SC_SIZE = 0xF000;
-
+        static private readonly UInt32 ENABLE_QUICK_EDIT = 0x0040;
 
         public static void DisableConsoleWindowButtons()
         {
 
-
             DeleteMenu(GetSystemMenu(GetConsoleWindow(), false), SC_MINIMIZE, MF_BYCOMMAND);
             DeleteMenu(GetSystemMenu(GetConsoleWindow(), false), SC_SIZE, MF_BYCOMMAND);
             DeleteMenu(GetSystemMenu(GetConsoleWindow(), false), SC_MAXIMIZE, MF_BYCOMMAND);
-
+           
         }
+
+
+
     }
 }

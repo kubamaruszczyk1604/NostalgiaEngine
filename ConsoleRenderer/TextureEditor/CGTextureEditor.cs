@@ -26,20 +26,36 @@ namespace ConsoleRenderer.TextureEditor
 
         }
 
+        private readonly Vector2 c_ColorPanelPos = new Vector2(2, 0);
+        private readonly int c_ColorWindowWidth = 6;
+        private readonly int c_ColorWindowHeight = 8;
+        private readonly int c_MinImageH = 5;
+        private readonly int c_MinImageW = 5;
+        private readonly int c_MaxImageW = 100;
+        private readonly int c_MaxImageH = 70;
+
+
+
         private int m_cursorX;
         private int m_cursorY;
 
         private int m_ImageW;
         private int m_ImageH;
 
+
+
+
+        private int SelectedColor;
+
         public override void OnInitialize()
         {
             ScreenWidth = 110;
-            ScreenHeight = 80;
+            ScreenHeight = 83;
             PixelWidth = 8;
             PixelHeight = 8;
             m_ImageW = 100;
             m_ImageH = 68;
+            SelectedColor = 10;
         }
         public override void OnStart()
         {
@@ -53,19 +69,58 @@ namespace ConsoleRenderer.TextureEditor
             //Console.Title = p.X.ToString();
             if(CGInput.CheckKeyPress(ConsoleKey.UpArrow))
             {
-                m_cursorY -= 1;
+                if(CGInput.CheckKeyDown((ConsoleKey)0xA2))
+                {
+                    m_ImageH--;
+                    if (m_ImageH < c_MinImageH) m_ImageH = c_MinImageH;
+
+                }
+                else
+                {
+                    m_cursorY -= 1;
+                }
+                
             }
             if (CGInput.CheckKeyPress(ConsoleKey.DownArrow))
             {
-                m_cursorY += 1;
+                if (CGInput.CheckKeyDown((ConsoleKey)0xA2))
+                {
+                    m_ImageH++;
+                    if (m_ImageH > c_MaxImageH) m_ImageH = c_MaxImageH;
+
+                }
+                else
+                {
+                    m_cursorY += 1;
+                }
             }
             if (CGInput.CheckKeyPress(ConsoleKey.LeftArrow))
             {
-                m_cursorX -= 1;
+
+                if (CGInput.CheckKeyDown((ConsoleKey)0xA2))
+                {
+                    m_ImageW--;
+                    if (m_ImageW < c_MinImageW) m_ImageW = c_MinImageW;
+
+                }
+                else
+                {
+                    m_cursorX -= 1;
+                }
+                
             }
             if (CGInput.CheckKeyPress(ConsoleKey.RightArrow))
             {
-                m_cursorX += 1;
+                if (CGInput.CheckKeyDown((ConsoleKey)0xA2))
+                {
+                    m_ImageW++;
+                    if (m_ImageW > c_MaxImageW) m_ImageW = c_MaxImageW;
+
+                }
+                else
+                {
+                    m_cursorX += 1;
+                }
             }
             m_cursorY = m_cursorY % ScreenHeight;
             if (m_cursorY < 0) m_cursorY = 0;
@@ -73,18 +128,29 @@ namespace ConsoleRenderer.TextureEditor
             m_cursorX = m_cursorX % ScreenWidth;
             if (m_cursorX < 0) m_cursorX = 0;
 
+            if (CGInput.CheckKeyPress(ConsoleKey.C))
+            {
+                SelectedColor++;
+                SelectedColor %= 16;
+            }
+
         }
 
         private void DrawPalette(int x, int y)
         {
-
+            Vector2 pixelPos = new Vector2(x, y);
             for (int i = 0; i < 16; ++i)
             {
-                if (CGHelper.InRectangle(new Vector2(x, y), new Vector2(6 * (i), 0), 6, 8))
+                if (CGHelper.InRectangle(pixelPos, new Vector2(c_ColorWindowWidth * (i), 0) + c_ColorPanelPos, c_ColorWindowWidth,c_ColorWindowHeight))
                 {
                     CGBuffer.AddAsync(' ', (short)((i) << 4), x, y);
                 }
 
+            }
+
+            if (CGHelper.InRectangle(pixelPos, new Vector2(c_ColorWindowWidth * SelectedColor, 8) + c_ColorPanelPos, c_ColorWindowWidth, 2))
+            {
+                CGBuffer.AddAsync((char)CGBlock.Middle, (short)((15)), x, y);
             }
         }
         public override void OnDrawPerColumn(int x)
@@ -99,7 +165,7 @@ namespace ConsoleRenderer.TextureEditor
                 DrawPalette(x, y);
 
 
-                if (CGHelper.InRectangle(new Vector2(x,y),new Vector2(2,10), m_ImageW,m_ImageH))
+                if (CGHelper.InRectangle(new Vector2(x,y),new Vector2(1,10), m_ImageW+1,m_ImageH+1))
                 {
                     CGColorSample csample = CGColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkGray, 0.1f);
 
