@@ -47,6 +47,8 @@ namespace ConsoleRenderer.TextureEditor
         private readonly int c_MinImageW = 5;
         private readonly int c_MaxImageW = 100;
         private readonly int c_MaxImageH = 70;
+        private readonly Vector2[] c_Directions = new Vector2[] { new Vector2(-1, 0), new Vector2(1, 0), new Vector2(0, -1), new Vector2(0, 1) };
+
 
 
 
@@ -208,6 +210,38 @@ namespace ConsoleRenderer.TextureEditor
                     CGBuffer.AddAsync(csample.Character, csample.BitMask, x, y);
                 }
             }
+        }
+        bool IsPixelOfColor(int x, int y, int c)
+        {
+            Pixel p = m_ImageData.Find(o => (o.X == x && o.Y == y));
+            if (p == null)
+            {
+                if (c == -1) return true;
+                return false;
+            }
+            if (p.Col == c) return true;
+
+            return false;
+        }
+
+        void FloodFill()
+        {
+
+        }
+
+        Vector2[] GetNeighbours(int x, int y)
+        {
+            List<Vector2> ret = new List<Vector2>();
+            foreach (var dir in c_Directions)
+            {
+                Vector2 p = new Vector2(x, y) + dir;
+                if(p.X>0 && p.Y>0 && p.X< m_ImageW && p.Y< m_ImageH)
+                {
+                    ret.Add(p);
+                }
+            }
+            return ret.ToArray();
+            
         }
         public override void OnPostDraw()
         {

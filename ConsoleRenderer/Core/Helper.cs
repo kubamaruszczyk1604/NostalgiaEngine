@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using OpenTK;
 namespace ConsoleRenderer.Core
 {
+
     public class CGHelper
     {
 
