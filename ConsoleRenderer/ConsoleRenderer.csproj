@@ -76,6 +76,8 @@
     <Compile Include="Core\Texture16.cs" />
     <Compile Include="Core\WindowControl.cs" />
     <Compile Include="TextureEditor\CGTextureEditor.cs" />
+    <Compile Include="TextureEditor\MemTex16.cs" />
+    <Compile Include="TextureEditor\Test_MemTex16.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
