@@ -21,6 +21,7 @@ namespace ConsoleRenderer.TextureEditor
             public MT16Pix UP { get; set; }
 
             public MT16Pix [] Neighbours { get; private set; }
+
             public MT16Pix(int x, int y, int col)
             {
                 X = x;
@@ -28,12 +29,15 @@ namespace ConsoleRenderer.TextureEditor
                 Col = col;
             }
         }
+        private readonly int VISITED = 10;
+        private  MT16Pix[] m_Pixels;
+        private int m_OrigColFlood;
+        private int m_NewColFlood;
 
-        MT16Pix[] m_Pixels;
         public int Width { get; private set; }
         public int Height { get; private set; }
 
-        int XY2I(int x, int y)
+        private int XY2I(int x, int y)
         {
             return (Width * y + x);
         }
@@ -47,8 +51,8 @@ namespace ConsoleRenderer.TextureEditor
             {
                 for(int x= 0; x<w;++x)
                 {
-                    MT16Pix pixel = new MT16Pix(x, y, (x==5&&y!=5)?1:15);
-                    pixel.Metadata = XY2I(x, y);
+                    MT16Pix pixel = new MT16Pix(x, y, (x==5 && y != 5) ?1:15);
+                    pixel.Metadata =0;
                     if ((y!=0))
                     {
                         pixel.UP = m_Pixels[XY2I(x, y - 1)];
@@ -64,6 +68,7 @@ namespace ConsoleRenderer.TextureEditor
                 }
             }
         }
+
         public void FloodFill(int x, int y, int color)
         {
             m_OrigColFlood = m_Pixels[XY2I(x, y)].Col;
@@ -74,89 +79,69 @@ namespace ConsoleRenderer.TextureEditor
             bool keepGoing = true;
             while (keepGoing)
             {
+                
                 List<MT16Pix> temp = new List<MT16Pix>();
                 keepGoing = false;
                 foreach (var pixel in l)
                 {
-                    if(pixel.LEFT != null)
+                   if (pixel.Metadata == VISITED) continue;
+                    pixel.Metadata = VISITED;
+                    callCnt++;
+                    if (pixel.LEFT != null)
                     {
-                        if(pixel.LEFT.Col == m_OrigColFlood  && pixel.LEFT.Metadata != 10)
+                        if(pixel.LEFT.Col == m_OrigColFlood  && pixel.LEFT.Metadata == 0)
                         {
-                            pixel.LEFT.Metadata = 10;
                             temp.Add(pixel.LEFT);
                             keepGoing = true;
                         }
                     }
                     if (pixel.RIGHT != null)
                     {
-                        if (pixel.RIGHT.Col == m_OrigColFlood && pixel.RIGHT.Metadata != 10)
+                        if (pixel.RIGHT.Col == m_OrigColFlood && pixel.RIGHT.Metadata == 0)
                         {
-                            pixel.RIGHT.Metadata = 10;
                            temp.Add(pixel.RIGHT);
                             keepGoing = true;
                         }
                     }
                     if (pixel.DOWN != null)
                     {
-                        if (pixel.DOWN.Col == m_OrigColFlood && pixel.DOWN.Metadata != 10)
+                        if (pixel.DOWN.Col == m_OrigColFlood && pixel.DOWN.Metadata == 0)
                         {
-                            pixel.DOWN.Metadata = 10;
                             temp.Add(pixel.DOWN);
                             keepGoing = true;
                         }
                     }
                     if (pixel.UP != null)
                     {
-                        if (pixel.UP.Col == m_OrigColFlood && pixel.UP.Metadata != 10)
+                        if (pixel.UP.Col == m_OrigColFlood && pixel.UP.Metadata == 0)
                         {
-                            pixel.UP.Metadata = 10;
                             temp.Add(pixel.UP);
                             keepGoing = true;
                         }
                     }
                    
+
                 }
                 l.AddRange(temp);
             }
-           // Flood(m_Pixels[XY2I(x, y)]);
 
-            foreach(var pixel in l)
+
+            foreach (var pixel in l)
             {
                 pixel.Col = m_NewColFlood;
                 pixel.Metadata = 0;
             }
         }
-        int m_OrigColFlood;
-        int m_NewColFlood;
-        static int callCnt = 0;
-        private void Flood(MT16Pix pixel)
+
+        public void SetPixel(int x, int y, int color)
         {
-            callCnt++;
-            if (callCnt > 5000) return;
-            if (pixel.Col != m_OrigColFlood) return;
-            pixel.Col = m_NewColFlood;
-            if (pixel.LEFT != null)
-            {
-                Flood(pixel.LEFT);
-
-            }
-            if (pixel.RIGHT != null)
-            {
-                Flood(pixel.RIGHT);
-
-            }
-            if (pixel.DOWN != null)
-            {
-                Flood(pixel.DOWN);
-
-            }
-            if (pixel.UP != null)
-            {
-                Flood(pixel.UP);
-
-            }
-           
+            m_Pixels[XY2I(x, y)].Col = color;
         }
+        
+
+        static int callCnt = 0;
+
+
         public int GetColor(int x, int y)
         {
             return m_Pixels[XY2I(x, y)].Col;
