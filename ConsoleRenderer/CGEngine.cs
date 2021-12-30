@@ -60,6 +60,7 @@ namespace ConsoleRenderer
             Title = "D";
 
             CGBuffer.Initialize((short)ScreenWidth, (short)ScreenHeight, (short)PixelWidth, (short)PixelHeight);
+            WindowControl.QuickEditMode(false);
             m_Running = true;
             m_App.OnStart();
            // m_buffThread.Start();
