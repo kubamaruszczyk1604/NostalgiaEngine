@@ -51,7 +51,7 @@ namespace ConsoleRenderer.TextureEditor
             {
                 for(int x= 0; x<w;++x)
                 {
-                    MT16Pix pixel = new MT16Pix(x, y, 1);
+                    MT16Pix pixel = new MT16Pix(x, y, 16);
                     pixel.Metadata =0;
                     if ((y!=0))
                     {

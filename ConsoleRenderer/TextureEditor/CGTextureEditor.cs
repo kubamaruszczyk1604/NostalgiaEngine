@@ -16,7 +16,7 @@ namespace ConsoleRenderer.TextureEditor
 
 
         private readonly Vector2 c_ColorPanelPos = new Vector2(2, 0);
-        private readonly Vector2 c_DrawingCanvasPos = new Vector2(3, 12);
+        private readonly Vector2 c_DrawingCanvasPos = new Vector2(3, 15);
         private readonly int c_ColorWindowWidth = 6;
         private readonly int c_ColorWindowHeight = 8;
         private readonly int c_MinImageH = 5;
@@ -44,11 +44,11 @@ namespace ConsoleRenderer.TextureEditor
         public override void OnInitialize()
         {
             ScreenWidth = 110;
-            ScreenHeight = 83;
+            ScreenHeight = 87;
             PixelWidth = 8;
             PixelHeight = 8;
             m_ImageW = 100;
-            m_ImageH = 68;
+            m_ImageH = 70;
             SelectedColor = 10;
             m_ImageData = new MemTex16(m_ImageW, m_ImageH);
             m_cursorX = 10;
@@ -129,17 +129,19 @@ namespace ConsoleRenderer.TextureEditor
             if (CGInput.CheckKeyPress(ConsoleKey.C))
             {
                 SelectedColor++;
-                SelectedColor %= 16;
+                SelectedColor %= 17;
             }
 
             if (CGInput.CheckKeyDown(ConsoleKey.Spacebar))
             {
-                m_ImageData.SetPixel(m_cursorX, m_cursorY, SelectedColor);
+                if(m_Brush) m_ImageData.SetPixel(m_cursorX, m_cursorY, SelectedColor);
+                else m_ImageData.FloodFill(m_cursorX, m_cursorY, SelectedColor);
             }
-            if (CGInput.CheckKeyDown(ConsoleKey.F))
+            if (CGInput.CheckKeyPress(ConsoleKey.Enter))
             {
+                if (m_Brush == false) m_Brush = true;
+                else m_Brush = false;
                 
-                m_ImageData.FloodFill(m_cursorX, m_cursorY, SelectedColor);
             }
 
         }
@@ -147,11 +149,12 @@ namespace ConsoleRenderer.TextureEditor
         private void DrawPalette(int x, int y)
         {
             Vector2 pixelPos = new Vector2(x, y);
-            for (int i = 0; i < 16; ++i)
+            for (int i = 0; i < 17; ++i)
             {
                 if (CGHelper.InRectangle(pixelPos, new Vector2(c_ColorWindowWidth * (i), 0) + c_ColorPanelPos, c_ColorWindowWidth, c_ColorWindowHeight))
                 {
                     CGBuffer.AddAsync(' ', (short)((i) << 4), x, y);
+                    if (i == 16) CGBuffer.AddAsync((char)CGBlock.Solid, (short)(8 << 4), x, y);
                 }
 
             }
@@ -185,23 +188,51 @@ namespace ConsoleRenderer.TextureEditor
                 //    CGBuffer.AddAsync(csample.Character, csample.BitMask, x, y);
                 //}
  
-                if (x >= (int)c_DrawingCanvasPos.X && x < m_ImageData.Width + (int)c_DrawingCanvasPos.X && 
-                    y >= (int)c_DrawingCanvasPos.Y && y< m_ImageData.Height + (int)c_DrawingCanvasPos.Y )
+                if (x >= (int)c_DrawingCanvasPos.X && x < m_ImageW + (int)c_DrawingCanvasPos.X && 
+                    y >= (int)c_DrawingCanvasPos.Y && y< m_ImageH + (int)c_DrawingCanvasPos.Y )
                 {
                    int col = m_ImageData.GetColor(x- (int)c_DrawingCanvasPos.X, y- (int)c_DrawingCanvasPos.Y);
-                        CGBuffer.AddAsync(' ', (short)(col<<4), x, y);
+                    if (col == 16)
+                    {
+                        CGBuffer.AddAsync((char)CGBlock.Solid, (short)(8<<4), x, y);
+                    }
+                    else
+                    {
+                        CGBuffer.AddAsync(' ', (short)(col << 4), x, y);
+                    }
                 }
             }
         }
 
 
 
-
+        string fl = "MODE(ENTER)";
+        string c_Fill = "FILL";
+        string c_Brush = "BRUSH";
+        bool m_Brush = true;
         public override void OnPostDraw()
         {
 
             CGBuffer.AddAsync('&', (short)(((int)SelectedColor << 4) | ((SelectedColor == 0) ? 15 : 0)),
                              (int)c_DrawingCanvasPos.X + m_cursorX , (int)c_DrawingCanvasPos.Y + m_cursorY );
+
+
+            int offset = (int)c_DrawingCanvasPos.X;
+            for (int i = 0; i < fl.Length;++i)
+            {
+                CGBuffer.AddAsync(fl[i], 8<<4 , offset + i, (int)c_DrawingCanvasPos.Y-2);
+            }
+            offset += fl.Length + 2;
+
+            for (int i = 0; i < c_Fill.Length; ++i)
+            {
+                CGBuffer.AddAsync(c_Fill[i], (short)(m_Brush?8:10), offset + i, (int)c_DrawingCanvasPos.Y - 2);
+            }
+            offset += c_Fill.Length + 2;
+            for (int i = 0; i < c_Brush.Length; ++i)
+            {
+                CGBuffer.AddAsync(c_Brush[i], (short)(m_Brush ? 10 : 8), offset + i, (int)c_DrawingCanvasPos.Y - 2);
+            }
         }
         public override void OnExit() { }
     }
