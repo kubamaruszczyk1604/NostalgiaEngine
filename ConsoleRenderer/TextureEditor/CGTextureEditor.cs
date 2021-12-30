@@ -40,7 +40,7 @@ namespace ConsoleRenderer.TextureEditor
         }
 
         private readonly Vector2 c_ColorPanelPos = new Vector2(2, 0);
-        private readonly Vector2 c_DrawingCanvasPos = new Vector2(1, 10);
+        private readonly Vector2 c_DrawingCanvasPos = new Vector2(3, 12);
         private readonly int c_ColorWindowWidth = 6;
         private readonly int c_ColorWindowHeight = 8;
         private readonly int c_MinImageH = 5;
@@ -63,7 +63,7 @@ namespace ConsoleRenderer.TextureEditor
 
 
         private int SelectedColor;
-        private List<Pixel> m_ImageData;
+        private MemTex16 m_ImageData;
 
         public override void OnInitialize()
         {
@@ -74,7 +74,9 @@ namespace ConsoleRenderer.TextureEditor
             m_ImageW = 100;
             m_ImageH = 68;
             SelectedColor = 10;
-            m_ImageData = new List<Pixel>();
+            m_ImageData = new MemTex16(m_ImageW, m_ImageH);
+            m_cursorX = 10;
+            m_cursorY = 10;
         }
         public override void OnStart()
         {
@@ -155,16 +157,12 @@ namespace ConsoleRenderer.TextureEditor
 
             if (CGInput.CheckKeyDown(ConsoleKey.Spacebar))
             {
-                Pixel p = m_ImageData.Find(o => (o.X == m_cursorX && o.Y == m_cursorY));
-                if (p != null)
-                {
-                    p.Col = SelectedColor;
-                }
-                else
-                {
-
-                    m_ImageData.Add(new Pixel(m_cursorX, m_cursorY, SelectedColor));
-                }
+                m_ImageData.SetPixel(m_cursorX, m_cursorY, SelectedColor);
+            }
+            if (CGInput.CheckKeyDown(ConsoleKey.F))
+            {
+                
+                m_ImageData.FloodFill(m_cursorX, m_cursorY, SelectedColor);
             }
 
         }
@@ -203,61 +201,30 @@ namespace ConsoleRenderer.TextureEditor
                 DrawPalette(x, y);
 
 
-                if (CGHelper.InRectangle(new Vector2(x, y), c_DrawingCanvasPos, m_ImageW + 1, m_ImageH + 1))
-                {
-                    CGColorSample csample = CGColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkGray, 0.1f);
+                //if (CGHelper.InRectangle(new Vector2(x, y), c_DrawingCanvasPos, m_ImageW + 1, m_ImageH + 1))
+                //{
+                //    CGColorSample csample = CGColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkGray, 0.1f);
 
-                    CGBuffer.AddAsync(csample.Character, csample.BitMask, x, y);
+                //    CGBuffer.AddAsync(csample.Character, csample.BitMask, x, y);
+                //}
+ 
+                if (x >= (int)c_DrawingCanvasPos.X && x < m_ImageData.Width + (int)c_DrawingCanvasPos.X && 
+                    y >= (int)c_DrawingCanvasPos.Y && y< m_ImageData.Height + (int)c_DrawingCanvasPos.Y )
+                {
+                   int col = m_ImageData.GetColor(x- (int)c_DrawingCanvasPos.X, y- (int)c_DrawingCanvasPos.Y);
+                        CGBuffer.AddAsync(' ', (short)(col<<4), x, y);
                 }
             }
         }
-        bool IsPixelOfColor(int x, int y, int c)
-        {
-            Pixel p = m_ImageData.Find(o => (o.X == x && o.Y == y));
-            if (p == null)
-            {
-                if (c == -1) return true;
-                return false;
-            }
-            if (p.Col == c) return true;
 
-            return false;
-        }
 
-        void FloodFill()
-        {
 
-        }
 
-        Vector2[] GetNeighbours(int x, int y)
-        {
-            List<Vector2> ret = new List<Vector2>();
-            foreach (var dir in c_Directions)
-            {
-                Vector2 p = new Vector2(x, y) + dir;
-                if(p.X>0 && p.Y>0 && p.X< m_ImageW && p.Y< m_ImageH)
-                {
-                    ret.Add(p);
-                }
-            }
-            return ret.ToArray();
-            
-        }
         public override void OnPostDraw()
         {
 
-
-            for (int i = 0; i < m_ImageData.Count; ++i)
-            {
-                if (m_ImageData[i].X >= m_ImageW) continue;
-                if (m_ImageData[i].Y >= m_ImageH) continue;
-                CGBuffer.AddAsync(' ', (short)(m_ImageData[i].Col << 4),
-                    (int)c_DrawingCanvasPos.X + m_ImageData[i].X + 1,
-                    (int)c_DrawingCanvasPos.Y + m_ImageData[i].Y + 1);
-            }
-
             CGBuffer.AddAsync('&', (short)(((int)SelectedColor << 4) | ((SelectedColor == 0) ? 15 : 0)),
-                             (int)c_DrawingCanvasPos.X + m_cursorX + 1, (int)c_DrawingCanvasPos.Y + m_cursorY + 1);
+                             (int)c_DrawingCanvasPos.X + m_cursorX , (int)c_DrawingCanvasPos.Y + m_cursorY );
         }
         public override void OnExit() { }
     }

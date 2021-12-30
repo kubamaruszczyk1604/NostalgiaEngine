@@ -23,9 +23,9 @@ namespace ConsoleRenderer
            // rm.Play();
            // CGRaytracer2D tracer = new CGRaytracer2D();
             CGEngine engine = new CGEngine();
-            //CGTextureEditor ed = new CGTextureEditor();
-            Test_MemTex16 test = new Test_MemTex16();
-            engine.Start(test);
+            CGTextureEditor ed = new CGTextureEditor();
+            //Test_MemTex16 test = new Test_MemTex16();
+            engine.Start(ed);
 
 
         }

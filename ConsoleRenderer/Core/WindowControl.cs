@@ -35,7 +35,7 @@ namespace ConsoleRenderer.Core
         static public readonly int SC_VSCROLL = 0xF070;
         static public readonly int SC_HSCROLL = 0xF080;
         static public readonly int SC_SIZE = 0xF000;
-        static private readonly UInt32 ENABLE_QUICK_EDIT = 0x0040;
+
 
         public static void DisableConsoleWindowButtons()
         {
