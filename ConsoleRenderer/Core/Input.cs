@@ -709,7 +709,12 @@ namespace ConsoleRenderer.Core
         public static extern int GetAsyncKeyState(
          [MarshalAs(UnmanagedType.U4)] int vKey);
 
-        
+
+        [DllImport("user32.dll")]
+        static extern bool GetCursorPos(ref CGPoint lpPoint);
+
+        private static CGPoint c_MousePosition = new CGPoint();
+
         public static bool CheckKeyDown(ConsoleKey key)
         {
             return ((GetAsyncKeyState((int)key) << 16) !=0);
@@ -726,6 +731,14 @@ namespace ConsoleRenderer.Core
             return (((output << 16) != 0) && ((output & 1) != 0));
         }
 
-
+        public static CGPoint GetMousePostion()
+        {
+            CGPoint wPos = WindowControl.GetWindowPosition();
+            CGPoint mScrPos = new CGPoint();
+            GetCursorPos(ref mScrPos);
+            c_MousePosition.X = mScrPos.X - wPos.X;
+            c_MousePosition.Y = mScrPos.Y - wPos.Y;
+            return c_MousePosition;
+        }
     }
 }

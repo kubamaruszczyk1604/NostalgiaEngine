@@ -13,31 +13,7 @@ namespace ConsoleRenderer.TextureEditor
     {
 
 
-        [DllImport("user32.dll")]
 
-        // GetCursorPos() makes everything possible
-        static extern bool GetCursorPos(ref Point lpPoint);
-
-
-        struct Point
-        {
-            public int X;
-            public int Y;
-        }
-
-        class Pixel
-        {
-            public int X;
-            public int Y;
-            public int Col;
-
-            public Pixel(int x, int y, int col)
-            {
-                X = x;
-                Y = y;
-                Col = col;
-            }
-        }
 
         private readonly Vector2 c_ColorPanelPos = new Vector2(2, 0);
         private readonly Vector2 c_DrawingCanvasPos = new Vector2(3, 12);
@@ -85,9 +61,10 @@ namespace ConsoleRenderer.TextureEditor
         }
         public override void OnUpdate(float deltaTime)
         {
-            //Point p = new Point();
-            //GetCursorPos(ref p);
-            //Console.Title = p.X.ToString();
+            //CGPoint mp = CGInput.GetMousePostion();
+            //Console.Title = (mp.X/PixelWidth).ToString() + ", " + mp.Y.ToString();
+            //m_cursorX = (mp.X / PixelWidth) - 8;
+            //m_cursorY = (mp.Y) / PixelHeight -15;
             if (CGInput.CheckKeyPress(ConsoleKey.UpArrow))
             {
                 if (CGInput.CheckKeyDown((ConsoleKey)0xA2))

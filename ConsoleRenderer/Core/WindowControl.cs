@@ -4,11 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace ConsoleRenderer.Core
 {
     public class WindowControl
     {
+
 
         public enum StdHandle : int
         {
@@ -56,6 +58,11 @@ namespace ConsoleRenderer.Core
         [DllImport("kernel32.dll", SetLastError = true)]
         static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint dwMode);
 
+        [DllImport("user32.dll")]
+        public static extern bool GetWindowRect(IntPtr hwnd, ref CGRectangle rectangle);
+        [DllImport("user32.dll")]
+        public static extern bool GetClientRect(IntPtr hwnd, ref CGRectangle rectangle );
+
         static public readonly int MF_BYCOMMAND = 0x00000000;
         static public readonly int SC_CLOSE = 0xF060;
         static public readonly int SC_MINIMIZE = 0xF020;
@@ -91,7 +98,19 @@ namespace ConsoleRenderer.Core
 
             SetConsoleMode(consoleHandle, consoleMode);
         }
+        
 
-
+        static private Process c_CurrentProcess = Process.GetCurrentProcess();
+        static private CGRectangle c_MainWindowRect = new CGRectangle();
+        static private CGPoint c_MainWindowPos = new CGPoint();
+        static public CGPoint GetWindowPosition()
+        {
+            
+            GetWindowRect(c_CurrentProcess.MainWindowHandle, ref c_MainWindowRect);
+            c_MainWindowPos.X = c_MainWindowRect.Left;
+            c_MainWindowPos.Y = c_MainWindowRect.Top;
+            return c_MainWindowPos;
+           
+        }
     }
 }
