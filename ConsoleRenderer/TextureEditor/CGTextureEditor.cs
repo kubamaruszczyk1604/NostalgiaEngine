@@ -9,7 +9,7 @@ using OpenTK;
 
 namespace ConsoleRenderer.TextureEditor
 {
-    class CGTextureEditor : CGApp
+    class CGTextureEditor : CGScene
     {
 
 
@@ -70,7 +70,7 @@ namespace ConsoleRenderer.TextureEditor
         {
             CGPoint mp = CGInput.GetMousePostion();
             // Console.Title = (mp.X / PixelWidth).ToString() + ", " + mp.Y.ToString();
-           // if ((Math.Abs(mp.X - m_LastMouse.X) > 0) && (Math.Abs(mp.Y - m_LastMouse.Y) > 0))
+            // if ((Math.Abs(mp.X - m_LastMouse.X) > 0) && (Math.Abs(mp.Y - m_LastMouse.Y) > 0))
             {
                 m_cursorX = (mp.X / PixelWidth) - 8;
                 m_cursorY = (mp.Y) / PixelHeight - 15;
@@ -135,7 +135,7 @@ namespace ConsoleRenderer.TextureEditor
             if (m_cursorY >= (m_ImageH - m_BrushH)) m_cursorY = (m_ImageH - m_BrushH);
             if (m_cursorY < 0) m_cursorY = 0;
 
-           // m_cursorX = m_cursorX % m_ImageW;
+            // m_cursorX = m_cursorX % m_ImageW;
             if (m_cursorX < 0) m_cursorX = 0;
             if (m_cursorX >= (m_ImageW - m_BrushW)) m_cursorX = (m_ImageW - m_BrushW);
 
@@ -153,7 +153,7 @@ namespace ConsoleRenderer.TextureEditor
                     {
                         for (int h = 0; h < m_BrushH; ++h)
                         {
-                            m_ImageData.SetPixel(m_cursorX+w, m_cursorY+h, SelectedColor);
+                            m_ImageData.SetPixel(m_cursorX + w, m_cursorY + h, SelectedColor);
                         }
                     }
                 }
@@ -166,9 +166,17 @@ namespace ConsoleRenderer.TextureEditor
             {
                 if (m_BrushFlag == false) m_BrushFlag = true;
                 else m_BrushFlag = false;
-                
+
             }
 
+            if (CGInput.CheckKeyPress(ConsoleKey.N))
+            {
+                CGEngine.Instance.PushScene(new CGRaytracer2D());
+            }
+            if (CGInput.CheckKeyPress(ConsoleKey.Escape))
+            {
+                Exit();
+            }
         }
 
         private void DrawPalette(int x, int y)
@@ -190,11 +198,19 @@ namespace ConsoleRenderer.TextureEditor
             }
         }
 
+        public override void OnResume()
+        {
+            base.OnResume();
+        }
 
+        public override void OnPause()
+        {
+            base.OnPause();
+        }
         public override void OnDrawPerColumn(int x)
         {
 
-            for (int y = 0; y < CGEngine.ScreenHeight; ++y)
+            for (int y = 0; y < ScreenHeight; ++y)
             {
 
                 CGBuffer.AddAsync((char)CGBlock.Weak, (short)ConsoleColor.DarkBlue, x, y);

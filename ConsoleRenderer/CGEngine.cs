@@ -18,15 +18,18 @@ namespace ConsoleRenderer
         private readonly int DEFAULT_PIXEL_H = 6;
 
 
-        private CGApp m_App;
+        private CGScene m_CurrentScene;
+        private Stack<CGScene> m_SceneStack;
         private bool m_Running;
         private float m_Delta;
 
+        
+        public static CGEngine Instance { get; private set; }
         public string Title { get; set; }
-        static public int ScreenWidth { get; private set; }
-        static public int ScreenHeight { get; private set; }
-        static public int PixelWidth { get; private set; }
-        static public int PixelHeight { get; private set; }
+        public int ScreenWidth { get; private set; }
+        public int ScreenHeight { get; private set; }
+        public int PixelWidth { get; private set; }
+        public int PixelHeight { get; private set; }
         public float RunningTime { get; private set; }
         object locker = new object();
 
@@ -35,36 +38,55 @@ namespace ConsoleRenderer
             WindowControl.DisableConsoleWindowButtons();
             m_Running = false;
             m_Delta = 0.0f;
-            //m_buffThread = new Thread(new ThreadStart(BufferSwapWorker));
-
+            m_SceneStack = new Stack<CGScene>();
+            Instance = this;
         }
 
-        private void BufferSwapWorker()
-        {
-            while(true)
-            {
-                CGBuffer.Swap();
 
-            }
-            
-        }
-
-        public void Start(CGApp app)
+        public void PushScene(CGScene scene)
         {
-            m_App = app;
-            m_App.OnInitialize();
-            ScreenWidth = m_App.ScreenWidth > 10 ? m_App.ScreenWidth : DEFAULT_SCR_W;
-            ScreenHeight = m_App.ScreenHeight > 10 ? m_App.ScreenHeight : DEFAULT_SCR_H;
-            PixelWidth = m_App.PixelWidth > 0 ? m_App.PixelWidth : DEFAULT_PIXEL_W;
-            PixelHeight = m_App.PixelHeight > 0 ? m_App.PixelHeight : DEFAULT_PIXEL_H;
+
+            if(m_CurrentScene != null) m_CurrentScene.OnPause();
+            scene.OnInitialize();
+            ScreenWidth = scene.ScreenWidth > 10 ? scene.ScreenWidth : DEFAULT_SCR_W;
+            ScreenHeight = scene.ScreenHeight > 10 ? scene.ScreenHeight : DEFAULT_SCR_H;
+            PixelWidth = scene.PixelWidth > 0 ? scene.PixelWidth : DEFAULT_PIXEL_W;
+            PixelHeight = scene.PixelHeight > 0 ? scene.PixelHeight : DEFAULT_PIXEL_H;
             Title = "D";
 
             CGBuffer.Initialize((short)ScreenWidth, (short)ScreenHeight, (short)PixelWidth, (short)PixelHeight);
+            scene.OnStart();
+            m_SceneStack.Push(scene);
+            m_CurrentScene = scene;
+        }
+
+        public void PopScene()
+        {
+            m_CurrentScene.OnExit();
+            m_SceneStack.Pop();
+            if(m_SceneStack.Count == 0)
+            {
+                m_Running = false;
+                return;
+            }
+            m_CurrentScene = m_SceneStack.Peek();
+            m_CurrentScene.OnResume();
+            var scene = m_CurrentScene;
+            ScreenWidth = scene.ScreenWidth > 10 ? scene.ScreenWidth : DEFAULT_SCR_W;
+            ScreenHeight = scene.ScreenHeight > 10 ? scene.ScreenHeight : DEFAULT_SCR_H;
+            PixelWidth = scene.PixelWidth > 0 ? scene.PixelWidth : DEFAULT_PIXEL_W;
+            PixelHeight = scene.PixelHeight > 0 ? scene.PixelHeight : DEFAULT_PIXEL_H;
+            Title = "D";
+
+            CGBuffer.Initialize((short)ScreenWidth, (short)ScreenHeight, (short)PixelWidth, (short)PixelHeight);
+        }
+
+        public void Start(CGScene scene)
+        {
+            PushScene(scene);
             WindowControl.QuickEditMode(false);
             m_Running = true;
-            m_App.OnStart();
-           // m_buffThread.Start();
-            //m_buffThread.Suspend();
+            
             while (m_Running)
             {
                 
@@ -75,7 +97,7 @@ namespace ConsoleRenderer
                     " FPS: " + CGFrameTimer.GetFPS() + "   FRAME TIME: " + m_Delta + "s ";
 
 
-                m_App.OnUpdate(CGFrameTimer.GetDeltaTime());
+                m_CurrentScene.OnUpdate(CGFrameTimer.GetDeltaTime());
                 var resetEvent = new ManualResetEvent(false); // Will be reset when buffer is ready to be swaped
                
                 //m_buffThread.Suspend();
@@ -90,7 +112,7 @@ namespace ConsoleRenderer
                          object[] array = state as object[];
                          int column = Convert.ToInt32(array[0]);
 
-                         m_App.OnDrawPerColumn(column);
+                         m_CurrentScene.OnDrawPerColumn(column);
 
                          if (column >= ScreenWidth - 1) resetEvent.Set();
                      }), new object[] { x });
@@ -98,7 +120,7 @@ namespace ConsoleRenderer
                 
                 resetEvent.WaitOne();
 
-                m_App.OnPostDraw();
+                m_CurrentScene.OnPostDraw();
 
                 //m_buffThread.Resume();
                 CGBuffer.Swap();
@@ -106,7 +128,7 @@ namespace ConsoleRenderer
                 RunningTime += CGFrameTimer.GetDeltaTime();
                
             }
-            m_App.OnExit();
+            m_CurrentScene.OnExit();
 
         }
 

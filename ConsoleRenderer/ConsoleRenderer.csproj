@@ -63,7 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\Buffer.cs" />
-    <Compile Include="CGApp.cs" />
+    <Compile Include="CGScene.cs" />
     <Compile Include="CGEngine.cs" />
     <Compile Include="Core\CommonTypes.cs" />
     <Compile Include="Core\FrameTimer.cs" />

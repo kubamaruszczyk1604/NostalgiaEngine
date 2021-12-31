@@ -8,7 +8,7 @@ using ConsoleRenderer.Core;
 
 namespace ConsoleRenderer
 {
-    class CGRaytracer2D : CGApp
+    class CGRaytracer2D : CGScene
     {
 
         private int m_MapWidth = 20;
@@ -73,11 +73,11 @@ namespace ConsoleRenderer
 
         override public void OnUpdate(float dt)
         {
-            
+
             float deltaT = dt;
             if (CGInput.CheckKeyDown(ConsoleKey.LeftArrow))
             {
-               
+
                 if (CGInput.CheckKeyDown(0xA2))
                 {
                     m_ViewerPos -= CGHelper.FindNormal(m_ViewerDir) * MOVEMENT_SPEED * deltaT;
@@ -122,9 +122,17 @@ namespace ConsoleRenderer
                 m_ViewerPos -= m_ViewerDir * MOVEMENT_SPEED * deltaT;
             }
 
+            if (CGInput.CheckKeyPress(ConsoleKey.Escape))
+            {
+                Exit();
+            }
+
+            if (CGInput.CheckKeyPress(ConsoleKey.N))
+            {
+                CGEngine.Instance.PushScene(new ConsoleRenderer.TextureEditor.Test_MemTex16());
+            }
+
         }
-
-
 
         override public void OnDrawPerColumn(int x)
         {

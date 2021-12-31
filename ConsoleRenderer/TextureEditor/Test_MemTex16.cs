@@ -8,7 +8,7 @@ using ConsoleRenderer;
 
 namespace ConsoleRenderer.TextureEditor
 {
-    class Test_MemTex16: CGApp
+    class Test_MemTex16: CGScene
     {
         MemTex16 m_MemTex16;
         public override void OnInitialize()
@@ -57,6 +57,12 @@ namespace ConsoleRenderer.TextureEditor
             {
                 m_MemTex16.FloodFill(m_Current.X, m_Current.Y, col);
                 col++;
+            }
+
+
+            if (CGInput.CheckKeyPress(ConsoleKey.Escape))
+            {
+                Exit();
             }
         }
         int col = 10;

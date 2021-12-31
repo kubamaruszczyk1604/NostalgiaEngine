@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ConsoleRenderer
 {
-    public class CGApp
+    public class CGScene
     {
         public string Title { get; protected set; }
         public int ScreenWidth { get; protected set; }
@@ -14,11 +14,18 @@ namespace ConsoleRenderer
         public int PixelWidth { get; protected set; }
         public int PixelHeight { get; protected set; }
 
+        public void Exit()
+        {
+            CGEngine.Instance.PopScene();
+        }
         public virtual void OnInitialize() { }
         public virtual void OnStart() { }
+        public virtual void OnPause() { }
+        public virtual void OnResume(){}
         public virtual void OnUpdate(float deltaTime) { }
         public virtual void OnDrawPerColumn(int x) { }
         public virtual void OnPostDraw() { }
         public virtual void OnExit() { }
     }
 }
+ 
