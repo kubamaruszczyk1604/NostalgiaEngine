@@ -13,9 +13,17 @@ namespace ConsoleRenderer
         public int ScreenHeight { get; protected set; }
         public int PixelWidth { get; protected set; }
         public int PixelHeight { get; protected set; }
+        public object ReturnData { get; private set; }
+        public Type ReturnDataType { get; private set; }
+        
 
-        public void Exit()
+        public void Exit(object returnData = null)
         {
+            ReturnData = returnData;
+            if (ReturnData != null)
+            {
+                ReturnDataType = ReturnData.GetType();
+            }
             CGEngine.Instance.PopScene();
         }
         public virtual void OnInitialize() { }
@@ -25,7 +33,10 @@ namespace ConsoleRenderer
         public virtual void OnUpdate(float deltaTime) { }
         public virtual void OnDrawPerColumn(int x) { }
         public virtual void OnPostDraw() { }
-        public virtual void OnExit() { }
+        public virtual void OnExit()
+        {
+           
+        }
     }
 }
  

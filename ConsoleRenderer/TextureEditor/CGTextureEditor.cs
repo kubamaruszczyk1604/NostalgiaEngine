@@ -273,6 +273,9 @@ namespace ConsoleRenderer.TextureEditor
                 CGBuffer.AddAsync(c_Brush[i], (short)(m_BrushFlag ? 10 : 8), offset + i, (int)c_DrawingCanvasPos.Y - 2);
             }
         }
-        public override void OnExit() { }
+        public override void OnExit()
+        {
+            base.OnExit();
+        }
     }
 }

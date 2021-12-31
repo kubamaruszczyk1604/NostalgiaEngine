@@ -100,7 +100,6 @@ namespace ConsoleRenderer
                 m_CurrentScene.OnUpdate(CGFrameTimer.GetDeltaTime());
                 var resetEvent = new ManualResetEvent(false); // Will be reset when buffer is ready to be swaped
                
-                //m_buffThread.Suspend();
                 //For each column..
                 for (int x = 0; x < ScreenWidth; ++x)
                 {
@@ -122,7 +121,6 @@ namespace ConsoleRenderer
 
                 m_CurrentScene.OnPostDraw();
 
-                //m_buffThread.Resume();
                 CGBuffer.Swap();
 
                 RunningTime += CGFrameTimer.GetDeltaTime();

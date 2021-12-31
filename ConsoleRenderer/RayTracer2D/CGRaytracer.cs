@@ -124,7 +124,7 @@ namespace ConsoleRenderer
 
             if (CGInput.CheckKeyPress(ConsoleKey.Escape))
             {
-                Exit();
+                Exit("some data");
             }
 
             if (CGInput.CheckKeyPress(ConsoleKey.N))
