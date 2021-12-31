@@ -171,7 +171,8 @@ namespace ConsoleRenderer.TextureEditor
 
             if (CGInput.CheckKeyPress(ConsoleKey.N))
             {
-                CGEngine.Instance.PushScene(new CGRaytracer2D());
+               // CGEngine.Instance.PushScene(new CGRaytracer2D());
+                CGEngine.Instance.PushScene(new ConsoleRenderer.FilePicker());
             }
             if (CGInput.CheckKeyPress(ConsoleKey.Escape))
             {

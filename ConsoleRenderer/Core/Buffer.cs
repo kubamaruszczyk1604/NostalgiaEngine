@@ -128,8 +128,8 @@ namespace ConsoleRenderer.Core
                     FontFamily = 0x00,
                     FontName = "Consolas",
                     FontWeight = 400,
-                    FontSize = pixelW,
-                    FontWidth = pixelH
+                    FontSize = pixelH,
+                    FontWidth = pixelW
                 };
                 SetCurrentConsoleFontEx(m_ConsoleHandle.DangerousGetHandle(), false, ref set);
                 Console.SetWindowSize(width + 10, height + 4);
@@ -172,6 +172,20 @@ namespace ConsoleRenderer.Core
             m_Bufer[index].Char.AsciiChar = (byte)c;
 
         }
+
+        static public void WriteXY(int x, int y, short col, string line)
+        {
+            for (int i  = 0; i < line.Length;++i)
+            {
+                AddAsync(line[i], col, x + i, y);
+            }
+        }
+
+        static public void Clear()
+        {
+            Array.Clear(m_Bufer, 0, m_Bufer.Length);
+        }
+
         static int i = 0;
         static public void Swap()
         {

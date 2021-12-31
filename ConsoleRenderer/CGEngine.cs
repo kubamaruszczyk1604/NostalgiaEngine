@@ -43,11 +43,8 @@ namespace ConsoleRenderer
         }
 
 
-        public void PushScene(CGScene scene)
+        private void SetSceneAsCurrent(CGScene scene)
         {
-
-            if(m_CurrentScene != null) m_CurrentScene.OnPause();
-            scene.OnInitialize();
             ScreenWidth = scene.ScreenWidth > 10 ? scene.ScreenWidth : DEFAULT_SCR_W;
             ScreenHeight = scene.ScreenHeight > 10 ? scene.ScreenHeight : DEFAULT_SCR_H;
             PixelWidth = scene.PixelWidth > 0 ? scene.PixelWidth : DEFAULT_PIXEL_W;
@@ -55,6 +52,14 @@ namespace ConsoleRenderer
             Title = "D";
 
             CGBuffer.Initialize((short)ScreenWidth, (short)ScreenHeight, (short)PixelWidth, (short)PixelHeight);
+        }
+
+        public void PushScene(CGScene scene)
+        {
+
+            if(m_CurrentScene != null) m_CurrentScene.OnPause();
+            scene.OnInitialize();
+            SetSceneAsCurrent(scene);
             scene.OnStart();
             m_SceneStack.Push(scene);
             m_CurrentScene = scene;
@@ -71,14 +76,7 @@ namespace ConsoleRenderer
             }
             m_CurrentScene = m_SceneStack.Peek();
             m_CurrentScene.OnResume();
-            var scene = m_CurrentScene;
-            ScreenWidth = scene.ScreenWidth > 10 ? scene.ScreenWidth : DEFAULT_SCR_W;
-            ScreenHeight = scene.ScreenHeight > 10 ? scene.ScreenHeight : DEFAULT_SCR_H;
-            PixelWidth = scene.PixelWidth > 0 ? scene.PixelWidth : DEFAULT_PIXEL_W;
-            PixelHeight = scene.PixelHeight > 0 ? scene.PixelHeight : DEFAULT_PIXEL_H;
-            Title = "D";
-
-            CGBuffer.Initialize((short)ScreenWidth, (short)ScreenHeight, (short)PixelWidth, (short)PixelHeight);
+            SetSceneAsCurrent(m_CurrentScene);
         }
 
         public void Start(CGScene scene)
