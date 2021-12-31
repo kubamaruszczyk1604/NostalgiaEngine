@@ -70,7 +70,7 @@ namespace ConsoleRenderer.TextureEditor
         {
             CGPoint mp = CGInput.GetMousePostion();
             // Console.Title = (mp.X / PixelWidth).ToString() + ", " + mp.Y.ToString();
-            if ((Math.Abs(mp.X - m_LastMouse.X) > 0) && (Math.Abs(mp.Y - m_LastMouse.Y) > 0))
+           // if ((Math.Abs(mp.X - m_LastMouse.X) > 0) && (Math.Abs(mp.Y - m_LastMouse.Y) > 0))
             {
                 m_cursorX = (mp.X / PixelWidth) - 8;
                 m_cursorY = (mp.Y) / PixelHeight - 15;
