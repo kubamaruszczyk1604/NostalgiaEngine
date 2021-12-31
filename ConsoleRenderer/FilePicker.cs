@@ -35,27 +35,33 @@ namespace ConsoleRenderer
         }
         public override void OnDrawPerColumn(int x) { }
         string m_CurrentDir = @"c:\";
-        int current = 1;
+        int current = 0;
+        int wrapH = 10;
         public override void OnDraw()
         {
 
             CGBuffer.WriteXY(0, 1, 12, "FILE PICKER TEMPLATE");
             string[] files = Directory.GetFiles(m_CurrentDir);
-            int cnt = 1;
+            int cnt = 0;
 
             string[] dirs = Directory.GetDirectories(m_CurrentDir);
 
+            var temp = dirs.ToList();
+            temp.AddRange(files);
+
+            dirs = temp.ToArray();
             foreach (string dir in dirs)
             {
-                CGBuffer.WriteXY(0, 2 + cnt, (short)(current==cnt?(11|1<<4):11), dir);
+                CGBuffer.WriteXY((cnt/wrapH)*30, 3 + (cnt%wrapH), (short)(current==cnt?(11|1<<4):11), dir);
+               
                 cnt++;
             }
 
-            foreach (string file in files)
-            {
-                CGBuffer.WriteXY(0,2+cnt, 12, file);
-                cnt++;
-            }
+            //foreach (string file in files)
+            //{
+            //    CGBuffer.WriteXY(0,2+cnt, 12, file);
+            //    cnt++;
+            //}
 
 
         }
