@@ -26,11 +26,15 @@ namespace ConsoleRenderer.TextureEditor
         private readonly Vector2[] c_Directions = new Vector2[] { new Vector2(-1, 0), new Vector2(1, 0), new Vector2(0, -1), new Vector2(0, 1) };
 
 
+        private readonly string fl = "MODE(ENTER)";
+        private readonly string c_Fill = "FILL";
+        private readonly string c_Brush = "BRUSH";
 
-
-
+        private bool m_BrushFlag = true;
         private int m_cursorX;
         private int m_cursorY;
+        private int m_BrushW;
+        private int m_BrushH;
 
         private int m_ImageW;
         private int m_ImageH;
@@ -49,6 +53,8 @@ namespace ConsoleRenderer.TextureEditor
             PixelHeight = 8;
             m_ImageW = 100;
             m_ImageH = 70;
+            m_BrushW = 2;
+            m_BrushH = 2;
             SelectedColor = 10;
             m_ImageData = new MemTex16(m_ImageW, m_ImageH);
             m_cursorX = 10;
@@ -59,12 +65,17 @@ namespace ConsoleRenderer.TextureEditor
             WindowControl.DisableConsoleWindowButtons();
 
         }
+        CGPoint m_LastMouse = new CGPoint();
         public override void OnUpdate(float deltaTime)
         {
-            //CGPoint mp = CGInput.GetMousePostion();
-            //Console.Title = (mp.X/PixelWidth).ToString() + ", " + mp.Y.ToString();
-            //m_cursorX = (mp.X / PixelWidth) - 8;
-            //m_cursorY = (mp.Y) / PixelHeight -15;
+            CGPoint mp = CGInput.GetMousePostion();
+            // Console.Title = (mp.X / PixelWidth).ToString() + ", " + mp.Y.ToString();
+            if ((Math.Abs(mp.X - m_LastMouse.X) > 0) && (Math.Abs(mp.Y - m_LastMouse.Y) > 0))
+            {
+                m_cursorX = (mp.X / PixelWidth) - 8;
+                m_cursorY = (mp.Y) / PixelHeight - 15;
+            }
+            m_LastMouse = mp;
             if (CGInput.CheckKeyPress(ConsoleKey.UpArrow))
             {
                 if (CGInput.CheckKeyDown((ConsoleKey)0xA2))
@@ -120,11 +131,13 @@ namespace ConsoleRenderer.TextureEditor
                     m_cursorX += 1;
                 }
             }
-            m_cursorY = m_cursorY % m_ImageH;
+            //m_cursorY = m_cursorY % (m_ImageH-m_BrushH);
+            if (m_cursorY >= (m_ImageH - m_BrushH)) m_cursorY = (m_ImageH - m_BrushH);
             if (m_cursorY < 0) m_cursorY = 0;
 
-            m_cursorX = m_cursorX % m_ImageW;
+           // m_cursorX = m_cursorX % m_ImageW;
             if (m_cursorX < 0) m_cursorX = 0;
+            if (m_cursorX >= (m_ImageW - m_BrushW)) m_cursorX = (m_ImageW - m_BrushW);
 
             if (CGInput.CheckKeyPress(ConsoleKey.C))
             {
@@ -134,13 +147,25 @@ namespace ConsoleRenderer.TextureEditor
 
             if (CGInput.CheckKeyDown(ConsoleKey.Spacebar))
             {
-                if(m_Brush) m_ImageData.SetPixel(m_cursorX, m_cursorY, SelectedColor);
-                else m_ImageData.FloodFill(m_cursorX, m_cursorY, SelectedColor);
+                if (m_BrushFlag)
+                {
+                    for (int w = 0; w < m_BrushW; ++w)
+                    {
+                        for (int h = 0; h < m_BrushH; ++h)
+                        {
+                            m_ImageData.SetPixel(m_cursorX+w, m_cursorY+h, SelectedColor);
+                        }
+                    }
+                }
+                else
+                {
+                    m_ImageData.FloodFill(m_cursorX, m_cursorY, SelectedColor);
+                }
             }
             if (CGInput.CheckKeyPress(ConsoleKey.Enter))
             {
-                if (m_Brush == false) m_Brush = true;
-                else m_Brush = false;
+                if (m_BrushFlag == false) m_BrushFlag = true;
+                else m_BrushFlag = false;
                 
             }
 
@@ -164,9 +189,6 @@ namespace ConsoleRenderer.TextureEditor
                 CGBuffer.AddAsync((char)CGBlock.Middle, (short)((15)), x, y);
             }
         }
-
-
-
 
 
         public override void OnDrawPerColumn(int x)
@@ -206,16 +228,17 @@ namespace ConsoleRenderer.TextureEditor
 
 
 
-        string fl = "MODE(ENTER)";
-        string c_Fill = "FILL";
-        string c_Brush = "BRUSH";
-        bool m_Brush = true;
+
         public override void OnPostDraw()
         {
-
-            CGBuffer.AddAsync('&', (short)(((int)SelectedColor << 4) | ((SelectedColor == 0) ? 15 : 0)),
-                             (int)c_DrawingCanvasPos.X + m_cursorX , (int)c_DrawingCanvasPos.Y + m_cursorY );
-
+            for(int w = 0; w < m_BrushW;++w)
+            {
+                for (int h =0; h<m_BrushH;++h)
+                {
+                    CGBuffer.AddAsync('&', (short)(((int)SelectedColor << 4) | ((SelectedColor == 0) ? 15 : 0)),
+                 (int)c_DrawingCanvasPos.X + m_cursorX+w, (int)c_DrawingCanvasPos.Y + m_cursorY+h);
+                }
+            }
 
             int offset = (int)c_DrawingCanvasPos.X;
             for (int i = 0; i < fl.Length;++i)
@@ -226,12 +249,12 @@ namespace ConsoleRenderer.TextureEditor
 
             for (int i = 0; i < c_Fill.Length; ++i)
             {
-                CGBuffer.AddAsync(c_Fill[i], (short)(m_Brush?8:10), offset + i, (int)c_DrawingCanvasPos.Y - 2);
+                CGBuffer.AddAsync(c_Fill[i], (short)(m_BrushFlag?8:10), offset + i, (int)c_DrawingCanvasPos.Y - 2);
             }
             offset += c_Fill.Length + 2;
             for (int i = 0; i < c_Brush.Length; ++i)
             {
-                CGBuffer.AddAsync(c_Brush[i], (short)(m_Brush ? 10 : 8), offset + i, (int)c_DrawingCanvasPos.Y - 2);
+                CGBuffer.AddAsync(c_Brush[i], (short)(m_BrushFlag ? 10 : 8), offset + i, (int)c_DrawingCanvasPos.Y - 2);
             }
         }
         public override void OnExit() { }
