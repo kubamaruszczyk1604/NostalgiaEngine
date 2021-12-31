@@ -245,7 +245,7 @@ namespace ConsoleRenderer.TextureEditor
 
 
 
-        public override void OnPostDraw()
+        public override void OnDraw()
         {
             for(int w = 0; w < m_BrushW;++w)
             {

@@ -67,7 +67,7 @@ namespace ConsoleRenderer.TextureEditor
         }
         int col = 10;
         public override void OnDrawPerColumn(int x) { }
-        public override void OnPostDraw()
+        public override void OnDraw()
         {
             for(int x = 0; x < m_MemTex16.Width;++x)
             {

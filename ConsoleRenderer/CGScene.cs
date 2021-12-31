@@ -32,7 +32,7 @@ namespace ConsoleRenderer
         public virtual void OnResume(){}
         public virtual void OnUpdate(float deltaTime) { }
         public virtual void OnDrawPerColumn(int x) { }
-        public virtual void OnPostDraw() { }
+        public virtual void OnDraw() { }
         public virtual void OnExit()
         {
            

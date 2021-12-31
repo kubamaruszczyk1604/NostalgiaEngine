@@ -119,7 +119,7 @@ namespace ConsoleRenderer
                 
                 resetEvent.WaitOne();
 
-                m_CurrentScene.OnPostDraw();
+                m_CurrentScene.OnDraw();
 
                 CGBuffer.Swap();
 

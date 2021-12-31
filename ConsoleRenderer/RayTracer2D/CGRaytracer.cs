@@ -222,7 +222,7 @@ namespace ConsoleRenderer
 
         }
 
-        public override void OnPostDraw()
+        public override void OnDraw()
         {
             float imgW = (0.25f * ScreenWidth);
             float imgH = (0.25f * ScreenWidth);
