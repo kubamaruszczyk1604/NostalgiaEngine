@@ -36,11 +36,13 @@ namespace ConsoleRenderer
         public override void OnDrawPerColumn(int x) { }
         string m_CurrentDir = @"c:\";
         int current = 0;
-        int wrapH = 10;
+        int wrapH = 20;
+        int colDist = 40;
         public override void OnDraw()
         {
-
-            CGBuffer.WriteXY(0, 1, 12, "FILE PICKER TEMPLATE");
+            CGBuffer.Clear();
+            CGBuffer.WriteXY(0, 0, 12, "FILE PICKER TEMPLATE");
+            CGBuffer.WriteXY(0, 1, 10, m_CurrentDir);
             string[] files = Directory.GetFiles(m_CurrentDir);
             int cnt = 0;
 
@@ -48,18 +50,27 @@ namespace ConsoleRenderer
 
             var temp = dirs.ToList();
             temp.AddRange(files);
-
+            temp.Insert(0, m_CurrentDir + "...");
             dirs = temp.ToArray();
-            foreach (string dir in dirs)
+            int start = 0;
+            if (current >= 2*wrapH) start = wrapH;
+            for (int i = start; i < dirs.Length; ++i)
             {
-                CGBuffer.WriteXY((cnt/wrapH)*30, 3 + (cnt%wrapH), (short)(current==cnt?(11|1<<4):11), dir);
-               
+                int x = (cnt / wrapH) * colDist;
+                
+                if(x< ScreenWidth)
+                CGBuffer.WriteXY(x, 3 + (cnt%wrapH), (short)(current-start==cnt?(11|1<<4):11), dirs[i].Substring(m_CurrentDir.Length));
                 cnt++;
             }
+            if(CGInput.CheckKeyPress(ConsoleKey.Enter))
+            {
+                    m_CurrentDir = dirs[current] + @"\";
+                    current = 0;
 
+            }
             //foreach (string file in files)
             //{
-            //    CGBuffer.WriteXY(0,2+cnt, 12, file);
+            ////    CGBuffer.WriteXY(0,2+cnt, 12, file);
             //    cnt++;
             //}
 
