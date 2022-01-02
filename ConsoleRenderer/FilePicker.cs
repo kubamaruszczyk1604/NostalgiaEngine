@@ -40,12 +40,24 @@ namespace ConsoleRenderer
             if(CGInput.CheckKeyPress(ConsoleKey.DownArrow))
             {
                 m_CurrentPosIndex++;
+                if(m_CurrentPosIndex-m_ViewStartIndex > c_ColLength*3-2)
+                {
+                    m_ViewStartIndex++;
+                }
             }
             if (CGInput.CheckKeyPress(ConsoleKey.UpArrow))
             {
+                
+                if ( m_CurrentPosIndex - m_ViewStartIndex <= 0 && m_CurrentPosIndex>0)
+                {
+                    m_ViewStartIndex--;
+                }
                 m_CurrentPosIndex--;
+
             }
 
+            if (m_CurrentPosIndex < 0) m_CurrentPosIndex = 0;
+            if (m_CurrentPosIndex >= m_DirectoryList.Length) m_CurrentPosIndex = m_DirectoryList.Length - 1;
 
             if (CGInput.CheckKeyPress(ConsoleKey.Enter))
             {
@@ -59,6 +71,7 @@ namespace ConsoleRenderer
                         TryObtainDirList(m_CurrentPath, out string[] dirList);
                         m_DirectoryList = dirList;
                         m_CurrentPosIndex = 0;
+                        m_ViewStartIndex = 0;
                     }
                 }
                 else
@@ -71,39 +84,41 @@ namespace ConsoleRenderer
                         m_CurrentPath = newPath;
                         m_DirectoryList = dirList;
                         m_CurrentPosIndex = 0;
+                        m_ViewStartIndex = 0;
                     }
 
                 }
+
             }
 
+
+
         }
-        
 
 
 
 
 
+        int m_ViewStartIndex = 0;
         public override void OnDraw()
         {
             CGBuffer.Clear();
-            CGBuffer.WriteXY(0, 0, 12, "FILE PICKER TEMPLATE");
+            CGBuffer.WriteXY(0, 0, 12, "FILE OPEN DIALOG");
             CGBuffer.WriteXY(0, 1, 10, m_CurrentPath);
-  
-            //int cnt = 0;
-            int start = 0;
 
-            if (m_CurrentPosIndex >= 2*c_ColLength) start = c_ColLength;
-            for (int i = start; i < m_DirectoryList.Length; ++i)
+            //int cnt = 0;
+
+           
+            //if (m_CurrentPosIndex >= 3*c_ColLength) start = c_ColLength;
+            for (int i = m_ViewStartIndex; i < m_DirectoryList.Length; ++i)
             {
-                int x = (i / c_ColLength) * c_DistanceBetweenColumns;
+                int x = ((i-m_ViewStartIndex) / c_ColLength) * c_DistanceBetweenColumns;
                 
                 if(x < ScreenWidth)
-                CGBuffer.WriteXY(x, 3 + (i%c_ColLength), (short)(m_CurrentPosIndex-start==i?(11|1<<4):11), m_DirectoryList[i].Substring(m_CurrentPath.Length));
+                CGBuffer.WriteXY(x, 3 + ((i-m_ViewStartIndex)%c_ColLength), (short)(m_CurrentPosIndex==i?(11|1<<4):11), m_DirectoryList[i].Substring(m_CurrentPath.Length));
                // cnt++;
             }
 
-            if (m_CurrentPosIndex < 0) m_CurrentPosIndex = 0;
-            if (m_CurrentPosIndex >=  m_DirectoryList.Length) m_CurrentPosIndex = m_DirectoryList.Length-1;
 
 
  
