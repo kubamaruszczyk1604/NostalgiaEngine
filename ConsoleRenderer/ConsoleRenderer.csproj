@@ -69,6 +69,7 @@
     <Compile Include="Core\FrameTimer.cs" />
     <Compile Include="Core\Helper.cs" />
     <Compile Include="Core\Input.cs" />
+    <Compile Include="Core\InputSimulator.cs" />
     <Compile Include="Core\Material.cs" />
     <Compile Include="FilePicker.cs" />
     <Compile Include="Program.cs" />

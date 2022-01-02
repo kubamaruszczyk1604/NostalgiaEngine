@@ -713,6 +713,8 @@ namespace ConsoleRenderer.Core
         [DllImport("user32.dll")]
         static extern bool GetCursorPos(ref CGPoint lpPoint);
 
+
+
         private static CGPoint c_MousePosition = new CGPoint();
 
         public static bool CheckKeyDown(ConsoleKey key)

@@ -8,16 +8,18 @@ using System.IO;
 
 namespace ConsoleRenderer
 {
-    class FilePicker:CGScene
+    public class FilePicker:CGScene
     {
-
+        enum VisitState { NoAccess = -1, Directory = 0, File = 1}
         private readonly int c_ColLength = 20;
         private readonly int c_DistanceBetweenColumns = 40;
 
         private Stack<string> m_DirStack;
-        string[] m_DirectoryList;
+        string[] m_CurrentDirContent;
         private string m_CurrentPath = "c:/";
         private int m_CurrentPosIndex = 0;
+
+        private string m_EditString = "select path";
 
         public override void OnInitialize()
         {
@@ -27,9 +29,9 @@ namespace ConsoleRenderer
             PixelWidth = 8;
             PixelHeight = 16;
             m_DirStack = new Stack<string>();
-            if(TryObtainDirList(m_CurrentPath,out string[] dirList))
+            if(VisitDirectory(m_CurrentPath,out string[] dirList)==VisitState.Directory)
             {
-                m_DirectoryList = dirList;
+                m_CurrentDirContent = dirList;
             }
             
         }
@@ -37,6 +39,7 @@ namespace ConsoleRenderer
 
         public override void OnUpdate(float deltaTime)
         {
+
             if(CGInput.CheckKeyPress(ConsoleKey.DownArrow))
             {
                 m_CurrentPosIndex++;
@@ -77,19 +80,19 @@ namespace ConsoleRenderer
             }
 
             if (m_CurrentPosIndex < 0) m_CurrentPosIndex = 0;
-            if (m_CurrentPosIndex >= m_DirectoryList.Length) m_CurrentPosIndex = m_DirectoryList.Length - 1;
+            if (m_CurrentPosIndex >= m_CurrentDirContent.Length) m_CurrentPosIndex = m_CurrentDirContent.Length - 1;
 
             if (CGInput.CheckKeyPress(ConsoleKey.Enter))
             {
-                string bk = m_DirectoryList[m_CurrentPosIndex].Substring(m_CurrentPath.Length);
+                string bk = m_CurrentDirContent[m_CurrentPosIndex].Substring(m_CurrentPath.Length);
                 if (bk == "...")
                 {
                     if (m_CurrentPath.Length > 3)
                     {
                         string del = m_DirStack.Pop();
                         m_CurrentPath = m_CurrentPath.Substring(0, m_CurrentPath.Length - del.Length - 1);
-                        TryObtainDirList(m_CurrentPath, out string[] dirList);
-                        m_DirectoryList = dirList;
+                        VisitDirectory(m_CurrentPath, out string[] dirList);
+                        m_CurrentDirContent = dirList;
                         m_CurrentPosIndex = 0;
                         m_ViewStartIndex = 0;
                     }
@@ -97,19 +100,33 @@ namespace ConsoleRenderer
                 else
                 {
 
-                    string newPath = m_DirectoryList[m_CurrentPosIndex] + "/";
-                    if (TryObtainDirList(newPath, out string[] dirList))
+                    string newPath = m_CurrentDirContent[m_CurrentPosIndex] + "/";
+                    VisitState state = VisitDirectory(newPath, out string[] dirList);
+                    if (state == VisitState.Directory)
                     {
                         m_DirStack.Push(bk);
                         m_CurrentPath = newPath;
-                        m_DirectoryList = dirList;
+                        m_CurrentDirContent = dirList;
                         m_CurrentPosIndex = 0;
                         m_ViewStartIndex = 0;
+                        m_EditString = newPath + "untitled.tex";
+                    }
+                    else if(state == VisitState.File)
+                    {
+                        m_EditString = newPath.Substring(0,newPath.Length-1);
                     }
 
                 }
 
             }
+
+            while (true)
+            {
+                Console.SetCursorPosition(5, 29);
+                Console.CursorVisible = true;
+                Console.ReadLine();
+            }
+
         }
 
 
@@ -126,15 +143,15 @@ namespace ConsoleRenderer
 
            
             //if (m_CurrentPosIndex >= 3*c_ColLength) start = c_ColLength;
-            for (int i = m_ViewStartIndex; i < m_DirectoryList.Length; ++i)
+            for (int i = m_ViewStartIndex; i < m_CurrentDirContent.Length; ++i)
             {
                 int x = ((i-m_ViewStartIndex) / c_ColLength) * c_DistanceBetweenColumns;
                 
                 if(x < ScreenWidth)
-                CGBuffer.WriteXY(x, 3 + ((i-m_ViewStartIndex)%c_ColLength), (short)(m_CurrentPosIndex==i?(11|1<<4):11), m_DirectoryList[i].Substring(m_CurrentPath.Length));
+                CGBuffer.WriteXY(x, 3 + ((i-m_ViewStartIndex)%c_ColLength), (short)(m_CurrentPosIndex==i?(15|1<<4):9), m_CurrentDirContent[i].Substring(m_CurrentPath.Length));
             }
 
-
+            CGBuffer.WriteXY(0, 28, 15|(1<<4), m_EditString);
 
         }
         public override void OnExit()
@@ -144,31 +161,60 @@ namespace ConsoleRenderer
 
 
 
-        private bool TryObtainDirList(string path, out string[] directoryList)
+        private VisitState VisitDirectory(string path, out string[] directoryList)
         {
+            directoryList = null;
+            string[] files = null;
+
+            if (IsFile(path))
+                return VisitState.File;
+
             try
             {
 
                 directoryList = Directory.GetDirectories(path);
-                for (int i = 0; i < directoryList.Length; ++i)
-                {
-                    directoryList[i] = directoryList[i].ToUpper();
-                }
+                files = Directory.GetFiles(path);
+                
 
-                var temp = directoryList.ToList();
-                string[] files = Directory.GetFiles(path);
-                temp.AddRange(files);
-                temp.Insert(0, path + "...");
-                directoryList = temp.ToArray();
             }
             catch
             {
                 directoryList = null;
-                return false;
+                return VisitState.NoAccess;
             }
-            return true;
+
+
+            for (int i = 0; i < directoryList.Length; ++i)
+            {
+                directoryList[i] = directoryList[i].ToUpper();
+            }
+
+            var temp = directoryList.ToList();
+
+            temp.AddRange(files);
+            temp.Insert(0, path + "...");
+            directoryList = temp.ToArray();
+            return VisitState.Directory;
 
 
         }
+
+        bool IsFile(string path)
+        {
+            FileAttributes attr = File.GetAttributes(path);
+
+         
+            if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
+                return false;
+            else
+                return true;
+        }
+
+        string ReadLine(string defaultStr)
+        {
+            string displayString = defaultStr + "|";
+            return defaultStr;
+        }
+
     }
 }
