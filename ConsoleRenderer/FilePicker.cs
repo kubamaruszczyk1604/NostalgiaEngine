@@ -55,6 +55,26 @@ namespace ConsoleRenderer
                 m_CurrentPosIndex--;
 
             }
+            if(CGInput.CheckKeyPress(ConsoleKey.RightArrow))
+            {
+                m_CurrentPosIndex += c_ColLength;
+                if (m_CurrentPosIndex - m_ViewStartIndex > c_ColLength * 3 - 2)
+                {
+                    m_ViewStartIndex += c_ColLength;
+                }
+            }
+
+            if (CGInput.CheckKeyPress(ConsoleKey.LeftArrow))
+            {
+               
+                if (m_CurrentPosIndex - m_ViewStartIndex > 0 && m_CurrentPosIndex > 0)
+                {
+                    m_ViewStartIndex -= c_ColLength;
+                    m_CurrentPosIndex -= c_ColLength;
+                    if (m_ViewStartIndex < 0) m_ViewStartIndex = 0;
+                }
+                
+            }
 
             if (m_CurrentPosIndex < 0) m_CurrentPosIndex = 0;
             if (m_CurrentPosIndex >= m_DirectoryList.Length) m_CurrentPosIndex = m_DirectoryList.Length - 1;
@@ -90,9 +110,6 @@ namespace ConsoleRenderer
                 }
 
             }
-
-
-
         }
 
 
@@ -102,11 +119,10 @@ namespace ConsoleRenderer
         int m_ViewStartIndex = 0;
         public override void OnDraw()
         {
+            
             CGBuffer.Clear();
             CGBuffer.WriteXY(0, 0, 12, "FILE OPEN DIALOG");
-            CGBuffer.WriteXY(0, 1, 10, m_CurrentPath);
-
-            //int cnt = 0;
+            CGBuffer.WriteXY(0, 1, 9, m_CurrentPath);
 
            
             //if (m_CurrentPosIndex >= 3*c_ColLength) start = c_ColLength;
@@ -116,17 +132,8 @@ namespace ConsoleRenderer
                 
                 if(x < ScreenWidth)
                 CGBuffer.WriteXY(x, 3 + ((i-m_ViewStartIndex)%c_ColLength), (short)(m_CurrentPosIndex==i?(11|1<<4):11), m_DirectoryList[i].Substring(m_CurrentPath.Length));
-               // cnt++;
             }
 
-
-
- 
-            //foreach (string file in files)
-            //{
-            ////    CGBuffer.WriteXY(0,2+cnt, 12, file);
-            //    cnt++;
-            //}
 
 
         }
