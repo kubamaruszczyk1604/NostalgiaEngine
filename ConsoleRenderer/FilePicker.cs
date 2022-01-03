@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using ConsoleRenderer.Core;
 using System.IO;
 
@@ -33,7 +33,7 @@ namespace ConsoleRenderer
             {
                 m_CurrentDirContent = dirList;
             }
-            
+           
         }
 
 
@@ -119,13 +119,10 @@ namespace ConsoleRenderer
                 }
 
             }
+            
 
-            while (true)
-            {
-                Console.SetCursorPosition(5, 29);
-                Console.CursorVisible = true;
-                Console.ReadLine();
-            }
+               ReadLine("test");
+
 
         }
 
@@ -152,6 +149,9 @@ namespace ConsoleRenderer
             }
 
             CGBuffer.WriteXY(0, 28, 15|(1<<4), m_EditString);
+
+
+           
 
         }
         public override void OnExit()
@@ -212,7 +212,45 @@ namespace ConsoleRenderer
 
         string ReadLine(string defaultStr)
         {
-            string displayString = defaultStr + "|";
+            string displayString = defaultStr;
+            Console.CursorVisible = true;
+            int cursorPos = defaultStr.Length;
+            ConsoleKeyInfo info;
+            
+            while (true)
+            {
+                info = Console.ReadKey(true);
+                Console.SetCursorPosition(5, 29);
+                Console.Write(new string(' ', displayString.Length+4));
+                if (char.IsLetterOrDigit(info.KeyChar))
+                {
+                 //   Console.Write(info.KeyChar);
+                    displayString = displayString.Insert(cursorPos, info.KeyChar.ToString());
+                    cursorPos++;
+                        //+= info.KeyChar;
+                }
+                if (info.Key == ConsoleKey.Backspace && cursorPos>0)
+                {
+                    displayString = displayString.Remove(cursorPos-1, 1);
+                    cursorPos--;
+                }
+                else if (info.Key == ConsoleKey.LeftArrow)
+                {
+                    if (cursorPos > 0) cursorPos--;
+                }
+                else if (info.Key == ConsoleKey.RightArrow)
+                {
+                    if (cursorPos < displayString.Length) cursorPos++;
+                }
+                Console.SetCursorPosition(5, 29);
+                Console.Write(displayString);
+                Console.SetCursorPosition(5+cursorPos, 29);
+
+            }
+
+            
+           
+            // 
             return defaultStr;
         }
 
