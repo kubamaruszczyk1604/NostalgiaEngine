@@ -6,11 +6,17 @@ using System.Threading;
 using ConsoleRenderer.Core;
 using System.IO;
 
-namespace ConsoleRenderer
+namespace ConsoleRenderer.Tools
 {
-    public class FilePicker:CGScene
+
+    
+    public class CGFileExplorer: CG_GUIElement, IDisposable
     {
-        enum VisitState { NoAccess = -1, Directory = 0, File = 1}
+        public delegate void OnFileSelected(string path);
+        public delegate void OnFocusChanged(string path, bool focus);
+        public delegate void OnPathUpdated(string path);
+
+        private enum VisitState { NoAccess = -1, Directory = 0, File = 1 }
         private readonly int c_ColLength = 20;
         private readonly int c_DistanceBetweenColumns = 40;
 
@@ -18,47 +24,54 @@ namespace ConsoleRenderer
         string[] m_CurrentDirContent;
         private string m_CurrentPath = "c:/";
         private int m_CurrentPosIndex = 0;
+        private int m_ViewStartIndex = 0;
 
-        private string m_EditString = "select path";
 
-        public override void OnInitialize()
+        private string m_EditString = "";
+        private string m_Title;
+
+        public OnFileSelected onFileSelected { get; set; }
+        public OnFocusChanged onFocusChanged { get; set; }
+        public OnPathUpdated onPathUpdated { get; set; }
+        private bool m_FocusFlag;
+        public bool InFocus { get { return m_FocusFlag; } }
+
+        public CGFileExplorer(string title)
         {
-
-            ScreenWidth = 120;
-            ScreenHeight = 30;
-            PixelWidth = 8;
-            PixelHeight = 16;
             m_DirStack = new Stack<string>();
-            if(VisitDirectory(m_CurrentPath,out string[] dirList)==VisitState.Directory)
+            m_FocusFlag = true;
+            if (VisitDirectory(m_CurrentPath, out string[] dirList) == VisitState.Directory)
             {
                 m_CurrentDirContent = dirList;
             }
-           
+            m_Title = title;
+
         }
-
-
-        public override void OnUpdate(float deltaTime)
+        public void Update()
         {
+            if (!m_FocusFlag) return;
 
-            if(CGInput.CheckKeyPress(ConsoleKey.DownArrow))
-            {
-                m_CurrentPosIndex++;
-                if(m_CurrentPosIndex-m_ViewStartIndex > c_ColLength*3-2)
+
+            if (CGInput.CheckKeyPress(ConsoleKey.DownArrow))
+            {           
+                 m_CurrentPosIndex++;
+                
+                if (m_CurrentPosIndex - m_ViewStartIndex > c_ColLength * 3 - 2)
                 {
                     m_ViewStartIndex++;
                 }
             }
             if (CGInput.CheckKeyPress(ConsoleKey.UpArrow))
             {
-                
-                if ( m_CurrentPosIndex - m_ViewStartIndex <= 0 && m_CurrentPosIndex>0)
+
+                if (m_CurrentPosIndex - m_ViewStartIndex <= 0 && m_CurrentPosIndex > 0)
                 {
                     m_ViewStartIndex--;
                 }
                 m_CurrentPosIndex--;
 
             }
-            if(CGInput.CheckKeyPress(ConsoleKey.RightArrow))
+            if (CGInput.CheckKeyPress(ConsoleKey.RightArrow))
             {
                 m_CurrentPosIndex += c_ColLength;
                 if (m_CurrentPosIndex - m_ViewStartIndex > c_ColLength * 3 - 2)
@@ -69,14 +82,14 @@ namespace ConsoleRenderer
 
             if (CGInput.CheckKeyPress(ConsoleKey.LeftArrow))
             {
-               
+
                 if (m_CurrentPosIndex - m_ViewStartIndex > 0 && m_CurrentPosIndex > 0)
                 {
                     m_ViewStartIndex -= c_ColLength;
                     m_CurrentPosIndex -= c_ColLength;
                     if (m_ViewStartIndex < 0) m_ViewStartIndex = 0;
                 }
-                
+
             }
 
             if (m_CurrentPosIndex < 0) m_CurrentPosIndex = 0;
@@ -95,6 +108,8 @@ namespace ConsoleRenderer
                         m_CurrentDirContent = dirList;
                         m_CurrentPosIndex = 0;
                         m_ViewStartIndex = 0;
+                        m_EditString = m_CurrentPath + "untitled.tex";
+                        onPathUpdated?.Invoke(m_EditString);
                     }
                 }
                 else
@@ -110,56 +125,76 @@ namespace ConsoleRenderer
                         m_CurrentPosIndex = 0;
                         m_ViewStartIndex = 0;
                         m_EditString = newPath + "untitled.tex";
+                        onPathUpdated?.Invoke(m_EditString);
                     }
-                    else if(state == VisitState.File)
+                    else if (state == VisitState.File)
                     {
-                        m_EditString = newPath.Substring(0,newPath.Length-1);
+                        m_EditString = newPath.Substring(0, newPath.Length - 1);
+                        onPathUpdated?.Invoke(m_EditString);
+                        onFileSelected?.Invoke(m_EditString);
                     }
 
                 }
 
             }
-            
-
-              // ReadLine("test");
-
-
         }
 
-
-
-
-
-        int m_ViewStartIndex = 0;
-        public override void OnDraw()
+        public void Draw(int screenWidth)
         {
-            
-            CGBuffer.Clear();
-            CGBuffer.WriteXY(0, 0, 12, "FILE OPEN DIALOG");
-            CGBuffer.WriteXY(0, 1, 9, m_CurrentPath);
+          
+            CGBuffer.WriteXY(0, 0, 12, m_Title);
+            CGBuffer.WriteXY(0, 2, 9, m_CurrentPath);
 
-           
+
             //if (m_CurrentPosIndex >= 3*c_ColLength) start = c_ColLength;
             for (int i = m_ViewStartIndex; i < m_CurrentDirContent.Length; ++i)
             {
-                int x = ((i-m_ViewStartIndex) / c_ColLength) * c_DistanceBetweenColumns;
-                
-                if(x < ScreenWidth)
-                CGBuffer.WriteXY(x, 3 + ((i-m_ViewStartIndex)%c_ColLength), (short)(m_CurrentPosIndex==i?(15|1<<4):9), m_CurrentDirContent[i].Substring(m_CurrentPath.Length));
+                int x = ((i - m_ViewStartIndex) / c_ColLength) * c_DistanceBetweenColumns;
+
+                if (x < screenWidth)
+                    CGBuffer.WriteXY(x, 4 + ((i - m_ViewStartIndex) % c_ColLength), (short)(m_CurrentPosIndex == i ? (15 | 1 << 4) : 9), m_CurrentDirContent[i].Substring(m_CurrentPath.Length));
             }
 
-            CGBuffer.WriteXY(0, 28, 15|(1<<4), m_EditString);
-
-
-           
-
+           // CGBuffer.WriteXY(0, 28, 15 | (1 << 4), m_EditString);
         }
-        public override void OnExit()
+
+        public void Focus()
+        {
+            m_FocusFlag = true;
+            onFocusChanged?.Invoke(m_EditString, true);
+        }
+
+        public void UnFocus()
+        {
+            m_FocusFlag = false;
+            onFocusChanged?.Invoke(m_EditString, false);
+        }
+
+        public void TriggerOnPathUpdated()
         {
 
+            onPathUpdated?.Invoke(m_CurrentPath);
+           
         }
 
-
+        public void Dispose()
+        { 
+            if(onPathUpdated != null)
+            foreach (var e in onPathUpdated.GetInvocationList())
+            {
+                onPathUpdated -= (OnPathUpdated)e;
+            }
+            if(onFocusChanged != null)
+            foreach (var e in onFocusChanged.GetInvocationList())
+            {
+                onFocusChanged -= (OnFocusChanged)e;
+            }
+            if(onFileSelected != null)
+            foreach (var e in onFileSelected.GetInvocationList())
+            {
+                onFileSelected -= (OnFileSelected)e;
+            }
+        }
 
         private VisitState VisitDirectory(string path, out string[] directoryList)
         {
@@ -174,7 +209,7 @@ namespace ConsoleRenderer
 
                 directoryList = Directory.GetDirectories(path);
                 files = Directory.GetFiles(path);
-                
+
 
             }
             catch
@@ -203,56 +238,11 @@ namespace ConsoleRenderer
         {
             FileAttributes attr = File.GetAttributes(path);
 
-         
+
             if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
                 return false;
             else
                 return true;
         }
-
-        string ReadLine(string defaultStr)
-        {
-            string displayString = defaultStr;
-            Console.CursorVisible = true;
-            int cursorPos = defaultStr.Length;
-            ConsoleKeyInfo info;
-            
-            while (true)
-            {
-                info = Console.ReadKey(true);
-                Console.SetCursorPosition(5, 29);
-                Console.Write(new string(' ', displayString.Length+4));
-                if (char.IsLetterOrDigit(info.KeyChar))
-                {
-                 //   Console.Write(info.KeyChar);
-                    displayString = displayString.Insert(cursorPos, info.KeyChar.ToString());
-                    cursorPos++;
-                        //+= info.KeyChar;
-                }
-                if (info.Key == ConsoleKey.Backspace && cursorPos>0)
-                {
-                    displayString = displayString.Remove(cursorPos-1, 1);
-                    cursorPos--;
-                }
-                else if (info.Key == ConsoleKey.LeftArrow)
-                {
-                    if (cursorPos > 0) cursorPos--;
-                }
-                else if (info.Key == ConsoleKey.RightArrow)
-                {
-                    if (cursorPos < displayString.Length) cursorPos++;
-                }
-                Console.SetCursorPosition(5, 29);
-                Console.Write(displayString);
-                Console.SetCursorPosition(5+cursorPos, 29);
-
-            }
-
-            
-           
-            // 
-            return defaultStr;
-        }
-
     }
 }

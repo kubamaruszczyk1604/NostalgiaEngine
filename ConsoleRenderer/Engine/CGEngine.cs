@@ -58,6 +58,7 @@ namespace ConsoleRenderer
         {
 
             if(m_CurrentScene != null) m_CurrentScene.OnPause();
+ 
             scene.OnInitialize();
             SetSceneAsCurrent(scene);
             scene.OnStart();
