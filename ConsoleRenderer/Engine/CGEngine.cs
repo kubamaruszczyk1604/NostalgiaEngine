@@ -95,29 +95,31 @@ namespace ConsoleRenderer
                Console.Title = Title + " @"+ ScreenWidth.ToString() + "x" +  ScreenHeight.ToString() + 
                     " FPS: " + CGFrameTimer.GetFPS() + "   FRAME TIME: " + m_Delta + "s ";
 
-
+                var sceneType = m_CurrentScene.GetType();
                 m_CurrentScene.OnUpdate(CGFrameTimer.GetDeltaTime());
-                var resetEvent = new ManualResetEvent(false); // Will be reset when buffer is ready to be swaped
-               
-                //For each column..
-                for (int x = 0; x < ScreenWidth; ++x)
+                if (sceneType.GetMethod("OnDrawPerColumn").DeclaringType == sceneType)
                 {
-                    // Queue new task
-                    ThreadPool.QueueUserWorkItem(
-                       new WaitCallback(
-                     delegate (object state)
-                     {
-                         object[] array = state as object[];
-                         int column = Convert.ToInt32(array[0]);
+                    var resetEvent = new ManualResetEvent(false); // Will be reset when buffer is ready to be swaped
 
-                         m_CurrentScene.OnDrawPerColumn(column);
+                    //For each column..
+                    for (int x = 0; x < ScreenWidth; ++x)
+                    {
+                        // Queue new task
+                        ThreadPool.QueueUserWorkItem(
+                           new WaitCallback(
+                         delegate (object state)
+                         {
+                             object[] array = state as object[];
+                             int column = Convert.ToInt32(array[0]);
 
-                         if (column >= ScreenWidth - 1) resetEvent.Set();
-                     }), new object[] { x });
+                             m_CurrentScene.OnDrawPerColumn(column);
+
+                             if (column >= ScreenWidth - 1) resetEvent.Set();
+                         }), new object[] { x });
+                    }
+
+                    resetEvent.WaitOne();
                 }
-                
-                resetEvent.WaitOne();
-
                 m_CurrentScene.OnDraw();
 
                 CGBuffer.Swap();

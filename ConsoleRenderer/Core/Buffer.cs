@@ -26,9 +26,9 @@ namespace ConsoleRenderer.Core
         static extern bool WriteConsoleOutput(
           SafeFileHandle hConsoleOutput,
           CharInfo[] lpBuffer,
-          Coord dwBufferSize,
-          Coord dwBufferCoord,
-          ref SmallRect lpWriteRegion);
+          CGPoint dwBufferSize,
+          CGPoint dwBufferCoord,
+          ref CGRectangle lpWriteRegion);
 
 
         [DllImport("kernel32.dll", SetLastError = true)]
@@ -43,18 +43,6 @@ namespace ConsoleRenderer.Core
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         internal static extern bool GetCurrentConsoleFontEx(IntPtr hConsoleOutput, bool MaximumWindow, ref FontInfoEx ConsoleCurrentFontEx);
 
-        [StructLayout(LayoutKind.Sequential)]
-        public struct Coord
-        {
-            public short X;
-            public short Y;
-
-            public Coord(short X, short Y)
-            {
-                this.X = X;
-                this.Y = Y;
-            }
-        };
 
         [StructLayout(LayoutKind.Explicit)]
         public struct CharUnion
@@ -74,14 +62,7 @@ namespace ConsoleRenderer.Core
             public short Attributes;
         }
 
-        [StructLayout(LayoutKind.Sequential)]
-        public struct SmallRect
-        {
-            public short Left;
-            public short Top;
-            public short Right;
-            public short Bottom;
-        }
+
 
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
@@ -102,9 +83,9 @@ namespace ConsoleRenderer.Core
         static int m_sWidth;
         static int m_sHeight;
         static CharInfo[] m_Bufer;
-        static SmallRect m_ConsoleRect;
-        static Coord m_ScrTopLeft;
-        static Coord m_ScrBottomRight;
+        static CGRectangle m_ConsoleRect;
+        static CGPoint m_ScrTopLeft;
+        static CGPoint m_ScrBottomRight;
         static int m_sBuffPtr;
 
         static public bool Initialize(short width, short height, short pixelW, short pixelH)
@@ -112,8 +93,8 @@ namespace ConsoleRenderer.Core
             HalfTemporalResolution = false;
             m_sWidth = width;
             m_sHeight = height;
-            m_ScrBottomRight = new Coord() { X = (short)m_sWidth, Y = (short)m_sHeight };
-            m_ScrTopLeft = new Coord() { X = 0, Y = 0 };
+            m_ScrBottomRight = new CGPoint() { X = (short)m_sWidth, Y = (short)m_sHeight };
+            m_ScrTopLeft = new CGPoint() { X = 0, Y = 0 };
             m_sBuffPtr = 0;
             m_ConsoleHandle = CreateFile("CONOUT$", 0x40000000, 2, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero);
             if (m_ConsoleHandle.IsInvalid) return false;
@@ -142,7 +123,7 @@ namespace ConsoleRenderer.Core
 
             
             m_Bufer = new CharInfo[width * height];
-            m_ConsoleRect = new SmallRect() { Left = 5, Top = 2, Right = (short)(width + 5), Bottom = (short)(height + 2) };
+            m_ConsoleRect = new CGRectangle() { Left = 5, Top = 2, Right = (short)(width + 5), Bottom = (short)(height + 2) };
             
             Console.CursorVisible = false;
             Console.Clear();
@@ -159,7 +140,7 @@ namespace ConsoleRenderer.Core
 
         }
 
-        static public void AddAsync(char c, short color, int x, int y)
+        static public void PutChar(char c, short color, int x, int y)
         {
 
             int index = m_sWidth * (y) + x;
@@ -177,7 +158,7 @@ namespace ConsoleRenderer.Core
         {
             for (int i  = 0; i < line.Length;++i)
             {
-                AddAsync(line[i], col, x + i, y);
+                PutChar(line[i], col, x + i, y);
             }
         }
 
@@ -186,20 +167,25 @@ namespace ConsoleRenderer.Core
             Array.Clear(m_Bufer, 0, m_Bufer.Length);
         }
 
-        static int i = 0;
+  
         static public void Swap()
         {
-            i = 1 -i;
-            if (HalfTemporalResolution)
-            {
-                if (i == 1) WriteConsoleOutput(m_ConsoleHandle, m_Bufer, m_ScrBottomRight, m_ScrTopLeft, ref m_ConsoleRect);
-            }
-            else
-            {
-                WriteConsoleOutput(m_ConsoleHandle, m_Bufer, m_ScrBottomRight, m_ScrTopLeft, ref m_ConsoleRect);
-            }
+
+
+             WriteConsoleOutput(m_ConsoleHandle, m_Bufer, m_ScrBottomRight, m_ScrTopLeft, ref m_ConsoleRect);
+           // WriteCon(0, 0, 320, 200);
 
             m_sBuffPtr = 0;
+        }
+
+        static private void WriteCon(short startX, short startY, short w, short h)
+        {
+            
+            WriteConsoleOutput(m_ConsoleHandle, m_Bufer, new CGPoint(w,h), new CGPoint(startX, startY), ref m_ConsoleRect);
+        }
+        static public void SwapMT()
+        {
+
         }
 
     }

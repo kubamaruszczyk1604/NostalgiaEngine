@@ -29,8 +29,8 @@ namespace ConsoleRenderer.Tools
             m_DataString = defaultStr;
             m_CursorPos = defaultStr.Length;
             m_Position = new CGPoint();
-            m_Position.X = x;
-            m_Position.Y = y;
+            m_Position.X = (short)x;
+            m_Position.Y = (short)y;
             m_FocusedFlag = inFocus;
         }
 

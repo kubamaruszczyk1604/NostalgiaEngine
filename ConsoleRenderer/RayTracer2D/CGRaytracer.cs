@@ -184,11 +184,11 @@ namespace ConsoleRenderer
                     if (py > ceiling) //draw ceiling
                     {
 
-                        CGBuffer.AddAsync(ceilSample.Character, ceilSample.BitMask, x, y);
+                        CGBuffer.PutChar(ceilSample.Character, ceilSample.BitMask, x, y);
                     }
                     else if (py < floorp)
                     {
-                        CGBuffer.AddAsync(floorSample.Character, floorSample.BitMask, x, y);
+                        CGBuffer.PutChar(floorSample.Character, floorSample.BitMask, x, y);
                     }
                     else
                     {
@@ -205,16 +205,16 @@ namespace ConsoleRenderer
                         //    wallChar = (char)CGBlock.Strong;
                         //    wallCol = 0;
                         //}
-                        CGBuffer.AddAsync(wallChar, wallCol, x, y);
+                        CGBuffer.PutChar(wallChar, wallCol, x, y);
                     }
 
                 }
                 else
                 {
 
-                    if (py > ceiling) CGBuffer.AddAsync(ceilSample.Character, ceilSample.BitMask, x, y);
-                    else if (py < floorp) CGBuffer.AddAsync(floorSample.Character, floorSample.BitMask, x, y);
-                    else CGBuffer.AddAsync((char)CGBlock.Weak, 0x0000 | 0x0000, x, y);
+                    if (py > ceiling) CGBuffer.PutChar(ceilSample.Character, ceilSample.BitMask, x, y);
+                    else if (py < floorp) CGBuffer.PutChar(floorSample.Character, floorSample.BitMask, x, y);
+                    else CGBuffer.PutChar((char)CGBlock.Weak, 0x0000 | 0x0000, x, y);
                 }
 
 
@@ -239,11 +239,11 @@ namespace ConsoleRenderer
                     int cell = GetCell(mapXY);
                     if(cell != 0)
                     {
-                        CGBuffer.AddAsync('#', 15, (int)imgW-x, (int)imgH-y);
+                        CGBuffer.PutChar('#', 15, (int)imgW-x, (int)imgH-y);
                     }
                     else
                     {
-                        CGBuffer.AddAsync('#', 8, (int)imgW - x, (int)imgH - y);
+                        CGBuffer.PutChar('#', 8, (int)imgW - x, (int)imgH - y);
                     }
 
                     Vector2 A = new Vector2(-0.65f, -0.65f);
@@ -258,7 +258,7 @@ namespace ConsoleRenderer
                     C += m_ViewerPos;
                     if (CGHelper.InTriangle(mapXY,A,B,C))
                     {
-                        CGBuffer.AddAsync('@', 13 << 4, (int)imgW - x, (int)imgH - y);
+                        CGBuffer.PutChar('@', 13 << 4, (int)imgW - x, (int)imgH - y);
                     }
 
                 }

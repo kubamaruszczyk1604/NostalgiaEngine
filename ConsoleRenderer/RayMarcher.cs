@@ -305,11 +305,11 @@ namespace ConsoleRenderer
                     if (py > ceiling) //draw ceiling
                     {
                         
-                        CGBuffer.AddAsync(ceilSample.Character, ceilSample.BitMask, x, y);
+                        CGBuffer.PutChar(ceilSample.Character, ceilSample.BitMask, x, y);
                     }
                     else if (py < floorp)
                     {
-                        CGBuffer.AddAsync(floorSample.Character, floorSample.BitMask, x, y);
+                        CGBuffer.PutChar(floorSample.Character, floorSample.BitMask, x, y);
                     }
                     else
                     {
@@ -326,16 +326,16 @@ namespace ConsoleRenderer
                         //    wallChar = (char)Block.Strong;
                         //    wallCol = 0;
                         //}
-                        CGBuffer.AddAsync(wallChar, wallCol, x, y);
+                        CGBuffer.PutChar(wallChar, wallCol, x, y);
                     }
 
                 }
                 else
                 {
 
-                    if (py > ceiling) CGBuffer.AddAsync(ceilSample.Character, ceilSample.BitMask, x, y);
-                    else if (py < floorp) CGBuffer.AddAsync(floorSample.Character, floorSample.BitMask, x, y);
-                    else CGBuffer.AddAsync((char)CGBlock.Weak, 0x0000 | 0x0000, x, y);
+                    if (py > ceiling) CGBuffer.PutChar(ceilSample.Character, ceilSample.BitMask, x, y);
+                    else if (py < floorp) CGBuffer.PutChar(floorSample.Character, floorSample.BitMask, x, y);
+                    else CGBuffer.PutChar((char)CGBlock.Weak, 0x0000 | 0x0000, x, y);
                 }
 
 
@@ -353,7 +353,7 @@ namespace ConsoleRenderer
 
             for (int y = 0; y < m_ScrHeight; ++y)
             {
-                CGBuffer.AddAsync(csample.Character, csample.BitMask, x, y);
+                CGBuffer.PutChar(csample.Character, csample.BitMask, x, y);
                 //int index = (int)((((float)x) / 150.0f) * 5.0f);
                 ////ProduceShadedColor(out char ceilChar, out short ceilCol, Math.Abs(py), (short)COLOUR.FG_BLUE, (short)COLOUR.BG_BLUE);
                 //if (y < 70)
@@ -381,7 +381,7 @@ namespace ConsoleRenderer
             {
                 float v = (float)y / 150.0f;
                 CGColorSample csample = tex.Sample(u, v,0.1f+u);
-                CGBuffer.AddAsync(csample.Character, csample.BitMask, x, y);
+                CGBuffer.PutChar(csample.Character, csample.BitMask, x, y);
 
 
 

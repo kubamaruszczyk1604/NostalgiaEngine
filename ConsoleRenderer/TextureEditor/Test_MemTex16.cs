@@ -75,7 +75,7 @@ namespace ConsoleRenderer.TextureEditor
                 {
                     MemTex16.MT16Pix pix = m_MemTex16.GetPixel(x, y);
                     bool d = pix == m_Current;
-                    CGBuffer.AddAsync( d?'X':'0', (short)m_MemTex16.GetColor(x,y), x, y);
+                    CGBuffer.PutChar( d?'X':'0', (short)m_MemTex16.GetColor(x,y), x, y);
                 }
             }
         }

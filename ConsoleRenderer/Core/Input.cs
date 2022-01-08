@@ -738,8 +738,8 @@ namespace ConsoleRenderer.Core
             CGPoint wPos = WindowControl.GetWindowPosition();
             CGPoint mScrPos = new CGPoint();
             GetCursorPos(ref mScrPos);
-            c_MousePosition.X = mScrPos.X - wPos.X;
-            c_MousePosition.Y = mScrPos.Y - wPos.Y;
+            c_MousePosition.X = (short)(mScrPos.X - wPos.X);
+            c_MousePosition.Y = (short)(mScrPos.Y - wPos.Y);
             return c_MousePosition;
         }
     }

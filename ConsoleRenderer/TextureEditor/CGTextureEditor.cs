@@ -201,15 +201,15 @@ namespace ConsoleRenderer.TextureEditor
             {
                 if (CGHelper.InRectangle(pixelPos, new Vector2(c_ColorWindowWidth * (i), 0) + c_ColorPanelPos, c_ColorWindowWidth, c_ColorWindowHeight))
                 {
-                    CGBuffer.AddAsync(' ', (short)((i) << 4), x, y);
-                    if (i == 16) CGBuffer.AddAsync((char)CGBlock.Solid, (short)(8 << 4), x, y);
+                    CGBuffer.PutChar(' ', (short)((i) << 4), x, y);
+                    if (i == 16) CGBuffer.PutChar((char)CGBlock.Solid, (short)(8 << 4), x, y);
                 }
 
             }
 
             if (CGHelper.InRectangle(pixelPos, new Vector2(c_ColorWindowWidth * SelectedColor, 8) + c_ColorPanelPos, c_ColorWindowWidth, 2))
             {
-                CGBuffer.AddAsync((char)CGBlock.Middle, (short)((15)), x, y);
+                CGBuffer.PutChar((char)CGBlock.Middle, (short)((15)), x, y);
             }
         }
 
@@ -229,7 +229,7 @@ namespace ConsoleRenderer.TextureEditor
             for (int y = 0; y < ScreenHeight; ++y)
             {
 
-                CGBuffer.AddAsync((char)CGBlock.Weak, (short)ConsoleColor.DarkBlue, x, y);
+                CGBuffer.PutChar((char)CGBlock.Weak, (short)ConsoleColor.DarkBlue, x, y);
 
 
                 DrawPalette(x, y);
@@ -241,11 +241,11 @@ namespace ConsoleRenderer.TextureEditor
                    int col = m_ImageData.GetColor(x- (int)c_DrawingCanvasPos.X, y- (int)c_DrawingCanvasPos.Y);
                     if (col == 16)
                     {
-                        CGBuffer.AddAsync((char)CGBlock.Solid, (short)(8<<4), x, y);
+                        CGBuffer.PutChar((char)CGBlock.Solid, (short)(8<<4), x, y);
                     }
                     else
                     {
-                        CGBuffer.AddAsync(' ', (short)(col << 4), x, y);
+                        CGBuffer.PutChar(' ', (short)(col << 4), x, y);
                     }
                 }
             }
@@ -260,7 +260,7 @@ namespace ConsoleRenderer.TextureEditor
             {
                 for (int h =0; h<m_BrushH;++h)
                 {
-                    CGBuffer.AddAsync('&', (short)(((int)SelectedColor << 4) | ((SelectedColor == 0) ? 15 : 0)),
+                    CGBuffer.PutChar('&', (short)(((int)SelectedColor << 4) | ((SelectedColor == 0) ? 15 : 0)),
                  (int)c_DrawingCanvasPos.X + m_cursorX+w, (int)c_DrawingCanvasPos.Y + m_cursorY+h);
                 }
             }
@@ -268,18 +268,18 @@ namespace ConsoleRenderer.TextureEditor
             int offset = (int)c_DrawingCanvasPos.X;
             for (int i = 0; i < fl.Length;++i)
             {
-                CGBuffer.AddAsync(fl[i], 8<<4 , offset + i, (int)c_DrawingCanvasPos.Y-2);
+                CGBuffer.PutChar(fl[i], 8<<4 , offset + i, (int)c_DrawingCanvasPos.Y-2);
             }
             offset += fl.Length + 2;
 
             for (int i = 0; i < c_Fill.Length; ++i)
             {
-                CGBuffer.AddAsync(c_Fill[i], (short)(m_BrushFlag?8:10), offset + i, (int)c_DrawingCanvasPos.Y - 2);
+                CGBuffer.PutChar(c_Fill[i], (short)(m_BrushFlag?8:10), offset + i, (int)c_DrawingCanvasPos.Y - 2);
             }
             offset += c_Fill.Length + 2;
             for (int i = 0; i < c_Brush.Length; ++i)
             {
-                CGBuffer.AddAsync(c_Brush[i], (short)(m_BrushFlag ? 10 : 8), offset + i, (int)c_DrawingCanvasPos.Y - 2);
+                CGBuffer.PutChar(c_Brush[i], (short)(m_BrushFlag ? 10 : 8), offset + i, (int)c_DrawingCanvasPos.Y - 2);
             }
         }
         public override void OnExit()
