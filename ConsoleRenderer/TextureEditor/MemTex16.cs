@@ -37,36 +37,53 @@ namespace ConsoleRenderer.TextureEditor
         public int Width { get; private set; }
         public int Height { get; private set; }
 
+        static public MemTex16 Copy(MemTex16 source)
+        {
+            return new MemTex16(source);
+        }
+
         private int XY2I(int x, int y)
         {
             return (Width * y + x);
         }
 
-        public MemTex16(int w, int h)
+        public MemTex16(MemTex16 source)
         {
-            Width = w;
-            Height = h;
+            Width = source.Width;
+            Height = source.Height;
+            CreateTexture(source.Width, source.Height, source.m_Pixels);
+        }
+
+        void CreateTexture(int w, int h, MT16Pix[] source = null)
+        {
             m_Pixels = new MT16Pix[w * h];
-            for(int y = 0; y < h;++y)
+
+            for (int y = 0; y < h; ++y)
             {
-                for(int x= 0; x<w;++x)
+                for (int x = 0; x < w; ++x)
                 {
-                    MT16Pix pixel = new MT16Pix(x, y, 16);
-                    pixel.Metadata =0;
-                    if ((y!=0))
+                    MT16Pix pixel = new MT16Pix(x, y, (source==null)?16:source[XY2I(x,y)].Col);
+                    pixel.Metadata = 0;
+                    if ((y != 0))
                     {
                         pixel.UP = m_Pixels[XY2I(x, y - 1)];
                         pixel.UP.DOWN = pixel;
                     }
-                    if(x!=0)
+                    if (x != 0)
                     {
                         pixel.LEFT = m_Pixels[XY2I(x - 1, y)];
                         pixel.LEFT.RIGHT = pixel;
                     }
 
-                    m_Pixels[XY2I(x,y)] = pixel;
+                    m_Pixels[XY2I(x, y)] = pixel;
                 }
             }
+        }
+        public MemTex16(int w, int h)
+        {
+            Width = w;
+            Height = h;
+            CreateTexture(w, h);
         }
 
         public void FloodFill(int x, int y, int color)

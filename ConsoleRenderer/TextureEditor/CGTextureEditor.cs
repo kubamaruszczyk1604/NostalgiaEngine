@@ -101,27 +101,26 @@ namespace ConsoleRenderer.TextureEditor
                 {
                     m_ImageH--;
                     if (m_ImageH < c_MinImageH) m_ImageH = c_MinImageH;
-
                 }
                 else
                 {
                     m_cursorY -= 1;
                 }
-
             }
+
             if (CGInput.CheckKeyPress(ConsoleKey.DownArrow))
             {
                 if (CGInput.CheckKeyDown((ConsoleKey)0xA2))
                 {
                     m_ImageH++;
                     if (m_ImageH > c_MaxImageH) m_ImageH = c_MaxImageH;
-
                 }
                 else
                 {
                     m_cursorY += 1;
                 }
             }
+
             if (CGInput.CheckKeyPress(ConsoleKey.LeftArrow))
             {
 
@@ -129,19 +128,17 @@ namespace ConsoleRenderer.TextureEditor
                 {
                     m_ImageW--;
                     if (m_ImageW < c_MinImageW) m_ImageW = c_MinImageW;
-
                 }
                 else if (CGInput.CheckKeyDown(ConsoleKey.C))
                 {
                     SelectedColor--;
-
                 }
                 else
                 {
                     m_cursorX -= 1;
                 }
-
             }
+
             if (CGInput.CheckKeyPress(ConsoleKey.RightArrow))
             {
                 if (CGInput.CheckKeyDown((ConsoleKey)0xA2))
@@ -153,18 +150,15 @@ namespace ConsoleRenderer.TextureEditor
                 else if (CGInput.CheckKeyDown(ConsoleKey.C))
                 {
                     SelectedColor++;
-
                 }
                 else
                 {
                     m_cursorX += 1;
                 }
             }
-            //m_cursorY = m_cursorY % (m_ImageH-m_BrushH);
+
             if (m_cursorY >= (m_ImageH - m_BrushH)) m_cursorY = (m_ImageH - m_BrushH);
             if (m_cursorY < 0) m_cursorY = 0;
-
-            // m_cursorX = m_cursorX % m_ImageW;
             if (m_cursorX < 0) m_cursorX = 0;
             if (m_cursorX >= (m_ImageW - m_BrushW)) m_cursorX = (m_ImageW - m_BrushW);
 
@@ -183,7 +177,6 @@ namespace ConsoleRenderer.TextureEditor
                             m_ImageData.SetPixel(m_cursorX + w, m_cursorY + h, SelectedColor);
                         }
                     }
-                    
                 }
                 else
                 {
@@ -206,6 +199,7 @@ namespace ConsoleRenderer.TextureEditor
                 m_ImageData.FloodFill(m_cursorX, m_cursorY, SelectedColor);
                 OnActionFinished();
             }
+
             if (CGInput.CheckKeyPress((ConsoleKey)0x10))
             {
                 if (m_BrushFlag == false) m_BrushFlag = true;
@@ -215,7 +209,6 @@ namespace ConsoleRenderer.TextureEditor
 
             if (CGInput.CheckKeyPress(ConsoleKey.N))
             {
-                // CGEngine.Instance.PushScene(new CGRaytracer2D());
                 var sd = new CGSaveDialog();
                 sd.onSceneExit += OnSave;
                 CGEngine.Instance.PushScene(sd);
@@ -241,8 +234,7 @@ namespace ConsoleRenderer.TextureEditor
         }
 
         private void OnActionFinished()
-        {
-           
+        { 
             Console.Beep();
         }
         private void DrawPalette(int x, int y)
@@ -255,7 +247,6 @@ namespace ConsoleRenderer.TextureEditor
                     CGBuffer.PutChar(' ', (short)((i) << 4), x, y);
                     if (i == 16) CGBuffer.PutChar((char)CGBlock.Solid, (short)(8 << 4), x, y);
                 }
-
             }
 
             if (CGHelper.InRectangle(pixelPos, new Vector2(c_ColorWindowWidth * SelectedColor, 8) + c_ColorPanelPos, c_ColorWindowWidth, 2))
@@ -274,6 +265,7 @@ namespace ConsoleRenderer.TextureEditor
         {
             base.OnPause();
         }
+
         public override void OnDrawPerColumn(int x)
         {
 
@@ -281,10 +273,7 @@ namespace ConsoleRenderer.TextureEditor
             {
 
                 CGBuffer.PutChar((char)CGBlock.Weak, (short)ConsoleColor.DarkBlue, x, y);
-
-
                 DrawPalette(x, y);
-
  
                 if (x >= (int)c_DrawingCanvasPos.X && x < m_ImageW + (int)c_DrawingCanvasPos.X && 
                     y >= (int)c_DrawingCanvasPos.Y && y< m_ImageH + (int)c_DrawingCanvasPos.Y )
