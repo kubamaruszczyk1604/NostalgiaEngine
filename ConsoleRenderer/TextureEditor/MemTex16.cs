@@ -151,5 +151,22 @@ namespace ConsoleRenderer.TextureEditor
             return m_Pixels[XY2I(x, y)];
         }
 
+
+        public string AsString(int w, int h)
+        {
+            string ret = "";
+            for(int y =0; y< h; y++)
+            {
+                for (int x = 0; x < w; ++x)
+                {
+                    ret += m_Pixels[XY2I(x, y)].Col.ToString() + ((x==w-1)?"\n":",") ;
+                }
+            }
+            //for (int i = 0; i < m_Pixels.Length;++i)
+            //{
+            //    ret += m_Pixels[i].Col + ((i % Width == 0) ? "\n" : ",");
+            //}
+            return ret;
+        }
     }
 }

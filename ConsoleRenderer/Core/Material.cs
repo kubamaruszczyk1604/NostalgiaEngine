@@ -80,6 +80,12 @@ namespace ConsoleRenderer.Core
 
         static public CGColorSample MakeCol(ConsoleColor col1, ConsoleColor col2, float t)
         {
+
+            //CGColorSample sc = new CGColorSample();
+            //sc.Character =(char)CGBlock.Middle;
+            //sc.BitMask = 1;
+            //return sc;
+
             int BG1 = (int)col1;
             int FG1 = ((int)col1) << 4;
             int BG2 = (int)col2;

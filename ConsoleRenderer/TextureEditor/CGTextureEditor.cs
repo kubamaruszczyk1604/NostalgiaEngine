@@ -4,8 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ConsoleRenderer.Core;
+using ConsoleRenderer;
 using System.Runtime.InteropServices;
 using OpenTK;
+using System.IO;
 
 namespace ConsoleRenderer.TextureEditor
 {
@@ -26,7 +28,7 @@ namespace ConsoleRenderer.TextureEditor
         private readonly Vector2[] c_Directions = new Vector2[] { new Vector2(-1, 0), new Vector2(1, 0), new Vector2(0, -1), new Vector2(0, 1) };
 
 
-        private readonly string fl = "MODE(ENTER)";
+        private readonly string fl = "MODE(Shift)";
         private readonly string c_Fill = "FILL";
         private readonly string c_Brush = "BRUSH";
 
@@ -38,6 +40,8 @@ namespace ConsoleRenderer.TextureEditor
 
         private int m_ImageW;
         private int m_ImageH;
+
+        private bool m_ActionStarted;
 
 
 
@@ -53,13 +57,14 @@ namespace ConsoleRenderer.TextureEditor
             PixelHeight = 8;
             m_ImageW = 100;
             m_ImageH = 70;
-            m_BrushW = 2;
-            m_BrushH = 2;
+            m_BrushW = 1;
+            m_BrushH = 1;
             SelectedColor = 10;
             m_ImageData = new MemTex16(m_ImageW, m_ImageH);
             m_cursorX = 10;
             m_cursorY = 10;
             FlushKeys();
+            m_ActionStarted = false;
         }
 
         private void FlushKeys()
@@ -82,14 +87,14 @@ namespace ConsoleRenderer.TextureEditor
         CGPoint m_LastMouse = new CGPoint();
         public override void OnUpdate(float deltaTime)
         {
-            CGPoint mp = CGInput.GetMousePostion();
-            // Console.Title = (mp.X / PixelWidth).ToString() + ", " + mp.Y.ToString();
-            // if ((Math.Abs(mp.X - m_LastMouse.X) > 0) && (Math.Abs(mp.Y - m_LastMouse.Y) > 0))
-            {
-                m_cursorX = (mp.X / PixelWidth) - 8;
-                m_cursorY = (mp.Y) / PixelHeight - 15;
-            }
-            m_LastMouse = mp;
+            //CGPoint mp = CGInput.GetMousePostion();
+            //// Console.Title = (mp.X / PixelWidth).ToString() + ", " + mp.Y.ToString();
+            //// if ((Math.Abs(mp.X - m_LastMouse.X) > 0) && (Math.Abs(mp.Y - m_LastMouse.Y) > 0))
+            //{
+            //    m_cursorX = (mp.X / PixelWidth) - 8;
+            //    m_cursorY = (mp.Y) / PixelHeight - 15;
+            //}
+           // m_LastMouse = mp;
             if (CGInput.CheckKeyPress(ConsoleKey.UpArrow))
             {
                 if (CGInput.CheckKeyDown((ConsoleKey)0xA2))
@@ -126,6 +131,11 @@ namespace ConsoleRenderer.TextureEditor
                     if (m_ImageW < c_MinImageW) m_ImageW = c_MinImageW;
 
                 }
+                else if (CGInput.CheckKeyDown(ConsoleKey.C))
+                {
+                    SelectedColor--;
+
+                }
                 else
                 {
                     m_cursorX -= 1;
@@ -138,6 +148,11 @@ namespace ConsoleRenderer.TextureEditor
                 {
                     m_ImageW++;
                     if (m_ImageW > c_MaxImageW) m_ImageW = c_MaxImageW;
+
+                }
+                else if (CGInput.CheckKeyDown(ConsoleKey.C))
+                {
+                    SelectedColor++;
 
                 }
                 else
@@ -153,11 +168,9 @@ namespace ConsoleRenderer.TextureEditor
             if (m_cursorX < 0) m_cursorX = 0;
             if (m_cursorX >= (m_ImageW - m_BrushW)) m_cursorX = (m_ImageW - m_BrushW);
 
-            if (CGInput.CheckKeyPress(ConsoleKey.C))
-            {
-                SelectedColor++;
-                SelectedColor %= 17;
-            }
+            SelectedColor %= 17;
+            if (SelectedColor < 0) SelectedColor = 16;
+
 
             if (CGInput.CheckKeyDown(ConsoleKey.Spacebar))
             {
@@ -170,13 +183,30 @@ namespace ConsoleRenderer.TextureEditor
                             m_ImageData.SetPixel(m_cursorX + w, m_cursorY + h, SelectedColor);
                         }
                     }
+                    
                 }
                 else
                 {
                     m_ImageData.FloodFill(m_cursorX, m_cursorY, SelectedColor);
+                    
+                }
+                m_ActionStarted = true;
+            }
+            else
+            {
+                if(m_ActionStarted)
+                {
+                    OnActionFinished();
+                    m_ActionStarted = false;
                 }
             }
-            if (CGInput.CheckKeyPress(ConsoleKey.Enter))
+
+            if(CGInput.CheckKeyPress(ConsoleKey.Enter))
+            {
+                m_ImageData.FloodFill(m_cursorX, m_cursorY, SelectedColor);
+                OnActionFinished();
+            }
+            if (CGInput.CheckKeyPress((ConsoleKey)0x10))
             {
                 if (m_BrushFlag == false) m_BrushFlag = true;
                 else m_BrushFlag = false;
@@ -185,15 +215,36 @@ namespace ConsoleRenderer.TextureEditor
 
             if (CGInput.CheckKeyPress(ConsoleKey.N))
             {
-               // CGEngine.Instance.PushScene(new CGRaytracer2D());
-                CGEngine.Instance.PushScene(new ConsoleRenderer.CGSaveDialog());
+                // CGEngine.Instance.PushScene(new CGRaytracer2D());
+                var sd = new CGSaveDialog();
+                sd.onSceneExit += OnSave;
+                CGEngine.Instance.PushScene(sd);
             }
             if (CGInput.CheckKeyPress(ConsoleKey.Escape))
             {
                 Exit();
             }
         }
+        private void OnSave(CGScene scene)
+        {
+           
+            string texStr = m_ImageData.AsString(m_ImageW,m_ImageH);
+            string path = scene.ReturnData.ToString();
+            if(path != "0")
+            {
+                using (StreamWriter writer = new StreamWriter(path))
+                {
+                    writer.Write(texStr);
+                    writer.Close();
+                }
+            }
+        }
 
+        private void OnActionFinished()
+        {
+           
+            Console.Beep();
+        }
         private void DrawPalette(int x, int y)
         {
             Vector2 pixelPos = new Vector2(x, y);

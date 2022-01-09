@@ -173,20 +173,21 @@ namespace ConsoleRenderer.Core
 
 
              WriteConsoleOutput(m_ConsoleHandle, m_Bufer, m_ScrBottomRight, m_ScrTopLeft, ref m_ConsoleRect);
-           // WriteCon(0, 0, 320, 200);
+             //WriteCon(0, 0, 320, 1);
 
             m_sBuffPtr = 0;
         }
 
         static private void WriteCon(short startX, short startY, short w, short h)
         {
-            
-            WriteConsoleOutput(m_ConsoleHandle, m_Bufer, new CGPoint(w,h), new CGPoint(startX, startY), ref m_ConsoleRect);
+            CGRectangle rect = new CGRectangle((short)(startX+5), (short)(startY+2), (short)(w+5), (short)(h+2)) ;
+            WriteConsoleOutput(m_ConsoleHandle, m_Bufer, new CGPoint(w,h), new CGPoint(startX, startY), ref rect);
         }
-        static public void SwapMT()
-        {
 
-        }
+
+
+
+
 
     }
     

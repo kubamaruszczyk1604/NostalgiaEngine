@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace ConsoleRenderer
 {
+    public delegate void OnSceneExit(CGScene scene);
     public class CGScene
     {
         public string Title { get; protected set; }
@@ -15,6 +16,7 @@ namespace ConsoleRenderer
         public int PixelHeight { get; protected set; }
         public object ReturnData { get; private set; }
         public Type ReturnDataType { get; private set; }
+        public OnSceneExit onSceneExit { get; set; }
         
 
         public void Exit(object returnData = null)
@@ -25,6 +27,8 @@ namespace ConsoleRenderer
                 ReturnDataType = ReturnData.GetType();
             }
             CGEngine.Instance.PopScene();
+            onSceneExit?.Invoke(this);
+            onSceneExit = null;
         }
         public virtual void OnInitialize() { }
         public virtual void OnStart() { }

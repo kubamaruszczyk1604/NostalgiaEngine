@@ -49,7 +49,7 @@ namespace ConsoleRenderer
             ScreenHeight = scene.ScreenHeight > 10 ? scene.ScreenHeight : DEFAULT_SCR_H;
             PixelWidth = scene.PixelWidth > 0 ? scene.PixelWidth : DEFAULT_PIXEL_W;
             PixelHeight = scene.PixelHeight > 0 ? scene.PixelHeight : DEFAULT_PIXEL_H;
-            Title = "D";
+            Title = "CGENGINE";
 
             CGBuffer.Initialize((short)ScreenWidth, (short)ScreenHeight, (short)PixelWidth, (short)PixelHeight);
         }
@@ -119,6 +119,7 @@ namespace ConsoleRenderer
                     }
 
                     resetEvent.WaitOne();
+                    
                 }
                 m_CurrentScene.OnDraw();
 
