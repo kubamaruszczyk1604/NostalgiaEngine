@@ -72,15 +72,17 @@ namespace ConsoleRenderer.TextureEditor
 
         private void FlushKeys()
         {
-            CGInput.CheckKeyPress(ConsoleKey.Tab);
-            CGInput.CheckKeyPress(ConsoleKey.UpArrow);
-            CGInput.CheckKeyPress(ConsoleKey.DownArrow);
-            CGInput.CheckKeyPress(ConsoleKey.LeftArrow);
-            CGInput.CheckKeyPress(ConsoleKey.RightArrow);
-            CGInput.CheckKeyDown(ConsoleKey.Spacebar);
-            CGInput.CheckKeyPress(ConsoleKey.Enter);
-            CGInput.CheckKeyPress(ConsoleKey.N);
-            CGInput.CheckKeyPress(ConsoleKey.Escape);
+            //CGInput.CheckKeyPress(ConsoleKey.Tab);
+            //CGInput.CheckKeyPress(ConsoleKey.UpArrow);
+            //CGInput.CheckKeyPress(ConsoleKey.DownArrow);
+            //CGInput.CheckKeyPress(ConsoleKey.LeftArrow);
+            //CGInput.CheckKeyPress(ConsoleKey.RightArrow);
+            //CGInput.CheckKeyDown(ConsoleKey.Spacebar);
+            //CGInput.CheckKeyPress(ConsoleKey.Enter);
+            //CGInput.CheckKeyPress(ConsoleKey.N);
+            //CGInput.CheckKeyPress(ConsoleKey.Escape);
+            //CGInput.CheckKeyPress(ConsoleKey.U);
+            CGInput.FlushKeyboard();
         }
         public override void OnStart()
         {

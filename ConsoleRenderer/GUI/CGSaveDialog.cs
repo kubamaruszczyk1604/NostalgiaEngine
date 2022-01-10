@@ -29,8 +29,9 @@ namespace ConsoleRenderer
             m_FileExplorer.onPathUpdated += OnPathUpdated;
             m_FileExplorer.TriggerOnPathUpdated();
             m_TextInput.onLineCommit += OnPathReady;
-            CGInput.CheckKeyPress(ConsoleKey.F2); // flush key state
-            CGInput.CheckKeyPress(ConsoleKey.F2);
+            //CGInput.CheckKeyPress(ConsoleKey.F2); // flush key state
+            //CGInput.CheckKeyPress(ConsoleKey.F2);
+            CGInput.FlushKeyboard();
         }
 
 
@@ -77,7 +78,7 @@ namespace ConsoleRenderer
             if (m_FileExplorer.InFocus)
             {
                 m_TextInput.Draw(8);
-                CGBuffer.WriteXY(34, 27, 15 | (2 << 4)," F2 - SELECT");
+                CGBuffer.WriteXY(34, 27, 15 | (2 << 4)," F2 - SELECT ");
                 CGBuffer.WriteXY(64, 27, 15 | (2 << 4), " ESC - CANCEL ");
                 CGBuffer.WriteXY(4, 25, 15 | (1 << 4), "SAVE AS:");
             }
