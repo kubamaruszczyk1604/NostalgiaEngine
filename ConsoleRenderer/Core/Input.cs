@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 namespace ConsoleRenderer.Core
 {
 
-    enum CGVK : int
+    public enum CGKey : int
     {
         ///<summary>
         ///Left mouse button
@@ -745,7 +745,7 @@ namespace ConsoleRenderer.Core
 
         public static void FlushKeyboard()
         {
-            foreach (var val in Enum.GetValues(typeof(CGVK)))
+            foreach (var val in Enum.GetValues(typeof(CGKey)))
             {
                 CheckKeyPress((ConsoleKey)val);
             }

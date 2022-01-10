@@ -213,12 +213,12 @@ namespace ConsoleRenderer.TextureEditor
 
             }
 
-            if(CGInput.CheckKeyPress(ConsoleKey.U))
+            if(CGInput.CheckKeyDown((ConsoleKey)CGKey.CONTROL) && CGInput.CheckKeyPress(ConsoleKey.Z))
             {
                 m_ImageData.UndoStep();
             }
 
-            if (CGInput.CheckKeyPress(ConsoleKey.N))
+            if (CGInput.CheckKeyDown((ConsoleKey)CGKey.CONTROL) && CGInput.CheckKeyPress(ConsoleKey.S))
             {
                 var sd = new CGSaveDialog();
                 sd.onSceneExit += OnSave;
