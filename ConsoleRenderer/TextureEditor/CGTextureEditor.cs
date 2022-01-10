@@ -47,8 +47,8 @@ namespace ConsoleRenderer.TextureEditor
 
 
         private int SelectedColor;
-        private MemTex16 m_ImageData;
-        private MemTex16[] m_Images;
+        //private MemTex16 m_ImageData;
+        private StepHistorySeries<MemTex16> m_ImageData;
 
         public override void OnInitialize()
         {
@@ -61,7 +61,7 @@ namespace ConsoleRenderer.TextureEditor
             m_BrushW = 1;
             m_BrushH = 1;
             SelectedColor = 10;
-            m_ImageData = new MemTex16(m_ImageW, m_ImageH);
+            m_ImageData = new StepHistorySeries<MemTex16>(20, new MemTex16(m_ImageW, m_ImageH));
             m_cursorX = 10;
             m_cursorY = 10;
             FlushKeys();
@@ -171,36 +171,37 @@ namespace ConsoleRenderer.TextureEditor
 
             if (CGInput.CheckKeyDown(ConsoleKey.Spacebar))
             {
+                if(!m_ActionStarted)
+                {
+                    OnActionStarted();
+                    m_ActionStarted = true;
+                }
                 if (m_BrushFlag)
                 {
                     for (int w = 0; w < m_BrushW; ++w)
                     {
                         for (int h = 0; h < m_BrushH; ++h)
                         {
-                            m_ImageData.SetPixel(m_cursorX + w, m_cursorY + h, SelectedColor);
+                            m_ImageData.Data.SetPixel(m_cursorX + w, m_cursorY + h, SelectedColor);
                         }
                     }
                 }
                 else
                 {
-                    m_ImageData.FloodFill(m_cursorX, m_cursorY, SelectedColor);
+                    m_ImageData.Data.FloodFill(m_cursorX, m_cursorY, SelectedColor);
                     
                 }
-                m_ActionStarted = true;
             }
             else
             {
-                if(m_ActionStarted)
-                {
-                    OnActionFinished();
-                    m_ActionStarted = false;
-                }
+                m_ActionStarted = false;
             }
 
             if(CGInput.CheckKeyPress(ConsoleKey.Enter))
             {
-                m_ImageData.FloodFill(m_cursorX, m_cursorY, SelectedColor);
-                OnActionFinished();
+                OnActionStarted();
+                m_ImageData.Data.FloodFill(m_cursorX, m_cursorY, SelectedColor);
+                
             }
 
             if (CGInput.CheckKeyPress((ConsoleKey)0x10))
@@ -208,6 +209,11 @@ namespace ConsoleRenderer.TextureEditor
                 if (m_BrushFlag == false) m_BrushFlag = true;
                 else m_BrushFlag = false;
 
+            }
+
+            if(CGInput.CheckKeyPress(ConsoleKey.U))
+            {
+                m_ImageData.UndoStep();
             }
 
             if (CGInput.CheckKeyPress(ConsoleKey.N))
@@ -224,7 +230,7 @@ namespace ConsoleRenderer.TextureEditor
         private void OnSave(CGScene scene)
         {
            
-            string texStr = m_ImageData.AsString(m_ImageW,m_ImageH);
+            string texStr = m_ImageData.Data.AsString(m_ImageW,m_ImageH);
             string path = scene.ReturnData.ToString();
             if(path != "0")
             {
@@ -236,9 +242,11 @@ namespace ConsoleRenderer.TextureEditor
             }
         }
 
-        private void OnActionFinished()
+        private void OnActionStarted()
         { 
-            Console.Beep();
+            //Console.Beep();
+            MemTex16 next = MemTex16.Copy(m_ImageData.Data);
+            m_ImageData.AddStep(next);
         }
         private void DrawPalette(int x, int y)
         {
@@ -281,7 +289,7 @@ namespace ConsoleRenderer.TextureEditor
                 if (x >= (int)c_DrawingCanvasPos.X && x < m_ImageW + (int)c_DrawingCanvasPos.X && 
                     y >= (int)c_DrawingCanvasPos.Y && y< m_ImageH + (int)c_DrawingCanvasPos.Y )
                 {
-                   int col = m_ImageData.GetColor(x- (int)c_DrawingCanvasPos.X, y- (int)c_DrawingCanvasPos.Y);
+                   int col = m_ImageData.Data.GetColor(x- (int)c_DrawingCanvasPos.X, y- (int)c_DrawingCanvasPos.Y);
                     if (col == 16)
                     {
                         CGBuffer.PutChar((char)CGBlock.Solid, (short)(8<<4), x, y);

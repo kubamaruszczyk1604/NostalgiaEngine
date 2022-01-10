@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ConsoleRenderer.TextureEditor
 {
-    class StepSeries<T>
+    class StepHistorySeries<T>
     {
         T[] m_Items;
         int m_MaxSteps = 10;
@@ -15,7 +15,7 @@ namespace ConsoleRenderer.TextureEditor
         int m_AvailableUndoCount;
 
 
-        public StepSeries(int maxSteps, T initalData)
+        public StepHistorySeries(int maxSteps, T initalData)
         {
             if (maxSteps < 3) maxSteps = 3;
             m_Items = new T[maxSteps];
@@ -44,7 +44,7 @@ namespace ConsoleRenderer.TextureEditor
             m_AvailableUndoCount--;
             if (m_AvailableUndoCount <= 0)
             {
-                m_AvailableUndoCount = 0;
+                m_AvailableUndoCount = 1;
                 return;
             }
 
