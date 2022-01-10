@@ -77,7 +77,7 @@ namespace ConsoleRenderer
             if (m_FileExplorer.InFocus)
             {
                 m_TextInput.Draw(8);
-                CGBuffer.WriteXY(34, 27, 15 | (2 << 4)," F2 - SAVE AS... ");
+                CGBuffer.WriteXY(34, 27, 15 | (2 << 4)," F2 - SELECT");
                 CGBuffer.WriteXY(64, 27, 15 | (2 << 4), " ESC - CANCEL ");
                 CGBuffer.WriteXY(4, 25, 15 | (1 << 4), "SAVE AS:");
             }

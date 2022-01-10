@@ -16,18 +16,27 @@ namespace ConsoleRenderer
         static void Main(string[] args)
         {
 
-
-           // RayMarcher rm = new RayMarcher(300, 200, 4, 4);
-           // Buffer.HalfTemporalResolution = true;
-
-           // rm.Play();
-            CGRaytracer2D tracer = new CGRaytracer2D();
+            //CGRaytracer2D tracer = new CGRaytracer2D();
             CGEngine engine = new CGEngine();
             CGTextureEditor ed = new CGTextureEditor();
-            //Test_MemTex16 test = new Test_MemTex16();
             engine.Start(ed);
 
 
+            //StepSeries<int> sr = new StepSeries<int>(10, 1);
+            //sr.AddStep(2);
+            //sr.UndoStep();
+            //sr.AddStep(3);
+            //sr.AddStep(4);
+            //sr.AddStep(5);
+            //sr.AddStep(6);
+            //Console.WriteLine(sr.Data);
+            //for (int i = 0; i < 16; ++i)
+            //{
+            //    sr.UndoStep();
+            //    Console.WriteLine(sr.Data);
+            //}
+            ////Console.WriteLine(sr.Data);
+            //Console.ReadLine();
         }
     }
 }

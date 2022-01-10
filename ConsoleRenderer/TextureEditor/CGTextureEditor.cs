@@ -48,6 +48,7 @@ namespace ConsoleRenderer.TextureEditor
 
         private int SelectedColor;
         private MemTex16 m_ImageData;
+        private MemTex16[] m_Images;
 
         public override void OnInitialize()
         {
@@ -65,6 +66,8 @@ namespace ConsoleRenderer.TextureEditor
             m_cursorY = 10;
             FlushKeys();
             m_ActionStarted = false;
+
+            
         }
 
         private void FlushKeys()

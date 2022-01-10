@@ -67,7 +67,7 @@ namespace ConsoleRenderer
         {
             m_AspectRatio = (float)ScreenWidth / (float)ScreenHeight;
             m_Fov = 80.0f * DEG_TO_RAD;
-            m_WallTex = CGTexture16.LoadFromFile($"C:/Users/Kuba/Desktop/untitled.tex");
+            m_WallTex = CGTexture16.LoadFromFile($"C:/Users/Kuba/Desktop/untitled2.tex");
            // CGBuffer.HalfTemporalResolution = true;
         }
 
