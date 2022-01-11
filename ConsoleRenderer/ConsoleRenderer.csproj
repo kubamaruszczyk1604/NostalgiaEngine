@@ -73,6 +73,7 @@
     <Compile Include="Core\Material.cs" />
     <Compile Include="GUI\CGFileExplorer.cs" />
     <Compile Include="GUI\CGTextInput.cs" />
+    <Compile Include="GUI\CGYesNoWindow.cs" />
     <Compile Include="GUI\CG_GUIElement.cs" />
     <Compile Include="GUI\CGSaveDialog.cs" />
     <Compile Include="Program.cs" />
@@ -82,6 +83,7 @@
     <Compile Include="Core\Texture16.cs" />
     <Compile Include="Core\WindowControl.cs" />
     <Compile Include="TextureEditor\CGTextureEditor.cs" />
+    <Compile Include="TextureEditor\CGWindowRect.cs" />
     <Compile Include="TextureEditor\MemTex16.cs" />
     <Compile Include="TextureEditor\StepSeries.cs" />
     <Compile Include="TextureEditor\Test_MemTex16.cs" />

@@ -8,6 +8,7 @@ using ConsoleRenderer;
 using System.Runtime.InteropServices;
 using OpenTK;
 using System.IO;
+using ConsoleRenderer.GUI;
 
 namespace ConsoleRenderer.TextureEditor
 {

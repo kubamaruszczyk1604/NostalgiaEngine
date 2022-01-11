@@ -7,13 +7,15 @@ using ConsoleRenderer.Core;
 using System.IO;
 using ConsoleRenderer.Tools;
 
-namespace ConsoleRenderer
+namespace ConsoleRenderer.GUI
 {
     public class CGSaveDialog:CGScene
     {
 
         CGFileExplorer m_FileExplorer;
         CGTextInput m_TextInput;
+
+        CGYesNoWindow m_WindowRect;
 
         public override void OnInitialize()
         {
@@ -32,6 +34,7 @@ namespace ConsoleRenderer
             //CGInput.CheckKeyPress(ConsoleKey.F2); // flush key state
             //CGInput.CheckKeyPress(ConsoleKey.F2);
             CGInput.FlushKeyboard();
+            m_WindowRect = new CGYesNoWindow(30, 5, 50, 8, "Confirm Save");
         }
 
 
@@ -90,7 +93,7 @@ namespace ConsoleRenderer
                 CGBuffer.WriteXY(4, 25, 15 | (4 << 4), "SAVE AS:");
             }
             //CGBuffer.WriteXY(40, 29, 12, m_FileExplorer.InFocus.ToString());
-
+            m_WindowRect.Draw();
 
         }
 
