@@ -5,15 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 
-namespace ConsoleRenderer.Core
+namespace NostalgiaEngine.Core
 {
-    //public struct CGRectangle
-    //{
-    //    public int Left { get; set; }
-    //    public int Top { get; set; }
-    //    public int Right { get; set; }
-    //    public int Bottom { get; set; }
-    //}
 
     [StructLayout(LayoutKind.Sequential)]
     public struct NERect
@@ -55,12 +48,6 @@ namespace ConsoleRenderer.Core
         }
 
     }
-    //public struct CGPoint
-    //{
-    //    public int X { get; set; }
-    //    public int Y { get; set; }
-
-    //}
 
 
     [StructLayout(LayoutKind.Sequential)]

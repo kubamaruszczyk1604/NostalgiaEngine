@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ConsoleRenderer.Core;
-using ConsoleRenderer;
+using NostalgiaEngine.Core;
+using NostalgiaEngine;
 
-namespace ConsoleRenderer.TextureEditor
+namespace NostalgiaEngine.TextureEditor
 {
     class Test_MemTex16: NEScene
     {
         MemTex16 m_MemTex16;
-        public override void OnInitialize()
+        public override bool OnLoad()
         {
             ScreenWidth = 100;
             ScreenHeight = 100;
@@ -19,33 +19,34 @@ namespace ConsoleRenderer.TextureEditor
             PixelHeight = 8;
             m_MemTex16 = new MemTex16(80, 80);
             m_Current = m_MemTex16.GetPixel(1, 1);
+            return true;
         }
         public MemTex16.MT16Pix m_Current = null;
         public override void OnStart() { }
         public override void OnUpdate(float deltaTime)
         {
-            if(CGInput.CheckKeyPress(ConsoleKey.DownArrow))
+            if(NEInput.CheckKeyPress(ConsoleKey.DownArrow))
             {
                 if(m_Current.DOWN != null)
                 {
                     m_Current = m_Current.DOWN;
                 }
             }
-            if (CGInput.CheckKeyPress(ConsoleKey.UpArrow))
+            if (NEInput.CheckKeyPress(ConsoleKey.UpArrow))
             {
                 if (m_Current.UP!= null)
                 {
                     m_Current = m_Current.UP;
                 }
             }
-            if (CGInput.CheckKeyPress(ConsoleKey.LeftArrow))
+            if (NEInput.CheckKeyPress(ConsoleKey.LeftArrow))
             {
                 if (m_Current.LEFT != null)
                 {
                     m_Current = m_Current.LEFT;
                 }
             }
-            if (CGInput.CheckKeyPress(ConsoleKey.RightArrow))
+            if (NEInput.CheckKeyPress(ConsoleKey.RightArrow))
             {
                 if (m_Current.RIGHT != null)
                 {
@@ -53,14 +54,14 @@ namespace ConsoleRenderer.TextureEditor
                 }
             }
 
-            if(CGInput.CheckKeyPress(ConsoleKey.Spacebar))
+            if(NEInput.CheckKeyPress(ConsoleKey.Spacebar))
             {
                 m_MemTex16.FloodFill(m_Current.X, m_Current.Y, col);
                 col++;
             }
 
 
-            if (CGInput.CheckKeyPress(ConsoleKey.Escape))
+            if (NEInput.CheckKeyPress(ConsoleKey.Escape))
             {
                 Exit();
             }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleRenderer
+namespace NostalgiaEngine.Core
 {
     public delegate void OnSceneExit(NEScene scene);
     public class NEScene
@@ -26,11 +26,11 @@ namespace ConsoleRenderer
             {
                 ReturnDataType = ReturnData.GetType();
             }
-            NostalgiaEngine.Instance.PopScene();
+            Engine.Instance.PopScene();
             onSceneExit?.Invoke(this);
             onSceneExit = null;
         }
-        public virtual void OnInitialize() { }
+        public virtual bool OnLoad() { return true; }
         public virtual void OnStart() { }
         public virtual void OnPause() { }
         public virtual void OnResume(){}

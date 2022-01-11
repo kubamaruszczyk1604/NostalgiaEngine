@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OpenTK;
-using ConsoleRenderer.Core;
+using NostalgiaEngine.Core;
 
-namespace ConsoleRenderer
+namespace NostalgiaEngine.Raycaster
 {
     class NERaycaster2D : NEScene
     {
@@ -54,20 +54,23 @@ namespace ConsoleRenderer
         float m_PlayerRotation = 0.0f;
         NETexture16 m_WallTex;
 
-        public override void OnInitialize()
+        public override bool OnLoad()
         {
             ScreenWidth = 320;
             ScreenHeight = 200;
             PixelWidth = 4;
             PixelHeight = 4;
 
+            m_WallTex = NETexture16.LoadFromFile($"C:/Users/Kuba/Desktop/untitled2.tex");
+            if (m_WallTex == null) return false;
+            return true;
         }
 
         override public void OnStart()
         {
             m_AspectRatio = (float)ScreenWidth / (float)ScreenHeight;
             m_Fov = 80.0f * DEG_TO_RAD;
-            m_WallTex = NETexture16.LoadFromFile($"C:/Users/Kuba/Desktop/untitled2.tex");
+
            // CGBuffer.HalfTemporalResolution = true;
         }
 
@@ -75,10 +78,10 @@ namespace ConsoleRenderer
         {
 
             float deltaT = dt;
-            if (CGInput.CheckKeyDown(ConsoleKey.LeftArrow))
+            if (NEInput.CheckKeyDown(ConsoleKey.LeftArrow))
             {
 
-                if (CGInput.CheckKeyDown(0xA2))
+                if (NEInput.CheckKeyDown(NEKey.Alt))
                 {
                     m_ViewerPos -= NEHelper.FindNormal(m_ViewerDir) * MOVEMENT_SPEED * deltaT;
 
@@ -93,10 +96,10 @@ namespace ConsoleRenderer
 
 
             }
-            if (CGInput.CheckKeyDown(ConsoleKey.RightArrow))
+            if (NEInput.CheckKeyDown(ConsoleKey.RightArrow))
             {
 
-                if (CGInput.CheckKeyDown(0xA2))
+                if (NEInput.CheckKeyDown(NEKey.Alt))
                 {
 
                     m_ViewerPos += NEHelper.FindNormal(m_ViewerDir) * MOVEMENT_SPEED * deltaT;
@@ -113,23 +116,23 @@ namespace ConsoleRenderer
 
 
 
-            if (CGInput.CheckKeyDown(ConsoleKey.UpArrow))
+            if (NEInput.CheckKeyDown(ConsoleKey.UpArrow))
             {
                 m_ViewerPos += m_ViewerDir * MOVEMENT_SPEED * deltaT;
             }
-            if (CGInput.CheckKeyDown(ConsoleKey.DownArrow))
+            if (NEInput.CheckKeyDown(ConsoleKey.DownArrow))
             {
                 m_ViewerPos -= m_ViewerDir * MOVEMENT_SPEED * deltaT;
             }
 
-            if (CGInput.CheckKeyPress(ConsoleKey.Escape))
+            if (NEInput.CheckKeyPress(ConsoleKey.Escape))
             {
                 Exit("some data");
             }
 
-            if (CGInput.CheckKeyPress(ConsoleKey.N))
+            if (NEInput.CheckKeyPress(ConsoleKey.N))
             {
-                NostalgiaEngine.Instance.PushScene(new ConsoleRenderer.TextureEditor.Test_MemTex16());
+                Engine.Instance.PushScene(new TextureEditor.Test_MemTex16());
             }
 
         }

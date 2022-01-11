@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OpenTK;
-namespace ConsoleRenderer.Core
+namespace NostalgiaEngine.Core
 {
 
     public class NEHelper

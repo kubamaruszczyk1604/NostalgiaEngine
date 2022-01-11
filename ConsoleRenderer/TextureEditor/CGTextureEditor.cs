@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ConsoleRenderer.Core;
-using ConsoleRenderer;
+using NostalgiaEngine.Core;
+using NostalgiaEngine;
 using System.Runtime.InteropServices;
 using OpenTK;
 using System.IO;
-using ConsoleRenderer.GUI;
+using NostalgiaEngine.GUI;
 
-namespace ConsoleRenderer.TextureEditor
+namespace NostalgiaEngine.TextureEditor
 {
     class NETextureEditor : NEScene
     {
@@ -51,7 +51,7 @@ namespace ConsoleRenderer.TextureEditor
         //private MemTex16 m_ImageData;
         private StepHistorySeries<MemTex16> m_ImageData;
 
-        public override void OnInitialize()
+        public override bool OnLoad()
         {
             ScreenWidth = 110;
             ScreenHeight = 87;
@@ -68,7 +68,7 @@ namespace ConsoleRenderer.TextureEditor
             FlushKeys();
             m_ActionStarted = false;
 
-            
+            return true;
         }
 
         private void FlushKeys()
@@ -83,11 +83,11 @@ namespace ConsoleRenderer.TextureEditor
             //CGInput.CheckKeyPress(ConsoleKey.N);
             //CGInput.CheckKeyPress(ConsoleKey.Escape);
             //CGInput.CheckKeyPress(ConsoleKey.U);
-            CGInput.FlushKeyboard();
+            NEInput.FlushKeyboard();
         }
         public override void OnStart()
         {
-            WindowControl.DisableConsoleWindowButtons();
+            NEWindowControl.DisableConsoleWindowButtons();
 
         }
         NEPoint m_LastMouse = new NEPoint();
@@ -101,9 +101,9 @@ namespace ConsoleRenderer.TextureEditor
             //    m_cursorY = (mp.Y) / PixelHeight - 15;
             //}
            // m_LastMouse = mp;
-            if (CGInput.CheckKeyPress(ConsoleKey.UpArrow))
+            if (NEInput.CheckKeyPress(ConsoleKey.UpArrow))
             {
-                if (CGInput.CheckKeyDown((ConsoleKey)0xA2))
+                if (NEInput.CheckKeyDown((ConsoleKey)0xA2))
                 {
                     m_ImageH--;
                     if (m_ImageH < c_MinImageH) m_ImageH = c_MinImageH;
@@ -114,9 +114,9 @@ namespace ConsoleRenderer.TextureEditor
                 }
             }
 
-            if (CGInput.CheckKeyPress(ConsoleKey.DownArrow))
+            if (NEInput.CheckKeyPress(ConsoleKey.DownArrow))
             {
-                if (CGInput.CheckKeyDown((ConsoleKey)0xA2))
+                if (NEInput.CheckKeyDown((ConsoleKey)0xA2))
                 {
                     m_ImageH++;
                     if (m_ImageH > c_MaxImageH) m_ImageH = c_MaxImageH;
@@ -127,15 +127,15 @@ namespace ConsoleRenderer.TextureEditor
                 }
             }
 
-            if (CGInput.CheckKeyPress(ConsoleKey.LeftArrow))
+            if (NEInput.CheckKeyPress(ConsoleKey.LeftArrow))
             {
 
-                if (CGInput.CheckKeyDown((ConsoleKey)0xA2))
+                if (NEInput.CheckKeyDown((ConsoleKey)0xA2))
                 {
                     m_ImageW--;
                     if (m_ImageW < c_MinImageW) m_ImageW = c_MinImageW;
                 }
-                else if (CGInput.CheckKeyDown(ConsoleKey.C))
+                else if (NEInput.CheckKeyDown(ConsoleKey.C))
                 {
                     SelectedColor--;
                 }
@@ -145,15 +145,15 @@ namespace ConsoleRenderer.TextureEditor
                 }
             }
 
-            if (CGInput.CheckKeyPress(ConsoleKey.RightArrow))
+            if (NEInput.CheckKeyPress(ConsoleKey.RightArrow))
             {
-                if (CGInput.CheckKeyDown((ConsoleKey)0xA2))
+                if (NEInput.CheckKeyDown((ConsoleKey)0xA2))
                 {
                     m_ImageW++;
                     if (m_ImageW > c_MaxImageW) m_ImageW = c_MaxImageW;
 
                 }
-                else if (CGInput.CheckKeyDown(ConsoleKey.C))
+                else if (NEInput.CheckKeyDown(ConsoleKey.C))
                 {
                     SelectedColor++;
                 }
@@ -172,7 +172,7 @@ namespace ConsoleRenderer.TextureEditor
             if (SelectedColor < 0) SelectedColor = 16;
 
 
-            if (CGInput.CheckKeyDown(ConsoleKey.Spacebar))
+            if (NEInput.CheckKeyDown(ConsoleKey.Spacebar))
             {
                 if(!m_ActionStarted)
                 {
@@ -200,32 +200,32 @@ namespace ConsoleRenderer.TextureEditor
                 m_ActionStarted = false;
             }
 
-            if(CGInput.CheckKeyPress(ConsoleKey.Enter))
+            if(NEInput.CheckKeyPress(ConsoleKey.Enter))
             {
                 OnActionStarted();
                 m_ImageData.Data.FloodFill(m_cursorX, m_cursorY, SelectedColor);
                 
             }
 
-            if (CGInput.CheckKeyPress((ConsoleKey)0x10))
+            if (NEInput.CheckKeyPress((ConsoleKey)0x10))
             {
                 if (m_BrushFlag == false) m_BrushFlag = true;
                 else m_BrushFlag = false;
 
             }
 
-            if(CGInput.CheckKeyDown((ConsoleKey)CGKey.CONTROL) && CGInput.CheckKeyPress(ConsoleKey.Z))
+            if(NEInput.CheckKeyDown((ConsoleKey)NEKey.Control) && NEInput.CheckKeyPress(ConsoleKey.Z))
             {
                 m_ImageData.UndoStep();
             }
 
-            if (CGInput.CheckKeyDown((ConsoleKey)CGKey.CONTROL) && CGInput.CheckKeyPress(ConsoleKey.S))
+            if (NEInput.CheckKeyDown((ConsoleKey)NEKey.Control) && NEInput.CheckKeyPress(ConsoleKey.S))
             {
                 var sd = new NESaveDialog();
                 sd.onSceneExit += OnSave;
-                NostalgiaEngine.Instance.PushScene(sd);
+                Engine.Instance.PushScene(sd);
             }
-            if (CGInput.CheckKeyPress(ConsoleKey.Escape))
+            if (NEInput.CheckKeyPress(ConsoleKey.Escape))
             {
                 Exit();
             }

@@ -64,13 +64,13 @@
   <ItemGroup>
     <Compile Include="Core\NEScreen.cs" />
     <Compile Include="Engine\NEScene.cs" />
-    <Compile Include="Engine\Engine.cs" />
+    <Compile Include="Engine\NostalgiaEngine.cs" />
     <Compile Include="Core\CommonTypes.cs" />
-    <Compile Include="Core\FrameTimer.cs" />
-    <Compile Include="Core\Helper.cs" />
-    <Compile Include="Core\Input.cs" />
+    <Compile Include="Core\NEFrameTimer.cs" />
+    <Compile Include="Core\NEHelper.cs" />
+    <Compile Include="Core\NEInput.cs" />
     <Compile Include="Core\InputSimulator.cs" />
-    <Compile Include="Core\Material.cs" />
+    <Compile Include="Core\Materials.cs" />
     <Compile Include="GUI\NEFileExplorer.cs" />
     <Compile Include="GUI\NETextInput.cs" />
     <Compile Include="GUI\NEYesNoWindow.cs" />
@@ -80,7 +80,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Raycaster2D\NERaycaster.cs" />
     <Compile Include="Core\NETexture16.cs" />
-    <Compile Include="Core\WindowControl.cs" />
+    <Compile Include="Core\NEWindowControl.cs" />
     <Compile Include="TextureEditor\CGTextureEditor.cs" />
     <Compile Include="TextureEditor\CGWindowRect.cs" />
     <Compile Include="TextureEditor\MemTex16.cs" />

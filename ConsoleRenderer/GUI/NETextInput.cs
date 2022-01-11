@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using ConsoleRenderer.Core;
+using NostalgiaEngine.Core;
 using System.IO;
-namespace ConsoleRenderer.Tools
+namespace NostalgiaEngine.Tools
 {
     public class NETextInput : INEGUIElement, IDisposable
     {

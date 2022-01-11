@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 using System.Threading;
 using OpenTK;
 using System.Diagnostics;
-using ConsoleRenderer.Core;
+using NostalgiaEngine.Core;
 
-namespace ConsoleRenderer
+namespace NostalgiaEngine.Core
 {
-    public class NostalgiaEngine
+    public class Engine
     {
         private readonly int DEFAULT_SCR_W = 120;
         private readonly int DEFAULT_SCR_H = 80;
@@ -24,18 +24,17 @@ namespace ConsoleRenderer
         private float m_Delta;
 
         
-        public static NostalgiaEngine Instance { get; private set; }
+        public static Engine Instance { get; private set; }
         public string Title { get; set; }
         public int ScreenWidth { get; private set; }
         public int ScreenHeight { get; private set; }
         public int PixelWidth { get; private set; }
         public int PixelHeight { get; private set; }
         public float RunningTime { get; private set; }
-        object locker = new object();
 
-        public NostalgiaEngine()
+        public Engine()
         {
-            WindowControl.DisableConsoleWindowButtons();
+            NEWindowControl.DisableConsoleWindowButtons();
             m_Running = false;
             m_Delta = 0.0f;
             m_SceneStack = new Stack<NEScene>();
@@ -43,27 +42,35 @@ namespace ConsoleRenderer
         }
 
 
-        private void SetSceneAsCurrent(NEScene scene)
+        private void InitializeScreen(NEScene scene)
         {
             ScreenWidth = scene.ScreenWidth > 10 ? scene.ScreenWidth : DEFAULT_SCR_W;
             ScreenHeight = scene.ScreenHeight > 10 ? scene.ScreenHeight : DEFAULT_SCR_H;
             PixelWidth = scene.PixelWidth > 0 ? scene.PixelWidth : DEFAULT_PIXEL_W;
             PixelHeight = scene.PixelHeight > 0 ? scene.PixelHeight : DEFAULT_PIXEL_H;
-            Title = "CGENGINE";
+            Title = "NOSTALGIA ENGINE";
 
             NEScreen.Initialize((short)ScreenWidth, (short)ScreenHeight, (short)PixelWidth, (short)PixelHeight);
         }
 
-        public void PushScene(NEScene scene)
+        public bool PushScene(NEScene scene)
         {
 
             if(m_CurrentScene != null) m_CurrentScene.OnPause();
- 
-            scene.OnInitialize();
-            SetSceneAsCurrent(scene);
-            scene.OnStart();
-            m_SceneStack.Push(scene);
-            m_CurrentScene = scene;
+            if (scene.OnLoad())
+            {
+                m_CurrentScene = scene;
+                m_SceneStack.Push(scene);
+                InitializeScreen(scene);
+                scene.OnStart();
+                return true;
+            }
+            else
+            {
+                if (m_CurrentScene != null) m_CurrentScene.OnResume();
+                return false;
+            }
+
         }
 
         public void PopScene()
@@ -77,13 +84,16 @@ namespace ConsoleRenderer
             }
             m_CurrentScene = m_SceneStack.Peek();
             m_CurrentScene.OnResume();
-            SetSceneAsCurrent(m_CurrentScene);
+            InitializeScreen(m_CurrentScene);
         }
 
         public void Start(NEScene scene)
         {
-            PushScene(scene);
-            WindowControl.QuickEditMode(false);
+            if(!PushScene(scene))
+            {
+                return;
+            }
+            NEWindowControl.QuickEditMode(false);
             m_Running = true;
             
             while (m_Running)
@@ -95,8 +105,11 @@ namespace ConsoleRenderer
                Console.Title = Title + " @"+ ScreenWidth.ToString() + "x" +  ScreenHeight.ToString() + 
                     " FPS: " + NEFrameTimer.GetFPS() + "   FRAME TIME: " + m_Delta + "s ";
 
-                var sceneType = m_CurrentScene.GetType();
+                
                 m_CurrentScene.OnUpdate(NEFrameTimer.GetDeltaTime());
+
+                var sceneType = m_CurrentScene.GetType();
+                //Execute OnDrawPerColumn() only if scene child class implements it.
                 if (sceneType.GetMethod("OnDrawPerColumn").DeclaringType == sceneType)
                 {
                     var resetEvent = new ManualResetEvent(false); // Will be reset when buffer is ready to be swaped
@@ -123,7 +136,7 @@ namespace ConsoleRenderer
                 }
                 m_CurrentScene.OnDraw();
 
-                NEScreen.Swap();
+                NEScreen.SwapBuffers();
 
                 RunningTime += NEFrameTimer.GetDeltaTime();
                

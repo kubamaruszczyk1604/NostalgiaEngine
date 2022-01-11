@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 
-namespace ConsoleRenderer.Core
+namespace NostalgiaEngine.Core
 {
-    public class WindowControl
+    public class NEWindowControl
     {
 
 

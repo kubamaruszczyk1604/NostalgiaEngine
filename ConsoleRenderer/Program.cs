@@ -5,8 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenTK;
 using System.Runtime.InteropServices;
-using ConsoleRenderer.TextureEditor;
-namespace ConsoleRenderer
+using NostalgiaEngine.TextureEditor;
+using NostalgiaEngine.Core;
+using NostalgiaEngine.Raycaster;
+
+namespace NostalgiaEngineApplication
 {
 
     class Program
@@ -16,27 +19,13 @@ namespace ConsoleRenderer
         static void Main(string[] args)
         {
 
-            //CGRaytracer2D tracer = new CGRaytracer2D();
-            NostalgiaEngine engine = new NostalgiaEngine();
+            
+            Engine engine = new Engine();
             NETextureEditor ed = new NETextureEditor();
-            engine.Start(ed);
+            NERaycaster2D raycaster = new NERaycaster2D();
+            engine.Start(raycaster);
 
 
-            //StepSeries<int> sr = new StepSeries<int>(10, 1);
-            //sr.AddStep(2);
-            //sr.UndoStep();
-            //sr.AddStep(3);
-            //sr.AddStep(4);
-            //sr.AddStep(5);
-            //sr.AddStep(6);
-            //Console.WriteLine(sr.Data);
-            //for (int i = 0; i < 16; ++i)
-            //{
-            //    sr.UndoStep();
-            //    Console.WriteLine(sr.Data);
-            //}
-            ////Console.WriteLine(sr.Data);
-            //Console.ReadLine();
         }
     }
 }

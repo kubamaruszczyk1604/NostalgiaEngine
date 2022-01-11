@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using ConsoleRenderer.Core;
+using NostalgiaEngine.Core;
 using System.IO;
-using ConsoleRenderer.Tools;
+using NostalgiaEngine.Tools;
 
-namespace ConsoleRenderer.GUI
+namespace NostalgiaEngine.GUI
 {
     public class NESaveDialog:NEScene
     {
@@ -17,7 +17,7 @@ namespace ConsoleRenderer.GUI
 
         NEYesNoWindow m_WindowRect;
 
-        public override void OnInitialize()
+        public override bool OnLoad()
         {
             while (Console.KeyAvailable) Console.ReadKey(); // flush key buffer
 
@@ -33,14 +33,15 @@ namespace ConsoleRenderer.GUI
             m_TextInput.onLineCommit += OnPathReady;
             //CGInput.CheckKeyPress(ConsoleKey.F2); // flush key state
             //CGInput.CheckKeyPress(ConsoleKey.F2);
-            CGInput.FlushKeyboard();
+            NEInput.FlushKeyboard();
             m_WindowRect = new NEYesNoWindow(30, 5, 50, 8, "Confirm Save");
+            return true;
         }
 
 
         public override void OnUpdate(float deltaTime)
         {
-            if (CGInput.CheckKeyPress(ConsoleKey.F2))
+            if (NEInput.CheckKeyPress(ConsoleKey.F2))
             {
 
                 if (m_FileExplorer.InFocus)
@@ -50,7 +51,7 @@ namespace ConsoleRenderer.GUI
                 }
             }
 
-            if(CGInput.CheckKeyPress(ConsoleKey.Escape))
+            if(NEInput.CheckKeyPress(ConsoleKey.Escape))
             {
                 if (m_TextInput.InFocus)
                 {

@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using ConsoleRenderer.Core;
+using NostalgiaEngine.Core;
 using System.IO;
 
-namespace ConsoleRenderer.Tools
+namespace NostalgiaEngine.Tools
 {
 
     
@@ -52,7 +52,7 @@ namespace ConsoleRenderer.Tools
             if (!m_FocusFlag) return;
 
 
-            if (CGInput.CheckKeyPress(ConsoleKey.DownArrow))
+            if (NEInput.CheckKeyPress(ConsoleKey.DownArrow))
             {           
                  m_CurrentPosIndex++;
                 
@@ -61,7 +61,7 @@ namespace ConsoleRenderer.Tools
                     m_ViewStartIndex++;
                 }
             }
-            if (CGInput.CheckKeyPress(ConsoleKey.UpArrow))
+            if (NEInput.CheckKeyPress(ConsoleKey.UpArrow))
             {
 
                 if (m_CurrentPosIndex - m_ViewStartIndex <= 0 && m_CurrentPosIndex > 0)
@@ -71,7 +71,7 @@ namespace ConsoleRenderer.Tools
                 m_CurrentPosIndex--;
 
             }
-            if (CGInput.CheckKeyPress(ConsoleKey.RightArrow))
+            if (NEInput.CheckKeyPress(ConsoleKey.RightArrow))
             {
                 m_CurrentPosIndex += c_ColLength;
                 if (m_CurrentPosIndex - m_ViewStartIndex > c_ColLength * 3 - 2)
@@ -80,7 +80,7 @@ namespace ConsoleRenderer.Tools
                 }
             }
 
-            if (CGInput.CheckKeyPress(ConsoleKey.LeftArrow))
+            if (NEInput.CheckKeyPress(ConsoleKey.LeftArrow))
             {
 
                 if (m_CurrentPosIndex - m_ViewStartIndex > 0 && m_CurrentPosIndex > 0)
@@ -95,7 +95,7 @@ namespace ConsoleRenderer.Tools
             if (m_CurrentPosIndex < 0) m_CurrentPosIndex = 0;
             if (m_CurrentPosIndex >= m_CurrentDirContent.Length) m_CurrentPosIndex = m_CurrentDirContent.Length - 1;
 
-            if (CGInput.CheckKeyPress(ConsoleKey.Enter))
+            if (NEInput.CheckKeyPress(ConsoleKey.Enter))
             {
                 string bk = m_CurrentDirContent[m_CurrentPosIndex].Substring(m_CurrentPath.Length);
                 if (bk == "...")

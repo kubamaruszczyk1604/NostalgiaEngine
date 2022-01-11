@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 using OpenTK;
 using System.Threading;
-namespace ConsoleRenderer.Core
+namespace NostalgiaEngine.Core
 {
     public class NEScreen
     {
@@ -168,7 +168,7 @@ namespace ConsoleRenderer.Core
         }
 
   
-        static public void Swap()
+        static public void SwapBuffers()
         {
 
 
