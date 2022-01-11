@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ConsoleRenderer.Core
 {
-    public class CGFrameTimer
+    public class NEFrameTimer
     {
         private static long s_LastFpsCapture = System.Environment.TickCount;
         private static long s_LastCallTime = System.Environment.TickCount;

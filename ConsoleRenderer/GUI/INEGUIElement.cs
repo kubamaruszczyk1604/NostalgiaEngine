@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ConsoleRenderer.Tools
 {
-    public interface CG_GUIElement
+    public interface INEGUIElement
     {
         void Focus();
         void UnFocus();

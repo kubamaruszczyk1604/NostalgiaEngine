@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 namespace ConsoleRenderer.Core
 {
 
-    public enum CGBlock {Space= 32, Weak = 176, Middle = 177, Strong = 178, Solid = 219 } // mapped to ascii
+    public enum NEBlock {Space= 32, Weak = 176, Middle = 177, Strong = 178, Solid = 219 } // mapped to ascii
 
 
     class BLOCKS
     {
-        static public int[] BLOCK_ARR = new int[] { (int)CGBlock.Space, (int)CGBlock.Weak, (int)CGBlock.Middle, (int)CGBlock.Strong, (int)CGBlock.Solid};
+        static public int[] BLOCK_ARR = new int[] { (int)NEBlock.Space, (int)NEBlock.Weak, (int)NEBlock.Middle, (int)NEBlock.Strong, (int)NEBlock.Solid};
     }
 
     //enum BlockMask
@@ -61,7 +61,7 @@ namespace ConsoleRenderer.Core
     //    BG_WHITE = 0x00F0,
     //};
 
-    public class CGColorSample
+    public class NEColorSample
     {
         private static readonly int MAX_COL_COUNT = 10;
         public short BitMask { get; private set; }
@@ -78,7 +78,7 @@ namespace ConsoleRenderer.Core
             return (short)(((short)col) << 4);
         }
 
-        static public CGColorSample MakeCol(ConsoleColor col1, ConsoleColor col2, float t)
+        static public NEColorSample MakeCol(ConsoleColor col1, ConsoleColor col2, float t)
         {
 
             //CGColorSample sc = new CGColorSample();
@@ -98,7 +98,7 @@ namespace ConsoleRenderer.Core
             int index = (int)(tFract * (float)MAX_COL_COUNT);
             index = index >= (MAX_COL_COUNT - 1) ? (MAX_COL_COUNT - 1) : index;
 
-            CGColorSample sample = new CGColorSample();
+            NEColorSample sample = new NEColorSample();
             if(index%2 == 0)
             {
                 index /= 2;
@@ -116,38 +116,6 @@ namespace ConsoleRenderer.Core
             return sample;
         }
         
-    }
-
-    partial class RayMarcher // ALL MATERIAL RELATED CONSTANTS
-    {
-        public const short BACKGROUND_INTENSITY = 0x0080;
-        public const short FOREGROUND_INTENSITY = 0x0008;
-        //Bitmasks for colors 
-
-        //Green
-        public const short BACKGROUND_GREEN = 0x0020;
-        public const short FOREGROUND_GREEN = 0x0002;
-
-        //Red
-        public const short BACKGROUND_RED = 0x0040;
-        public const short FOREGROUND_RED = 0x0004;
-
-        //Blue
-        public const short BACKGROUND_BLUE = 0x0010;
-        public const short FOREGROUND_BLUE = 0x0001;
-
-        //Red
-        public const short BACKGROUND_YELLOW = 0x0040 | 0x0020;
-        public const short FOREGROUND_YELLOW = 0x0004 | 0x0002;
-
-        public const short BACKGROUND_CYAN = 0x0020 | 0x0010;
-        public const short FOREGROUND_CYAN = 0x0002 | 0x0001;
-
-        public const short BACKGROUND_MAGENTA = 0x0040 | 0x0010;
-        public const short FOREGROUND_MAGENTA = 0x0004 | 0x0001;
-
-        public const short BACKGROUND_WHITE = 0x0040 | 0x0010 | 0x0020;
-        public const short FOREGROUND_WHITE = 0x0004 | 0x0001 | 0x0002;
     }
 
 

@@ -12,7 +12,7 @@ using ConsoleRenderer.GUI;
 
 namespace ConsoleRenderer.TextureEditor
 {
-    class CGTextureEditor : CGScene
+    class NETextureEditor : NEScene
     {
 
 
@@ -90,7 +90,7 @@ namespace ConsoleRenderer.TextureEditor
             WindowControl.DisableConsoleWindowButtons();
 
         }
-        CGPoint m_LastMouse = new CGPoint();
+        NEPoint m_LastMouse = new NEPoint();
         public override void OnUpdate(float deltaTime)
         {
             //CGPoint mp = CGInput.GetMousePostion();
@@ -221,16 +221,16 @@ namespace ConsoleRenderer.TextureEditor
 
             if (CGInput.CheckKeyDown((ConsoleKey)CGKey.CONTROL) && CGInput.CheckKeyPress(ConsoleKey.S))
             {
-                var sd = new CGSaveDialog();
+                var sd = new NESaveDialog();
                 sd.onSceneExit += OnSave;
-                CGEngine.Instance.PushScene(sd);
+                NostalgiaEngine.Instance.PushScene(sd);
             }
             if (CGInput.CheckKeyPress(ConsoleKey.Escape))
             {
                 Exit();
             }
         }
-        private void OnSave(CGScene scene)
+        private void OnSave(NEScene scene)
         {
            
             string texStr = m_ImageData.Data.AsString(m_ImageW,m_ImageH);
@@ -256,16 +256,16 @@ namespace ConsoleRenderer.TextureEditor
             Vector2 pixelPos = new Vector2(x, y);
             for (int i = 0; i < 17; ++i)
             {
-                if (CGHelper.InRectangle(pixelPos, new Vector2(c_ColorWindowWidth * (i), 0) + c_ColorPanelPos, c_ColorWindowWidth, c_ColorWindowHeight))
+                if (NEHelper.InRectangle(pixelPos, new Vector2(c_ColorWindowWidth * (i), 0) + c_ColorPanelPos, c_ColorWindowWidth, c_ColorWindowHeight))
                 {
-                    CGBuffer.PutChar(' ', (short)((i) << 4), x, y);
-                    if (i == 16) CGBuffer.PutChar((char)CGBlock.Solid, (short)(8 << 4), x, y);
+                    NEScreen.PutChar(' ', (short)((i) << 4), x, y);
+                    if (i == 16) NEScreen.PutChar((char)NEBlock.Solid, (short)(8 << 4), x, y);
                 }
             }
 
-            if (CGHelper.InRectangle(pixelPos, new Vector2(c_ColorWindowWidth * SelectedColor, 8) + c_ColorPanelPos, c_ColorWindowWidth, 2))
+            if (NEHelper.InRectangle(pixelPos, new Vector2(c_ColorWindowWidth * SelectedColor, 8) + c_ColorPanelPos, c_ColorWindowWidth, 2))
             {
-                CGBuffer.PutChar((char)CGBlock.Middle, (short)((15)), x, y);
+                NEScreen.PutChar((char)NEBlock.Middle, (short)((15)), x, y);
             }
         }
 
@@ -286,7 +286,7 @@ namespace ConsoleRenderer.TextureEditor
             for (int y = 0; y < ScreenHeight; ++y)
             {
 
-                CGBuffer.PutChar((char)CGBlock.Weak, (short)ConsoleColor.DarkBlue, x, y);
+                NEScreen.PutChar((char)NEBlock.Weak, (short)ConsoleColor.DarkBlue, x, y);
                 DrawPalette(x, y);
  
                 if (x >= (int)c_DrawingCanvasPos.X && x < m_ImageW + (int)c_DrawingCanvasPos.X && 
@@ -295,11 +295,11 @@ namespace ConsoleRenderer.TextureEditor
                    int col = m_ImageData.Data.GetColor(x- (int)c_DrawingCanvasPos.X, y- (int)c_DrawingCanvasPos.Y);
                     if (col == 16)
                     {
-                        CGBuffer.PutChar((char)CGBlock.Solid, (short)(8<<4), x, y);
+                        NEScreen.PutChar((char)NEBlock.Solid, (short)(8<<4), x, y);
                     }
                     else
                     {
-                        CGBuffer.PutChar(' ', (short)(col << 4), x, y);
+                        NEScreen.PutChar(' ', (short)(col << 4), x, y);
                     }
                 }
             }
@@ -314,7 +314,7 @@ namespace ConsoleRenderer.TextureEditor
             {
                 for (int h =0; h<m_BrushH;++h)
                 {
-                    CGBuffer.PutChar('&', (short)(((int)SelectedColor << 4) | ((SelectedColor == 0) ? 15 : 0)),
+                    NEScreen.PutChar('&', (short)(((int)SelectedColor << 4) | ((SelectedColor == 0) ? 15 : 0)),
                  (int)c_DrawingCanvasPos.X + m_cursorX+w, (int)c_DrawingCanvasPos.Y + m_cursorY+h);
                 }
             }
@@ -322,18 +322,18 @@ namespace ConsoleRenderer.TextureEditor
             int offset = (int)c_DrawingCanvasPos.X;
             for (int i = 0; i < fl.Length;++i)
             {
-                CGBuffer.PutChar(fl[i], 8<<4 , offset + i, (int)c_DrawingCanvasPos.Y-2);
+                NEScreen.PutChar(fl[i], 8<<4 , offset + i, (int)c_DrawingCanvasPos.Y-2);
             }
             offset += fl.Length + 2;
 
             for (int i = 0; i < c_Fill.Length; ++i)
             {
-                CGBuffer.PutChar(c_Fill[i], (short)(m_BrushFlag?8:10), offset + i, (int)c_DrawingCanvasPos.Y - 2);
+                NEScreen.PutChar(c_Fill[i], (short)(m_BrushFlag?8:10), offset + i, (int)c_DrawingCanvasPos.Y - 2);
             }
             offset += c_Fill.Length + 2;
             for (int i = 0; i < c_Brush.Length; ++i)
             {
-                CGBuffer.PutChar(c_Brush[i], (short)(m_BrushFlag ? 10 : 8), offset + i, (int)c_DrawingCanvasPos.Y - 2);
+                NEScreen.PutChar(c_Brush[i], (short)(m_BrushFlag ? 10 : 8), offset + i, (int)c_DrawingCanvasPos.Y - 2);
             }
         }
         public override void OnExit()

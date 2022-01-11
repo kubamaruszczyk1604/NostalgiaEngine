@@ -711,11 +711,11 @@ namespace ConsoleRenderer.Core
 
 
         [DllImport("user32.dll")]
-        static extern bool GetCursorPos(ref CGPoint lpPoint);
+        static extern bool GetCursorPos(ref NEPoint lpPoint);
 
 
 
-        private static CGPoint c_MousePosition = new CGPoint();
+        private static NEPoint c_MousePosition = new NEPoint();
 
         public static bool CheckKeyDown(ConsoleKey key)
         {
@@ -733,10 +733,10 @@ namespace ConsoleRenderer.Core
             return (((output << 16) != 0) && ((output & 1) != 0));
         }
 
-        public static CGPoint GetMousePostion()
+        public static NEPoint GetMousePostion()
         {
-            CGPoint wPos = WindowControl.GetWindowPosition();
-            CGPoint mScrPos = new CGPoint();
+            NEPoint wPos = WindowControl.GetWindowPosition();
+            NEPoint mScrPos = new NEPoint();
             GetCursorPos(ref mScrPos);
             c_MousePosition.X = (short)(mScrPos.X - wPos.X);
             c_MousePosition.Y = (short)(mScrPos.Y - wPos.Y);

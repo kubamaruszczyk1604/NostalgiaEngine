@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace ConsoleRenderer
 {
-    public delegate void OnSceneExit(CGScene scene);
-    public class CGScene
+    public delegate void OnSceneExit(NEScene scene);
+    public class NEScene
     {
         public string Title { get; protected set; }
         public int ScreenWidth { get; protected set; }
@@ -26,7 +26,7 @@ namespace ConsoleRenderer
             {
                 ReturnDataType = ReturnData.GetType();
             }
-            CGEngine.Instance.PopScene();
+            NostalgiaEngine.Instance.PopScene();
             onSceneExit?.Invoke(this);
             onSceneExit = null;
         }

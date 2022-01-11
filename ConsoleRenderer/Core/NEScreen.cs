@@ -6,7 +6,7 @@ using OpenTK;
 using System.Threading;
 namespace ConsoleRenderer.Core
 {
-    public class CGBuffer
+    public class NEScreen
     {
 
 
@@ -26,9 +26,9 @@ namespace ConsoleRenderer.Core
         static extern bool WriteConsoleOutput(
           SafeFileHandle hConsoleOutput,
           CharInfo[] lpBuffer,
-          CGPoint dwBufferSize,
-          CGPoint dwBufferCoord,
-          ref CGRectangle lpWriteRegion);
+          NEPoint dwBufferSize,
+          NEPoint dwBufferCoord,
+          ref NERect lpWriteRegion);
 
 
         [DllImport("kernel32.dll", SetLastError = true)]
@@ -83,9 +83,9 @@ namespace ConsoleRenderer.Core
         static int m_sWidth;
         static int m_sHeight;
         static CharInfo[] m_Bufer;
-        static CGRectangle m_ConsoleRect;
-        static CGPoint m_ScrTopLeft;
-        static CGPoint m_ScrBottomRight;
+        static NERect m_ConsoleRect;
+        static NEPoint m_ScrTopLeft;
+        static NEPoint m_ScrBottomRight;
         static int m_sBuffPtr;
 
         static public bool Initialize(short width, short height, short pixelW, short pixelH)
@@ -93,8 +93,8 @@ namespace ConsoleRenderer.Core
             HalfTemporalResolution = false;
             m_sWidth = width;
             m_sHeight = height;
-            m_ScrBottomRight = new CGPoint() { X = (short)m_sWidth, Y = (short)m_sHeight };
-            m_ScrTopLeft = new CGPoint() { X = 0, Y = 0 };
+            m_ScrBottomRight = new NEPoint() { X = (short)m_sWidth, Y = (short)m_sHeight };
+            m_ScrTopLeft = new NEPoint() { X = 0, Y = 0 };
             m_sBuffPtr = 0;
             m_ConsoleHandle = CreateFile("CONOUT$", 0x40000000, 2, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero);
             if (m_ConsoleHandle.IsInvalid) return false;
@@ -123,7 +123,7 @@ namespace ConsoleRenderer.Core
 
             
             m_Bufer = new CharInfo[width * height];
-            m_ConsoleRect = new CGRectangle() { Left = 5, Top = 2, Right = (short)(width + 5), Bottom = (short)(height + 2) };
+            m_ConsoleRect = new NERect() { Left = 5, Top = 2, Right = (short)(width + 5), Bottom = (short)(height + 2) };
             
             Console.CursorVisible = false;
             Console.Clear();
@@ -180,8 +180,8 @@ namespace ConsoleRenderer.Core
 
         static private void WriteCon(short startX, short startY, short w, short h)
         {
-            CGRectangle rect = new CGRectangle((short)(startX+5), (short)(startY+2), (short)(w+5), (short)(h+2)) ;
-            WriteConsoleOutput(m_ConsoleHandle, m_Bufer, new CGPoint(w,h), new CGPoint(startX, startY), ref rect);
+            NERect rect = new NERect((short)(startX+5), (short)(startY+2), (short)(w+5), (short)(h+2)) ;
+            WriteConsoleOutput(m_ConsoleHandle, m_Bufer, new NEPoint(w,h), new NEPoint(startX, startY), ref rect);
         }
 
 

@@ -10,7 +10,7 @@ using ConsoleRenderer.Core;
 
 namespace ConsoleRenderer
 {
-    public class CGEngine
+    public class NostalgiaEngine
     {
         private readonly int DEFAULT_SCR_W = 120;
         private readonly int DEFAULT_SCR_H = 80;
@@ -18,13 +18,13 @@ namespace ConsoleRenderer
         private readonly int DEFAULT_PIXEL_H = 6;
 
 
-        private CGScene m_CurrentScene;
-        private Stack<CGScene> m_SceneStack;
+        private NEScene m_CurrentScene;
+        private Stack<NEScene> m_SceneStack;
         private bool m_Running;
         private float m_Delta;
 
         
-        public static CGEngine Instance { get; private set; }
+        public static NostalgiaEngine Instance { get; private set; }
         public string Title { get; set; }
         public int ScreenWidth { get; private set; }
         public int ScreenHeight { get; private set; }
@@ -33,17 +33,17 @@ namespace ConsoleRenderer
         public float RunningTime { get; private set; }
         object locker = new object();
 
-        public CGEngine()
+        public NostalgiaEngine()
         {
             WindowControl.DisableConsoleWindowButtons();
             m_Running = false;
             m_Delta = 0.0f;
-            m_SceneStack = new Stack<CGScene>();
+            m_SceneStack = new Stack<NEScene>();
             Instance = this;
         }
 
 
-        private void SetSceneAsCurrent(CGScene scene)
+        private void SetSceneAsCurrent(NEScene scene)
         {
             ScreenWidth = scene.ScreenWidth > 10 ? scene.ScreenWidth : DEFAULT_SCR_W;
             ScreenHeight = scene.ScreenHeight > 10 ? scene.ScreenHeight : DEFAULT_SCR_H;
@@ -51,10 +51,10 @@ namespace ConsoleRenderer
             PixelHeight = scene.PixelHeight > 0 ? scene.PixelHeight : DEFAULT_PIXEL_H;
             Title = "CGENGINE";
 
-            CGBuffer.Initialize((short)ScreenWidth, (short)ScreenHeight, (short)PixelWidth, (short)PixelHeight);
+            NEScreen.Initialize((short)ScreenWidth, (short)ScreenHeight, (short)PixelWidth, (short)PixelHeight);
         }
 
-        public void PushScene(CGScene scene)
+        public void PushScene(NEScene scene)
         {
 
             if(m_CurrentScene != null) m_CurrentScene.OnPause();
@@ -80,7 +80,7 @@ namespace ConsoleRenderer
             SetSceneAsCurrent(m_CurrentScene);
         }
 
-        public void Start(CGScene scene)
+        public void Start(NEScene scene)
         {
             PushScene(scene);
             WindowControl.QuickEditMode(false);
@@ -89,14 +89,14 @@ namespace ConsoleRenderer
             while (m_Running)
             {
                 
-                CGFrameTimer.Update();
-                m_Delta = CGFrameTimer.GetDeltaTime();
+                NEFrameTimer.Update();
+                m_Delta = NEFrameTimer.GetDeltaTime();
                 Console.SetCursorPosition(5, 1);
                Console.Title = Title + " @"+ ScreenWidth.ToString() + "x" +  ScreenHeight.ToString() + 
-                    " FPS: " + CGFrameTimer.GetFPS() + "   FRAME TIME: " + m_Delta + "s ";
+                    " FPS: " + NEFrameTimer.GetFPS() + "   FRAME TIME: " + m_Delta + "s ";
 
                 var sceneType = m_CurrentScene.GetType();
-                m_CurrentScene.OnUpdate(CGFrameTimer.GetDeltaTime());
+                m_CurrentScene.OnUpdate(NEFrameTimer.GetDeltaTime());
                 if (sceneType.GetMethod("OnDrawPerColumn").DeclaringType == sceneType)
                 {
                     var resetEvent = new ManualResetEvent(false); // Will be reset when buffer is ready to be swaped
@@ -123,9 +123,9 @@ namespace ConsoleRenderer
                 }
                 m_CurrentScene.OnDraw();
 
-                CGBuffer.Swap();
+                NEScreen.Swap();
 
-                RunningTime += CGFrameTimer.GetDeltaTime();
+                RunningTime += NEFrameTimer.GetDeltaTime();
                
             }
             m_CurrentScene.OnExit();

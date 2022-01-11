@@ -7,7 +7,7 @@ using ConsoleRenderer.Core;
 using System.IO;
 namespace ConsoleRenderer.Tools
 {
-    public class CGTextInput : CG_GUIElement, IDisposable
+    public class NETextInput : INEGUIElement, IDisposable
     {
 
         public delegate void OnLineCommit(string line);
@@ -15,7 +15,7 @@ namespace ConsoleRenderer.Tools
         private string m_DataString;
         private int m_CursorPos;
         private ConsoleKeyInfo m_KeyInfo;
-        private CGPoint m_Position;
+        private NEPoint m_Position;
         private readonly int c_HorizontalOffset = 5;
         private readonly int c_VerticalOffset = 2;
 
@@ -24,11 +24,11 @@ namespace ConsoleRenderer.Tools
         public bool InFocus { get { return m_FocusedFlag; } }
 
 
-        public CGTextInput(string defaultStr, int x, int y, bool inFocus = false)
+        public NETextInput(string defaultStr, int x, int y, bool inFocus = false)
         {
             m_DataString = defaultStr;
             m_CursorPos = defaultStr.Length;
-            m_Position = new CGPoint();
+            m_Position = new NEPoint();
             m_Position.X = (short)x;
             m_Position.Y = (short)y;
             m_FocusedFlag = inFocus;
@@ -75,7 +75,7 @@ namespace ConsoleRenderer.Tools
 
         public void Draw(short col = 15)
         {
-            CGBuffer.WriteXY(m_Position.X, m_Position.Y, col, m_DataString);
+            NEScreen.WriteXY(m_Position.X, m_Position.Y, col, m_DataString);
 
             Console.SetCursorPosition(m_Position.X + c_HorizontalOffset + m_CursorPos, m_Position.Y + c_VerticalOffset);
         }

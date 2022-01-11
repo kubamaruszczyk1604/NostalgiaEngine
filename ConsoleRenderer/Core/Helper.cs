@@ -7,7 +7,7 @@ using OpenTK;
 namespace ConsoleRenderer.Core
 {
 
-    public class CGHelper
+    public class NEHelper
     {
 
         static public float Min(float a, float b)

@@ -8,7 +8,7 @@ using ConsoleRenderer;
 
 namespace ConsoleRenderer.TextureEditor
 {
-    class Test_MemTex16: CGScene
+    class Test_MemTex16: NEScene
     {
         MemTex16 m_MemTex16;
         public override void OnInitialize()
@@ -75,7 +75,7 @@ namespace ConsoleRenderer.TextureEditor
                 {
                     MemTex16.MT16Pix pix = m_MemTex16.GetPixel(x, y);
                     bool d = pix == m_Current;
-                    CGBuffer.PutChar( d?'X':'0', (short)m_MemTex16.GetColor(x,y), x, y);
+                    NEScreen.PutChar( d?'X':'0', (short)m_MemTex16.GetColor(x,y), x, y);
                 }
             }
         }

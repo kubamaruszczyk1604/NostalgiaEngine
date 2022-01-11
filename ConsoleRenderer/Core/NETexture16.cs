@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ConsoleRenderer.Core
 {
-    class CGTexture16
+    class NETexture16
     {
         public int Width { get; private set; }
         public int Height { get; private set; }
@@ -17,7 +17,7 @@ namespace ConsoleRenderer.Core
 
 
 
-        private CGTexture16()
+        private NETexture16()
         {
            
         }
@@ -80,10 +80,10 @@ namespace ConsoleRenderer.Core
             return true;
         }
 
-        public static CGTexture16 LoadFromFile(string file)
+        public static NETexture16 LoadFromFile(string file)
         {
 
-            CGTexture16 texture = new CGTexture16();
+            NETexture16 texture = new NETexture16();
             if(texture.ReadFromFile(file))
             {
                 return texture;
@@ -91,7 +91,7 @@ namespace ConsoleRenderer.Core
             return null;
         }
 
-        public CGColorSample Sample(float u, float v, float intensity)
+        public NEColorSample Sample(float u, float v, float intensity)
         {
             int x = (int)(u * (float)Width);
             if (x >= (Width - 1)) x = Width - 1; 
@@ -101,7 +101,7 @@ namespace ConsoleRenderer.Core
             int index = y * Width + x;
             int col = m_Data[index];
 
-            return CGColorSample.MakeCol(ConsoleColor.Black, (ConsoleColor)col,intensity);
+            return NEColorSample.MakeCol(ConsoleColor.Black, (ConsoleColor)col,intensity);
         }
 
     }

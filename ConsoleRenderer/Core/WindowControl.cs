@@ -59,9 +59,9 @@ namespace ConsoleRenderer.Core
         static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint dwMode);
 
         [DllImport("user32.dll")]
-        public static extern bool GetWindowRect(IntPtr hwnd, ref CGRectangle rectangle);
+        public static extern bool GetWindowRect(IntPtr hwnd, ref NERect rectangle);
         [DllImport("user32.dll")]
-        public static extern bool GetClientRect(IntPtr hwnd, ref CGRectangle rectangle );
+        public static extern bool GetClientRect(IntPtr hwnd, ref NERect rectangle );
 
         static public readonly int MF_BYCOMMAND = 0x00000000;
         static public readonly int SC_CLOSE = 0xF060;
@@ -101,9 +101,9 @@ namespace ConsoleRenderer.Core
         
 
         static private Process c_CurrentProcess = Process.GetCurrentProcess();
-        static private CGRectangle c_MainWindowRect = new CGRectangle();
-        static private CGPoint c_MainWindowPos = new CGPoint();
-        static public CGPoint GetWindowPosition()
+        static private NERect c_MainWindowRect = new NERect();
+        static private NEPoint c_MainWindowPos = new NEPoint();
+        static public NEPoint GetWindowPosition()
         {
             
             GetWindowRect(c_CurrentProcess.MainWindowHandle, ref c_MainWindowRect);

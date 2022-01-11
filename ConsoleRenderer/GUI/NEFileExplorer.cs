@@ -10,7 +10,7 @@ namespace ConsoleRenderer.Tools
 {
 
     
-    public class CGFileExplorer: CG_GUIElement, IDisposable
+    public class NEFileExplorer: INEGUIElement, IDisposable
     {
         public delegate void OnFileSelected(string path);
         public delegate void OnFocusChanged(string path, bool focus);
@@ -36,7 +36,7 @@ namespace ConsoleRenderer.Tools
         private bool m_FocusFlag;
         public bool InFocus { get { return m_FocusFlag; } }
 
-        public CGFileExplorer(string title)
+        public NEFileExplorer(string title)
         {
             m_DirStack = new Stack<string>();
             m_FocusFlag = true;
@@ -142,8 +142,8 @@ namespace ConsoleRenderer.Tools
         public void Draw(int screenWidth)
         {
           
-            CGBuffer.WriteXY(0, 0, 12, m_Title);
-            CGBuffer.WriteXY(0, 2, 9, m_CurrentPath);
+            NEScreen.WriteXY(0, 0, 12, m_Title);
+            NEScreen.WriteXY(0, 2, 9, m_CurrentPath);
 
 
             //if (m_CurrentPosIndex >= 3*c_ColLength) start = c_ColLength;
@@ -152,7 +152,7 @@ namespace ConsoleRenderer.Tools
                 int x = ((i - m_ViewStartIndex) / c_ColLength) * c_DistanceBetweenColumns;
 
                 if (x < screenWidth)
-                    CGBuffer.WriteXY(x, 4 + ((i - m_ViewStartIndex) % c_ColLength), (short)(m_CurrentPosIndex == i ? (15 | 1 << 4) : 9), m_CurrentDirContent[i].Substring(m_CurrentPath.Length));
+                    NEScreen.WriteXY(x, 4 + ((i - m_ViewStartIndex) % c_ColLength), (short)(m_CurrentPosIndex == i ? (15 | 1 << 4) : 9), m_CurrentDirContent[i].Substring(m_CurrentPath.Length));
             }
 
            // CGBuffer.WriteXY(0, 28, 15 | (1 << 4), m_EditString);

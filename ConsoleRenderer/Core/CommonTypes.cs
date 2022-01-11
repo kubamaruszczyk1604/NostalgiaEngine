@@ -16,14 +16,14 @@ namespace ConsoleRenderer.Core
     //}
 
     [StructLayout(LayoutKind.Sequential)]
-    public struct CGRectangle
+    public struct NERect
     {
         public short Left { get; set; }
         public short Top { get; set; }
         public short Right { get; set; }
         public short Bottom { get; set; }
 
-        public CGRectangle(short left, short top, short right, short bottom)
+        public NERect(short left, short top, short right, short bottom)
         {
             Left = left;
             Top = top;
@@ -31,27 +31,27 @@ namespace ConsoleRenderer.Core
             Bottom = bottom;
         }
 
-        public static CGRectangle operator -(CGRectangle lhs, CGRectangle rhs)
+        public static NERect operator -(NERect lhs, NERect rhs)
         {
-            return new CGRectangle((short)(lhs.Left - rhs.Left), (short)(lhs.Top - rhs.Top), (short)(lhs.Right - rhs.Right), (short)(lhs.Bottom - rhs.Bottom));
+            return new NERect((short)(lhs.Left - rhs.Left), (short)(lhs.Top - rhs.Top), (short)(lhs.Right - rhs.Right), (short)(lhs.Bottom - rhs.Bottom));
         }
-        public static CGRectangle operator +(CGRectangle lhs, CGRectangle rhs)
+        public static NERect operator +(NERect lhs, NERect rhs)
         {
-            return new CGRectangle((short)(lhs.Left + rhs.Left), (short)(lhs.Top + rhs.Top), (short)(lhs.Right + rhs.Right), (short)(lhs.Bottom + rhs.Bottom));
+            return new NERect((short)(lhs.Left + rhs.Left), (short)(lhs.Top + rhs.Top), (short)(lhs.Right + rhs.Right), (short)(lhs.Bottom + rhs.Bottom));
         }
-        public static CGRectangle operator *(CGRectangle lhs, int rhs)
+        public static NERect operator *(NERect lhs, int rhs)
         {
-            return new CGRectangle((short)(lhs.Left * rhs), (short)(lhs.Top * rhs), (short)(lhs.Right * rhs), (short)(lhs.Bottom * rhs));
-        }
-
-        public static CGRectangle operator /(CGRectangle lhs, int rhs)
-        {
-            return new CGRectangle((short)(lhs.Left / rhs), (short)(lhs.Top / rhs), (short)(lhs.Right / rhs), (short)(lhs.Bottom / rhs));
+            return new NERect((short)(lhs.Left * rhs), (short)(lhs.Top * rhs), (short)(lhs.Right * rhs), (short)(lhs.Bottom * rhs));
         }
 
-        public static CGRectangle operator %(CGRectangle lhs, int rhs)
+        public static NERect operator /(NERect lhs, int rhs)
         {
-            return new CGRectangle((short)(lhs.Left % rhs), (short)(lhs.Top % rhs), (short)(lhs.Right % rhs), (short)(lhs.Bottom % rhs));
+            return new NERect((short)(lhs.Left / rhs), (short)(lhs.Top / rhs), (short)(lhs.Right / rhs), (short)(lhs.Bottom / rhs));
+        }
+
+        public static NERect operator %(NERect lhs, int rhs)
+        {
+            return new NERect((short)(lhs.Left % rhs), (short)(lhs.Top % rhs), (short)(lhs.Right % rhs), (short)(lhs.Bottom % rhs));
         }
 
     }
@@ -64,52 +64,52 @@ namespace ConsoleRenderer.Core
 
 
     [StructLayout(LayoutKind.Sequential)]
-    public struct CGPoint
+    public struct NEPoint
     {
         public short X;
         public short Y;
 
-        public CGPoint(short X, short Y)
+        public NEPoint(short X, short Y)
         {
             this.X = X;
             this.Y = Y;
         }
 
-        static public CGPoint operator+(CGPoint lhs, CGPoint rhs)
+        static public NEPoint operator+(NEPoint lhs, NEPoint rhs)
         {
-            return new CGPoint((short)(lhs.X + rhs.X), (short)(lhs.Y + rhs.Y));
+            return new NEPoint((short)(lhs.X + rhs.X), (short)(lhs.Y + rhs.Y));
         }
 
-        static public CGPoint operator-(CGPoint lhs, CGPoint rhs)
+        static public NEPoint operator-(NEPoint lhs, NEPoint rhs)
         {
-            return new CGPoint((short)(lhs.X - rhs.X), (short)(lhs.Y - rhs.Y));
+            return new NEPoint((short)(lhs.X - rhs.X), (short)(lhs.Y - rhs.Y));
         }
 
-        static public CGPoint operator *(CGPoint lhs, int rhs)
+        static public NEPoint operator *(NEPoint lhs, int rhs)
         {
-            return new CGPoint((short)(lhs.X * rhs), (short)(lhs.Y * rhs));
+            return new NEPoint((short)(lhs.X * rhs), (short)(lhs.Y * rhs));
         }
 
-        static public CGPoint operator /(CGPoint lhs, int rhs)
+        static public NEPoint operator /(NEPoint lhs, int rhs)
         {
-            return new CGPoint((short)(lhs.X / rhs), (short)(lhs.Y / rhs));
+            return new NEPoint((short)(lhs.X / rhs), (short)(lhs.Y / rhs));
         }
 
-        static public CGPoint operator %(CGPoint lhs, int rhs)
+        static public NEPoint operator %(NEPoint lhs, int rhs)
         {
-            return new CGPoint((short)(lhs.X % rhs), (short)(lhs.Y % rhs));
+            return new NEPoint((short)(lhs.X % rhs), (short)(lhs.Y % rhs));
         }
 
     };
 
 
-    public class CGPixel
+    public class NEPixel
     {
         public int X;
         public int Y;
         public int Col;
 
-        public CGPixel(int x, int y, int col)
+        public NEPixel(int x, int y, int col)
         {
             X = x;
             Y = y;

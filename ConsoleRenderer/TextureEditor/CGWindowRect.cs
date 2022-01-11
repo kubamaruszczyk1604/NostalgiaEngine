@@ -7,7 +7,7 @@ using ConsoleRenderer.Core;
 
 namespace ConsoleRenderer.GUI
 {
-    public class CGWindowRect
+    public class NEWindowRect
     {
 
         public int X { get; set; }
@@ -16,7 +16,7 @@ namespace ConsoleRenderer.GUI
         public int H { get; set; }
         public string Title { get; set; }
 
-        public CGWindowRect(int x, int y, int w, int h, string title = "")
+        public NEWindowRect(int x, int y, int w, int h, string title = "")
         {
             X = x;
             Y = y;
@@ -33,7 +33,7 @@ namespace ConsoleRenderer.GUI
                 {
                     int col = (y == Y) ? (9 << 4)|15 : (8 << 4);
                     char c = (y == Y)&& (x-X<Title.Length) ? Title[x-X] : ' ';
-                    CGBuffer.PutChar(c,(short)col,  x, y);
+                    NEScreen.PutChar(c,(short)col,  x, y);
                 }
             }
         }

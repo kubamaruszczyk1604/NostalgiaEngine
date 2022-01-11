@@ -17,8 +17,8 @@ namespace ConsoleRenderer
         {
 
             //CGRaytracer2D tracer = new CGRaytracer2D();
-            CGEngine engine = new CGEngine();
-            CGTextureEditor ed = new CGTextureEditor();
+            NostalgiaEngine engine = new NostalgiaEngine();
+            NETextureEditor ed = new NETextureEditor();
             engine.Start(ed);
 
 

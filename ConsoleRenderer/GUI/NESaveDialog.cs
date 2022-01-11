@@ -9,13 +9,13 @@ using ConsoleRenderer.Tools;
 
 namespace ConsoleRenderer.GUI
 {
-    public class CGSaveDialog:CGScene
+    public class NESaveDialog:NEScene
     {
 
-        CGFileExplorer m_FileExplorer;
-        CGTextInput m_TextInput;
+        NEFileExplorer m_FileExplorer;
+        NETextInput m_TextInput;
 
-        CGYesNoWindow m_WindowRect;
+        NEYesNoWindow m_WindowRect;
 
         public override void OnInitialize()
         {
@@ -25,8 +25,8 @@ namespace ConsoleRenderer.GUI
             ScreenHeight = 30;
             PixelWidth = 8;
             PixelHeight = 16;
-            m_FileExplorer = new CGFileExplorer("SAVE FILE AS..");
-            m_TextInput = new CGTextInput("---", 15, 25);
+            m_FileExplorer = new NEFileExplorer("SAVE FILE AS..");
+            m_TextInput = new NETextInput("---", 15, 25);
             m_FileExplorer.onFocusChanged += OnExplorerFocusChanged;
             m_FileExplorer.onPathUpdated += OnPathUpdated;
             m_FileExplorer.TriggerOnPathUpdated();
@@ -34,7 +34,7 @@ namespace ConsoleRenderer.GUI
             //CGInput.CheckKeyPress(ConsoleKey.F2); // flush key state
             //CGInput.CheckKeyPress(ConsoleKey.F2);
             CGInput.FlushKeyboard();
-            m_WindowRect = new CGYesNoWindow(30, 5, 50, 8, "Confirm Save");
+            m_WindowRect = new NEYesNoWindow(30, 5, 50, 8, "Confirm Save");
         }
 
 
@@ -74,23 +74,23 @@ namespace ConsoleRenderer.GUI
 
         public override void OnDraw()
         {
-            CGBuffer.Clear();
+            NEScreen.Clear();
             m_FileExplorer.Draw(ScreenWidth);
             
            // CGBuffer.WriteXY(3, 27, 15 | (1 << 4), "SAVE PATH: ");
             if (m_FileExplorer.InFocus)
             {
                 m_TextInput.Draw(8);
-                CGBuffer.WriteXY(34, 27, 15 | (2 << 4)," F2 - SELECT ");
-                CGBuffer.WriteXY(64, 27, 15 | (2 << 4), " ESC - CANCEL ");
-                CGBuffer.WriteXY(4, 25, 15 | (1 << 4), "SAVE AS:");
+                NEScreen.WriteXY(34, 27, 15 | (2 << 4)," F2 - SELECT ");
+                NEScreen.WriteXY(64, 27, 15 | (2 << 4), " ESC - CANCEL ");
+                NEScreen.WriteXY(4, 25, 15 | (1 << 4), "SAVE AS:");
             }
             else
             {
                 m_TextInput.Draw(15|(1<<4));
-                CGBuffer.WriteXY(34, 27, 15 | (4 << 4), " ENTER - SAVE ");
-                CGBuffer.WriteXY(64, 27, 15 | (4 << 4), " ESC - BACK ");
-                CGBuffer.WriteXY(4, 25, 15 | (4 << 4), "SAVE AS:");
+                NEScreen.WriteXY(34, 27, 15 | (4 << 4), " ENTER - SAVE ");
+                NEScreen.WriteXY(64, 27, 15 | (4 << 4), " ESC - BACK ");
+                NEScreen.WriteXY(4, 25, 15 | (4 << 4), "SAVE AS:");
             }
             //CGBuffer.WriteXY(40, 29, 12, m_FileExplorer.InFocus.ToString());
             m_WindowRect.Draw();
