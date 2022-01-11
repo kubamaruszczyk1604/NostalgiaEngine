@@ -42,7 +42,7 @@ namespace NostalgiaEngine.Core
         }
 
 
-        private void InitializeScreen(NEScene scene)
+        private bool InitializeScreen(NEScene scene)
         {
             ScreenWidth = scene.ScreenWidth > 10 ? scene.ScreenWidth : DEFAULT_SCR_W;
             ScreenHeight = scene.ScreenHeight > 10 ? scene.ScreenHeight : DEFAULT_SCR_H;
@@ -50,7 +50,7 @@ namespace NostalgiaEngine.Core
             PixelHeight = scene.PixelHeight > 0 ? scene.PixelHeight : DEFAULT_PIXEL_H;
             Title = "NOSTALGIA ENGINE";
 
-            NEScreen.Initialize((short)ScreenWidth, (short)ScreenHeight, (short)PixelWidth, (short)PixelHeight);
+            return NEScreen.Initialize((short)ScreenWidth, (short)ScreenHeight, (short)PixelWidth, (short)PixelHeight);
         }
 
         public bool PushScene(NEScene scene)
@@ -59,9 +59,12 @@ namespace NostalgiaEngine.Core
             if(m_CurrentScene != null) m_CurrentScene.OnPause();
             if (scene.OnLoad())
             {
+                if(!InitializeScreen(scene))
+                {
+                    return false;
+                }
                 m_CurrentScene = scene;
                 m_SceneStack.Push(scene);
-                InitializeScreen(scene);
                 scene.OnStart();
                 return true;
             }
