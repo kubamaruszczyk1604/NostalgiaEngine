@@ -76,7 +76,7 @@ namespace NostalgiaEngine.TextureEditor
                 {
                     MemTex16.MT16Pix pix = m_MemTex16.GetPixel(x, y);
                     bool d = pix == m_Current;
-                    NEScreen.PutChar( d?'X':'0', (short)m_MemTex16.GetColor(x,y), x, y);
+                    NEConsoleScreen.PutChar( d?'X':'0', (short)m_MemTex16.GetColor(x,y), x, y);
                 }
             }
         }

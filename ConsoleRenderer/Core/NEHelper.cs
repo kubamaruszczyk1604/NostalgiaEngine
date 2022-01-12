@@ -6,30 +6,55 @@ using System.Threading.Tasks;
 namespace NostalgiaEngine.Core
 {
 
-    public class NEHelper
+    public class NEMathHelper
     {
 
         static public float Min(float a, float b)
         {
-            if (a < b) return a;
-            else return b;
+            return (a < b) ? a : b;
         }
 
         static public float Max(float a, float b)
         {
-            if (a > b) return a;
-            else return b;
-
+            return (a > b) ? a : b;
         }
 
+        static public float Clamp(float val, float low, float high)
+        {
+            val = (val < low) ? low : val;
+            val = (val > high) ? high : val;
+            return val;
+        }
 
         static public float Abs(float a)
         {
             return Math.Abs(a);
         }
 
-        static public float Pow(double number, double power)
+        static public int Abs(int a)
         {
+            return Math.Abs(a);
+        }
+
+        static public int Min(int a, int b)
+        {
+            return (a < b) ? a : b;
+        }
+
+        static public int Max(int a, int b)
+        {
+            return (a > b) ? a : b;
+        }
+
+        static public int Clamp(int val, int low, int high)
+        {
+            val = (val < low) ? low : val;
+            val = (val > high) ? high : val;
+            return val;
+        }
+
+        static public float Pow(float number, float power)
+        { 
             return (float)Math.Pow(number, power);
         }
 
@@ -65,10 +90,6 @@ namespace NostalgiaEngine.Core
             return dir;
         }
 
-        static public float Dot(NEVector2 a, NEVector2 b)
-        {
-            return NEVector2.Dot(a, b);
-        }
 
         /// <summary>
         /// Finds terms "a" and "c" of the straight line (y = ax + c) passing through points p1 and p2
@@ -88,9 +109,9 @@ namespace NostalgiaEngine.Core
 
         public static bool InTriangle(NEVector2 p, NEVector2 A, NEVector2 B, NEVector2 C)
         {
-            float a = Dot((p - A), FindNormal(A, B));
-            float b = Dot((p - B), FindNormal(B, C));
-            float c = Dot((p - C), FindNormal(C, A));
+            float a = NEVector2.Dot((p - A), FindNormal(A, B));
+            float b = NEVector2.Dot((p - B), FindNormal(B, C));
+            float c = NEVector2.Dot((p - C), FindNormal(C, A));
 
             if (Sign(a) + Sign(b) + Sign(c) <= -3.0)
                 return true;
@@ -98,6 +119,12 @@ namespace NostalgiaEngine.Core
         }
 
         public static bool InRectangle(NEVector2 p, NEVector2 orgin, float W, float H)
+        {
+            return ((p.X > orgin.X) && (p.X < (orgin.X + W)) &&
+                (p.Y > orgin.Y) && (p.Y < (orgin.Y + H)));
+        }
+
+        public static bool InRectangle(NEPoint p, NEPoint orgin, int W, int H)
         {
             return ((p.X > orgin.X) && (p.X < (orgin.X + W)) &&
                 (p.Y > orgin.Y) && (p.Y < (orgin.Y + H)));
@@ -115,7 +142,7 @@ namespace NostalgiaEngine.Core
             NEVector2 intersection = new NEVector2(interX, a * interX + c);
 
             //3. Distance between p and intersection is on the perp
-            return NEVector2.Length(p - intersection);
+            return NEVector2.CalculateLength(p - intersection);
         }
 
         public static float DistToLine(NEVector2 p , NEVector2 A, NEVector2 B)
@@ -147,9 +174,6 @@ namespace NostalgiaEngine.Core
 
             return a;
         }
-
-
-
 
         static public void Rotate(ref NEVector2 v, float theta)
         {

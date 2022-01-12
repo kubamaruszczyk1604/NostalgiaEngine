@@ -27,8 +27,8 @@ namespace NostalgiaEngine.GUI
         public void Draw()
         {
             m_Window.Draw();
-            NEScreen.WriteXY(m_Window.X + m_Window.W / 8, m_Window.Y + m_Window.H / 2, (2 << 4) | 15, "  YES - ENTER  ");
-            NEScreen.WriteXY(m_Window.X + m_Window.W - m_Window.W/8- 15, m_Window.Y + m_Window.H / 2, (12 << 4) | 15, "   NO - ESC    ");
+            NEConsoleScreen.WriteXY(m_Window.X + m_Window.W / 8, m_Window.Y + m_Window.H / 2, (2 << 4) | 15, "  YES - ENTER  ");
+            NEConsoleScreen.WriteXY(m_Window.X + m_Window.W - m_Window.W/8- 15, m_Window.Y + m_Window.H / 2, (12 << 4) | 15, "   NO - ESC    ");
         }
     }
 }

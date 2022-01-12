@@ -67,17 +67,8 @@ namespace NostalgiaEngine.Core
         ///Windows 2000/XP: For any country/region, the '+' key
         ///</summary>
         OEM_PLUS = 0xBB,
-        ///<summary>
-        ///Windows 2000/XP: For any country/region, the ',' key
-        ///</summary>
         OEM_COMMA = 0xBC,
-        ///<summary>
-        ///Windows 2000/XP: For any country/region, the '-' key
-        ///</summary>
         OEM_MINUS = 0xBD,
-        ///<summary>
-        ///Windows 2000/XP: For any country/region, the '.' key
-        ///</summary>
         OEM_PERIOD = 0xBE,
         ///<summary>
         ///Used for miscellaneous characters; it can vary by keyboard.
@@ -182,6 +173,11 @@ namespace NostalgiaEngine.Core
             return ((GetAsyncKeyState((int)key) << 16) != 0);
         }
 
+        public static bool CheckKeyDown(NEButton button)
+        {
+            return ((GetAsyncKeyState((int)button) << 16) != 0);
+        }
+
         public static bool CheckKeyPress(ConsoleKey key)
         {
             int output = GetAsyncKeyState((int)key);
@@ -191,6 +187,12 @@ namespace NostalgiaEngine.Core
         public static bool CheckKeyPress(NEKey key)
         {
             int output = GetAsyncKeyState((int)key);
+            return (((output << 16) != 0) && ((output & 1) != 0));
+        }
+
+        public static bool CheckKeyPress(NEButton button)
+        {
+            int output = GetAsyncKeyState((int)button);
             return (((output << 16) != 0) && ((output & 1) != 0));
         }
 
@@ -209,7 +211,15 @@ namespace NostalgiaEngine.Core
         {
             foreach (var val in Enum.GetValues(typeof(NEKey)))
             {
-                CheckKeyPress((ConsoleKey)val);
+                CheckKeyPress((NEKey)val);
+            }
+        }
+
+        public static void FlushMouse()
+        {
+            foreach (var val in Enum.GetValues(typeof(NEButton)))
+            {
+                CheckKeyPress((NEButton)val);
             }
         }
     }

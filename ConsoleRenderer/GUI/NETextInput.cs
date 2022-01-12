@@ -75,7 +75,7 @@ namespace NostalgiaEngine.Tools
 
         public void Draw(short col = 15)
         {
-            NEScreen.WriteXY(m_Position.X, m_Position.Y, col, m_DataString);
+            NEConsoleScreen.WriteXY(m_Position.X, m_Position.Y, col, m_DataString);
 
             Console.SetCursorPosition(m_Position.X + c_HorizontalOffset + m_CursorPos, m_Position.Y + c_VerticalOffset);
         }

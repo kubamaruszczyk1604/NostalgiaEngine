@@ -33,7 +33,7 @@ namespace NostalgiaEngine.GUI
                 {
                     int col = (y == Y) ? (9 << 4)|15 : (8 << 4);
                     char c = (y == Y)&& (x-X<Title.Length) ? Title[x-X] : ' ';
-                    NEScreen.PutChar(c,(short)col,  x, y);
+                    NEConsoleScreen.PutChar(c,(short)col,  x, y);
                 }
             }
         }

@@ -5,11 +5,8 @@ using Microsoft.Win32.SafeHandles;
 using System.Threading;
 namespace NostalgiaEngine.Core
 {
-    public class NEScreen
+    public class NEConsoleScreen
     {
-
-
-
         /* TEXT FRAME BUFFER FOR FAST RENDERING */
         [DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         static extern SafeFileHandle CreateFile(
@@ -61,9 +58,6 @@ namespace NostalgiaEngine.Core
             public short Attributes;
         }
 
-
-
-
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         public struct FontInfoEx
         {
@@ -87,6 +81,10 @@ namespace NostalgiaEngine.Core
         static NEPoint m_ScrBottomRight;
         static int m_sBuffPtr;
 
+        static int m_InitialW;
+        static int m_InitialH;
+        static bool m_FirstRun = true;
+
         static public bool Initialize(short width, short height, short pixelW, short pixelH)
         {
             HalfTemporalResolution = false;
@@ -97,6 +95,14 @@ namespace NostalgiaEngine.Core
             m_sBuffPtr = 0;
             m_ConsoleHandle = CreateFile("CONOUT$", 0x40000000, 2, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero);
             if (m_ConsoleHandle.IsInvalid) return false;
+
+
+            if (m_FirstRun)
+            {
+                m_InitialW = Console.WindowWidth;
+                m_InitialH = Console.WindowHeight;
+            }
+            m_FirstRun = false;
             try
             {
 
@@ -116,10 +122,9 @@ namespace NostalgiaEngine.Core
             }
             catch
             {
+                SetDefaultConsole();
                 return false;
             }
-           
-
             
             m_Bufer = new CharInfo[width * height];
             m_ConsoleRect = new NERect() { Left = 5, Top = 2, Right = (short)(width + 5), Bottom = (short)(height + 2) };
@@ -183,10 +188,24 @@ namespace NostalgiaEngine.Core
             WriteConsoleOutput(m_ConsoleHandle, m_Bufer, new NEPoint(w,h), new NEPoint(startX, startY), ref rect);
         }
 
-
-
-
-
+        static public void SetDefaultConsole()
+        {
+            Console.Clear();
+            Console.SetWindowSize(m_InitialW, m_InitialH);
+            FontInfoEx set = new FontInfoEx
+            {
+                cbSize = Marshal.SizeOf<FontInfoEx>(),
+                FontIndex = 0,
+                FontFamily = 0x00,
+                FontName = "Consolas",
+                FontWeight = 400,
+                FontSize = 16,
+                FontWidth = 8
+            };
+            SetCurrentConsoleFontEx(m_ConsoleHandle.DangerousGetHandle(), false, ref set);
+            Console.CursorVisible = true;
+            Console.SetCursorPosition(0, 0);
+        }
 
     }
     

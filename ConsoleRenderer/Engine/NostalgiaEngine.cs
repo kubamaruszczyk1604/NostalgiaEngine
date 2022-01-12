@@ -30,14 +30,16 @@ namespace NostalgiaEngine.Core
         public int PixelWidth { get; private set; }
         public int PixelHeight { get; private set; }
         public float RunningTime { get; private set; }
+        public string PostMessage { get; set; }
 
-        public Engine()
+        public Engine(string postMessage = "Thank you for using NostalgiaEngine!")
         {
             NEWindowControl.DisableConsoleWindowButtons();
             m_Running = false;
             m_Delta = 0.0f;
             m_SceneStack = new Stack<NEScene>();
             Instance = this;
+            PostMessage = postMessage;
         }
 
 
@@ -49,12 +51,12 @@ namespace NostalgiaEngine.Core
             PixelHeight = scene.PixelHeight > 0 ? scene.PixelHeight : DEFAULT_PIXEL_H;
             Title = "NOSTALGIA ENGINE";
 
-            return NEScreen.Initialize((short)ScreenWidth, (short)ScreenHeight, (short)PixelWidth, (short)PixelHeight);
+            return NEConsoleScreen.Initialize((short)ScreenWidth, (short)ScreenHeight, (short)PixelWidth, (short)PixelHeight);
         }
 
         public bool PushScene(NEScene scene)
         {
-
+            NEInput.FlushKeyboard();
             if(m_CurrentScene != null) m_CurrentScene.OnPause();
             if (scene.OnLoad())
             {
@@ -85,6 +87,7 @@ namespace NostalgiaEngine.Core
                 return;
             }
             m_CurrentScene = m_SceneStack.Peek();
+            NEInput.FlushKeyboard();
             m_CurrentScene.OnResume();
             InitializeScreen(m_CurrentScene);
         }
@@ -138,13 +141,15 @@ namespace NostalgiaEngine.Core
                 }
                 m_CurrentScene.OnDraw();
 
-                NEScreen.SwapBuffers();
+                NEConsoleScreen.SwapBuffers();
 
                 RunningTime += NEFrameTimer.GetDeltaTime();
                
             }
-            m_CurrentScene.OnExit();
-
+            Console.Clear();
+            NEConsoleScreen.SetDefaultConsole();
+            Console.WriteLine(PostMessage);
+            Console.ReadLine();
         }
 
     }

@@ -62,6 +62,11 @@ namespace NostalgiaEngine.Core
             this.Y = Y;
         }
 
+        public NEVector2 AsVector()
+        {
+            return new NEVector2(X, Y);
+        }
+
         static public NEPoint operator+(NEPoint lhs, NEPoint rhs)
         {
             return new NEPoint((short)(lhs.X + rhs.X), (short)(lhs.Y + rhs.Y));
@@ -72,7 +77,7 @@ namespace NostalgiaEngine.Core
             return new NEPoint((short)(lhs.X - rhs.X), (short)(lhs.Y - rhs.Y));
         }
 
-        static public NEPoint operator *(NEPoint lhs, int rhs)
+        static public NEPoint operator*(NEPoint lhs, int rhs)
         {
             return new NEPoint((short)(lhs.X * rhs), (short)(lhs.Y * rhs));
         }
@@ -93,6 +98,8 @@ namespace NostalgiaEngine.Core
     {
         public float X { get; set; }
         public float Y { get; set; }
+        public float Length { get { return CalculateLength(this); } }
+        public NEVector2 Normalized { get { return Normalize(this); } }
 
         public NEVector2(float x, float y)
         {
@@ -100,14 +107,15 @@ namespace NostalgiaEngine.Core
             Y = y;
         }
 
-        public static float Length(NEVector2 v)
+
+        public static float CalculateLength(NEVector2 v)
         {
             return (float)Math.Sqrt(v.X * v.X + v.Y * v.Y);
         }
 
         public static NEVector2 Normalize(NEVector2 v)
         {
-            float l = Length(v);
+            float l = CalculateLength(v);
             return new NEVector2(v.X / l, v.Y / l);
         }
 
@@ -140,7 +148,17 @@ namespace NostalgiaEngine.Core
             return new NEVector2(lhs.X + rhs.X, lhs.Y + rhs.Y);
         }
 
+        static public NEVector2 operator +(NEVector2 lhs, NEPoint rhs)
+        {
+            return new NEVector2(lhs.X + rhs.X, lhs.Y + rhs.Y);
+        }
+
         static public NEVector2 operator -(NEVector2 lhs, NEVector2 rhs)
+        {
+            return new NEVector2(lhs.X - rhs.X, lhs.Y - rhs.Y);
+        }
+
+        static public NEVector2 operator -(NEVector2 lhs, NEPoint rhs)
         {
             return new NEVector2(lhs.X - rhs.X, lhs.Y - rhs.Y);
         }

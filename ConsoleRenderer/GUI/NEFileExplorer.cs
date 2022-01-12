@@ -142,8 +142,8 @@ namespace NostalgiaEngine.Tools
         public void Draw(int screenWidth)
         {
           
-            NEScreen.WriteXY(0, 0, 12, m_Title);
-            NEScreen.WriteXY(0, 2, 9, m_CurrentPath);
+            NEConsoleScreen.WriteXY(0, 0, 12, m_Title);
+            NEConsoleScreen.WriteXY(0, 2, 9, m_CurrentPath);
 
 
             //if (m_CurrentPosIndex >= 3*c_ColLength) start = c_ColLength;
@@ -152,7 +152,7 @@ namespace NostalgiaEngine.Tools
                 int x = ((i - m_ViewStartIndex) / c_ColLength) * c_DistanceBetweenColumns;
 
                 if (x < screenWidth)
-                    NEScreen.WriteXY(x, 4 + ((i - m_ViewStartIndex) % c_ColLength), (short)(m_CurrentPosIndex == i ? (15 | 1 << 4) : 9), m_CurrentDirContent[i].Substring(m_CurrentPath.Length));
+                    NEConsoleScreen.WriteXY(x, 4 + ((i - m_ViewStartIndex) % c_ColLength), (short)(m_CurrentPosIndex == i ? (15 | 1 << 4) : 9), m_CurrentDirContent[i].Substring(m_CurrentPath.Length));
             }
 
            // CGBuffer.WriteXY(0, 28, 15 | (1 << 4), m_EditString);

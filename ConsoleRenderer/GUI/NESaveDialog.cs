@@ -75,23 +75,23 @@ namespace NostalgiaEngine.GUI
 
         public override void OnDraw()
         {
-            NEScreen.Clear();
+            NEConsoleScreen.Clear();
             m_FileExplorer.Draw(ScreenWidth);
             
            // CGBuffer.WriteXY(3, 27, 15 | (1 << 4), "SAVE PATH: ");
             if (m_FileExplorer.InFocus)
             {
                 m_TextInput.Draw(8);
-                NEScreen.WriteXY(34, 27, 15 | (2 << 4)," F2 - SELECT ");
-                NEScreen.WriteXY(64, 27, 15 | (2 << 4), " ESC - CANCEL ");
-                NEScreen.WriteXY(4, 25, 15 | (1 << 4), "SAVE AS:");
+                NEConsoleScreen.WriteXY(34, 27, 15 | (2 << 4)," F2 - SELECT ");
+                NEConsoleScreen.WriteXY(64, 27, 15 | (2 << 4), " ESC - CANCEL ");
+                NEConsoleScreen.WriteXY(4, 25, 15 | (1 << 4), "SAVE AS:");
             }
             else
             {
                 m_TextInput.Draw(15|(1<<4));
-                NEScreen.WriteXY(34, 27, 15 | (4 << 4), " ENTER - SAVE ");
-                NEScreen.WriteXY(64, 27, 15 | (4 << 4), " ESC - BACK ");
-                NEScreen.WriteXY(4, 25, 15 | (4 << 4), "SAVE AS:");
+                NEConsoleScreen.WriteXY(34, 27, 15 | (4 << 4), " ENTER - SAVE ");
+                NEConsoleScreen.WriteXY(64, 27, 15 | (4 << 4), " ESC - BACK ");
+                NEConsoleScreen.WriteXY(4, 25, 15 | (4 << 4), "SAVE AS:");
             }
             //CGBuffer.WriteXY(40, 29, 12, m_FileExplorer.InFocus.ToString());
             m_WindowRect.Draw();
