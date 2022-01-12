@@ -2,7 +2,6 @@
 using System.IO;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
-using OpenTK;
 using System.Threading;
 namespace NostalgiaEngine.Core
 {

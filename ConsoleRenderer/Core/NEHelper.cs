@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using OpenTK;
 namespace NostalgiaEngine.Core
 {
 
@@ -58,7 +57,7 @@ namespace NostalgiaEngine.Core
             return dir;
         }
 
-        static public Vector2 FindNormal(Vector2 dir)
+        static public NEVector2 FindNormal(NEVector2 dir)
         {
             float tx = dir.X;
             dir.X = -dir.Y;
@@ -78,7 +77,7 @@ namespace NostalgiaEngine.Core
         /// <param name="p2">point 2</param>
         /// <param name="a">gradient</param>
         /// <param name="c">intersection height with y axis </param>
-        static public void FindLineEquation(Vector2 p1, Vector2 p2, out float a, out float c)
+        static public void FindLineEquation(NEVector2 p1, NEVector2 p2, out float a, out float c)
         {
             //gradient
             a = (p2.Y - p1.Y) / ((p2.X - p1.X)+0.01f);
@@ -104,7 +103,7 @@ namespace NostalgiaEngine.Core
                 (p.Y > orgin.Y) && (p.Y < (orgin.Y + H)));
         }
 
-        public static float DistToLine(Vector2 p, float a, float c)
+        public static float DistToLine(NEVector2 p, float a, float c)
         {
             if (a == 0) a = 0.001f;
             //1. find perpendicular line that passes thourgh p
@@ -113,19 +112,19 @@ namespace NostalgiaEngine.Core
 
             //2. Find intersection point
             float interX = (c - cPerpendicular) / (aPerpendicular - a);
-            Vector2 intersection = new Vector2(interX, a * interX + c);
+            NEVector2 intersection = new NEVector2(interX, a * interX + c);
 
             //3. Distance between p and intersection is on the perp
-            return (p - intersection).LengthFast;
+            return NEVector2.Length(p - intersection);
         }
 
-        public static float DistToLine(Vector2 p ,Vector2 A, Vector2 B)
+        public static float DistToLine(NEVector2 p , NEVector2 A, NEVector2 B)
         {
             FindLineEquation(A, B, out float a, out float c);
             return DistToLine(p, a, c);
         }
 
-        public static bool IsOnLine(Vector2 p, Vector2 A, Vector2 B, float thickness = 1.0f)
+        public static bool IsOnLine(NEVector2 p, NEVector2 A, NEVector2 B, float thickness = 1.0f)
         {
             float lowX = A.X < B.X ? A.X : B.X;
             float hiX = A.X > B.X ? A.X : B.X;
@@ -140,24 +139,8 @@ namespace NostalgiaEngine.Core
             return false;
         }
 
-        static public Vector4 Abs(Vector4 a)
-        {
-            a.X = Math.Abs(a.X);
-            a.Y = Math.Abs(a.Y);
-            a.Z = Math.Abs(a.Z);
-            a.W = Math.Abs(a.W);
-            return a;
-        }
 
-        static public Vector3 Abs(Vector3 a)
-        {
-            a.X = Math.Abs(a.X);
-            a.Y = Math.Abs(a.Y);
-            a.Z = Math.Abs(a.Z);
-            return a;
-        }
-
-        static public Vector2 Abs(Vector2 a)
+        static public NEVector2 Abs(NEVector2 a)
         {
             a.X = Math.Abs(a.X);
             a.Y = Math.Abs(a.Y);
@@ -165,17 +148,10 @@ namespace NostalgiaEngine.Core
             return a;
         }
 
-        static public Vector3 Max(Vector3 a, float b)
-        {
-            if (a.X < b) a.X = b;
-            if (a.Y < b) a.Y = b;
-            if (a.Z < b) a.Z = b;
-            return a;
-        }
 
 
 
-        static public void Rotate(ref Vector2 v, float theta)
+        static public void Rotate(ref NEVector2 v, float theta)
         {
             float s = (float)Math.Sin(theta);
             float c = (float)Math.Cos(theta);

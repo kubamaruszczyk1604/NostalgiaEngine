@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using NostalgiaEngine.Core;
 using NostalgiaEngine;
 using System.Runtime.InteropServices;
-using OpenTK;
 using System.IO;
 using NostalgiaEngine.GUI;
 
@@ -103,7 +102,7 @@ namespace NostalgiaEngine.TextureEditor
            // m_LastMouse = mp;
             if (NEInput.CheckKeyPress(ConsoleKey.UpArrow))
             {
-                if (NEInput.CheckKeyDown((ConsoleKey)0xA2))
+                if (NEInput.CheckKeyDown(NEKey.Control))
                 {
                     m_ImageH--;
                     if (m_ImageH < c_MinImageH) m_ImageH = c_MinImageH;
@@ -116,7 +115,7 @@ namespace NostalgiaEngine.TextureEditor
 
             if (NEInput.CheckKeyPress(ConsoleKey.DownArrow))
             {
-                if (NEInput.CheckKeyDown((ConsoleKey)0xA2))
+                if (NEInput.CheckKeyDown(NEKey.Control))
                 {
                     m_ImageH++;
                     if (m_ImageH > c_MaxImageH) m_ImageH = c_MaxImageH;
@@ -130,7 +129,7 @@ namespace NostalgiaEngine.TextureEditor
             if (NEInput.CheckKeyPress(ConsoleKey.LeftArrow))
             {
 
-                if (NEInput.CheckKeyDown((ConsoleKey)0xA2))
+                if (NEInput.CheckKeyDown(NEKey.Control))
                 {
                     m_ImageW--;
                     if (m_ImageW < c_MinImageW) m_ImageW = c_MinImageW;
@@ -147,7 +146,7 @@ namespace NostalgiaEngine.TextureEditor
 
             if (NEInput.CheckKeyPress(ConsoleKey.RightArrow))
             {
-                if (NEInput.CheckKeyDown((ConsoleKey)0xA2))
+                if (NEInput.CheckKeyDown(NEKey.Control))
                 {
                     m_ImageW++;
                     if (m_ImageW > c_MaxImageW) m_ImageW = c_MaxImageW;
