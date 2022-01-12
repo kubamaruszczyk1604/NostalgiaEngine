@@ -18,15 +18,15 @@ namespace NostalgiaEngine.TextureEditor
 
 
 
-        private readonly Vector2 c_ColorPanelPos = new Vector2(2, 0);
-        private readonly Vector2 c_DrawingCanvasPos = new Vector2(3, 15);
+        private readonly NEVector2 c_ColorPanelPos = new NEVector2(2, 0);
+        private readonly NEVector2 c_DrawingCanvasPos = new NEVector2(3, 15);
         private readonly int c_ColorWindowWidth = 6;
         private readonly int c_ColorWindowHeight = 8;
         private readonly int c_MinImageH = 5;
         private readonly int c_MinImageW = 5;
         private readonly int c_MaxImageW = 100;
         private readonly int c_MaxImageH = 70;
-        private readonly Vector2[] c_Directions = new Vector2[] { new Vector2(-1, 0), new Vector2(1, 0), new Vector2(0, -1), new Vector2(0, 1) };
+        private readonly NEVector2[] c_Directions = new NEVector2[] { new NEVector2(-1, 0), new NEVector2(1, 0), new NEVector2(0, -1), new NEVector2(0, 1) };
 
 
         private readonly string fl = "MODE(Shift)";
@@ -253,17 +253,17 @@ namespace NostalgiaEngine.TextureEditor
         }
         private void DrawPalette(int x, int y)
         {
-            Vector2 pixelPos = new Vector2(x, y);
+            NEVector2 pixelPos = new NEVector2(x, y);
             for (int i = 0; i < 17; ++i)
             {
-                if (NEHelper.InRectangle(pixelPos, new Vector2(c_ColorWindowWidth * (i), 0) + c_ColorPanelPos, c_ColorWindowWidth, c_ColorWindowHeight))
+                if (NEHelper.InRectangle(pixelPos, new NEVector2(c_ColorWindowWidth * (i), 0) + c_ColorPanelPos, c_ColorWindowWidth, c_ColorWindowHeight))
                 {
                     NEScreen.PutChar(' ', (short)((i) << 4), x, y);
                     if (i == 16) NEScreen.PutChar((char)NEBlock.Solid, (short)(8 << 4), x, y);
                 }
             }
 
-            if (NEHelper.InRectangle(pixelPos, new Vector2(c_ColorWindowWidth * SelectedColor, 8) + c_ColorPanelPos, c_ColorWindowWidth, 2))
+            if (NEHelper.InRectangle(pixelPos, new NEVector2(c_ColorWindowWidth * SelectedColor, 8) + c_ColorPanelPos, c_ColorWindowWidth, 2))
             {
                 NEScreen.PutChar((char)NEBlock.Middle, (short)((15)), x, y);
             }

@@ -98,7 +98,7 @@ namespace NostalgiaEngine.Core
             return false;
         }
 
-        public static bool InRectangle(Vector2 p, Vector2 orgin, float W, float H)
+        public static bool InRectangle(NEVector2 p, NEVector2 orgin, float W, float H)
         {
             return ((p.X > orgin.X) && (p.X < (orgin.X + W)) &&
                 (p.Y > orgin.Y) && (p.Y < (orgin.Y + H)));
