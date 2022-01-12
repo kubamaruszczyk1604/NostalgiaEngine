@@ -3,6 +3,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 using System.Threading;
+using System.Collections.Generic;
 namespace NostalgiaEngine.Core
 {
     public class NEConsoleScreen
@@ -70,29 +71,34 @@ namespace NostalgiaEngine.Core
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
             public string FontName;
         }
-
-        static public bool HalfTemporalResolution { get; set; }
+        static private readonly object LOCK = new object();
         static SafeFileHandle m_ConsoleHandle;
         static int m_sWidth;
         static int m_sHeight;
-        static CharInfo[] m_Bufer;
+        static List<CharInfo[]> m_Bufer;
         static NERect m_ConsoleRect;
         static NEPoint m_ScrTopLeft;
         static NEPoint m_ScrBottomRight;
-        static int m_sBuffPtr;
+        static int m_WriteBufferPtr;
+        static int m_DrawBufferPtr;
+        static bool m_MultiThreadEnabled;
 
         static int m_InitialW;
         static int m_InitialH;
         static bool m_FirstRun = true;
+        static bool m_SwapRequestedFlag;
 
-        static public bool Initialize(short width, short height, short pixelW, short pixelH)
+        static Thread m_ConsoleDrawWorker;
+
+        static public bool Initialize(short width, short height, short pixelW, short pixelH, bool renderOnSeparateThread = true)
         {
-            HalfTemporalResolution = false;
+            m_MultiThreadEnabled = renderOnSeparateThread;
+            if (m_ConsoleDrawWorker != null) m_ConsoleDrawWorker.Abort();
+            
             m_sWidth = width;
             m_sHeight = height;
             m_ScrBottomRight = new NEPoint() { X = (short)m_sWidth, Y = (short)m_sHeight };
             m_ScrTopLeft = new NEPoint() { X = 0, Y = 0 };
-            m_sBuffPtr = 0;
             m_ConsoleHandle = CreateFile("CONOUT$", 0x40000000, 2, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero);
             if (m_ConsoleHandle.IsInvalid) return false;
 
@@ -105,8 +111,6 @@ namespace NostalgiaEngine.Core
             m_FirstRun = false;
             try
             {
-
-                // ConsoleHelper.SetCurrentFont("Consolas", pixelSize);
                 FontInfoEx set = new FontInfoEx
                 {
                     cbSize = Marshal.SizeOf<FontInfoEx>(),
@@ -124,36 +128,35 @@ namespace NostalgiaEngine.Core
             {
                 return false;
             }
-            
-            m_Bufer = new CharInfo[width * height];
+            m_Bufer = new List<CharInfo[]>(2);
+            m_Bufer.Add(new CharInfo[width * height]);
+            m_Bufer.Add(new CharInfo[width * height]);
             m_ConsoleRect = new NERect() { Left = 5, Top = 2, Right = (short)(width + 5), Bottom = (short)(height + 2) };
             
             Console.CursorVisible = false;
             Console.Clear();
+            m_WriteBufferPtr = 0;
+            m_DrawBufferPtr = 0;
+            if (m_MultiThreadEnabled)
+            {
+                m_ConsoleDrawWorker = new Thread(new ThreadStart(SwapWorker));
+                m_SwapRequestedFlag = false;
+                m_ConsoleDrawWorker.Start();
+            }
             return true;
-        }
-
-        static public void AddSequentialy(char c, short color)
-        {
-
-            m_Bufer[m_sBuffPtr].Attributes = color;
-            m_Bufer[m_sBuffPtr].Char.AsciiChar = (byte)c;
-            m_sBuffPtr++;
-            if (m_sBuffPtr >= m_Bufer.Length) m_sBuffPtr = 0;
-
         }
 
         static public void PutChar(char c, short color, int x, int y)
         {
 
             int index = m_sWidth * (y) + x;
-            if (index >= m_Bufer.Length)
+            if (index >= m_Bufer[m_WriteBufferPtr].Length)
             {
                 index = 0;
                 //throw new Exception("DLUGOSC JEST: " + index.ToString());
             }
-            m_Bufer[index].Attributes = color;
-            m_Bufer[index].Char.AsciiChar = (byte)c;
+            m_Bufer[m_WriteBufferPtr][index].Attributes = color;
+            m_Bufer[m_WriteBufferPtr][index].Char.AsciiChar = (byte)c;
 
         }
 
@@ -167,28 +170,45 @@ namespace NostalgiaEngine.Core
 
         static public void Clear()
         {
-            Array.Clear(m_Bufer, 0, m_Bufer.Length);
+            Array.Clear(m_Bufer[m_WriteBufferPtr], 0, m_Bufer[0].Length);
         }
 
-  
+        static private void SwapWorker()
+        {
+            while(true)
+            {
+                while (!m_SwapRequestedFlag) {  }
+                WriteConsoleOutput(m_ConsoleHandle, m_Bufer[m_DrawBufferPtr], m_ScrBottomRight, m_ScrTopLeft, ref m_ConsoleRect);
+                lock (LOCK)
+                {
+                    m_SwapRequestedFlag = false;
+                }
+            }
+        }
+
         static public void SwapBuffers()
         {
+            if(!m_MultiThreadEnabled)
+            {
+                WriteConsoleOutput(m_ConsoleHandle, m_Bufer[m_DrawBufferPtr], m_ScrBottomRight, m_ScrTopLeft, ref m_ConsoleRect);
+                return;
+            }
 
-
-             WriteConsoleOutput(m_ConsoleHandle, m_Bufer, m_ScrBottomRight, m_ScrTopLeft, ref m_ConsoleRect);
-             //WriteCon(0, 0, 320, 1);
-
-            m_sBuffPtr = 0;
+            lock (LOCK)
+            {
+                if (m_SwapRequestedFlag == false)
+                {
+                    m_SwapRequestedFlag = true;
+                    m_DrawBufferPtr = m_WriteBufferPtr;
+                    m_WriteBufferPtr = 1 - m_WriteBufferPtr;
+                }
+            }          
         }
 
-        static private void WriteCon(short startX, short startY, short w, short h)
-        {
-            NERect rect = new NERect((short)(startX+5), (short)(startY+2), (short)(w+5), (short)(h+2)) ;
-            WriteConsoleOutput(m_ConsoleHandle, m_Bufer, new NEPoint(w,h), new NEPoint(startX, startY), ref rect);
-        }
 
         static public void SetDefaultConsole()
         {
+            if (m_ConsoleDrawWorker != null) m_ConsoleDrawWorker.Abort();
             Console.Clear();
             Console.SetWindowSize(m_InitialW, m_InitialH);
             FontInfoEx set = new FontInfoEx

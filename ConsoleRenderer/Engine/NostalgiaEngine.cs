@@ -22,7 +22,7 @@ namespace NostalgiaEngine.Core
         private bool m_Running;
         private float m_Delta;
         private Thread m_TaskbarUpdateWorker;
-
+        private bool m_SuspendTaskbarFlag;
         
         public static Engine Instance { get; private set; }
         public string Title { get; set; }
@@ -45,14 +45,21 @@ namespace NostalgiaEngine.Core
             PostMessage = "Thank you for using NostalgiaEngine!";
             Title = "NOSTALGIA ENGINE";
             m_TaskbarUpdateWorker = new Thread(new ThreadStart(UpdateTaskbar));
+            m_SuspendTaskbarFlag = false;
         }
 
         private void UpdateTaskbar()
         {
             while (m_Running)
             {
-                Console.Title = Title + "             Resolution: " + ScreenWidth.ToString() + "x" + ScreenHeight.ToString() +
-                "             FPS: " + NEFrameTimer.GetFPS() + "             FRAME TIME: " + m_Delta + "s ";
+                if(m_SuspendTaskbarFlag)
+                {
+                    Thread.Sleep(100);
+                    continue;
+                }
+                Console.Title = Title + 
+                    "             Resolution: " + ScreenWidth.ToString() + "x" + ScreenHeight.ToString() +
+                    "             FPS: " + NEFrameTimer.GetFPS();
                 Thread.Sleep(500);
                 
             }
@@ -87,6 +94,7 @@ namespace NostalgiaEngine.Core
 
                 Console.Clear();
                 Console.Title = Title;
+                m_SuspendTaskbarFlag = true;
                 Console.SetCursorPosition(0, 0);
                 Console.BackgroundColor = ConsoleColor.DarkRed;
                 Console.ForegroundColor = ConsoleColor.White;
@@ -97,6 +105,7 @@ namespace NostalgiaEngine.Core
                 Console.WriteLine("Window and Screen status:       " + (screenOK ? "OK" : "Failed"));
                 Console.WriteLine("\n\n\nPress ENTER to continue...");
                 NEInput.BlockUntilKeyPress(NEKey.Enter);
+                m_SuspendTaskbarFlag = false;
                 if (m_CurrentScene != null)
                 {
                     InitializeScreen(m_CurrentScene);
@@ -165,13 +174,12 @@ namespace NostalgiaEngine.Core
                     
                 }
                 m_CurrentScene.OnDraw();
-
                 NEConsoleScreen.SwapBuffers();
-
                 RunningTime += NEFrameTimer.GetDeltaTime();
                
             }
             m_TaskbarUpdateWorker.Join();
+            Console.Title = Title;
             Console.Clear();
             NEConsoleScreen.SetDefaultConsole();
             Console.WriteLine(PostMessage);
