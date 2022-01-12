@@ -15,8 +15,8 @@ namespace NostalgiaEngine.TextureEditor
         {
             ScreenWidth = 100;
             ScreenHeight = 100;
-            PixelWidth = 8;
-            PixelHeight = 8;
+            PixelWidth = 16;
+            PixelHeight = 16;
             m_MemTex16 = new MemTex16(80, 80);
             m_Current = m_MemTex16.GetPixel(1, 1);
             return true;
@@ -70,13 +70,13 @@ namespace NostalgiaEngine.TextureEditor
         public override void OnDrawPerColumn(int x) { }
         public override void OnDraw()
         {
-            for(int x = 0; x < m_MemTex16.Width;++x)
+            for (int x = 0; x < m_MemTex16.Width; ++x)
             {
-                for(int y = 0; y< m_MemTex16.Height;++y)
+                for (int y = 0; y < m_MemTex16.Height; ++y)
                 {
                     MemTex16.MT16Pix pix = m_MemTex16.GetPixel(x, y);
                     bool d = pix == m_Current;
-                    NEConsoleScreen.PutChar( d?'X':'0', (short)m_MemTex16.GetColor(x,y), x, y);
+                    NEConsoleScreen.PutChar(d ? 'X' : '0', (short)m_MemTex16.GetColor(x, y), x, y);
                 }
             }
         }

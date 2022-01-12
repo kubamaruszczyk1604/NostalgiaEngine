@@ -122,7 +122,6 @@ namespace NostalgiaEngine.Core
             }
             catch
             {
-                SetDefaultConsole();
                 return false;
             }
             

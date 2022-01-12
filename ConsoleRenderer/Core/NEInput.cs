@@ -165,7 +165,7 @@ namespace NostalgiaEngine.Core
 
         public static bool CheckKeyDown(ConsoleKey key)
         {
-            return ((GetAsyncKeyState((int)key) << 16) !=0);
+            return ((GetAsyncKeyState((int)key) << 16) != 0);
         }
 
         public static bool CheckKeyDown(NEKey key)
@@ -213,6 +213,7 @@ namespace NostalgiaEngine.Core
             {
                 CheckKeyPress((NEKey)val);
             }
+            while (Console.KeyAvailable) Console.ReadKey();
         }
 
         public static void FlushMouse()
@@ -221,6 +222,15 @@ namespace NostalgiaEngine.Core
             {
                 CheckKeyPress((NEButton)val);
             }
+        }
+
+        public static void BlockUntilKeyPress(NEKey key)
+        {
+            while (!CheckKeyPress(key))
+            {
+                Thread.Sleep(100);
+            }
+            FlushKeyboard();
         }
     }
 }

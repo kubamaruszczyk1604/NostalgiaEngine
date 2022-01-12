@@ -32,14 +32,16 @@ namespace NostalgiaEngine.Core
         public float RunningTime { get; private set; }
         public string PostMessage { get; set; }
 
-        public Engine(string postMessage = "Thank you for using NostalgiaEngine!")
+        public Engine()
         {
+            NEInput.FlushKeyboard();
             NEWindowControl.DisableConsoleWindowButtons();
             m_Running = false;
             m_Delta = 0.0f;
             m_SceneStack = new Stack<NEScene>();
             Instance = this;
-            PostMessage = postMessage;
+            PostMessage = "Thank you for using NostalgiaEngine!";
+            Title = "NOSTALGIA ENGINE";
         }
 
 
@@ -49,8 +51,6 @@ namespace NostalgiaEngine.Core
             ScreenHeight = scene.ScreenHeight > 10 ? scene.ScreenHeight : DEFAULT_SCR_H;
             PixelWidth = scene.PixelWidth > 0 ? scene.PixelWidth : DEFAULT_PIXEL_W;
             PixelHeight = scene.PixelHeight > 0 ? scene.PixelHeight : DEFAULT_PIXEL_H;
-            Title = "NOSTALGIA ENGINE";
-
             return NEConsoleScreen.Initialize((short)ScreenWidth, (short)ScreenHeight, (short)PixelWidth, (short)PixelHeight);
         }
 
@@ -58,12 +58,10 @@ namespace NostalgiaEngine.Core
         {
             NEInput.FlushKeyboard();
             if(m_CurrentScene != null) m_CurrentScene.OnPause();
-            if (scene.OnLoad())
+            bool loadOK = scene.OnLoad();
+            bool screenOK = InitializeScreen(scene);
+            if (loadOK && screenOK )
             {
-                if(!InitializeScreen(scene))
-                {
-                    return false;
-                }
                 m_CurrentScene = scene;
                 m_SceneStack.Push(scene);
                 scene.OnStart();
@@ -71,7 +69,26 @@ namespace NostalgiaEngine.Core
             }
             else
             {
-                if (m_CurrentScene != null) m_CurrentScene.OnResume();
+                NEConsoleScreen.SetDefaultConsole();
+                NEInput.FlushKeyboard();
+
+                Console.Clear();
+                Console.Title = Title;
+                Console.SetCursorPosition(0, 0);
+                Console.BackgroundColor = ConsoleColor.DarkRed;
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("   Failed to load scene!   \n");
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.ForegroundColor = ConsoleColor.Gray;
+                Console.WriteLine("OnLoad() status:                " + (loadOK ? "OK" : "Failed"));
+                Console.WriteLine("Window and Screen status:       " + (screenOK ? "OK" : "Failed"));
+                Console.WriteLine("\n\n\nPress ENTER to continue...");
+                NEInput.BlockUntilKeyPress(NEKey.Enter);
+                if (m_CurrentScene != null)
+                {
+                    InitializeScreen(m_CurrentScene);
+                    m_CurrentScene.OnResume();
+                }
                 return false;
             }
 
@@ -79,6 +96,7 @@ namespace NostalgiaEngine.Core
 
         public void PopScene()
         {
+            NEInput.FlushKeyboard();
             m_CurrentScene.OnExit();
             m_SceneStack.Pop();
             if(m_SceneStack.Count == 0)
@@ -87,13 +105,13 @@ namespace NostalgiaEngine.Core
                 return;
             }
             m_CurrentScene = m_SceneStack.Peek();
-            NEInput.FlushKeyboard();
             m_CurrentScene.OnResume();
             InitializeScreen(m_CurrentScene);
         }
 
         public void Start(NEScene scene)
         {
+            NEInput.FlushKeyboard();
             if(!PushScene(scene))
             {
                 return;
@@ -107,8 +125,8 @@ namespace NostalgiaEngine.Core
                 NEFrameTimer.Update();
                 m_Delta = NEFrameTimer.GetDeltaTime();
                 Console.SetCursorPosition(5, 1);
-               Console.Title = Title + " @"+ ScreenWidth.ToString() + "x" +  ScreenHeight.ToString() + 
-                    " FPS: " + NEFrameTimer.GetFPS() + "   FRAME TIME: " + m_Delta + "s ";
+               Console.Title = Title + "             Resolution: " + ScreenWidth.ToString() + "x" +  ScreenHeight.ToString() +
+                    "             FPS: " + NEFrameTimer.GetFPS() + "             FRAME TIME: " + m_Delta + "s ";
 
                 
                 m_CurrentScene.OnUpdate(NEFrameTimer.GetDeltaTime());
@@ -149,7 +167,7 @@ namespace NostalgiaEngine.Core
             Console.Clear();
             NEConsoleScreen.SetDefaultConsole();
             Console.WriteLine(PostMessage);
-            Console.ReadLine();
+            NEInput.BlockUntilKeyPress(NEKey.Enter);
         }
 
     }

@@ -19,7 +19,8 @@ namespace NostalgiaEngine.GUI
 
         public override bool OnLoad()
         {
-            while (Console.KeyAvailable) Console.ReadKey(); // flush key buffer
+            //  while (Console.KeyAvailable) Console.ReadKey(); // flush key buffer
+            NEInput.FlushKeyboard();
 
             ScreenWidth = 120;
             ScreenHeight = 30;
@@ -31,9 +32,6 @@ namespace NostalgiaEngine.GUI
             m_FileExplorer.onPathUpdated += OnPathUpdated;
             m_FileExplorer.TriggerOnPathUpdated();
             m_TextInput.onLineCommit += OnPathReady;
-            //CGInput.CheckKeyPress(ConsoleKey.F2); // flush key state
-            //CGInput.CheckKeyPress(ConsoleKey.F2);
-            NEInput.FlushKeyboard();
             m_WindowRect = new NEYesNoWindow(30, 5, 50, 8, "Confirm Save");
             return true;
         }
