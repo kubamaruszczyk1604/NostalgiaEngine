@@ -21,6 +21,7 @@ namespace NostalgiaEngine.Core
         private Stack<NEScene> m_SceneStack;
         private bool m_Running;
         private float m_Delta;
+        private Thread m_TaskbarUpdateWorker;
 
         
         public static Engine Instance { get; private set; }
@@ -32,6 +33,7 @@ namespace NostalgiaEngine.Core
         public float RunningTime { get; private set; }
         public string PostMessage { get; set; }
 
+
         public Engine()
         {
             NEInput.FlushKeyboard();
@@ -42,9 +44,20 @@ namespace NostalgiaEngine.Core
             Instance = this;
             PostMessage = "Thank you for using NostalgiaEngine!";
             Title = "NOSTALGIA ENGINE";
+            m_TaskbarUpdateWorker = new Thread(new ThreadStart(UpdateTaskbar));
         }
 
+        private void UpdateTaskbar()
+        {
+            while (m_Running)
+            {
+                Console.Title = Title + "             Resolution: " + ScreenWidth.ToString() + "x" + ScreenHeight.ToString() +
+                "             FPS: " + NEFrameTimer.GetFPS() + "             FRAME TIME: " + m_Delta + "s ";
+                Thread.Sleep(500);
+                
+            }
 
+        }
         private bool InitializeScreen(NEScene scene)
         {
             ScreenWidth = scene.ScreenWidth > 10 ? scene.ScreenWidth : DEFAULT_SCR_W;
@@ -118,17 +131,11 @@ namespace NostalgiaEngine.Core
             }
             NEWindowControl.QuickEditMode(false);
             m_Running = true;
-            
+            m_TaskbarUpdateWorker.Start();
             while (m_Running)
             {
-                
                 NEFrameTimer.Update();
                 m_Delta = NEFrameTimer.GetDeltaTime();
-                Console.SetCursorPosition(5, 1);
-               Console.Title = Title + "             Resolution: " + ScreenWidth.ToString() + "x" +  ScreenHeight.ToString() +
-                    "             FPS: " + NEFrameTimer.GetFPS() + "             FRAME TIME: " + m_Delta + "s ";
-
-                
                 m_CurrentScene.OnUpdate(NEFrameTimer.GetDeltaTime());
 
                 var sceneType = m_CurrentScene.GetType();
@@ -164,6 +171,7 @@ namespace NostalgiaEngine.Core
                 RunningTime += NEFrameTimer.GetDeltaTime();
                
             }
+            m_TaskbarUpdateWorker.Join();
             Console.Clear();
             NEConsoleScreen.SetDefaultConsole();
             Console.WriteLine(PostMessage);
