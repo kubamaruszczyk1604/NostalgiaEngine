@@ -49,9 +49,9 @@ namespace NostalgiaEngine.Core
             return (float)Math.Sign(a);
         }
 
-        static public Vector2 FindNormal(Vector2 p1, Vector2 p2)
+        static public NEVector2 FindNormal(NEVector2 p1, NEVector2 p2)
         {
-            Vector2 dir = p2 - p1;
+            NEVector2 dir = p2 - p1;
             float tx = dir.X;
             dir.X = -dir.Y;
             dir.Y = tx;
@@ -66,9 +66,9 @@ namespace NostalgiaEngine.Core
             return dir;
         }
 
-        static public float Dot(Vector2 a, Vector2 b)
+        static public float Dot(NEVector2 a, NEVector2 b)
         {
-            return Vector2.Dot(a, b);
+            return NEVector2.Dot(a, b);
         }
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace NostalgiaEngine.Core
            
         }
 
-        public static bool InTriangle(Vector2 p, Vector2 A,Vector2 B, Vector2 C)
+        public static bool InTriangle(NEVector2 p, NEVector2 A, NEVector2 B, NEVector2 C)
         {
             float a = Dot((p - A), FindNormal(A, B));
             float b = Dot((p - B), FindNormal(B, C));

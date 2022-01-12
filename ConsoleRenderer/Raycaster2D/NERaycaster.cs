@@ -49,8 +49,8 @@ namespace NostalgiaEngine.Raycaster
         private float m_AspectRatio;
         private float m_Fov;
 
-        Vector2 m_ViewerPos = new Vector2(3.0f, 1.0f);
-        Vector2 m_ViewerDir = new Vector2(0.0f, 1.0f);
+        NEVector2 m_ViewerPos = new NEVector2(3.0f, 1.0f);
+        NEVector2 m_ViewerDir = new NEVector2(0.0f, 1.0f);
         float m_PlayerRotation = 0.0f;
         NETexture16 m_WallTex;
 
@@ -83,15 +83,15 @@ namespace NostalgiaEngine.Raycaster
 
                 if (NEInput.CheckKeyDown(NEKey.Alt))
                 {
-                    m_ViewerPos -= NEHelper.FindNormal(m_ViewerDir) * MOVEMENT_SPEED * deltaT;
+                    m_ViewerPos -= NEVector2.FindNormal(m_ViewerDir) * MOVEMENT_SPEED * deltaT;
 
                 }
                 else
                 {
                     float deltaR = -ROTATION_SPEED * deltaT;
                     m_PlayerRotation += deltaR;
-                    NEHelper.Rotate(ref m_ViewerDir, deltaR);
-                    Vector2.NormalizeFast(m_ViewerDir);
+                    NEVector2.Rotate(ref m_ViewerDir, deltaR);
+                    NEVector2.Normalize(m_ViewerDir);
                 }
 
 
@@ -102,15 +102,15 @@ namespace NostalgiaEngine.Raycaster
                 if (NEInput.CheckKeyDown(NEKey.Alt))
                 {
 
-                    m_ViewerPos += NEHelper.FindNormal(m_ViewerDir) * MOVEMENT_SPEED * deltaT;
+                    m_ViewerPos += NEVector2.FindNormal(m_ViewerDir) * MOVEMENT_SPEED * deltaT;
 
                 }
                 else
                 {
                     float deltaR = ROTATION_SPEED * deltaT;
                     m_PlayerRotation += deltaR;
-                    NEHelper.Rotate(ref m_ViewerDir, deltaR);
-                    Vector2.NormalizeFast(m_ViewerDir);
+                    NEVector2.Rotate(ref m_ViewerDir, deltaR);
+                    NEVector2.Normalize(m_ViewerDir);
                 }
             }
 
@@ -143,14 +143,14 @@ namespace NostalgiaEngine.Raycaster
 
             px *= m_Fov; // TO DO: consider aspect ratio 
 
-            Vector2 dir = new Vector2(m_ViewerDir.X, m_ViewerDir.Y);
-            NEHelper.Rotate(ref dir, px);
-            dir = Vector2.NormalizeFast(dir);
+            NEVector2 dir = new NEVector2(m_ViewerDir.X, m_ViewerDir.Y);
+            NEVector2.Rotate(ref dir, px);
+            dir = NEVector2.Normalize(dir);
 
             float t = 0.0f;
             const float stp = 0.01f;
             bool hit = false;
-            Vector2 ray = Vector2.Zero;
+            NEVector2 ray = new NEVector2(0, 0);
             while ((t < DEPTH) && !hit)
             {
                 ray = m_ViewerPos + dir * t;
@@ -230,7 +230,7 @@ namespace NostalgiaEngine.Raycaster
             float imgW = (0.25f * ScreenWidth);
             float imgH = (0.25f * ScreenWidth);
 
-            Vector2 mapXY = Vector2.Zero;
+            NEVector2 mapXY = new NEVector2(0, 0);
             for (int x = 0; x < imgW; ++x)
             {
                 float nx = ((float)x) / imgW;
@@ -249,13 +249,13 @@ namespace NostalgiaEngine.Raycaster
                         NEScreen.PutChar('#', 8, (int)imgW - x, (int)imgH - y);
                     }
 
-                    Vector2 A = new Vector2(-0.65f, -0.65f);
-                    Vector2 B = new Vector2(0.0f, 1.28f);
-                    Vector2 C = new Vector2(0.65f, -0.65f);
+                    NEVector2 A = new NEVector2(-0.65f, -0.65f);
+                    NEVector2 B = new NEVector2(0.0f, 1.28f);
+                    NEVector2 C = new NEVector2(0.65f, -0.65f);
 
-                    NEHelper.Rotate(ref A, m_PlayerRotation);
-                    NEHelper.Rotate(ref B, m_PlayerRotation);
-                    NEHelper.Rotate(ref C, m_PlayerRotation);
+                    NEVector2.Rotate(ref A, m_PlayerRotation);
+                    NEVector2.Rotate(ref B, m_PlayerRotation);
+                    NEVector2.Rotate(ref C, m_PlayerRotation);
                     A +=m_ViewerPos;
                     B += m_ViewerPos;
                     C += m_ViewerPos;
@@ -274,7 +274,7 @@ namespace NostalgiaEngine.Raycaster
             return (m_MapWidth * y) + x;
         }
 
-        int GetCell(Vector2 p)
+        int GetCell(NEVector2 p)
         {
             int x = (int)p.X;
             int y = (int)p.Y;
