@@ -59,7 +59,7 @@ namespace NostalgiaEngine.Raycaster
             ScreenHeight = 180;
             PixelWidth = 4;
             PixelHeight = 4;
-
+            ParallelScreenDraw = true;
             m_WallTex = NETexture16.LoadFromFile($"C:/Users/Kuba/Desktop/untitled2.tex");
             if (m_WallTex == null) return false;
             return true;
@@ -69,8 +69,6 @@ namespace NostalgiaEngine.Raycaster
         {
             m_AspectRatio = (float)ScreenWidth / (float)ScreenHeight;
             m_Fov = 80.0f * DEG_TO_RAD;
-
-           // CGBuffer.HalfTemporalResolution = true;
         }
 
         override public void OnUpdate(float dt)

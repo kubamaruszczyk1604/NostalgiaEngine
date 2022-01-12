@@ -14,6 +14,7 @@ namespace NostalgiaEngine.Core
         public int ScreenHeight { get; protected set; }
         public int PixelWidth { get; protected set; }
         public int PixelHeight { get; protected set; }
+        public bool ParallelScreenDraw{ get; protected set; }
         public object ReturnData { get; private set; }
         public Type ReturnDataType { get; private set; }
         public OnSceneExit onSceneExit { get; set; }
