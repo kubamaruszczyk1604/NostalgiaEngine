@@ -11,11 +11,8 @@ namespace NostalgiaEngine.Core
         public int Width { get; private set; }
         public int Height { get; private set; }
         public static string LastErrorMessage { get; private set; }
-     
 
         private int[] m_Data;
-
-
 
         private NETexture16()
         {
@@ -93,15 +90,15 @@ namespace NostalgiaEngine.Core
 
         public NEColorSample Sample(float u, float v, float intensity)
         {
-            int x = (int)(u * (float)Width);
+            int x = (int)Math.Round(u * (float)Width);
             if (x >= (Width - 1)) x = Width - 1; 
 
-            int y = (int)(v * (float)Height);
+            int y = (int)Math.Round(v * (float)Height);
             if (y >= (Height - 1)) y = Height - 1;
             int index = y * Width + x;
             int col = m_Data[index];
 
-            return NEColorSample.MakeCol(ConsoleColor.Black, (ConsoleColor)col,intensity);
+            return NEColorSample.MakeCol10(ConsoleColor.Black, (ConsoleColor)col,intensity);
         }
 
     }

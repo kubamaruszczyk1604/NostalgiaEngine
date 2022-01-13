@@ -10,6 +10,15 @@ namespace NostalgiaEngine.Raycaster
     class NERaycaster2D : NEScene
     {
 
+
+        private readonly float EPSILON = 0.01f;
+        private readonly float DEG_TO_RAD = 0.0174532f;
+        private readonly float M_PI = 3.1415926535f;
+        private readonly float DEPTH = 24.0f;
+        private readonly float ROTATION_SPEED = 1.5f;
+        private readonly float MOVEMENT_SPEED = 4.0f;
+
+
         private int m_MapWidth = 20;
         private int m_MapHeight = 20;
         private int[] m_Map = {
@@ -36,22 +45,12 @@ namespace NostalgiaEngine.Raycaster
         };
 
 
-
-        const float EPSILON = 0.01f;
-        const float DEG_TO_RAD = 0.0174532f;
-        const float M_PI = 3.1415926535f;
-        const float DEPTH = 24.0f;
-        const float ROTATION_SPEED = 1.5f;
-        const float MOVEMENT_SPEED = 4.0f;
-
-
         private float m_AspectRatio;
         private float m_Fov;
-
-        NEVector2 m_ViewerPos = new NEVector2(3.0f, 1.0f);
-        NEVector2 m_ViewerDir = new NEVector2(0.0f, 1.0f);
-        float m_PlayerRotation = 0.0f;
-        NETexture16 m_WallTex;
+        private NEVector2 m_ViewerPos = new NEVector2(3.0f, 1.0f);
+        private NEVector2 m_ViewerDir = new NEVector2(0.0f, 1.0f);
+        private float m_PlayerRotation = 0.0f;
+        private NETexture16 m_WallTex;
 
         public override bool OnLoad()
         {
@@ -59,7 +58,7 @@ namespace NostalgiaEngine.Raycaster
             ScreenHeight = 180;
             PixelWidth = 4;
             PixelHeight = 4;
-            ParallelScreenDraw = true;
+           // ParallelScreenDraw = true;
             m_WallTex = NETexture16.LoadFromFile($"C:/Users/Kuba/Desktop/untitled2.tex");
             if (m_WallTex == null) return false;
             return true;
@@ -159,7 +158,7 @@ namespace NostalgiaEngine.Raycaster
             float ceiling = (1.0f / t);
             float floorp = (-1.0f / t);
             float intensity = 1.0f - (t / DEPTH);
-            //intensity *= intensity;
+            //intensity *= intensity*1.5f;
 
             for (int y = 0; y < ScreenHeight; ++y)
             {
@@ -169,13 +168,13 @@ namespace NostalgiaEngine.Raycaster
                 py *= m_Fov * 2.0f;
 
                 //ColorSample floorSample = ColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkGray, fd);
-                NEColorSample floorSample = NEColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkGreen, Math.Abs(py * 1.4f) -Math.Abs(px * 0.1f));
+                NEColorSample floorSample = NEColorSample.MakeCol5(ConsoleColor.Black, ConsoleColor.DarkGreen, 0.2f);// Math.Abs(py) -Math.Abs(px * 0.1f));
 
 
-                NEColorSample ceilSample = NEColorSample.MakeCol(ConsoleColor.DarkRed, ConsoleColor.DarkMagenta, Math.Abs(py) - 0.1f);
+                NEColorSample ceilSample = NEColorSample.MakeCol10(ConsoleColor.DarkRed, ConsoleColor.DarkMagenta, Math.Abs(py) - 0.1f);
                 if (py < 0.3f + (float)Math.Sin(px * 10 + m_PlayerRotation * 4) * 0.1f)
                 {
-                    ceilSample = NEColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkGray, Math.Abs(py * 0.75f) - Math.Abs(px * 0.1f));
+                    ceilSample = NEColorSample.MakeCol5(ConsoleColor.DarkGreen, ConsoleColor.Green, Math.Abs(py * 0.75f) + NEMathHelper.Sin(px * 10 + m_PlayerRotation * 4) * 0.05f);
                 }
 
                 if (hit)

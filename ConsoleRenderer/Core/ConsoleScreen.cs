@@ -71,24 +71,26 @@ namespace NostalgiaEngine.Core
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
             public string FontName;
         }
+
+
         static private readonly object LOCK = new object();
-        static SafeFileHandle m_ConsoleHandle;
-        static int m_sWidth;
-        static int m_sHeight;
-        static List<CharInfo[]> m_Bufer;
-        static NERect m_ConsoleRect;
-        static NEPoint m_ScrTopLeft;
-        static NEPoint m_ScrBottomRight;
-        static int m_WriteBufferPtr;
-        static int m_DrawBufferPtr;
-        static bool m_MultiThreadEnabled;
+        static private SafeFileHandle m_ConsoleHandle;
+        static private int m_sWidth;
+        static private int m_sHeight;
+        static private List<CharInfo[]> m_Bufer;
+        static private NERect m_ConsoleRect;
+        static private NEPoint m_ScrTopLeft;
+        static private NEPoint m_ScrBottomRight;
+        static private int m_WriteBufferPtr;
+        static private int m_DrawBufferPtr;
+        static private bool m_MultiThreadEnabled;
 
-        static int m_InitialW;
-        static int m_InitialH;
-        static bool m_FirstRun = true;
-        static bool m_SwapRequestedFlag;
+        static private int m_InitialW;
+        static private int m_InitialH;
+        static private bool m_FirstRun = true;
+        static private bool m_SwapRequestedFlag;
 
-        static Thread m_ConsoleDrawWorker;
+        static private Thread m_ConsoleDrawWorker;
 
         static public bool Initialize(short width, short height, short pixelW, short pixelH, bool renderOnSeparateThread = true)
         {
@@ -228,87 +230,87 @@ namespace NostalgiaEngine.Core
 
     }
     
-    
-    static class ConsoleHelper
-    {
-        private const int FixedWidthTrueType = 54;
-        private const int StandardOutputHandle = -11;
 
-        [DllImport("kernel32.dll", SetLastError = true)]
-        internal static extern IntPtr GetStdHandle(int nStdHandle);
+    //static class ConsoleHelper
+    //{
+    //    private const int FixedWidthTrueType = 54;
+    //    private const int StandardOutputHandle = -11;
 
-        [return: MarshalAs(UnmanagedType.Bool)]
-        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-        internal static extern bool SetCurrentConsoleFontEx(IntPtr hConsoleOutput, bool MaximumWindow, ref FontInfo ConsoleCurrentFontEx);
+    //    [DllImport("kernel32.dll", SetLastError = true)]
+    //    internal static extern IntPtr GetStdHandle(int nStdHandle);
 
-        [return: MarshalAs(UnmanagedType.Bool)]
-        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-        internal static extern bool GetCurrentConsoleFontEx(IntPtr hConsoleOutput, bool MaximumWindow, ref FontInfo ConsoleCurrentFontEx);
+    //    [return: MarshalAs(UnmanagedType.Bool)]
+    //    [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+    //    internal static extern bool SetCurrentConsoleFontEx(IntPtr hConsoleOutput, bool MaximumWindow, ref FontInfo ConsoleCurrentFontEx);
+
+    //    [return: MarshalAs(UnmanagedType.Bool)]
+    //    [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+    //    internal static extern bool GetCurrentConsoleFontEx(IntPtr hConsoleOutput, bool MaximumWindow, ref FontInfo ConsoleCurrentFontEx);
 
 
-        private static readonly IntPtr ConsoleOutputHandle = GetStdHandle(StandardOutputHandle);
+    //    private static readonly IntPtr ConsoleOutputHandle = GetStdHandle(StandardOutputHandle);
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-        public struct FontInfo
-        {
-            internal int cbSize;
-            internal int FontIndex;
-            public short FontWidth;
-            public short FontSize;
-            public int FontFamily;
-            public int FontWeight;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
-            //[MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.wc, SizeConst = 32)]
-            public string FontName;
-        }
+    //    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+    //    public struct FontInfo
+    //    {
+    //        internal int cbSize;
+    //        internal int FontIndex;
+    //        public short FontWidth;
+    //        public short FontSize;
+    //        public int FontFamily;
+    //        public int FontWeight;
+    //        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+    //        //[MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.wc, SizeConst = 32)]
+    //        public string FontName;
+    //    }
 
-        public static FontInfo[] SetCurrentFont(string font, short fontSize = 0)
-        {
-            Console.WriteLine("Set Current Font: " + font);
+    //    public static FontInfo[] SetCurrentFont(string font, short fontSize = 0)
+    //    {
+    //        Console.WriteLine("Set Current Font: " + font);
 
-            FontInfo before = new FontInfo
-            {
-                cbSize = Marshal.SizeOf<FontInfo>()
-            };
+    //        FontInfo before = new FontInfo
+    //        {
+    //            cbSize = Marshal.SizeOf<FontInfo>()
+    //        };
 
-            if (GetCurrentConsoleFontEx(ConsoleOutputHandle, false, ref before))
-            {
+    //        if (GetCurrentConsoleFontEx(ConsoleOutputHandle, false, ref before))
+    //        {
 
-                FontInfo set = new FontInfo
-                {
-                    cbSize = Marshal.SizeOf<FontInfo>(),
-                    FontIndex = 0,
-                    //FontFamily = FixedWidthTrueType,
-                   // FontName = font,
-                    FontWeight = 400,
-                    FontSize = fontSize > 0 ? fontSize : before.FontSize,
-                    FontWidth = fontSize
-                };
+    //            FontInfo set = new FontInfo
+    //            {
+    //                cbSize = Marshal.SizeOf<FontInfo>(),
+    //                FontIndex = 0,
+    //                //FontFamily = FixedWidthTrueType,
+    //               // FontName = font,
+    //                FontWeight = 400,
+    //                FontSize = fontSize > 0 ? fontSize : before.FontSize,
+    //                FontWidth = fontSize
+    //            };
 
-                // Get some settings from current font.
-                if (!SetCurrentConsoleFontEx(ConsoleOutputHandle, false, ref set))
-                {
-                    var ex = Marshal.GetLastWin32Error();
-                    Console.WriteLine("Set error " + ex);
-                    throw new System.ComponentModel.Win32Exception(ex);
-                }
+    //            // Get some settings from current font.
+    //            if (!SetCurrentConsoleFontEx(ConsoleOutputHandle, false, ref set))
+    //            {
+    //                var ex = Marshal.GetLastWin32Error();
+    //                Console.WriteLine("Set error " + ex);
+    //                throw new System.ComponentModel.Win32Exception(ex);
+    //            }
 
-                FontInfo after = new FontInfo
-                {
-                    cbSize = Marshal.SizeOf<FontInfo>()
-                };
-                GetCurrentConsoleFontEx(ConsoleOutputHandle, false, ref after);
+    //            FontInfo after = new FontInfo
+    //            {
+    //                cbSize = Marshal.SizeOf<FontInfo>()
+    //            };
+    //            GetCurrentConsoleFontEx(ConsoleOutputHandle, false, ref after);
 
-                return new[] { before, set, after };
-            }
-            else
-            {
-                var er = Marshal.GetLastWin32Error();
-                Console.WriteLine("Get error " + er);
-                throw new System.ComponentModel.Win32Exception(er);
-            }
-        }
-    }
+    //            return new[] { before, set, after };
+    //        }
+    //        else
+    //        {
+    //            var er = Marshal.GetLastWin32Error();
+    //            Console.WriteLine("Get error " + er);
+    //            throw new System.ComponentModel.Win32Exception(er);
+    //        }
+    //    }
+    //}
 
 
 

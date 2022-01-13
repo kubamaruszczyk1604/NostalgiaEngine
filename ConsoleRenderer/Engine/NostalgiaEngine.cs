@@ -42,7 +42,7 @@ namespace NostalgiaEngine.Core
             m_Delta = 0.0f;
             m_SceneStack = new Stack<NEScene>();
             Instance = this;
-            PostMessage = "Thank you for using NostalgiaEngine!";
+            PostMessage = "Thank you for using Nostalgia Engine!";
             Title = "NOSTALGIA ENGINE";
             m_TaskbarUpdateWorker = new Thread(new ThreadStart(UpdateTaskbar));
             m_SuspendTaskbarFlag = false;
