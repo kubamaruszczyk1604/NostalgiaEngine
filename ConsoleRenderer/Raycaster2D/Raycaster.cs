@@ -50,7 +50,7 @@ namespace NostalgiaEngine.Raycaster
         private NEVector2 m_ViewerPos = new NEVector2(3.0f, 1.0f);
         private NEVector2 m_ViewerDir = new NEVector2(0.0f, 1.0f);
         private float m_PlayerRotation = 0.0f;
-        private NETexture16 m_WallTex;
+        private NEColorTexture16 m_WallTex;
 
         public override bool OnLoad()
         {
@@ -59,7 +59,7 @@ namespace NostalgiaEngine.Raycaster
             PixelWidth = 4;
             PixelHeight = 4;
            // ParallelScreenDraw = true;
-            m_WallTex = NETexture16.LoadFromFile($"C:/Users/Kuba/Desktop/untitled2.tex");
+            m_WallTex = NEColorTexture16.LoadFromFile($"C:/Users/Kuba/Desktop/untitled2.tex");
             if (m_WallTex == null) return false;
             return true;
         }

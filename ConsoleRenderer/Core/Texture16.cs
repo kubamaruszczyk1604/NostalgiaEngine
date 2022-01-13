@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace NostalgiaEngine.Core
 {
-    class NETexture16
+    class NEColorTexture16
     {
         public int Width { get; private set; }
         public int Height { get; private set; }
@@ -14,7 +14,7 @@ namespace NostalgiaEngine.Core
 
         private int[] m_Data;
 
-        private NETexture16()
+        private NEColorTexture16()
         {
            
         }
@@ -77,10 +77,10 @@ namespace NostalgiaEngine.Core
             return true;
         }
 
-        public static NETexture16 LoadFromFile(string file)
+        public static NEColorTexture16 LoadFromFile(string file)
         {
 
-            NETexture16 texture = new NETexture16();
+            NEColorTexture16 texture = new NEColorTexture16();
             if(texture.ReadFromFile(file))
             {
                 return texture;
