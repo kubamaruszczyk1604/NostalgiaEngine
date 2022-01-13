@@ -7,7 +7,7 @@ using NostalgiaEngine.Core;
 
 namespace NostalgiaEngine.GUI
 {
-    public class NEYesNoWindow
+    public class NEYesNoWindow 
     {
         NEWindowRect m_Window;
         string m_Question;

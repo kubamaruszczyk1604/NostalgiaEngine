@@ -22,7 +22,7 @@ namespace NostalgiaEngineApplication
             Engine engine = new Engine();
             NETextureEditor ed = new NETextureEditor();
             NERaycaster2D raycaster = new NERaycaster2D();
-            engine.Start(raycaster);
+            engine.Start(ed);
             
 
         }

@@ -15,11 +15,10 @@ namespace NostalgiaEngine.GUI
         NEFileExplorer m_FileExplorer;
         NETextInput m_TextInput;
 
-        NEYesNoWindow m_WindowRect;
+        NEYesNoWindow m_YesNoWindow;
 
         public override bool OnLoad()
         {
-            //  while (Console.KeyAvailable) Console.ReadKey(); // flush key buffer
             NEInput.FlushKeyboard();
 
             ScreenWidth = 120;
@@ -32,7 +31,7 @@ namespace NostalgiaEngine.GUI
             m_FileExplorer.onPathUpdated += OnPathUpdated;
             m_FileExplorer.TriggerOnPathUpdated();
             m_TextInput.onLineCommit += OnPathReady;
-            m_WindowRect = new NEYesNoWindow(30, 5, 50, 8, "Confirm Save");
+            m_YesNoWindow = new NEYesNoWindow(30, 5, 50, 8, "Confirm Save");
             return true;
         }
 
@@ -92,7 +91,7 @@ namespace NostalgiaEngine.GUI
                 NEConsoleScreen.WriteXY(4, 25, 15 | (4 << 4), "SAVE AS:");
             }
             //CGBuffer.WriteXY(40, 29, 12, m_FileExplorer.InFocus.ToString());
-            m_WindowRect.Draw();
+            //m_YesNoWindow.Draw();
 
         }
 
