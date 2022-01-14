@@ -93,8 +93,6 @@ namespace NostalgiaEngine.GUI
                 NEConsoleScreen.WriteXY(64, 27, 15 | (4 << 4), " ESC - BACK ");
                 NEConsoleScreen.WriteXY(4, 25, 15 | (4 << 4), "SAVE AS:");
             }
-            //CGBuffer.WriteXY(40, 29, 12, m_FileExplorer.InFocus.ToString());
-            
 
         }
 
@@ -125,6 +123,7 @@ namespace NostalgiaEngine.GUI
             m_FileExplorer.Dispose();
             m_TextInput.Dispose();
             m_YesNoWindow.Dispose();
+            NEInput.FlushKeyboard();
         }
 
         private void OnPathUpdated(string path)
