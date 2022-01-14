@@ -7,10 +7,13 @@ using NostalgiaEngine.Core;
 
 namespace NostalgiaEngine.GUI
 {
-    public class NEYesNoWindow 
+    public class NEYesNoWindow :INEGUIElement
     {
-        NEWindowRect m_Window;
-        string m_Question;
+        public delegate void OnUserSelection(bool yn);
+
+        public OnUserSelection onUserSelection { get; set; }
+        private NEWindowRect m_Window;
+        private string m_Question;
 
         public NEYesNoWindow(int x, int y,int w, int h, string question)
         {
@@ -23,12 +26,30 @@ namespace NostalgiaEngine.GUI
             m_Window = new NEWindowRect(x, y, w, h, question);
         }
 
+        public void Update()
+        {
+            if (!Focused) return;
+
+            if(NEInput.CheckKeyPress(NEKey.Enter))
+            {
+                onUserSelection?.Invoke(true);
+            }
+            if(NEInput.CheckKeyPress(NEKey.Escape))
+            {
+                onUserSelection?.Invoke(false);
+            }
+        }
 
         public void Draw()
         {
             m_Window.Draw();
             NEConsoleScreen.WriteXY(m_Window.X + m_Window.W / 8, m_Window.Y + m_Window.H / 2, (2 << 4) | 15, "  YES - ENTER  ");
             NEConsoleScreen.WriteXY(m_Window.X + m_Window.W - m_Window.W/8- 15, m_Window.Y + m_Window.H / 2, (12 << 4) | 15, "   NO - ESC    ");
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
         }
     }
 }

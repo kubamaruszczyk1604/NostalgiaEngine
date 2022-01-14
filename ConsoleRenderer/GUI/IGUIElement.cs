@@ -4,39 +4,32 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NostalgiaEngine.Tools
+namespace NostalgiaEngine.GUI
 {
-    public interface INEGUIElement
+    public class INEGUIElement: IDisposable
     {
-        void Focus();
-        void UnFocus();
-        bool InFocus { get; }
-    }
+        private static List<INEGUIElement> s_Elements = new List<INEGUIElement>();
 
 
-    public class NEGUIMgr
-    {
-        static List<INEGUIElement> s_Elements = new List<INEGUIElement>();
-
-        public static void RegisterElement(INEGUIElement element)
+        protected INEGUIElement()
         {
-            if(!s_Elements.Contains(element))
-            {
-                s_Elements.Add(element);
-            }
+            s_Elements.Add(this);
         }
 
-        public static void Focus(INEGUIElement element)
+        public void Focus()
         {
-            RegisterElement(element);
-            foreach(var el in s_Elements)
+            foreach (var el in s_Elements)
             {
-                el.UnFocus();
+                el.Focused = false;
             }
-            element.Focus();
+            Focused = true;
         }
 
+        public bool Focused { get; private set; } 
 
+        public virtual void Dispose()
+        {
+            s_Elements.Remove(this);
+        }
     }
-
 }

@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading;
 using NostalgiaEngine.Core;
 using System.IO;
-using NostalgiaEngine.Tools;
 
 namespace NostalgiaEngine.GUI
 {
@@ -17,6 +16,7 @@ namespace NostalgiaEngine.GUI
 
         NEYesNoWindow m_YesNoWindow;
 
+        string m_SavePath;
         public override bool OnLoad()
         {
             NEInput.FlushKeyboard();
@@ -27,46 +27,45 @@ namespace NostalgiaEngine.GUI
             PixelHeight = 16;
             m_FileExplorer = new NEFileExplorer("SAVE FILE AS..");
             m_TextInput = new NETextInput("---", 15, 25);
-            m_FileExplorer.onFocusChanged += OnExplorerFocusChanged;
             m_FileExplorer.onPathUpdated += OnPathUpdated;
             m_FileExplorer.TriggerOnPathUpdated();
             m_TextInput.onLineCommit += OnPathReady;
             m_YesNoWindow = new NEYesNoWindow(30, 5, 50, 8, "Confirm Save");
+            m_YesNoWindow.onUserSelection += OnSaveDecision;
+            m_FileExplorer.Focus();
+            m_SavePath = "";
             return true;
         }
 
 
         public override void OnUpdate(float deltaTime)
         {
+            m_FileExplorer.Update();
+            m_TextInput.InputUpdate();
+            m_YesNoWindow.Update();
             if (NEInput.CheckKeyPress(ConsoleKey.F2))
             {
 
-                if (m_FileExplorer.InFocus)
+                if (m_FileExplorer.Focused)
                 {
-                    m_FileExplorer.UnFocus();
                     m_TextInput.Focus();
                 }
             }
 
             if(NEInput.CheckKeyPress(ConsoleKey.Escape))
             {
-                if (m_TextInput.InFocus)
+                if (m_TextInput.Focused)
                 {
-                    m_TextInput.UnFocus();
                     m_FileExplorer.Focus();
                 }
-                else if(m_FileExplorer.InFocus)
+                else if(m_FileExplorer.Focused)
                 {
-                    m_FileExplorer.Dispose();
-                    m_TextInput.Dispose();
                     Exit(0);
                 }
+
             }
 
-            
-            m_FileExplorer.Update();
-            m_TextInput.InputUpdate();
-            while (Console.KeyAvailable) Console.ReadKey(); // flush key buffer
+            NEInput.FlushKeyboard();
         }
 
 
@@ -76,12 +75,16 @@ namespace NostalgiaEngine.GUI
             m_FileExplorer.Draw(ScreenWidth);
             
            // CGBuffer.WriteXY(3, 27, 15 | (1 << 4), "SAVE PATH: ");
-            if (m_FileExplorer.InFocus)
+            if (m_FileExplorer.Focused)
             {
                 m_TextInput.Draw(8);
                 NEConsoleScreen.WriteXY(34, 27, 15 | (2 << 4)," F2 - SELECT ");
                 NEConsoleScreen.WriteXY(64, 27, 15 | (2 << 4), " ESC - CANCEL ");
                 NEConsoleScreen.WriteXY(4, 25, 15 | (1 << 4), "SAVE AS:");
+            }
+            else if (m_YesNoWindow.Focused)
+            {
+                m_YesNoWindow.Draw();
             }
             else
             {
@@ -91,38 +94,43 @@ namespace NostalgiaEngine.GUI
                 NEConsoleScreen.WriteXY(4, 25, 15 | (4 << 4), "SAVE AS:");
             }
             //CGBuffer.WriteXY(40, 29, 12, m_FileExplorer.InFocus.ToString());
-            //m_YesNoWindow.Draw();
+            
 
         }
 
         void OnPathReady(string path)
         {
-            m_FileExplorer.Dispose();
-            m_TextInput.Dispose();
-            this.Exit(path);
+            
+            NEInput.FlushKeyboard();
+            m_YesNoWindow.Focus();
+            m_SavePath = path;
         }
+
+        void OnSaveDecision(bool save)
+        {
+            if(save)
+            {
+
+                this.Exit(m_SavePath);
+            }
+            else
+            {
+               m_FileExplorer.Focus();
+
+            }
+        }
+
         public override void OnExit()
         {
-
-        }
-
-
-        private void OnExplorerFocusChanged(string path, bool focus)
-        {
-            if (!focus)
-            {
-                m_TextInput.Reset(path);
-                m_TextInput.Focus();
-            }
+            m_FileExplorer.Dispose();
+            m_TextInput.Dispose();
+            m_YesNoWindow.Dispose();
         }
 
         private void OnPathUpdated(string path)
         {
             m_TextInput.Reset(path);
         }
-
-
-
 
     }
 }

@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading;
 using NostalgiaEngine.Core;
 using System.IO;
-namespace NostalgiaEngine.Tools
+namespace NostalgiaEngine.GUI
 {
-    public class NETextInput : INEGUIElement, IDisposable
+    public class NETextInput : INEGUIElement
     {
 
         public delegate void OnLineCommit(string line);
@@ -19,9 +19,7 @@ namespace NostalgiaEngine.Tools
         private readonly int c_HorizontalOffset = 5;
         private readonly int c_VerticalOffset = 2;
 
-        private bool m_FocusedFlag;
         public OnLineCommit onLineCommit { get; set; }
-        public bool InFocus { get { return m_FocusedFlag; } }
 
 
         public NETextInput(string defaultStr, int x, int y, bool inFocus = false)
@@ -31,7 +29,6 @@ namespace NostalgiaEngine.Tools
             m_Position = new NEPoint();
             m_Position.X = (short)x;
             m_Position.Y = (short)y;
-            m_FocusedFlag = inFocus;
         }
 
         public void Reset(string defaultStr = "")
@@ -42,7 +39,7 @@ namespace NostalgiaEngine.Tools
 
         public void InputUpdate()
         {
-            if (!m_FocusedFlag) return;
+            if (!Focused) return;
             
             Console.CursorVisible = true;
             Console.SetCursorPosition(m_Position.X + c_HorizontalOffset + m_CursorPos, m_Position.Y + c_VerticalOffset);
@@ -80,20 +77,21 @@ namespace NostalgiaEngine.Tools
             Console.SetCursorPosition(m_Position.X + c_HorizontalOffset + m_CursorPos, m_Position.Y + c_VerticalOffset);
         }
 
-        public void Focus()
-        {
-            m_FocusedFlag = true;
+        //public void Focus()
+        //{
+        //    m_FocusedFlag = true;
            
-        }
+        //}
 
-        public void UnFocus()
-        {
-            m_FocusedFlag = false;
-            Console.CursorVisible = false;
-        }
+        //public void UnFocus()
+        //{
+        //    m_FocusedFlag = false;
+        //    Console.CursorVisible = false;
+        //}
 
-        public void Dispose()
+        public override void Dispose()
         {
+            base.Dispose();
             if(onLineCommit != null)
             foreach(var e in onLineCommit.GetInvocationList())
             {

@@ -6,14 +6,14 @@ using System.Threading;
 using NostalgiaEngine.Core;
 using System.IO;
 
-namespace NostalgiaEngine.Tools
+namespace NostalgiaEngine.GUI
 {
 
     
-    public class NEFileExplorer: INEGUIElement, IDisposable
+    public class NEFileExplorer: INEGUIElement
     {
         public delegate void OnFileSelected(string path);
-        public delegate void OnFocusChanged(string path, bool focus);
+        //public delegate void OnFocusChanged(string path, bool focus);
         public delegate void OnPathUpdated(string path);
 
         private enum VisitState { NoAccess = -1, Directory = 0, File = 1 }
@@ -31,15 +31,13 @@ namespace NostalgiaEngine.Tools
         private string m_Title;
 
         public OnFileSelected onFileSelected { get; set; }
-        public OnFocusChanged onFocusChanged { get; set; }
         public OnPathUpdated onPathUpdated { get; set; }
-        private bool m_FocusFlag;
-        public bool InFocus { get { return m_FocusFlag; } }
+
 
         public NEFileExplorer(string title)
         {
             m_DirStack = new Stack<string>();
-            m_FocusFlag = true;
+
             if (VisitDirectory(m_CurrentPath, out string[] dirList) == VisitState.Directory)
             {
                 m_CurrentDirContent = dirList;
@@ -49,8 +47,7 @@ namespace NostalgiaEngine.Tools
         }
         public void Update()
         {
-            if (!m_FocusFlag) return;
-
+            if (!Focused) return;
 
             if (NEInput.CheckKeyPress(ConsoleKey.DownArrow))
             {           
@@ -150,25 +147,15 @@ namespace NostalgiaEngine.Tools
             for (int i = m_ViewStartIndex; i < m_CurrentDirContent.Length; ++i)
             {
                 int x = ((i - m_ViewStartIndex) / c_ColLength) * c_DistanceBetweenColumns;
-
+                int textCol = Focused ? 9 : 1;
                 if (x < screenWidth)
-                    NEConsoleScreen.WriteXY(x, 4 + ((i - m_ViewStartIndex) % c_ColLength), (short)(m_CurrentPosIndex == i ? (15 | 1 << 4) : 9), m_CurrentDirContent[i].Substring(m_CurrentPath.Length));
+                    NEConsoleScreen.WriteXY(x, 4 + ((i - m_ViewStartIndex) % c_ColLength), (short)(m_CurrentPosIndex == i ? (15 | 1 << 4) : textCol), m_CurrentDirContent[i].Substring(m_CurrentPath.Length));
             }
 
            // CGBuffer.WriteXY(0, 28, 15 | (1 << 4), m_EditString);
         }
 
-        public void Focus()
-        {
-            m_FocusFlag = true;
-            onFocusChanged?.Invoke(m_EditString, true);
-        }
 
-        public void UnFocus()
-        {
-            m_FocusFlag = false;
-            onFocusChanged?.Invoke(m_EditString, false);
-        }
 
         public void TriggerOnPathUpdated()
         {
@@ -177,17 +164,13 @@ namespace NostalgiaEngine.Tools
            
         }
 
-        public void Dispose()
-        { 
-            if(onPathUpdated != null)
+        public override void Dispose()
+        {
+            base.Dispose();
+            if (onPathUpdated != null)
             foreach (var e in onPathUpdated.GetInvocationList())
             {
                 onPathUpdated -= (OnPathUpdated)e;
-            }
-            if(onFocusChanged != null)
-            foreach (var e in onFocusChanged.GetInvocationList())
-            {
-                onFocusChanged -= (OnFocusChanged)e;
             }
             if(onFileSelected != null)
             foreach (var e in onFileSelected.GetInvocationList())
