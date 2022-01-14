@@ -14,7 +14,8 @@ namespace NostalgiaEngine.GUI
         NEFileExplorer m_FileExplorer;
         NETextInput m_TextInput;
 
-        NEYesNoWindow m_YesNoWindow;
+        NEYesNoWindow m_ConfirmSaveWindow;
+        NEYesNoWindow m_ConfirmOverwriteWindow;
 
         string m_SavePath;
         public override bool OnLoad()
@@ -30,8 +31,10 @@ namespace NostalgiaEngine.GUI
             m_FileExplorer.onPathUpdated += OnPathUpdated;
             m_FileExplorer.TriggerOnPathUpdated();
             m_TextInput.onLineCommit += OnPathReady;
-            m_YesNoWindow = new NEYesNoWindow(30, 5, 50, 8, "Confirm Save");
-            m_YesNoWindow.onUserSelection += OnSaveDecision;
+            m_ConfirmSaveWindow = new NEYesNoWindow(30, 5, 50, 8, "Confirm Save?");
+            m_ConfirmOverwriteWindow = new NEYesNoWindow(30, 7, 50, 8, "File already exists. Overwite?", NEWindowStyle.Warning);
+            m_ConfirmSaveWindow.onUserSelection += OnSaveDecision;
+            m_ConfirmOverwriteWindow.onUserSelection += OnOverwriteDecision;
             m_FileExplorer.Focus();
             m_SavePath = "";
             return true;
@@ -42,7 +45,8 @@ namespace NostalgiaEngine.GUI
         {
             m_FileExplorer.Update();
             m_TextInput.InputUpdate();
-            m_YesNoWindow.Update();
+            m_ConfirmSaveWindow.Update();
+            m_ConfirmOverwriteWindow.Update();
             if (NEInput.CheckKeyPress(ConsoleKey.F2))
             {
 
@@ -78,13 +82,17 @@ namespace NostalgiaEngine.GUI
             if (m_FileExplorer.Focused)
             {
                 m_TextInput.Draw(8);
-                NEConsoleScreen.WriteXY(34, 27, 15 | (2 << 4)," F2 - SELECT ");
+                NEConsoleScreen.WriteXY(34, 27, 15 | (2 << 4)," F2 - NEXT ");
                 NEConsoleScreen.WriteXY(64, 27, 15 | (2 << 4), " ESC - CANCEL ");
                 NEConsoleScreen.WriteXY(4, 25, 15 | (1 << 4), "SAVE AS:");
             }
-            else if (m_YesNoWindow.Focused)
+            else if (m_ConfirmSaveWindow.Focused)
             {
-                m_YesNoWindow.Draw();
+                m_ConfirmSaveWindow.Draw();
+            }
+            else if (m_ConfirmOverwriteWindow.Focused)
+            {
+                m_ConfirmOverwriteWindow.Draw();
             }
             else
             {
@@ -100,7 +108,7 @@ namespace NostalgiaEngine.GUI
         {
             
             NEInput.FlushKeyboard();
-            m_YesNoWindow.Focus();
+            m_ConfirmSaveWindow.Focus();
             m_SavePath = path;
         }
 
@@ -108,13 +116,32 @@ namespace NostalgiaEngine.GUI
         {
             if(save)
             {
-
-                this.Exit(m_SavePath);
+                if(File.Exists(m_SavePath))
+                {
+                    NEInput.FlushKeyboard();
+                    m_ConfirmOverwriteWindow.Focus();
+                }
+                else
+                {
+                    this.Exit(m_SavePath);
+                }
+                
             }
             else
             {
                m_FileExplorer.Focus();
+            }
+        }
 
+        void OnOverwriteDecision(bool overwrite)
+        {
+            if(overwrite)
+            {
+                this.Exit(m_SavePath);
+            }
+            else
+            {
+                m_FileExplorer.Focus();
             }
         }
 
@@ -122,7 +149,8 @@ namespace NostalgiaEngine.GUI
         {
             m_FileExplorer.Dispose();
             m_TextInput.Dispose();
-            m_YesNoWindow.Dispose();
+            m_ConfirmSaveWindow.Dispose();
+            m_ConfirmOverwriteWindow.Dispose();
             NEInput.FlushKeyboard();
         }
 

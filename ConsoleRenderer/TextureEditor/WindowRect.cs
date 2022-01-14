@@ -15,6 +15,9 @@ namespace NostalgiaEngine.GUI
         public int W { get; set; }
         public int H { get; set; }
         public string Title { get; set; }
+        public int BarColor { get; set; }
+        public int TextBarColor { get; set; }
+        public int BodyColor { get; set; }
 
         public NEWindowRect(int x, int y, int w, int h, string title = "")
         {
@@ -23,6 +26,9 @@ namespace NostalgiaEngine.GUI
             W = w;
             H = h;
             Title = title;
+            BarColor = 9;
+            TextBarColor = 15;
+            BodyColor = 8;
         }
 
         public void Draw()
@@ -31,7 +37,7 @@ namespace NostalgiaEngine.GUI
             {
                 for (int y = Y; y < (Y+H); ++y)
                 {
-                    int col = (y == Y) ? (9 << 4)|15 : (8 << 4);
+                    int col = (y == Y) ? (BarColor << 4)|TextBarColor : (BodyColor << 4);
                     char c = (y == Y)&& (x-X<Title.Length) ? Title[x-X] : ' ';
                     NEConsoleScreen.PutChar(c,(short)col,  x, y);
                 }

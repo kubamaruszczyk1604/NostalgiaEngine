@@ -7,15 +7,17 @@ using NostalgiaEngine.Core;
 
 namespace NostalgiaEngine.GUI
 {
+    public enum NEWindowStyle { Normal = 0, Warning = 1, Error =2};
     public class NEYesNoWindow :INEGUIElement
     {
         public delegate void OnUserSelection(bool yn);
 
         public OnUserSelection onUserSelection { get; set; }
         private NEWindowRect m_Window;
+        private NEWindowStyle m_Style;
         private string m_Question;
 
-        public NEYesNoWindow(int x, int y,int w, int h, string question)
+        public NEYesNoWindow(int x, int y,int w, int h, string question, NEWindowStyle style = NEWindowStyle.Normal)
         {
             m_Question = question;
             if (w < question.Length)
@@ -23,7 +25,20 @@ namespace NostalgiaEngine.GUI
                 w = question.Length + 5;
             }
             if (h < 10) h = 10;
+            m_Style = style;
             m_Window = new NEWindowRect(x, y, w, h, question);
+            if(style == NEWindowStyle.Warning)
+            {
+                m_Window.BarColor = 14;
+                m_Window.TextBarColor = 1;
+            }
+
+            if(style == NEWindowStyle.Error)
+            {
+                m_Window.BarColor = 12;
+                m_Window.TextBarColor = 15;
+                m_Window.BodyColor = 4;
+            }
         }
 
         public void Update()

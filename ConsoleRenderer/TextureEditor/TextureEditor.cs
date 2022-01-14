@@ -233,10 +233,19 @@ namespace NostalgiaEngine.TextureEditor
             string path = scene.ReturnData.ToString();
             if(path != "0")
             {
-                using (StreamWriter writer = new StreamWriter(path))
+                try
                 {
-                    writer.Write(texStr);
-                    writer.Close();
+                    using (StreamWriter writer = new StreamWriter(path))
+                    {
+                        writer.Write(texStr);
+                        writer.Close();
+                    }
+                    Console.Beep(880, 100);
+                }
+                catch
+                {
+                    Console.Beep(300, 100);
+                    Console.Beep(250, 100);
                 }
             }
         }
