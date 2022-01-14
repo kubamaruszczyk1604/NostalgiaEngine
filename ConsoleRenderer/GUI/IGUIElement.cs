@@ -16,7 +16,7 @@ namespace NostalgiaEngine.GUI
             s_Elements.Add(this);
         }
 
-        public void Focus()
+        public virtual void Focus()
         {
             foreach (var el in s_Elements)
             {

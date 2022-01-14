@@ -61,26 +61,15 @@ namespace NostalgiaEngine.TextureEditor
             m_ImageData = new StepHistorySeries<MemTex16>(20, new MemTex16(m_ImageW, m_ImageH));
             m_cursorX = 10;
             m_cursorY = 10;
-            FlushKeys();
             m_ActionStarted = false;
 
             return true;
         }
 
-        private void FlushKeys()
-        {
-            //CGInput.CheckKeyPress(ConsoleKey.Tab);
-            //CGInput.CheckKeyPress(ConsoleKey.UpArrow);
-            //CGInput.CheckKeyPress(ConsoleKey.DownArrow);
-            //CGInput.CheckKeyPress(ConsoleKey.LeftArrow);
-            //CGInput.CheckKeyPress(ConsoleKey.RightArrow);
-            //CGInput.CheckKeyDown(ConsoleKey.Spacebar);
-            //CGInput.CheckKeyPress(ConsoleKey.Enter);
-            //CGInput.CheckKeyPress(ConsoleKey.N);
-            //CGInput.CheckKeyPress(ConsoleKey.Escape);
-            //CGInput.CheckKeyPress(ConsoleKey.U);
-            NEInput.FlushKeyboard();
-        }
+       // private void FlushKeys()
+        //{
+        //    NEInput.FlushKeyboard();
+        //}
         public override void OnStart()
         {
             NEWindowControl.DisableConsoleWindowButtons();
@@ -203,7 +192,7 @@ namespace NostalgiaEngine.TextureEditor
                 
             }
 
-            if (NEInput.CheckKeyPress((ConsoleKey)0x10))
+            if (NEInput.CheckKeyPress(NEKey.Shift))
             {
                 if (m_BrushFlag == false) m_BrushFlag = true;
                 else m_BrushFlag = false;
@@ -240,12 +229,11 @@ namespace NostalgiaEngine.TextureEditor
                         writer.Write(texStr);
                         writer.Close();
                     }
-                    Console.Beep(880, 100);
+                    NEConsoleSounds.ConfirmBeep2();
                 }
                 catch
                 {
-                    Console.Beep(300, 100);
-                    Console.Beep(250, 100);
+                    NEConsoleSounds.FailBeep();
                 }
             }
         }
@@ -277,7 +265,6 @@ namespace NostalgiaEngine.TextureEditor
         public override void OnResume()
         {
             base.OnResume();
-            FlushKeys();
         }
 
         public override void OnPause()

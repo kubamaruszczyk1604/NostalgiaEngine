@@ -35,7 +35,6 @@ namespace NostalgiaEngine.Core
 
         static public NEColorSample MakeCol10(ConsoleColor col1, ConsoleColor col2, float t)
         {
-
             //if (t == float.NaN) t = 0.0f;
             int BG1 = (int)col1;
             int FG1 = ((int)col1) << 4;

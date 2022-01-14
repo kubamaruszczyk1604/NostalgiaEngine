@@ -77,17 +77,6 @@ namespace NostalgiaEngine.GUI
             Console.SetCursorPosition(m_Position.X + c_HorizontalOffset + m_CursorPos, m_Position.Y + c_VerticalOffset);
         }
 
-        //public void Focus()
-        //{
-        //    m_FocusedFlag = true;
-           
-        //}
-
-        //public void UnFocus()
-        //{
-        //    m_FocusedFlag = false;
-        //    Console.CursorVisible = false;
-        //}
 
         public override void Dispose()
         {

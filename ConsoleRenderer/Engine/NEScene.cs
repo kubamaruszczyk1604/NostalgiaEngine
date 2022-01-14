@@ -22,6 +22,7 @@ namespace NostalgiaEngine.Core
 
         public void Exit(object returnData = null)
         {
+            NEInput.FlushKeyboard();
             ReturnData = returnData;
             if (ReturnData != null)
             {
@@ -31,16 +32,16 @@ namespace NostalgiaEngine.Core
             onSceneExit?.Invoke(this);
             onSceneExit = null;
         }
-        public virtual bool OnLoad() { return true; }
-        public virtual void OnStart() { }
-        public virtual void OnPause() { }
-        public virtual void OnResume(){}
+        public virtual bool OnLoad() { NEInput.FlushKeyboard(); return true; }
+        public virtual void OnStart() { NEInput.FlushKeyboard(); }
+        public virtual void OnPause() { NEInput.FlushKeyboard(); }
+        public virtual void OnResume() { NEInput.FlushKeyboard(); }
         public virtual void OnUpdate(float deltaTime) { }
         public virtual void OnDrawPerColumn(int x) { }
         public virtual void OnDraw() { }
         public virtual void OnExit()
         {
-           
+            NEInput.FlushKeyboard();
         }
     }
 }

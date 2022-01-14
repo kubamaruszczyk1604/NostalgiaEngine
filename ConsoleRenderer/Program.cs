@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using NostalgiaEngine.TextureEditor;
 using NostalgiaEngine.Core;
 using NostalgiaEngine.Raycaster;
+using NostalgiaEngine.GUI;
 
 namespace NostalgiaEngineApplication
 {
@@ -18,13 +19,11 @@ namespace NostalgiaEngineApplication
         static void Main(string[] args)
         {
 
-            
+
             Engine engine = new Engine();
             NETextureEditor ed = new NETextureEditor();
             NERaycaster2D raycaster = new NERaycaster2D();
             engine.Start(ed);
-            
-
         }
     }
 }

@@ -66,5 +66,22 @@ namespace NostalgiaEngine.GUI
         {
             base.Dispose();
         }
+
+        public override void Focus()
+        {
+            base.Focus();
+            if(m_Style == NEWindowStyle.Normal)
+            {
+                NEConsoleSounds.AB_Beep();
+            }
+            else if(m_Style == NEWindowStyle.Warning)
+            {
+                NEConsoleSounds.WarningBeep();
+            }
+            else
+            {
+                NEConsoleSounds.FailBeep();
+            }
+        }
     }
 }
