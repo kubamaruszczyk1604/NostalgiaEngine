@@ -80,7 +80,7 @@ namespace NostalgiaEngine.GUI
             }
             else
             {
-                NEConsoleSounds.FailBeep();
+                NEConsoleSounds.ForbidenBeep();
             }
         }
     }

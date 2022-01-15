@@ -125,9 +125,9 @@ namespace NostalgiaEngine.GUI
             if (NEInput.CheckKeyPress(ConsoleKey.Enter))
             {
                 string bk = m_CurrentDirContent[m_CurrentPosIndex].Substring(m_CurrentPath.Length);
-                if (bk == "...")
+                if (bk == "...") // if moving back up
                 {
-                    if (m_CurrentPath.Length > 3)
+                    if (m_CurrentPath.Length > 3) // only if we aren't at the root dir
                     {
                         string del = m_DirStack.Pop();
                         m_CurrentPath = m_CurrentPath.Substring(0, m_CurrentPath.Length - del.Length - 1);
@@ -139,7 +139,7 @@ namespace NostalgiaEngine.GUI
                         onPathUpdated?.Invoke(m_EditString);
                     }
                 }
-                else
+                else // if moving deeper down
                 {
 
                     string newPath = m_CurrentDirContent[m_CurrentPosIndex] + "/";
@@ -159,6 +159,10 @@ namespace NostalgiaEngine.GUI
                         m_EditString = newPath.Substring(0, newPath.Length - 1);
                         onPathUpdated?.Invoke(m_EditString);
                         onFileSelected?.Invoke(m_EditString);
+                    }
+                    else
+                    {
+                        NEConsoleSounds.ForbidenBeep();
                     }
 
                 }

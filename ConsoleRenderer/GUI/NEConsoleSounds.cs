@@ -49,7 +49,7 @@ namespace NostalgiaEngine.GUI
             Console.Beep(739, 30);
         }
 
-        public static void FailBeep()
+        public static void ForbidenBeep()
         {
             Console.Beep(300, 100);
             Console.Beep(250, 100);

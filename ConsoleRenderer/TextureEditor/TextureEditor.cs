@@ -233,7 +233,7 @@ namespace NostalgiaEngine.TextureEditor
                 }
                 catch
                 {
-                    NEConsoleSounds.FailBeep();
+                    NEConsoleSounds.ForbidenBeep();
                 }
             }
         }
