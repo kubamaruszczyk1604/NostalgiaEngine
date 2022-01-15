@@ -240,7 +240,6 @@ namespace NostalgiaEngine.TextureEditor
 
         private void OnActionStarted()
         { 
-            //Console.Beep();
             MemTex16 next = MemTex16.Copy(m_ImageData.Data);
             m_ImageData.AddStep(next);
         }
@@ -296,8 +295,6 @@ namespace NostalgiaEngine.TextureEditor
                 }
             }
         }
-
-
 
 
         public override void OnDraw()

@@ -33,6 +33,9 @@ namespace NostalgiaEngine.GUI
         public OnFileSelected onFileSelected { get; set; }
         public OnPathUpdated onPathUpdated { get; set; }
 
+        public int StartRow { get; set; }
+        public bool DisplayPathString { get; set; }
+
 
         public NEFileExplorer(string title)
         {
@@ -43,12 +46,13 @@ namespace NostalgiaEngine.GUI
                 m_CurrentDirContent = dirList;
             }
             m_Title = title;
-
+            StartRow = 2;
+            DisplayPathString = true;
         }
         public void Update()
         {
             if (!Focused) return;
-
+            bool arrowPressed = false;
             if (NEInput.CheckKeyPress(ConsoleKey.DownArrow))
             {           
                  m_CurrentPosIndex++;
@@ -57,6 +61,7 @@ namespace NostalgiaEngine.GUI
                 {
                     m_ViewStartIndex++;
                 }
+                arrowPressed = true;
             }
             if (NEInput.CheckKeyPress(ConsoleKey.UpArrow))
             {
@@ -66,7 +71,7 @@ namespace NostalgiaEngine.GUI
                     m_ViewStartIndex--;
                 }
                 m_CurrentPosIndex--;
-
+                arrowPressed = true;
             }
             if (NEInput.CheckKeyPress(ConsoleKey.RightArrow))
             {
@@ -75,6 +80,7 @@ namespace NostalgiaEngine.GUI
                 {
                     m_ViewStartIndex += c_ColLength;
                 }
+                arrowPressed = true;
             }
 
             if (NEInput.CheckKeyPress(ConsoleKey.LeftArrow))
@@ -86,11 +92,14 @@ namespace NostalgiaEngine.GUI
                     m_CurrentPosIndex -= c_ColLength;
                     if (m_ViewStartIndex < 0) m_ViewStartIndex = 0;
                 }
-
+                arrowPressed = true;
+                
             }
 
             if (m_CurrentPosIndex < 0) m_CurrentPosIndex = 0;
             if (m_CurrentPosIndex >= m_CurrentDirContent.Length) m_CurrentPosIndex = m_CurrentDirContent.Length - 1;
+
+            if(arrowPressed) onPathUpdated?.Invoke(m_CurrentDirContent[m_CurrentPosIndex]);
 
             if (NEInput.CheckKeyPress(ConsoleKey.Enter))
             {
@@ -140,8 +149,11 @@ namespace NostalgiaEngine.GUI
         {
           
             NEConsoleScreen.WriteXY(0, 0, 12, m_Title);
-            NEConsoleScreen.WriteXY(0, 2, 9, m_CurrentPath);
-
+            NEConsoleScreen.WriteXY(0, StartRow+2, 9, m_CurrentPath);
+            if(Focused)
+            {
+                NEConsoleScreen.WriteXY(0, StartRow, 8 | (0 << 4), "Arrow keys: Navigate     Enter: Enter Subdirectory");
+            }
 
             //if (m_CurrentPosIndex >= 3*c_ColLength) start = c_ColLength;
             for (int i = m_ViewStartIndex; i < m_CurrentDirContent.Length; ++i)
@@ -149,7 +161,7 @@ namespace NostalgiaEngine.GUI
                 int x = ((i - m_ViewStartIndex) / c_ColLength) * c_DistanceBetweenColumns;
                 int textCol = Focused ? 9 : 1;
                 if (x < screenWidth)
-                    NEConsoleScreen.WriteXY(x, 4 + ((i - m_ViewStartIndex) % c_ColLength), (short)(m_CurrentPosIndex == i ? (15 | 1 << 4) : textCol), m_CurrentDirContent[i].Substring(m_CurrentPath.Length));
+                    NEConsoleScreen.WriteXY(2+x, StartRow + 4 + ((i - m_ViewStartIndex) % c_ColLength), (short)(m_CurrentPosIndex == i ? (15 | 1 << 4) : textCol), m_CurrentDirContent[i].Substring(m_CurrentPath.Length));
             }
 
            // CGBuffer.WriteXY(0, 28, 15 | (1 << 4), m_EditString);
