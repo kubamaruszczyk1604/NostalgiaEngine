@@ -13,9 +13,9 @@ namespace NostalgiaEngine.GUI
         NEFileExplorer m_FileExplorer;
         string m_OpenPath;
 
-        public NEOpenDialog()
+        public NEOpenDialog(string initialPath = "C:/")
         {
-            m_OpenPath = "";
+            m_OpenPath = initialPath;
         }
 
         public override bool OnLoad()
@@ -25,7 +25,7 @@ namespace NostalgiaEngine.GUI
             ScreenHeight = 30;
             PixelWidth = 8;
             PixelHeight = 16;
-            m_FileExplorer = new NEFileExplorer(" SELECT FILE TO OPEN ");
+            m_FileExplorer = new NEFileExplorer(" SELECT FILE TO OPEN ", m_OpenPath);
             m_FileExplorer.onFileSelected = OnPathUpdate;
             m_FileExplorer.Focus();
             

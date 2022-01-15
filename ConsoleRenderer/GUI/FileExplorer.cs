@@ -37,8 +37,20 @@ namespace NostalgiaEngine.GUI
         public bool DisplayPathString { get; set; }
 
 
-        public NEFileExplorer(string title)
+        public NEFileExplorer(string title, string initialPath = "C:/")
         {
+            m_CurrentPath = initialPath;
+            m_CurrentPath = m_CurrentPath.Replace('\\', '/');
+            if(!Directory.Exists(m_CurrentPath))
+            {
+                m_CurrentPath = "C:/";
+            }
+
+            if(m_CurrentPath[m_CurrentPath.Length-1] != '/')
+            {
+                m_CurrentPath += '/';
+            }
+            
             m_DirStack = new Stack<string>();
 
             if (VisitDirectory(m_CurrentPath, out string[] dirList) == VisitState.Directory)
@@ -48,6 +60,7 @@ namespace NostalgiaEngine.GUI
             m_Title = title;
             StartRow = 2;
             DisplayPathString = true;
+            
         }
         public void Update()
         {
