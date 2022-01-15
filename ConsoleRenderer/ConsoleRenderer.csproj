@@ -69,6 +69,7 @@
     <Compile Include="Core\Materials.cs" />
     <Compile Include="GUI\FileExplorer.cs" />
     <Compile Include="GUI\NEConsoleSounds.cs" />
+    <Compile Include="GUI\OpenDialog.cs" />
     <Compile Include="GUI\TextInput.cs" />
     <Compile Include="GUI\YesNoWindow.cs" />
     <Compile Include="GUI\IGUIElement.cs" />

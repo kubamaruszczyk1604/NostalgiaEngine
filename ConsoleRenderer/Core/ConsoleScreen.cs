@@ -175,6 +175,18 @@ namespace NostalgiaEngine.Core
             Array.Clear(m_Bufer[m_WriteBufferPtr], 0, m_Bufer[0].Length);
         }
 
+        static public void ClearColor(int col)
+        {
+            int len = m_sWidth * m_sHeight;
+            for(int i = 0; i < len; ++i)
+            {
+                m_Bufer[m_WriteBufferPtr][i].Attributes = (short)(col<<4);
+                m_Bufer[m_WriteBufferPtr][i].Char.AsciiChar = (byte)' ';
+
+            }
+            
+        }
+
         static private void SwapWorker()
         {
             while(true)
