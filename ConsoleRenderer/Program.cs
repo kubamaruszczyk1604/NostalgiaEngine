@@ -23,7 +23,7 @@ namespace NostalgiaEngineApplication
             Engine engine = new Engine();
             NETextureEditor ed = new NETextureEditor();
             NERaycaster2D raycaster = new NERaycaster2D();
-            NEOpenDialog nd = new NEOpenDialog(@"C:\users");
+            NEOpenDialog nd = new NEOpenDialog(@"C:\");
             engine.Start(nd);
 
             string s = nd.ReturnData.ToString();

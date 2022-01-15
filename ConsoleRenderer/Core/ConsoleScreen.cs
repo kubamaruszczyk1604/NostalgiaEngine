@@ -166,7 +166,11 @@ namespace NostalgiaEngine.Core
         {
             for (int i  = 0; i < line.Length;++i)
             {
-                PutChar(line[i], col, x + i, y);
+                int putX = x + i;
+                if (putX < m_sWidth)
+                {
+                    PutChar(line[i], col, putX, y);
+                }
             }
         }
 
