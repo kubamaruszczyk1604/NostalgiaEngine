@@ -46,12 +46,20 @@ namespace NostalgiaEngine.GUI
                 m_CurrentPath = "C:/";
             }
 
-            if(m_CurrentPath[m_CurrentPath.Length-1] != '/')
+            //At this point we are guaranteed that the path will be legal
+
+            if (m_CurrentPath[m_CurrentPath.Length-1] != '/')
             {
                 m_CurrentPath += '/';
             }
-            
             m_DirStack = new Stack<string>();
+            string[] levels = m_CurrentPath.Split('/');
+            for (int i = 1; i < levels.Length-1; ++i) // we wanna ignore the first and the last entry
+            {
+                m_DirStack.Push(levels[i]);
+            }
+
+
 
             if (VisitDirectory(m_CurrentPath, out string[] dirList) == VisitState.Directory)
             {
