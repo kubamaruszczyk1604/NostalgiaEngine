@@ -55,10 +55,17 @@ namespace NostalgiaEngine.GUI
             Console.Beep(250, 100);
         }
 
-        public static void FailBeep2()
+        public static void ErrorBeep()
         {
-            Console.Beep(369, 100);
-            Console.Beep(329, 100);
+
+            Console.Beep(100, 1000);
+            //Console.Beep(150, 10);
+        }
+
+        public static void ErrorBeep2()
+        {
+            Console.Beep(180, 300);
+            Console.Beep(150, 10);
         }
     }
 }
