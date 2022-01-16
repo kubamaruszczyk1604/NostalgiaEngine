@@ -10,6 +10,7 @@ namespace NostalgiaEngine.Core
     {
         public int Width { get; private set; }
         public int Height { get; private set; }
+        public int[] DATA { get { return m_Data; } }
         public static string LastErrorMessage { get; private set; }
 
         private int[] m_Data;
@@ -96,8 +97,8 @@ namespace NostalgiaEngine.Core
             int y = (int)Math.Round(v * (float)Height);
             if (y >= (Height - 1)) y = Height - 1;
             int index = y * Width + x;
-            int col = m_Data[index];
-
+            int col = m_Data != null?m_Data[index]:13;
+            
             return NEColorSample.MakeCol10(ConsoleColor.Black, (ConsoleColor)col,intensity);
         }
 

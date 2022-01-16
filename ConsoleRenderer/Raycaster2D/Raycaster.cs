@@ -128,7 +128,7 @@ namespace NostalgiaEngine.Raycaster
 
             if (NEInput.CheckKeyPress(ConsoleKey.N))
             {
-                Engine.Instance.PushScene(new TextureEditor.Test_MemTex16());
+                //Engine.Instance.PushScene(new TextureEditor.Test_MemTex16());
             }
 
         }

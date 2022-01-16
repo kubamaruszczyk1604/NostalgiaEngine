@@ -83,7 +83,6 @@
     <Compile Include="TextureEditor\WindowRect.cs" />
     <Compile Include="TextureEditor\MemTex16.cs" />
     <Compile Include="TextureEditor\StepSeries.cs" />
-    <Compile Include="TextureEditor\Test_MemTex16.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

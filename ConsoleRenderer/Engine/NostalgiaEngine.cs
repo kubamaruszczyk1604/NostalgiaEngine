@@ -52,16 +52,16 @@ namespace NostalgiaEngine.Core
         {
             while (m_Running)
             {
-                if(m_SuspendTaskbarFlag)
+                if (m_SuspendTaskbarFlag)
                 {
                     Thread.Sleep(100);
                     continue;
                 }
-                Console.Title = Title + 
+                Console.Title = Title +
                     "             Resolution: " + ScreenWidth.ToString() + "x" + ScreenHeight.ToString() +
                     "             FPS: " + NEFrameTimer.GetFPS();
                 Thread.Sleep(500);
-                
+
             }
 
         }
@@ -143,6 +143,7 @@ namespace NostalgiaEngine.Core
             m_TaskbarUpdateWorker.Start();
             while (m_Running)
             {
+                Console.SetCursorPosition(0, 0);
                 NEFrameTimer.Update();
                 m_Delta = NEFrameTimer.GetDeltaTime();
                 m_CurrentScene.OnUpdate(NEFrameTimer.GetDeltaTime());

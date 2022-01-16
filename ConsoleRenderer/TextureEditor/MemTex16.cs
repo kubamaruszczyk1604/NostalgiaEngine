@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NostalgiaEngine.Core;
 
 namespace NostalgiaEngine.TextureEditor
 {
@@ -10,8 +11,8 @@ namespace NostalgiaEngine.TextureEditor
     {
         public class MT16Pix
         {
-            public int X { get; set; }
-            public int Y { get; set; }
+            //public int X { get; set; }
+            //public int Y { get; set; }
             public int Col { get; set; }
             public int Metadata { get; set; }
 
@@ -22,10 +23,10 @@ namespace NostalgiaEngine.TextureEditor
 
             public MT16Pix [] Neighbours { get; private set; }
 
-            public MT16Pix(int x, int y, int col)
+            public MT16Pix(/*int x, int y, */int col)
             {
-                X = x;
-                Y = y;
+                //X = x;
+                //Y = y;
                 Col = col;
             }
         }
@@ -54,6 +55,19 @@ namespace NostalgiaEngine.TextureEditor
             CreateTexture(source.Width, source.Height, source.m_Pixels);
         }
 
+        public MemTex16(NEColorTexture16 source)
+        {
+            Width = source.Width;
+            Height = source.Height;
+            MT16Pix[] pixels = new MT16Pix[source.DATA.Length];
+            for(int i = 0; i < pixels.Length; ++i)
+            {
+                pixels[i] = new MT16Pix(source.DATA[i]);
+            }
+
+            CreateTexture(source.Width, source.Height, pixels);
+        }
+
         void CreateTexture(int w, int h, MT16Pix[] source = null)
         {
             m_Pixels = new MT16Pix[w * h];
@@ -62,7 +76,7 @@ namespace NostalgiaEngine.TextureEditor
             {
                 for (int x = 0; x < w; ++x)
                 {
-                    MT16Pix pixel = new MT16Pix(x, y, (source==null)?16:source[XY2I(x,y)].Col);
+                    MT16Pix pixel = new MT16Pix(/*x, y, */(source==null)?16:source[XY2I(x,y)].Col);
                     pixel.Metadata = 0;
                     if ((y != 0))
                     {

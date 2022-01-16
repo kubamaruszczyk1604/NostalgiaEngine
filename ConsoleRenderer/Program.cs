@@ -25,7 +25,7 @@ namespace NostalgiaEngineApplication
             NERaycaster2D raycaster = new NERaycaster2D();
             //NEOpenDialog nd = new NEOpenDialog(@"C:\users\kuba");
             engine.Start(ed);
-
+            
         }
     }
 }

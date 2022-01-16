@@ -203,7 +203,12 @@ namespace NostalgiaEngine.TextureEditor
             {
                 m_ImageData.UndoStep();
             }
-
+            if (NEInput.CheckKeyDown((ConsoleKey)NEKey.Control) && NEInput.CheckKeyPress(ConsoleKey.O))
+            {
+                var od = new NEOpenDialog();
+                od.onSceneExit += OnFileOpen;
+                Engine.Instance.PushScene(od);
+            }
             if (NEInput.CheckKeyDown((ConsoleKey)NEKey.Control) && NEInput.CheckKeyPress(ConsoleKey.S))
             {
                 var sd = new NESaveDialog();
@@ -236,6 +241,23 @@ namespace NostalgiaEngine.TextureEditor
                     NEConsoleSounds.ForbidenBeep();
                 }
             }
+        }
+
+
+        private void OnFileOpen(NEScene scene)
+        {
+            NEColorTexture16 nativeTex = NEColorTexture16.LoadFromFile(scene.ReturnData.ToString()); 
+            if(nativeTex != null)
+            {
+                m_ImageData.AddStep(new MemTex16(nativeTex));
+                m_ImageW = nativeTex.Width;
+                m_ImageH = nativeTex.Height;
+            }
+            else
+            {
+                NEConsoleSounds.ErrorBeep();
+            }
+
         }
 
         private void OnActionStarted()
