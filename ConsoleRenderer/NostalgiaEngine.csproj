@@ -58,6 +58,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\NETexture.cs" />
     <Compile Include="Core\ScreenBuffer.cs" />
     <Compile Include="Core\NEDebug.cs" />
     <Compile Include="Core\NEDepthBuffer.cs" />

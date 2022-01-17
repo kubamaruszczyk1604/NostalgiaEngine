@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace NostalgiaEngine.Core
 {
-    public class NEColorTexture16
+    public class NEColorTexture16: NETexture
     {
-        public int Width { get; private set; }
-        public int Height { get; private set; }
+
         public int[] DATA { get { return m_Data; } }
         public static string LastErrorMessage { get; private set; }
 
@@ -89,7 +88,7 @@ namespace NostalgiaEngine.Core
             return null;
         }
 
-        public NEColorSample Sample(float u, float v, float intensity)
+        public override NEColorSample Sample(float u, float v, float intensity)
         {
             int x = (int)Math.Round(u * (float)Width);
             if (x >= (Width - 1)) x = Width - 1; 
