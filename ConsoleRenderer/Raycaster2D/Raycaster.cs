@@ -51,7 +51,8 @@ namespace NostalgiaEngine.Raycaster
         private NEVector2 m_ViewerDir = new NEVector2(0.0f, 1.0f);
         private float m_PlayerRotation = 0.0f;
         private NEColorTexture16 m_WallTex;
-
+        private NEDepthBuffer m_DepthBuffer;
+        private NEStaticSprite m_Sprite;
         public override bool OnLoad()
         {
             ScreenWidth = 280;
@@ -61,6 +62,11 @@ namespace NostalgiaEngine.Raycaster
            // ParallelScreenDraw = true;
             m_WallTex = NEColorTexture16.LoadFromFile($"C:/Users/Kuba/Desktop/untitled2.tex");
             if (m_WallTex == null) return false;
+
+            NEColorTexture16 lampTex = NEColorTexture16.LoadFromFile("C:/test/lantern2.tex");
+            if (lampTex == null) return false;
+            m_Sprite = new NEStaticSprite(lampTex);
+
             return true;
         }
 
@@ -68,6 +74,7 @@ namespace NostalgiaEngine.Raycaster
         {
             m_AspectRatio = (float)ScreenWidth / (float)ScreenHeight;
             m_Fov = 80.0f * DEG_TO_RAD;
+            m_DepthBuffer = new NEDepthBuffer(ScreenWidth, ScreenHeight);
         }
 
         override public void OnUpdate(float dt)
@@ -130,6 +137,7 @@ namespace NostalgiaEngine.Raycaster
             {
                 //Engine.Instance.PushScene(new TextureEditor.Test_MemTex16());
             }
+            m_DepthBuffer.ResetBuffer();
 
         }
 
@@ -155,9 +163,10 @@ namespace NostalgiaEngine.Raycaster
                 if (cell != 0)
                     hit = true;
             }
-            float ceiling = (1.0f / t);
-            float floorp = (-1.0f / t);
-            float intensity = 1.0f - (t / DEPTH);
+            float depth = (t / DEPTH);
+            float ceilingStartY = (1.0f / t);
+            float floorStartY = (-1.0f / t);
+            float intensity = 1.0f - depth;
             //intensity *= intensity*1.5f;
 
             for (int y = 0; y < ScreenHeight; ++y)
@@ -180,12 +189,12 @@ namespace NostalgiaEngine.Raycaster
                 if (hit)
                 {
 
-                    if (py > ceiling) //draw ceiling
+                    if (py > ceilingStartY) //draw ceiling
                     {
 
                         NEScreenBuffer.PutChar(ceilSample.Character, ceilSample.BitMask, x, y);
                     }
-                    else if (py < floorp)
+                    else if (py < floorStartY)
                     {
                         NEScreenBuffer.PutChar(floorSample.Character, floorSample.BitMask, x, y);
                     }
@@ -194,16 +203,12 @@ namespace NostalgiaEngine.Raycaster
                         float rayFract = (ray.X - (float)Math.Floor(ray.X) - (ray.Y - (float)Math.Floor(ray.Y)));
                         rayFract = Math.Abs(rayFract);
 
-                        //ColorSample csample = ColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkBlue, intensity);
-                        NEColorSample csample = m_WallTex.Sample(rayFract, py / (floorp - ceiling) + 0.5f, intensity);
+                        NEColorSample csample = m_WallTex.Sample(rayFract, py / (floorStartY - ceilingStartY) + 0.5f, intensity);
                         char wallChar = csample.Character;
                         short wallCol = csample.BitMask;
-
-                        //if (Math.Abs(rayFract) < 0.05f || Math.Abs(rayFract) > 0.95f)
-                        //{
-                        //    wallChar = (char)CGBlock.Strong;
-                        //    wallCol = 0;
-                        //}
+                        m_DepthBuffer.TryUpdate(x, y, depth);
+                        //NEColorSample s = NEColorSample.MakeCol10(ConsoleColor.Black, ConsoleColor.Red, m_DepthBuffer.Sample(x,y));
+                        //NEScreenBuffer.PutChar(s.Character, s.BitMask, x, y);
                         NEScreenBuffer.PutChar(wallChar, wallCol, x, y);
                     }
 
@@ -211,8 +216,8 @@ namespace NostalgiaEngine.Raycaster
                 else
                 {
 
-                    if (py > ceiling) NEScreenBuffer.PutChar(ceilSample.Character, ceilSample.BitMask, x, y);
-                    else if (py < floorp) NEScreenBuffer.PutChar(floorSample.Character, floorSample.BitMask, x, y);
+                    if (py > ceilingStartY) NEScreenBuffer.PutChar(ceilSample.Character, ceilSample.BitMask, x, y);
+                    else if (py < floorStartY) NEScreenBuffer.PutChar(floorSample.Character, floorSample.BitMask, x, y);
                     else NEScreenBuffer.PutChar((char)NEBlock.Weak, 0x0000 | 0x0000, x, y);
                 }
 
@@ -225,6 +230,21 @@ namespace NostalgiaEngine.Raycaster
         {
             float imgW = (0.25f * ScreenWidth);
             float imgH = (0.25f * ScreenWidth);
+
+            for(int x = 0; x < m_Sprite.Texture.Width*2;++x)
+            {
+                for (int y = 0; y <  m_Sprite.Texture.Height*2;++y)
+                {
+                    float u = (float)x / (float)m_Sprite.Texture.Width;
+                    float v = (float)y / (float)m_Sprite.Texture.Height;
+                    NEColorSample s = m_Sprite.Texture.Sample(u*0.5f, v*0.5f , 0.9f);
+
+                    if(s.Character != 't')
+                    {
+                        NEScreenBuffer.PutChar(s.Character, s.BitMask, 90+ x, 50+y);
+                    }
+                }
+            }
 
             NEVector2 mapXY = new NEVector2(0, 0);
             for (int x = 0; x < imgW; ++x)

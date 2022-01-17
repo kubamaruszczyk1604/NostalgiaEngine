@@ -28,6 +28,11 @@ namespace NostalgiaEngine.Core
             }
         }
 
+        public float Sample(int x, int y)
+        {
+            return DATA[XY2I(x, y)];
+        }
+
         /// <summary>
         /// Resets entire buffer to initial value. Usually this will be infinity, unless specified differently when buffer was created.
         /// </summary>

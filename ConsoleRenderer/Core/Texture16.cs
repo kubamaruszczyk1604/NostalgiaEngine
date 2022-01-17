@@ -97,8 +97,12 @@ namespace NostalgiaEngine.Core
             if (y >= (Height - 1)) y = Height - 1;
             int index = y * Width + x;
             int col = m_Data != null?m_Data[index]:13;
-            
-            return NEColorSample.MakeCol10(ConsoleColor.Black, (ConsoleColor)col,intensity);
+            if (col == 16)
+            {
+                return NEColorSample.MakeTransparent();
+            }
+
+            return NEColorSample.MakeCol10(ConsoleColor.Black, (ConsoleColor)col, intensity);
         }
 
     }

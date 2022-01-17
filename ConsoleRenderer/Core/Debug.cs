@@ -7,36 +7,36 @@ using System.Diagnostics;
 
 namespace NostalgiaEngine.Core
 {
-    public class NEDebug
+    public class Debug
     {
 
         static public void Print(string message)
         {
-            Debug.Print("NEDebug|  " + message);
+            System.Diagnostics.Debug.Print("NEDebug|  " + message);
         }
         static public void Print(int message)
         {
-            Debug.Print("NEDebug|  (int): " + message.ToString());
+            System.Diagnostics.Debug.Print("NEDebug|  (int): " + message.ToString());
         }
 
         static public void Print(uint message)
         {
-            Debug.Print("NEDebug|  (uint): " + message.ToString());
+            System.Diagnostics.Debug.Print("NEDebug|  (uint): " + message.ToString());
         }
 
         static public void Print(short message)
         {
-            Debug.Print("NEDebug|  (short): " + message.ToString());
+            System.Diagnostics.Debug.Print("NEDebug|  (short): " + message.ToString());
         }
 
         static public void Print(float message)
         {
-            Debug.Print("NEDebug|  (float): " + message.ToString());
+            System.Diagnostics.Debug.Print("NEDebug|  (float): " + message.ToString());
         }
 
         static public void Print(double message)
         {
-            Debug.Print("NEDebug|  (double): " + message.ToString());
+            System.Diagnostics.Debug.Print("NEDebug|  (double): " + message.ToString());
         }
     }
 }

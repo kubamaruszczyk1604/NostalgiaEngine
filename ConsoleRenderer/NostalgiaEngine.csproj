@@ -58,11 +58,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\NETexture.cs" />
+    <Compile Include="Core\Texture.cs" />
     <Compile Include="Core\ScreenBuffer.cs" />
-    <Compile Include="Core\NEDebug.cs" />
-    <Compile Include="Core\NEDepthBuffer.cs" />
-    <Compile Include="Core\NEStaticSprite.cs" />
+    <Compile Include="Core\Debug.cs" />
+    <Compile Include="Core\DepthBuffer.cs" />
+    <Compile Include="Core\StaticSprite.cs" />
     <Compile Include="Engine\NEScene.cs" />
     <Compile Include="Engine\NostalgiaEngine.cs" />
     <Compile Include="Core\CommonTypes.cs" />
@@ -72,7 +72,7 @@
     <Compile Include="Core\InputSimulator.cs" />
     <Compile Include="Core\Materials.cs" />
     <Compile Include="GUI\FileExplorer.cs" />
-    <Compile Include="GUI\NEConsoleSounds.cs" />
+    <Compile Include="GUI\ConsoleSounds.cs" />
     <Compile Include="GUI\OpenDialog.cs" />
     <Compile Include="GUI\TextInput.cs" />
     <Compile Include="GUI\YesNoWindow.cs" />

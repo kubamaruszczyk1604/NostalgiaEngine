@@ -10,9 +10,13 @@ namespace NostalgiaEngine.Core
     {
         public int X { get; set; }
         public int Y { get; set; }
-        public int Z { get; set; }
 
         public NETexture Texture { get; private set; }
+
+        public NEStaticSprite(NETexture texture)
+        {
+            Texture = texture;
+        }
 
     }
 }

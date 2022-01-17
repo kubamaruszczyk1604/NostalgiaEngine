@@ -38,6 +38,14 @@ namespace NostalgiaEngine.Core
             return (short)(((short)col) << 4);
         }
 
+        static public NEColorSample MakeTransparent()
+        {
+            var s = new NEColorSample();
+            s.BitMask = 16;
+            s.Character = 't';
+            return s;
+        }
+
         static public NEColorSample MakeCol10(ConsoleColor col1, ConsoleColor col2, float t)
         {
             //if (t == float.NaN) t = 0.0f;
