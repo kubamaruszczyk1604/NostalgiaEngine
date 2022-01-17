@@ -321,7 +321,9 @@ namespace NostalgiaEngine.TextureEditor
 
         public override void OnDraw()
         {
-            for(int w = 0; w < m_BrushW;++w)
+            Console.SetCursorPosition(0, 0);
+            Console.CursorVisible = false;
+            for (int w = 0; w < m_BrushW;++w)
             {
                 for (int h =0; h<m_BrushH;++h)
                 {

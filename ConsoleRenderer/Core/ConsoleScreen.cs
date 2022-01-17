@@ -228,7 +228,7 @@ namespace NostalgiaEngine.Core
         {
             if (m_ConsoleDrawWorker != null) m_ConsoleDrawWorker.Abort();
             Console.Clear();
-            Console.SetWindowSize(m_InitialW, m_InitialH);
+            Console.SetWindowSize(m_InitialW, 30);
             FontInfoEx set = new FontInfoEx
             {
                 cbSize = Marshal.SizeOf<FontInfoEx>(),

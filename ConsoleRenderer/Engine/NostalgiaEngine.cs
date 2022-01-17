@@ -143,7 +143,7 @@ namespace NostalgiaEngine.Core
             m_TaskbarUpdateWorker.Start();
             while (m_Running)
             {
-                Console.SetCursorPosition(0, 0);
+                
                 NEFrameTimer.Update();
                 m_Delta = NEFrameTimer.GetDeltaTime();
                 m_CurrentScene.OnUpdate(NEFrameTimer.GetDeltaTime());
@@ -174,6 +174,7 @@ namespace NostalgiaEngine.Core
                     resetEvent.WaitOne();
                     
                 }
+
                 m_CurrentScene.OnDraw();
                 NEConsoleScreen.SwapBuffers();
                 RunningTime += NEFrameTimer.GetDeltaTime();

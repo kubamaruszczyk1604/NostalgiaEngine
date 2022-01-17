@@ -104,16 +104,15 @@ namespace NostalgiaEngine.TextureEditor
         {
             m_OrigColFlood = m_Pixels[XY2I(x, y)].Col;
             m_NewColFlood = color;
-            List<MT16Pix> l = new List<MT16Pix>();
+            List<MT16Pix> pixelsToChange = new List<MT16Pix>();
             MT16Pix curr = m_Pixels[XY2I(x, y)];
-            l.Add(curr);
+            pixelsToChange.Add(curr);
             bool keepGoing = true;
             while (keepGoing)
-            {
-                
+            {    
                 List<MT16Pix> temp = new List<MT16Pix>();
                 keepGoing = false;
-                foreach (var pixel in l)
+                foreach (var pixel in pixelsToChange) // for each pixels to change- chack if neighbours need chaniging too
                 {
                    if (pixel.Metadata == VISITED) continue;
                     pixel.Metadata = VISITED;
@@ -153,11 +152,11 @@ namespace NostalgiaEngine.TextureEditor
                    
 
                 }
-                l.AddRange(temp);
+                pixelsToChange.AddRange(temp);
             }
 
 
-            foreach (var pixel in l)
+            foreach (var pixel in pixelsToChange)
             {
                 pixel.Col = m_NewColFlood;
                 pixel.Metadata = 0;

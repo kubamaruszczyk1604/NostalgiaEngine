@@ -177,7 +177,7 @@ namespace NostalgiaEngine.GUI
             NEConsoleScreen.WriteXY(0, StartRow+2, 9, m_CurrentPath);
             if(Focused)
             {
-                NEConsoleScreen.WriteXY(0, StartRow, 8 | (0 << 4), "Arrow keys: Navigate     Enter: Enter Subdirectory");
+                NEConsoleScreen.WriteXY(0, StartRow, 8 | (0 << 4), "Arrow keys: Navigate     Enter: Select Item");
             }
 
             //if (m_CurrentPosIndex >= 3*c_ColLength) start = c_ColLength;
