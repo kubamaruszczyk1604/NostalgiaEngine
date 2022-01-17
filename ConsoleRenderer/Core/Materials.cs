@@ -22,6 +22,11 @@ namespace NostalgiaEngine.Core
         public short BitMask { get; private set; }
         public char Character { get; private set; }
 
+        public override string ToString()
+        {
+           
+            return "Char = " + (short)Character + ", FG_Col = " + (BitMask& 0x000F).ToString() + ", BG_Col = " + ((BitMask&0x00F0)>>4).ToString();
+        }
 
         static public short GetBGCol(ConsoleColor col)
         {

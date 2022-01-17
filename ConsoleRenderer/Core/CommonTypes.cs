@@ -176,17 +176,17 @@ namespace NostalgiaEngine.Core
     }
 
 
-    public class NEPixel
-    {
-        public int X;
-        public int Y;
-        public int Col;
+    //public class NEPixel
+    //{
+    //    public int X;
+    //    public int Y;
+    //    public int Col;
 
-        public NEPixel(int x, int y, int col)
-        {
-            X = x;
-            Y = y;
-            Col = col;
-        }
-    }
+    //    public NEPixel(int x, int y, int col)
+    //    {
+    //        X = x;
+    //        Y = y;
+    //        Col = col;
+    //    }
+    //}
 }

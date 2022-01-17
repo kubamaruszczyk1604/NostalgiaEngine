@@ -58,8 +58,8 @@ namespace NostalgiaEngine.GUI
         public static void ErrorBeep()
         {
 
-            Console.Beep(100, 1000);
-            //Console.Beep(150, 10);
+            Console.Beep(300, 200);
+            Console.Beep(290, 200);
         }
 
         public static void ErrorBeep2()
