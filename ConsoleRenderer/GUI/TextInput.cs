@@ -72,7 +72,7 @@ namespace NostalgiaEngine.GUI
 
         public void Draw(short col = 15)
         {
-            NEConsoleScreen.WriteXY(m_Position.X, m_Position.Y, col, m_DataString);
+            NEScreenBuffer.WriteXY(m_Position.X, m_Position.Y, col, m_DataString);
 
             Console.SetCursorPosition(m_Position.X + c_HorizontalOffset + m_CursorPos, m_Position.Y + c_VerticalOffset);
         }

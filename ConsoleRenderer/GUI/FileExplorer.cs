@@ -173,11 +173,11 @@ namespace NostalgiaEngine.GUI
         public void Draw(int screenWidth)
         {
           
-            NEConsoleScreen.WriteXY(0, 0, 12, m_Title);
-            NEConsoleScreen.WriteXY(0, StartRow+2, 9, m_CurrentPath);
+            NEScreenBuffer.WriteXY(0, 0, 12, m_Title);
+            NEScreenBuffer.WriteXY(0, StartRow+2, 9, m_CurrentPath);
             if(Focused)
             {
-                NEConsoleScreen.WriteXY(0, StartRow, 8 | (0 << 4), "Arrow keys: Navigate     Enter: Select Item");
+                NEScreenBuffer.WriteXY(0, StartRow, 8 | (0 << 4), "Arrow keys: Navigate     Enter: Select Item");
             }
 
             //if (m_CurrentPosIndex >= 3*c_ColLength) start = c_ColLength;
@@ -186,7 +186,7 @@ namespace NostalgiaEngine.GUI
                 int x = ((i - m_ViewStartIndex) / c_ColLength) * c_DistanceBetweenColumns;
                 int textCol = Focused ? 9 : 1;
                 if (x < screenWidth)
-                    NEConsoleScreen.WriteXY(2+x, StartRow + 4 + ((i - m_ViewStartIndex) % c_ColLength), (short)(m_CurrentPosIndex == i ? (15 | 1 << 4) : textCol), m_CurrentDirContent[i].Substring(m_CurrentPath.Length));
+                    NEScreenBuffer.WriteXY(2+x, StartRow + 4 + ((i - m_ViewStartIndex) % c_ColLength), (short)(m_CurrentPosIndex == i ? (15 | 1 << 4) : textCol), m_CurrentDirContent[i].Substring(m_CurrentPath.Length));
             }
 
            // CGBuffer.WriteXY(0, 28, 15 | (1 << 4), m_EditString);

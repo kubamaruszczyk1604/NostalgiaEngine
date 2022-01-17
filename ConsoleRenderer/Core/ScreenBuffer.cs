@@ -6,7 +6,7 @@ using System.Threading;
 using System.Collections.Generic;
 namespace NostalgiaEngine.Core
 {
-    public class NEConsoleScreen
+    public class NEScreenBuffer
     {
         /* TEXT FRAME BUFFER FOR FAST RENDERING */
         [DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]

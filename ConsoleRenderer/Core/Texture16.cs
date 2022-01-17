@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace NostalgiaEngine.Core
 {
-    class NEColorTexture16
+    public class NEColorTexture16
     {
         public int Width { get; private set; }
         public int Height { get; private set; }

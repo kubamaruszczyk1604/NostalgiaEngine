@@ -39,7 +39,7 @@ namespace NostalgiaEngine.GUI
                 {
                     int col = (y == Y) ? (BarColor << 4)|TextBarColor : (BodyColor << 4);
                     char c = (y == Y)&& (x-X<Title.Length) ? Title[x-X] : ' ';
-                    NEConsoleScreen.PutChar(c,(short)col,  x, y);
+                    NEScreenBuffer.PutChar(c,(short)col,  x, y);
                 }
             }
         }

@@ -183,11 +183,11 @@ namespace NostalgiaEngine.Raycaster
                     if (py > ceiling) //draw ceiling
                     {
 
-                        NEConsoleScreen.PutChar(ceilSample.Character, ceilSample.BitMask, x, y);
+                        NEScreenBuffer.PutChar(ceilSample.Character, ceilSample.BitMask, x, y);
                     }
                     else if (py < floorp)
                     {
-                        NEConsoleScreen.PutChar(floorSample.Character, floorSample.BitMask, x, y);
+                        NEScreenBuffer.PutChar(floorSample.Character, floorSample.BitMask, x, y);
                     }
                     else
                     {
@@ -204,16 +204,16 @@ namespace NostalgiaEngine.Raycaster
                         //    wallChar = (char)CGBlock.Strong;
                         //    wallCol = 0;
                         //}
-                        NEConsoleScreen.PutChar(wallChar, wallCol, x, y);
+                        NEScreenBuffer.PutChar(wallChar, wallCol, x, y);
                     }
 
                 }
                 else
                 {
 
-                    if (py > ceiling) NEConsoleScreen.PutChar(ceilSample.Character, ceilSample.BitMask, x, y);
-                    else if (py < floorp) NEConsoleScreen.PutChar(floorSample.Character, floorSample.BitMask, x, y);
-                    else NEConsoleScreen.PutChar((char)NEBlock.Weak, 0x0000 | 0x0000, x, y);
+                    if (py > ceiling) NEScreenBuffer.PutChar(ceilSample.Character, ceilSample.BitMask, x, y);
+                    else if (py < floorp) NEScreenBuffer.PutChar(floorSample.Character, floorSample.BitMask, x, y);
+                    else NEScreenBuffer.PutChar((char)NEBlock.Weak, 0x0000 | 0x0000, x, y);
                 }
 
 
@@ -238,11 +238,11 @@ namespace NostalgiaEngine.Raycaster
                     int cell = GetCell(mapXY);
                     if(cell != 0)
                     {
-                        NEConsoleScreen.PutChar('#', 15, (int)imgW-x, (int)imgH-y);
+                        NEScreenBuffer.PutChar('#', 15, (int)imgW-x, (int)imgH-y);
                     }
                     else
                     {
-                        NEConsoleScreen.PutChar('#', 8, (int)imgW - x, (int)imgH - y);
+                        NEScreenBuffer.PutChar('#', 8, (int)imgW - x, (int)imgH - y);
                     }
 
                     NEVector2 A = new NEVector2(-0.65f, -0.65f);
@@ -257,7 +257,7 @@ namespace NostalgiaEngine.Raycaster
                     C += m_ViewerPos;
                     if (NEMathHelper.InTriangle(mapXY,A,B,C))
                     {
-                        NEConsoleScreen.PutChar('@', 13 << 4, (int)imgW - x, (int)imgH - y);
+                        NEScreenBuffer.PutChar('@', 13 << 4, (int)imgW - x, (int)imgH - y);
                     }
 
                 }

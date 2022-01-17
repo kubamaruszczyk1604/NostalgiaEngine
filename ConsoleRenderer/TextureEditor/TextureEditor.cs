@@ -272,14 +272,14 @@ namespace NostalgiaEngine.TextureEditor
             {
                 if (NEMathHelper.InRectangle(pixelPos, new NEVector2(c_ColorWindowWidth * (i), 0) + c_ColorPanelPos, c_ColorWindowWidth, c_ColorWindowHeight))
                 {
-                    NEConsoleScreen.PutChar(' ', (short)((i) << 4), x, y);
-                    if (i == 16) NEConsoleScreen.PutChar((char)NEBlock.Solid, (short)(8 << 4), x, y);
+                    NEScreenBuffer.PutChar(' ', (short)((i) << 4), x, y);
+                    if (i == 16) NEScreenBuffer.PutChar((char)NEBlock.Solid, (short)(8 << 4), x, y);
                 }
             }
 
             if (NEMathHelper.InRectangle(pixelPos, new NEVector2(c_ColorWindowWidth * SelectedColor, 8) + c_ColorPanelPos, c_ColorWindowWidth, 2))
             {
-                NEConsoleScreen.PutChar((char)NEBlock.Middle, (short)((15)), x, y);
+                NEScreenBuffer.PutChar((char)NEBlock.Middle, (short)((15)), x, y);
             }
         }
 
@@ -299,7 +299,7 @@ namespace NostalgiaEngine.TextureEditor
             for (int y = 0; y < ScreenHeight; ++y)
             {
 
-                NEConsoleScreen.PutChar((char)NEBlock.Weak, (short)ConsoleColor.DarkBlue, x, y);
+                NEScreenBuffer.PutChar((char)NEBlock.Weak, (short)ConsoleColor.DarkBlue, x, y);
                 DrawPalette(x, y);
  
                 if (x >= (int)c_DrawingCanvasPos.X && x < m_ImageW + (int)c_DrawingCanvasPos.X && 
@@ -308,11 +308,11 @@ namespace NostalgiaEngine.TextureEditor
                    int col = m_ImageData.Data.GetColor(x- (int)c_DrawingCanvasPos.X, y- (int)c_DrawingCanvasPos.Y);
                     if (col == 16)
                     {
-                        NEConsoleScreen.PutChar((char)NEBlock.Solid, (short)(8<<4), x, y);
+                        NEScreenBuffer.PutChar((char)NEBlock.Solid, (short)(8<<4), x, y);
                     }
                     else
                     {
-                        NEConsoleScreen.PutChar(' ', (short)(col << 4), x, y);
+                        NEScreenBuffer.PutChar(' ', (short)(col << 4), x, y);
                     }
                 }
             }
@@ -327,7 +327,7 @@ namespace NostalgiaEngine.TextureEditor
             {
                 for (int h =0; h<m_BrushH;++h)
                 {
-                    NEConsoleScreen.PutChar('&', (short)(((int)SelectedColor << 4) | ((SelectedColor == 0) ? 15 : 0)),
+                    NEScreenBuffer.PutChar('&', (short)(((int)SelectedColor << 4) | ((SelectedColor == 0) ? 15 : 0)),
                  (int)c_DrawingCanvasPos.X + m_cursorX+w, (int)c_DrawingCanvasPos.Y + m_cursorY+h);
                 }
             }
@@ -335,18 +335,18 @@ namespace NostalgiaEngine.TextureEditor
             int offset = (int)c_DrawingCanvasPos.X;
             for (int i = 0; i < fl.Length;++i)
             {
-                NEConsoleScreen.PutChar(fl[i], 8<<4 , offset + i, (int)c_DrawingCanvasPos.Y-2);
+                NEScreenBuffer.PutChar(fl[i], 8<<4 , offset + i, (int)c_DrawingCanvasPos.Y-2);
             }
             offset += fl.Length + 2;
 
             for (int i = 0; i < c_Fill.Length; ++i)
             {
-                NEConsoleScreen.PutChar(c_Fill[i], (short)(m_BrushFlag?8:10), offset + i, (int)c_DrawingCanvasPos.Y - 2);
+                NEScreenBuffer.PutChar(c_Fill[i], (short)(m_BrushFlag?8:10), offset + i, (int)c_DrawingCanvasPos.Y - 2);
             }
             offset += c_Fill.Length + 2;
             for (int i = 0; i < c_Brush.Length; ++i)
             {
-                NEConsoleScreen.PutChar(c_Brush[i], (short)(m_BrushFlag ? 10 : 8), offset + i, (int)c_DrawingCanvasPos.Y - 2);
+                NEScreenBuffer.PutChar(c_Brush[i], (short)(m_BrushFlag ? 10 : 8), offset + i, (int)c_DrawingCanvasPos.Y - 2);
             }
         }
         public override void OnExit()

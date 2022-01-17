@@ -75,7 +75,7 @@ namespace NostalgiaEngine.GUI
 
         public override void OnDraw()
         {
-            NEConsoleScreen.Clear();
+            NEScreenBuffer.Clear();
             m_FileExplorer.Draw(ScreenWidth);
             
 
@@ -83,10 +83,10 @@ namespace NostalgiaEngine.GUI
             {
                 m_TextInput.Draw(8);
 
-                NEConsoleScreen.WriteXY(64, 29, 15 | (2 << 4)," F2 - NEXT ");
-                NEConsoleScreen.WriteXY(34, 29, 15 | (4 << 4), " ESC - BACK ");
+                NEScreenBuffer.WriteXY(64, 29, 15 | (2 << 4)," F2 - NEXT ");
+                NEScreenBuffer.WriteXY(34, 29, 15 | (4 << 4), " ESC - BACK ");
 
-                NEConsoleScreen.WriteXY(10, 27, 7 | (0 << 4), "CURRENT PATH:");
+                NEScreenBuffer.WriteXY(10, 27, 7 | (0 << 4), "CURRENT PATH:");
             }
             else if (m_ConfirmSaveWindow.Focused)
             {
@@ -99,9 +99,9 @@ namespace NostalgiaEngine.GUI
             else
             {
                 m_TextInput.Draw(15|(1<<4));
-                NEConsoleScreen.WriteXY(54, 29, 15 | (2 << 4), " ENTER - CONFIRM ");
-                NEConsoleScreen.WriteXY(34, 29, 15 | (4 << 4), " ESC - BACK ");
-                NEConsoleScreen.WriteXY(12, 27, 15 | (0 << 4), "ENTER NAME: ");
+                NEScreenBuffer.WriteXY(54, 29, 15 | (2 << 4), " ENTER - CONFIRM ");
+                NEScreenBuffer.WriteXY(34, 29, 15 | (4 << 4), " ESC - BACK ");
+                NEScreenBuffer.WriteXY(12, 27, 15 | (0 << 4), "ENTER NAME: ");
             }
 
         }

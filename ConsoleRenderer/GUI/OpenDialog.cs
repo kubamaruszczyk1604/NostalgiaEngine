@@ -46,10 +46,10 @@ namespace NostalgiaEngine.GUI
         public override void OnDraw()
         {
             base.OnDraw();
-            NEConsoleScreen.Clear();
+            NEScreenBuffer.Clear();
             m_FileExplorer.Draw(ScreenWidth);
-            NEConsoleScreen.WriteXY(54, 28, 15|2<<4, " ENTER - CONFIRM ");
-            NEConsoleScreen.WriteXY(34, 28, 15 | 4 << 4, " ESC - CANCEL ");
+            NEScreenBuffer.WriteXY(54, 28, 15|2<<4, " ENTER - CONFIRM ");
+            NEScreenBuffer.WriteXY(34, 28, 15 | 4 << 4, " ESC - CANCEL ");
         }
 
         private void OnPathUpdate(string path)

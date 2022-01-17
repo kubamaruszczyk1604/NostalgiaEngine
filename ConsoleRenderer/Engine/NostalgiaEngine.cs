@@ -71,7 +71,7 @@ namespace NostalgiaEngine.Core
             ScreenHeight = scene.ScreenHeight > 10 ? scene.ScreenHeight : DEFAULT_SCR_H;
             PixelWidth = scene.PixelWidth > 0 ? scene.PixelWidth : DEFAULT_PIXEL_W;
             PixelHeight = scene.PixelHeight > 0 ? scene.PixelHeight : DEFAULT_PIXEL_H;
-            return NEConsoleScreen.Initialize((short)ScreenWidth, (short)ScreenHeight, (short)PixelWidth, (short)PixelHeight,scene.ParallelScreenDraw);
+            return NEScreenBuffer.Initialize((short)ScreenWidth, (short)ScreenHeight, (short)PixelWidth, (short)PixelHeight,scene.ParallelScreenDraw);
         }
 
         public bool PushScene(NEScene scene)
@@ -89,7 +89,7 @@ namespace NostalgiaEngine.Core
             }
             else
             {
-                NEConsoleScreen.SetDefaultConsole();
+                NEScreenBuffer.SetDefaultConsole();
                 NEInput.FlushKeyboard();
 
                 Console.Clear();
@@ -176,14 +176,14 @@ namespace NostalgiaEngine.Core
                 }
 
                 m_CurrentScene.OnDraw();
-                NEConsoleScreen.SwapBuffers();
+                NEScreenBuffer.SwapBuffers();
                 RunningTime += NEFrameTimer.GetDeltaTime();
                
             }
             m_TaskbarUpdateWorker.Join();
             Console.Title = Title;
             Console.Clear();
-            NEConsoleScreen.SetDefaultConsole();
+            NEScreenBuffer.SetDefaultConsole();
             Console.WriteLine(PostMessage);
             NEInput.BlockUntilKeyPress(NEKey.Enter);
         }
