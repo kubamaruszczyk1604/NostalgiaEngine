@@ -60,6 +60,7 @@
   <ItemGroup>
     <Compile Include="Core\ConsoleScreen.cs" />
     <Compile Include="Core\NEDebug.cs" />
+    <Compile Include="Core\NEDepthBuffer.cs" />
     <Compile Include="Engine\NEScene.cs" />
     <Compile Include="Engine\NostalgiaEngine.cs" />
     <Compile Include="Core\CommonTypes.cs" />
