@@ -11,43 +11,45 @@ namespace NostalgiaEngine.Core
     {
 
         [StructLayout(LayoutKind.Sequential)]
-        internal struct NEColRGB
+        internal struct NEColorDefinition
         {
-            internal uint ColorDWORD;
+            internal uint ColMask;
 
-            internal NEColRGB(uint r, uint g, uint b)
+
+            internal NEColorDefinition(uint r, uint g, uint b)
             {
-                ColorDWORD = r + (g << 8) + (b << 16);
+                ColMask = r | (g << 8) | (b << 16);
             }
         }
 
         [StructLayout(LayoutKind.Sequential)]
         internal struct CONSOLE_SCREEN_BUFFER_INFO_EX
         {
-            internal int cbSize;
-            internal NEPoint dwSize;
-            internal NEPoint dwCursorPosition;
-            internal ushort wAttributes;
-            internal NERect srWindow;
-            internal NEPoint dwMaximumWindowSize;
-            internal ushort wPopupAttributes;
-            internal bool bFullscreenSupported;
-            internal NEColRGB black;
-            internal NEColRGB darkBlue;
-            internal NEColRGB darkGreen;
-            internal NEColRGB darkCyan;
-            internal NEColRGB darkRed;
-            internal NEColRGB darkMagenta;
-            internal NEColRGB darkYellow;
-            internal NEColRGB gray;
-            internal NEColRGB darkGray;
-            internal NEColRGB blue;
-            internal NEColRGB green;
-            internal NEColRGB cyan;
-            internal NEColRGB red;
-            internal NEColRGB magenta;
-            internal NEColRGB yellow;
-            internal NEColRGB white;
+            internal int Size;
+            internal NEPoint WndSize;
+            internal NEPoint CursorPosition;
+            internal ushort Attributes;
+            internal NERect Window;
+            internal NEPoint MaxWndSize;
+            internal ushort PopupAttributes;
+            internal bool FullScreenSupportedFlag;
+
+            internal NEColorDefinition Black;
+            internal NEColorDefinition DarkBLue;
+            internal NEColorDefinition DarkGreen;
+            internal NEColorDefinition DarkCyan;
+            internal NEColorDefinition DarkRed;
+            internal NEColorDefinition DarkMagenta;
+            internal NEColorDefinition DarkYellow;
+            internal NEColorDefinition Gray;
+            internal NEColorDefinition DarkGray;
+            internal NEColorDefinition Blue;
+            internal NEColorDefinition Green;
+            internal NEColorDefinition Cyan;
+            internal NEColorDefinition Red;
+            internal NEColorDefinition Magenta;
+            internal NEColorDefinition Yellow;
+            internal NEColorDefinition White;
         }
 
         [DllImport("kernel32.dll", SetLastError = true)]
@@ -62,7 +64,7 @@ namespace NostalgiaEngine.Core
         public static int SetColor(int consoleColor, uint r, uint g, uint b)
         {
             CONSOLE_SCREEN_BUFFER_INFO_EX screenBuffInfo = new CONSOLE_SCREEN_BUFFER_INFO_EX();
-            screenBuffInfo.cbSize = Marshal.SizeOf(screenBuffInfo);                   
+            screenBuffInfo.Size = Marshal.SizeOf(screenBuffInfo);                   
             IntPtr outputHandle = GetStdHandle((int)NEWindowControl.StdHandle.STD_OUTPUT_HANDLE);    
 
             if (outputHandle == new IntPtr(-1))
@@ -78,52 +80,52 @@ namespace NostalgiaEngine.Core
             switch (consoleColor)
             {
                 case 0:
-                    screenBuffInfo.black = new NEColRGB(r, g, b);
+                    screenBuffInfo.Black = new NEColorDefinition(r, g, b);
                     break;
                 case 1:
-                    screenBuffInfo.darkBlue = new NEColRGB(r, g, b);
+                    screenBuffInfo.DarkBLue = new NEColorDefinition(r, g, b);
                     break;
                 case 2:
-                    screenBuffInfo.darkGreen = new NEColRGB(r, g, b);
+                    screenBuffInfo.DarkGreen = new NEColorDefinition(r, g, b);
                     break;
                 case 3:
-                    screenBuffInfo.darkCyan = new NEColRGB(r, g, b);
+                    screenBuffInfo.DarkCyan = new NEColorDefinition(r, g, b);
                     break;
                 case 4:
-                    screenBuffInfo.darkRed = new NEColRGB(r, g, b);
+                    screenBuffInfo.DarkRed = new NEColorDefinition(r, g, b);
                     break;
                 case 5:
-                    screenBuffInfo.darkMagenta = new NEColRGB(r, g, b);
+                    screenBuffInfo.DarkMagenta = new NEColorDefinition(r, g, b);
                     break;
                 case 6:
-                    screenBuffInfo.darkYellow = new NEColRGB(r, g, b);
+                    screenBuffInfo.DarkYellow = new NEColorDefinition(r, g, b);
                     break;
                 case 7:
-                    screenBuffInfo.gray = new NEColRGB(r, g, b);
+                    screenBuffInfo.Gray = new NEColorDefinition(r, g, b);
                     break;
                 case 8:
-                    screenBuffInfo.darkGray = new NEColRGB(r, g, b);
+                    screenBuffInfo.DarkGray = new NEColorDefinition(r, g, b);
                     break;
                 case 9:
-                    screenBuffInfo.blue = new NEColRGB(r, g, b);
+                    screenBuffInfo.Blue = new NEColorDefinition(r, g, b);
                     break;
                 case 10:
-                    screenBuffInfo.green = new NEColRGB(r, g, b);
+                    screenBuffInfo.Green = new NEColorDefinition(r, g, b);
                     break;
                 case 11:
-                    screenBuffInfo.cyan = new NEColRGB(r, g, b);
+                    screenBuffInfo.Cyan = new NEColorDefinition(r, g, b);
                     break;
                 case 12:
-                    screenBuffInfo.red = new NEColRGB(r, g, b);
+                    screenBuffInfo.Red = new NEColorDefinition(r, g, b);
                     break;
                 case 13:
-                    screenBuffInfo.magenta = new NEColRGB(r, g, b);
+                    screenBuffInfo.Magenta = new NEColorDefinition(r, g, b);
                     break;
                 case 14:
-                    screenBuffInfo.yellow = new NEColRGB(r, g, b);
+                    screenBuffInfo.Yellow = new NEColorDefinition(r, g, b);
                     break;
                 case 15:
-                    screenBuffInfo.white = new NEColRGB(r, g, b);
+                    screenBuffInfo.White = new NEColorDefinition(r, g, b);
                     break;
             }
 
