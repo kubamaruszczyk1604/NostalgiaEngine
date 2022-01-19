@@ -220,10 +220,8 @@ namespace NostalgiaEngine.TextureEditor
             if (NEInput.CheckKeyDown((ConsoleKey)NEKey.Control) && NEInput.CheckKeyPress(ConsoleKey.D1))
             {
 
-                NEColorMgr.SetSpectralPalette1();
+                NEColorManagement.SetSpectralPalette1();
                 NEScreenBuffer.Reallign();
-                //Console.SetWindowSize(ScreenWidth + 10, ScreenHeight + 4);
-                //NEColorMgr.SetDefaultPalette();
             }
 
             if (NEInput.CheckKeyPress(ConsoleKey.Escape))
@@ -299,7 +297,7 @@ namespace NostalgiaEngine.TextureEditor
         public override void OnResume()
         {
             base.OnResume();
-            NEColorMgr.SetNostalgiaPalette();
+            NEColorManagement.SetNostalgiaPalette();
         }
 
         public override void OnPause()

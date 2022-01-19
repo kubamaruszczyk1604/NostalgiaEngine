@@ -53,6 +53,13 @@ namespace NostalgiaEngine.Core
             return val;
         }
 
+        static public uint Clamp(uint val, uint low, uint high)
+        {
+            val = (val < low) ? low : val;
+            val = (val > high) ? high : val;
+            return val;
+        }
+
         static public float Pow(float number, float power)
         { 
             return (float)Math.Pow(number, power);

@@ -144,7 +144,7 @@ namespace NostalgiaEngine.Core
             }
             NEWindowControl.QuickEditMode(false);
             m_Running = true;
-            NEColorMgr.SetNostalgiaPalette();
+            NEColorManagement.SetNostalgiaPalette();
             m_TaskbarUpdateWorker.Start();
             while (m_Running)
             {
@@ -186,7 +186,7 @@ namespace NostalgiaEngine.Core
                
             }
             m_TaskbarUpdateWorker.Join();
-            NEColorMgr.SetDefaultPalette();
+            NEColorManagement.SetDefaultPalette();
             Console.Title = Title;
             Console.Clear();
             NEScreenBuffer.SetDefaultConsole();

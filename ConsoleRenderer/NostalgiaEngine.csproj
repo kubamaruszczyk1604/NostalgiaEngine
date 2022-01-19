@@ -59,7 +59,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\ColorMgr.cs" />
+    <Compile Include="Core\ColorManagement.cs" />
+    <Compile Include="Core\ColorPalette.cs" />
     <Compile Include="Core\Texture.cs" />
     <Compile Include="Core\ScreenBuffer.cs" />
     <Compile Include="Core\Debug.cs" />

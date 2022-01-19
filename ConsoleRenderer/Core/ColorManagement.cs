@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 
 namespace NostalgiaEngine.Core
 {
-    public class NEColorMgr
+    public class NEColorManagement
     {
 
 
@@ -46,22 +46,22 @@ namespace NostalgiaEngine.Core
             internal ushort PopupAttributes;
             internal bool FullScreenSupportedFlag;
 
-            internal NEConsoleColorDefinition Black;
-            internal NEConsoleColorDefinition DarkBlue;
-            internal NEConsoleColorDefinition DarkGreen;
-            internal NEConsoleColorDefinition DarkCyan;
-            internal NEConsoleColorDefinition DarkRed;
-            internal NEConsoleColorDefinition DarkMagenta;
-            internal NEConsoleColorDefinition DarkYellow;
-            internal NEConsoleColorDefinition Gray;
-            internal NEConsoleColorDefinition DarkGray;
-            internal NEConsoleColorDefinition Blue;
-            internal NEConsoleColorDefinition Green;
-            internal NEConsoleColorDefinition Cyan;
-            internal NEConsoleColorDefinition Red;
-            internal NEConsoleColorDefinition Magenta;
-            internal NEConsoleColorDefinition Yellow;
-            internal NEConsoleColorDefinition White;
+            internal NEConsoleColorDef Black;
+            internal NEConsoleColorDef DarkBlue;
+            internal NEConsoleColorDef DarkGreen;
+            internal NEConsoleColorDef DarkCyan;
+            internal NEConsoleColorDef DarkRed;
+            internal NEConsoleColorDef DarkMagenta;
+            internal NEConsoleColorDef DarkYellow;
+            internal NEConsoleColorDef Gray;
+            internal NEConsoleColorDef DarkGray;
+            internal NEConsoleColorDef Blue;
+            internal NEConsoleColorDef Green;
+            internal NEConsoleColorDef Cyan;
+            internal NEConsoleColorDef Red;
+            internal NEConsoleColorDef Magenta;
+            internal NEConsoleColorDef Yellow;
+            internal NEConsoleColorDef White;
 
 
         }
@@ -79,12 +79,12 @@ namespace NostalgiaEngine.Core
 
 
 
-        public static int SetColor(int consoleColor, uint r, uint g, uint b)
+        public static int RedefineColor(int consoleColor, uint r, uint g, uint b)
         {
-            return SetColor(consoleColor, new NEConsoleColorDefinition(r, g, b));
+            return RedefineColor(consoleColor, new NEConsoleColorDef(r, g, b));
         }
 
-        public static int SetColor(int consoleColor, NEConsoleColorDefinition colDef)
+        public static int RedefineColor(int consoleColor, NEConsoleColorDef colDef)
         {
             CONSOLE_SCREEN_BUFFER_INFO_EX screenBuffInfo = new CONSOLE_SCREEN_BUFFER_INFO_EX();
             screenBuffInfo.Size = Marshal.SizeOf(screenBuffInfo);                   
@@ -164,53 +164,35 @@ namespace NostalgiaEngine.Core
 
         static public void SetNostalgiaPalette()
         {
-            NEColorMgr.SetColor(12, 255, 95, 0);
-            NEColorMgr.SetColor(14, 208, 156, 142);
-            NEColorMgr.SetColor(10, 0, 225, 33);
-            NEColorMgr.SetColor(13, 255, 12, 0);
-            NEColorMgr.SetColor(6, 94, 43, 43);
-            NEColorMgr.SetColor(3, 255, 0, 110);
-            NEColorMgr.SetColor(11, 255, 255, 0);
-            NEColorMgr.SetColor(4, 127, 0, 0);
-            NEColorMgr.SetColor(2, 82, 151, 255);
-            NEColorMgr.SetColor(9, 0, 160, 0);
-            NEColorMgr.SetColor(7, 80, 90, 90);
+            RedefineColor(12, 255, 95, 0);
+            RedefineColor(14, 208, 156, 142);
+            RedefineColor(10, 0, 225, 33);
+            RedefineColor(13, 255, 12, 0);
+            RedefineColor(6, 94, 43, 43);
+            RedefineColor(3, 255, 0, 110);
+            RedefineColor(11, 255, 255, 0);
+            RedefineColor(4, 127, 0, 0);
+            RedefineColor(2, 82, 151, 255);
+            RedefineColor(9, 0, 160, 0);
+            RedefineColor(7, 80, 90, 90);
         }
 
 
 
         static public void SetSpectralPalette1()
         {
-            NEConsoleColorDefinition[] pal = {
-            new NEConsoleColorDefinition(0, 0, 0), new NEConsoleColorDefinition(15, 0, 229), new NEConsoleColorDefinition(175, 0, 229),
-            new NEConsoleColorDefinition(229, 0, 114), new NEConsoleColorDefinition(229, 0, 15), new NEConsoleColorDefinition(229, 80, 0),
-            new NEConsoleColorDefinition(229, 172, 0), new NEConsoleColorDefinition(229, 218, 0), new NEConsoleColorDefinition(95, 229, 0),
-            new NEConsoleColorDefinition(0, 229, 3), new NEConsoleColorDefinition(0, 229, 130), new NEConsoleColorDefinition(0, 221, 229),
-            new NEConsoleColorDefinition(0, 156, 229), new NEConsoleColorDefinition(0, 91, 229), new NEConsoleColorDefinition(179, 184, 229),
-            new NEConsoleColorDefinition(242, 242, 242)};
-
             for(int i = 0; i < 16; ++i)
             {
-                SetColor(i, pal[i]);
+                RedefineColor(i, NEColorPalette.ColorSpectrumPalette_1[i]);
             }
-
         }
 
         static public void SetDefaultPalette()
         {
-            NEConsoleColorDefinition[] pal = {
-            new NEConsoleColorDefinition(0, 0, 0), new NEConsoleColorDefinition(0, 55, 218), new NEConsoleColorDefinition(19, 161, 14),
-            new NEConsoleColorDefinition(58, 150, 221), new NEConsoleColorDefinition(195,17, 31), new NEConsoleColorDefinition(136, 23, 152),
-            new NEConsoleColorDefinition(193, 156, 0), new NEConsoleColorDefinition(204, 204, 204), new NEConsoleColorDefinition(118, 118,118),
-            new NEConsoleColorDefinition(59, 120, 255), new NEConsoleColorDefinition(22, 198, 12), new NEConsoleColorDefinition(97, 214, 214),
-            new NEConsoleColorDefinition(231, 72, 86), new NEConsoleColorDefinition(180, 0, 158), new NEConsoleColorDefinition(249, 213, 150),
-            new NEConsoleColorDefinition(242, 242, 242)};
-
             for (int i = 0; i < 16; ++i)
             {
-                SetColor(i, pal[i]);
+                RedefineColor(i, NEColorPalette.DefaultPalette[i]);
             }
-
         }
 
     }
