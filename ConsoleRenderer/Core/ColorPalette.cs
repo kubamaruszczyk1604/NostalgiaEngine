@@ -26,6 +26,16 @@ namespace NostalgiaEngine.Core
             new NEConsoleColorDef(0, 156, 229), new NEConsoleColorDef(0, 91, 229), new NEConsoleColorDef(179, 184, 229),
             new NEConsoleColorDef(242, 242, 242)};
 
+        static public readonly NEConsoleColorDef[] NostalgiaPalette =
+{
+            new NEConsoleColorDef(0, 0, 0), new NEConsoleColorDef(0, 55, 218), new NEConsoleColorDef(82, 151, 255),
+            new NEConsoleColorDef(255, 0, 110), new NEConsoleColorDef(127, 0, 0), new NEConsoleColorDef(136, 23, 152),
+            new NEConsoleColorDef(94, 43, 43), new NEConsoleColorDef(80, 90, 90), new NEConsoleColorDef(118, 118,118),
+            new NEConsoleColorDef(0, 160, 0), new NEConsoleColorDef(0, 225, 33), new NEConsoleColorDef(255, 255, 0),
+            new NEConsoleColorDef(255, 95, 0), new NEConsoleColorDef(255, 12, 0), new NEConsoleColorDef(208, 165, 142),
+            new NEConsoleColorDef(242, 242, 242)
+        };
+
 
         private NEConsoleColorDef[] m_Colors;
 
@@ -65,12 +75,52 @@ namespace NostalgiaEngine.Core
             }
         }
 
+        public void Subtract(NEConsoleColorDef col)
+        {
+            for (int i = 0; i < m_Colors.Length; ++i)
+            {
+                m_Colors[i] -= col;
+            }
+        }
+
+        public void Subtract(NEColorPalette pal)
+        {
+            for (int i = 0; i < m_Colors.Length; ++i)
+            {
+                m_Colors[i] -= pal.m_Colors[i];
+            }
+        }
+
         public void InvertColors()
         { 
             for (int i = 0; i < m_Colors.Length; ++i)
             {
                 m_Colors[i] = -m_Colors[i];
             }
+        }
+
+        public NEConsoleColorDef GetColor(int colIndex)
+        {
+            colIndex = NEMathHelper.Clamp(colIndex, 0, 15);
+            return m_Colors[colIndex];
+        }
+
+        public bool SetColor(int colIndex, NEConsoleColorDef col)
+        {
+            if (colIndex > 15) return false;
+            if (colIndex < 0) return false;
+            m_Colors[colIndex] = col;
+            return true;
+        }
+
+        public bool SetColor(int colIndex, uint r, uint g, uint b)
+        {
+            return SetColor(colIndex, new NEConsoleColorDef(r, g, b));
+        }
+
+        public bool SetColor(int colIndex, float r, float g, float b)
+        {
+            return SetColor(colIndex, new NEConsoleColorDef(r, g, b));
         }
 
     }

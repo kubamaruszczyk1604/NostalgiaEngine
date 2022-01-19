@@ -162,37 +162,48 @@ namespace NostalgiaEngine.Core
         }
 
 
-        static public void SetNostalgiaPalette()
+
+        static public void SetPalette(NEColorPalette pal)
         {
-            RedefineColor(12, 255, 95, 0);
-            RedefineColor(14, 208, 156, 142);
-            RedefineColor(10, 0, 225, 33);
-            RedefineColor(13, 255, 12, 0);
-            RedefineColor(6, 94, 43, 43);
-            RedefineColor(3, 255, 0, 110);
-            RedefineColor(11, 255, 255, 0);
-            RedefineColor(4, 127, 0, 0);
-            RedefineColor(2, 82, 151, 255);
-            RedefineColor(9, 0, 160, 0);
-            RedefineColor(7, 80, 90, 90);
+            for (int i = 0; i < 16; ++i)
+            {
+                RedefineColor(i, pal.GetColor(i));
+            }
+        }
+
+        static public void SetPalette(NEConsoleColorDef [] pal)
+        {
+            if(pal.Length != 16)
+            {
+                for (int i = 0; i < 16; ++i)
+                {
+                    RedefineColor(i, new NEConsoleColorDef(250,i,250));
+                }
+            }
+            else
+            {
+                for (int i = 0; i < 16; ++i)
+                {
+                    RedefineColor(i, pal[i]);
+                }
+            }
         }
 
 
 
+        static public void SetNostalgiaPalette()
+        {
+            SetPalette(NEColorPalette.NostalgiaPalette);
+        }
+
         static public void SetSpectralPalette1()
         {
-            for(int i = 0; i < 16; ++i)
-            {
-                RedefineColor(i, NEColorPalette.ColorSpectrumPalette_1[i]);
-            }
+            SetPalette(NEColorPalette.ColorSpectrumPalette_1);
         }
 
         static public void SetDefaultPalette()
         {
-            for (int i = 0; i < 16; ++i)
-            {
-                RedefineColor(i, NEColorPalette.DefaultPalette[i]);
-            }
+            SetPalette(NEColorPalette.DefaultPalette);
         }
 
     }
