@@ -67,17 +67,17 @@ namespace NostalgiaEngine.Core
             return new NEVector2(X, Y);
         }
 
-        static public NEPoint operator+(NEPoint lhs, NEPoint rhs)
+        static public NEPoint operator +(NEPoint lhs, NEPoint rhs)
         {
             return new NEPoint((short)(lhs.X + rhs.X), (short)(lhs.Y + rhs.Y));
         }
 
-        static public NEPoint operator-(NEPoint lhs, NEPoint rhs)
+        static public NEPoint operator -(NEPoint lhs, NEPoint rhs)
         {
             return new NEPoint((short)(lhs.X - rhs.X), (short)(lhs.Y - rhs.Y));
         }
 
-        static public NEPoint operator*(NEPoint lhs, int rhs)
+        static public NEPoint operator *(NEPoint lhs, int rhs)
         {
             return new NEPoint((short)(lhs.X * rhs), (short)(lhs.Y * rhs));
         }
@@ -173,6 +173,18 @@ namespace NostalgiaEngine.Core
             return new NEVector2(lhs.X / rhs, lhs.Y / rhs);
         }
 
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct NEConsoleColorDefinition
+    {
+        public uint ColMask;
+
+
+        public NEConsoleColorDefinition(uint r, uint g, uint b)
+        {
+            ColMask = r | (g << 8) | (b << 16);
+        }
     }
 
 

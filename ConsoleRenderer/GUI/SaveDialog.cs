@@ -21,7 +21,7 @@ namespace NostalgiaEngine.GUI
         public override bool OnLoad()
         {
             NEInput.FlushKeyboard();
-
+            NEColorMgr.SetDefaultPalette();
             ScreenWidth = 120;
             ScreenHeight = 30;
             PixelWidth = 8;

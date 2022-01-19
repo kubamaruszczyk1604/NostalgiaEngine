@@ -214,11 +214,21 @@ namespace NostalgiaEngine.TextureEditor
                 var sd = new NESaveDialog();
                 sd.onSceneExit += OnSave;
                 Engine.Instance.PushScene(sd);
+
             }
+
+            if (NEInput.CheckKeyDown((ConsoleKey)NEKey.Control) && NEInput.CheckKeyPress(ConsoleKey.D1))
+            {
+
+                NEColorMgr.SetSpectralPalette1();
+            }
+
             if (NEInput.CheckKeyPress(ConsoleKey.Escape))
             {
                 Exit();
             }
+
+
         }
         private void OnSave(NEScene scene)
         {
@@ -286,6 +296,7 @@ namespace NostalgiaEngine.TextureEditor
         public override void OnResume()
         {
             base.OnResume();
+            NEColorMgr.SetNostalgiaPalette();
         }
 
         public override void OnPause()

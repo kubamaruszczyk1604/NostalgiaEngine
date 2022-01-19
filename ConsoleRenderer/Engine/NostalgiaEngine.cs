@@ -36,17 +36,8 @@ namespace NostalgiaEngine.Core
 
         public Engine()
         {
-            NEColorMgr.SetColor((int)ConsoleColor.Red, 255, 95, 0);
-            NEColorMgr.SetColor((int)ConsoleColor.Yellow, 208, 156, 142);
-            NEColorMgr.SetColor((int)ConsoleColor.Green, 0, 225, 33);
-            NEColorMgr.SetColor((int)ConsoleColor.Magenta, 255, 12, 0);
-            NEColorMgr.SetColor((int)ConsoleColor.DarkYellow, 94, 43, 43);
-            NEColorMgr.SetColor((int)ConsoleColor.DarkCyan, 255, 0, 110);
-            NEColorMgr.SetColor((int)ConsoleColor.Cyan, 255, 255, 0);
-            NEColorMgr.SetColor((int)ConsoleColor.DarkRed,127, 0, 0);
-            NEColorMgr.SetColor((int)ConsoleColor.DarkGreen, 82, 151, 255);
-            NEColorMgr.SetColor((int)ConsoleColor.Blue, 0, 160, 0);
-
+            NEColorMgr.SetNostalgiaPalette();
+           // NEColorMgr.SetDefaultPalette();
             NEInput.FlushKeyboard();
             NEWindowControl.DisableConsoleWindowButtons();
             m_Running = false;
@@ -57,6 +48,7 @@ namespace NostalgiaEngine.Core
             Title = "NOSTALGIA ENGINE";
             m_TaskbarUpdateWorker = new Thread(new ThreadStart(UpdateTaskbar));
             m_SuspendTaskbarFlag = false;
+            
         }
 
         private void UpdateTaskbar()
@@ -192,6 +184,7 @@ namespace NostalgiaEngine.Core
                
             }
             m_TaskbarUpdateWorker.Join();
+            NEColorMgr.SetDefaultPalette();
             Console.Title = Title;
             Console.Clear();
             NEScreenBuffer.SetDefaultConsole();
