@@ -36,7 +36,7 @@ namespace NostalgiaEngine.Core
 
         public Engine()
         {
-            NEColorMgr.SetNostalgiaPalette();
+            //NEColorMgr.SetNostalgiaPalette();
            // NEColorMgr.SetDefaultPalette();
             NEInput.FlushKeyboard();
             NEWindowControl.DisableConsoleWindowButtons();
@@ -83,6 +83,7 @@ namespace NostalgiaEngine.Core
             if(m_CurrentScene != null) m_CurrentScene.OnPause();
             bool loadOK = scene.OnLoad();
             bool screenOK = InitializeScreen(scene);
+
             if (loadOK && screenOK )
             {
                 m_CurrentScene = scene;
@@ -143,6 +144,7 @@ namespace NostalgiaEngine.Core
             }
             NEWindowControl.QuickEditMode(false);
             m_Running = true;
+            NEColorMgr.SetNostalgiaPalette();
             m_TaskbarUpdateWorker.Start();
             while (m_Running)
             {

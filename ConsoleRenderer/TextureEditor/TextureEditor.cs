@@ -221,6 +221,9 @@ namespace NostalgiaEngine.TextureEditor
             {
 
                 NEColorMgr.SetSpectralPalette1();
+                NEScreenBuffer.Reallign();
+                //Console.SetWindowSize(ScreenWidth + 10, ScreenHeight + 4);
+                //NEColorMgr.SetDefaultPalette();
             }
 
             if (NEInput.CheckKeyPress(ConsoleKey.Escape))

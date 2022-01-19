@@ -243,7 +243,10 @@ namespace NostalgiaEngine.Core
             Console.CursorVisible = true;
             Console.SetCursorPosition(0, 0);
         }
-
+        static public void Reallign()
+        {
+            Console.SetWindowSize(m_sWidth + 10, m_sHeight + 4);
+        }
     }
     
 

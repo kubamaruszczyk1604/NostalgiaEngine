@@ -59,7 +59,7 @@ namespace NostalgiaEngine.Raycaster
             ScreenHeight = 180;
             PixelWidth = 4;
             PixelHeight = 4;
-           // ParallelScreenDraw = true;
+            //ParallelScreenDraw = true;
             m_WallTex = NEColorTexture16.LoadFromFile($"C:/Users/Kuba/Desktop/untitled2.tex");
             if (m_WallTex == null) return false;
 
