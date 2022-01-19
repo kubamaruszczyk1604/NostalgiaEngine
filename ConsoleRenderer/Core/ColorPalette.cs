@@ -38,10 +38,40 @@ namespace NostalgiaEngine.Core
         public NEColorPalette(NEConsoleColorDef[] src)
         {
             m_Colors = new NEConsoleColorDef[16];
-            Array.Copy(src, m_Colors, 16);
-            
+            Array.Copy(src, m_Colors, 16);          
         }
 
+        public void MultiplyBy(float val)
+        {
+            for (int i = 0; i < m_Colors.Length; ++i)
+            {
+                m_Colors[i] *= val;
+            }
+        }
+
+        public void MultiplyBy(NEConsoleColorDef col)
+        {
+            for(int i =0; i < m_Colors.Length; ++i)
+            {
+                m_Colors[i] *= col;
+            }
+        }
+
+        public void MultiplyBy(NEColorPalette pal)
+        {
+            for (int i = 0; i < m_Colors.Length; ++i)
+            {
+                m_Colors[i] *= pal.m_Colors[i];
+            }
+        }
+
+        public void InvertColors()
+        { 
+            for (int i = 0; i < m_Colors.Length; ++i)
+            {
+                m_Colors[i] = -m_Colors[i];
+            }
+        }
 
     }
 }
