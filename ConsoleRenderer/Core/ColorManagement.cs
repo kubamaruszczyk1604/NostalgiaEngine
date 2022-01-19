@@ -87,8 +87,8 @@ namespace NostalgiaEngine.Core
         public static int RedefineColor(int consoleColor, NEConsoleColorDef colDef)
         {
             CONSOLE_SCREEN_BUFFER_INFO_EX screenBuffInfo = new CONSOLE_SCREEN_BUFFER_INFO_EX();
-            screenBuffInfo.Size = Marshal.SizeOf(screenBuffInfo);                   
-            IntPtr outputHandle = GetStdHandle((int)NEWindowControl.StdHandle.STD_OUTPUT_HANDLE);    
+            screenBuffInfo.Size = Marshal.SizeOf(screenBuffInfo);
+            IntPtr outputHandle = GetStdHandle((int)NEWindowControl.StdHandle.STD_OUTPUT_HANDLE);
 
             if (outputHandle == new IntPtr(-1))
             {
@@ -163,30 +163,62 @@ namespace NostalgiaEngine.Core
 
 
 
-        static public void SetPalette(NEColorPalette pal)
+        static public int SetPalette(NEColorPalette pal)
         {
-            for (int i = 0; i < 16; ++i)
-            {
-                RedefineColor(i, pal.GetColor(i));
-            }
+            return SetPalette(pal.Colors);
         }
 
-        static public void SetPalette(NEConsoleColorDef [] pal)
+        static public int SetPalette(NEConsoleColorDef[] pal)
         {
-            if(pal.Length != 16)
+
+
+            CONSOLE_SCREEN_BUFFER_INFO_EX screenBuffInfo = new CONSOLE_SCREEN_BUFFER_INFO_EX();
+            screenBuffInfo.Size = Marshal.SizeOf(screenBuffInfo);
+            IntPtr outputHandle = GetStdHandle((int)NEWindowControl.StdHandle.STD_OUTPUT_HANDLE);
+
+            if (outputHandle == new IntPtr(-1))
             {
-                for (int i = 0; i < 16; ++i)
-                {
-                    RedefineColor(i, new NEConsoleColorDef(250,i,250));
-                }
+                return Marshal.GetLastWin32Error();
             }
-            else
+
+            if (!GetConsoleScreenBufferInfoEx(outputHandle, ref screenBuffInfo))
             {
-                for (int i = 0; i < 16; ++i)
-                {
-                    RedefineColor(i, pal[i]);
-                }
+                return Marshal.GetLastWin32Error();
             }
+            screenBuffInfo.Window.Bottom++;
+            screenBuffInfo.Window.Right++;
+
+
+            if (pal.Length != 16)
+            {
+                return -1;
+            }
+
+
+            screenBuffInfo.Black = pal[0];
+            screenBuffInfo.DarkBlue = pal[1];
+            screenBuffInfo.DarkGreen = pal[2];
+            screenBuffInfo.DarkCyan = pal[3];
+            screenBuffInfo.DarkRed = pal[4];
+            screenBuffInfo.DarkMagenta = pal[5];
+            screenBuffInfo.DarkYellow = pal[6];
+            screenBuffInfo.Gray = pal[7];
+            screenBuffInfo.DarkGray = pal[8];
+            screenBuffInfo.Blue = pal[9];
+            screenBuffInfo.Green = pal[10];
+            screenBuffInfo.Cyan = pal[11];
+            screenBuffInfo.Red = pal[12];
+            screenBuffInfo.Magenta = pal[13];
+            screenBuffInfo.Yellow = pal[14];
+            screenBuffInfo.White = pal[15];
+
+            if (!SetConsoleScreenBufferInfoEx(outputHandle, ref screenBuffInfo))
+            {
+                return Marshal.GetLastWin32Error();
+            }
+
+            return 0;
+
         }
 
 
