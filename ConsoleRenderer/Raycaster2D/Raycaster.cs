@@ -60,10 +60,10 @@ namespace NostalgiaEngine.Raycaster
             PixelWidth = 4;
             PixelHeight = 4;
             //ParallelScreenDraw = true;
-            m_WallTex = NEColorTexture16.LoadFromFile($"C:/Users/Kuba/Desktop/untitled2.tex");
+            m_WallTex = NEColorTexture16.LoadFromFile($"C:/test/murek2.tex");
             if (m_WallTex == null) return false;
 
-            NEColorTexture16 lampTex = NEColorTexture16.LoadFromFile("C:/test/lantern2.tex");
+            NEColorTexture16 lampTex = NEColorTexture16.LoadFromFile("C:/test/lantern1.tex");
             if (lampTex == null) return false;
             m_Sprite = new NEStaticSprite(lampTex);
 
@@ -177,13 +177,14 @@ namespace NostalgiaEngine.Raycaster
                 py *= m_Fov * 2.0f;
 
                 //ColorSample floorSample = ColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkGray, fd);
-                NEColorSample floorSample = NEColorSample.MakeCol5(ConsoleColor.Black, ConsoleColor.DarkGreen, 0.2f);// Math.Abs(py) -Math.Abs(px * 0.1f));
+                NEColorSample floorSample = NEColorSample.MakeCol5(ConsoleColor.Black, (ConsoleColor)7, 0.2f);// Math.Abs(py) -Math.Abs(px * 0.1f));
 
 
-                NEColorSample ceilSample = NEColorSample.MakeCol10(ConsoleColor.DarkRed, ConsoleColor.DarkMagenta, Math.Abs(py) - 0.1f);
+                NEColorSample ceilSample = NEColorSample.MakeCol5((ConsoleColor)12, (ConsoleColor)0, Math.Abs(py) - 0.71f);
                 if (py < 0.3f + (float)Math.Sin(px * 10 + m_PlayerRotation * 4) * 0.1f)
                 {
-                    ceilSample = NEColorSample.MakeCol5(ConsoleColor.DarkGreen, ConsoleColor.Green, Math.Abs(py * 0.75f) + NEMathHelper.Sin(px * 10 + m_PlayerRotation * 4) * 0.05f);
+                    //ceilSample = NEColorSample.MakeCol5((ConsoleColor)0, (ConsoleColor)9, Math.Abs(py * 1.75f) + NEMathHelper.Sin(px * 10 + m_PlayerRotation * 4) * 0.05f);
+                    ceilSample = NEColorSample.MakeCol5((ConsoleColor)0, (ConsoleColor)0,1.0f);
                 }
 
                 if (hit)
