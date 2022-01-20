@@ -59,14 +59,15 @@ namespace NostalgiaEngine.Raycaster
             ScreenHeight = 180;
             PixelWidth = 4;
             PixelHeight = 4;
-            //ParallelScreenDraw = true;
+           // ParallelScreenDraw = true;
             m_WallTex = NEColorTexture16.LoadFromFile($"C:/test/murek2.tex");
             if (m_WallTex == null) return false;
 
             NEColorTexture16 lampTex = NEColorTexture16.LoadFromFile("C:/test/lantern1.tex");
             if (lampTex == null) return false;
             m_Sprite = new NEStaticSprite(lampTex);
-
+            m_Sprite.X = 6.0f;
+            m_Sprite.Y = 4.0f;
             return true;
         }
 
@@ -173,8 +174,8 @@ namespace NostalgiaEngine.Raycaster
             {
 
                 float pixelY = -(y - ScreenHeight / 2);
-                float py = pixelY / ((float)ScreenHeight) / 2.0f;
-                py *= m_Fov * 2.0f;
+                float py = pixelY / ((float)ScreenHeight);
+                py *= m_Fov;
 
                 //ColorSample floorSample = ColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkGray, fd);
                 NEColorSample floorSample = NEColorSample.MakeCol5(ConsoleColor.Black, (ConsoleColor)7, 0.2f);// Math.Abs(py) -Math.Abs(px * 0.1f));
@@ -222,7 +223,24 @@ namespace NostalgiaEngine.Raycaster
                     else NEScreenBuffer.PutChar((char)NEBlock.Weak, 0x0000 | 0x0000, x, y);
                 }
 
+                // Sprites
+                NEVector2 rayToSprite = m_Sprite.Position - m_ViewerPos;
+                float rayAngle = (float)Math.Acos(NEVector2.Dot(dir, rayToSprite.Normalized));
+                bool inFov = rayAngle < (0.5f * m_Fov);
+                if(inFov)
+                {
+                   
+                    //float sprDepth = rayToSprite.Length / DEPTH;
+                    float spriteCeilingStartY = (1.0f / rayToSprite.Length);
+                    float spriteFloorStartY = (-1.0f / rayToSprite.Length);
 
+                    if(py<spriteCeilingStartY && py>spriteFloorStartY)
+                    {
+                        NEScreenBuffer.PutChar((char)NEBlock.Weak, 0x0000 | 10, x, y);
+                    }
+
+                }
+                // NEScreenBuffer.PutChar((char)NEBlock.Weak, 0x0000 | 0x0000, x, y);
             }
 
         }
@@ -232,20 +250,20 @@ namespace NostalgiaEngine.Raycaster
             float imgW = (0.25f * ScreenWidth);
             float imgH = (0.25f * ScreenWidth);
 
-            for(int x = 0; x < m_Sprite.Texture.Width*2;++x)
-            {
-                for (int y = 0; y <  m_Sprite.Texture.Height*2;++y)
-                {
-                    float u = (float)x / (float)m_Sprite.Texture.Width;
-                    float v = (float)y / (float)m_Sprite.Texture.Height;
-                    NEColorSample s = m_Sprite.Texture.Sample(u*0.5f, v*0.5f , 0.9f);
+            //for(int x = 0; x < m_Sprite.Texture.Width*2;++x)
+            //{
+            //    for (int y = 0; y <  m_Sprite.Texture.Height*2;++y)
+            //    {
+            //        float u = (float)x / (float)m_Sprite.Texture.Width;
+            //        float v = (float)y / (float)m_Sprite.Texture.Height;
+            //        NEColorSample s = m_Sprite.Texture.Sample(u*0.5f, v*0.5f , 0.9f);
 
-                    if(s.Character != 't')
-                    {
-                        NEScreenBuffer.PutChar(s.Character, s.BitMask, 90+ x, 50+y);
-                    }
-                }
-            }
+            //        if(s.Character != 't')
+            //        {
+            //            NEScreenBuffer.PutChar(s.Character, s.BitMask, 90+ x, 50+y);
+            //        }
+            //    }
+            //}
 
             NEVector2 mapXY = new NEVector2(0, 0);
             for (int x = 0; x < imgW; ++x)
@@ -273,7 +291,7 @@ namespace NostalgiaEngine.Raycaster
                     NEVector2.Rotate(ref A, m_PlayerRotation);
                     NEVector2.Rotate(ref B, m_PlayerRotation);
                     NEVector2.Rotate(ref C, m_PlayerRotation);
-                    A +=m_ViewerPos;
+                    A += m_ViewerPos;
                     B += m_ViewerPos;
                     C += m_ViewerPos;
                     if (NEMathHelper.InTriangle(mapXY,A,B,C))
@@ -281,6 +299,10 @@ namespace NostalgiaEngine.Raycaster
                         NEScreenBuffer.PutChar('@', 13 << 4, (int)imgW - x, (int)imgH - y);
                     }
 
+                    if(NEVector2.CalculateLength(mapXY - m_Sprite.Position) < 0.4f)
+                    {
+                        NEScreenBuffer.PutChar('@', 13 << 4, (int)imgW - x, (int)imgH - y);
+                    }
                 }
             }
 

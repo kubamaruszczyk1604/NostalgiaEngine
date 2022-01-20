@@ -8,8 +8,11 @@ namespace NostalgiaEngine.Core
 {
     public class NEStaticSprite
     {
-        public int X { get; set; }
-        public int Y { get; set; }
+        public float X { get; set; }
+        public float Y { get; set; }
+
+        public NEVector2 Position { get { return new NEVector2(X, Y); } }
+        public float AstpectRatio { get { return ((float)Texture.Width) / ((float)Texture.Height); } }
 
         public NETexture Texture { get; private set; }
 
