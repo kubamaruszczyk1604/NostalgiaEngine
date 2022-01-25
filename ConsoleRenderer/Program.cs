@@ -20,14 +20,14 @@ namespace NostalgiaEngineApplication
         static void Main(string[] args)
         {
 
-            BitmapRGB b = BitmapRGB.FromFile("C:/test/fd.bmp");
+            //BitmapRGB b = BitmapRGB.FromFile("C:/test/fd.bmp");
 
-            PixelRGB p = b.GetPixel(2, 2);
+            //PixelRGB p = b.GetPixel(2, 2);
 
-            //Engine engine = new Engine();
-            //NETextureEditor ed = new NETextureEditor();
-            //NERaycaster2D raycaster = new NERaycaster2D();
-            //engine.Start(raycaster);
+            Engine engine = new Engine();
+            NETextureEditor ed = new NETextureEditor();
+            NERaycaster2D raycaster = new NERaycaster2D();
+            engine.Start(raycaster);
 
         }
     }

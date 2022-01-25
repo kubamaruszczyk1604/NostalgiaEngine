@@ -224,24 +224,24 @@ namespace NostalgiaEngine.Raycaster
                 }
 
                 // Sprites
-                NEVector2 rayToSprite = m_Sprite.Position - m_ViewerPos;
-                float rayAngle = (float)Math.Acos(NEVector2.Dot(dir, rayToSprite.Normalized));
-                bool inFov = rayAngle < (0.5f * m_Fov);
-                if(inFov)
-                {
+                //NEVector2 rayToSprite = m_Sprite.Position - m_ViewerPos;
+                //float rayAngle = (float)Math.Acos(NEVector2.Dot(dir, rayToSprite.Normalized));
+                //bool inFov = rayAngle < (0.5f * m_Fov);
+                //if(inFov)
+                //{
                    
-                    //float sprDepth = rayToSprite.Length / DEPTH;
-                    float spriteCeilingStartY = (1.0f / rayToSprite.Length);
-                    float spriteFloorStartY = (-1.0f / rayToSprite.Length);
+                //    //float sprDepth = rayToSprite.Length / DEPTH;
+                //    float spriteCeilingStartY = (1.0f / rayToSprite.Length);
+                //    float spriteFloorStartY = (-1.0f / rayToSprite.Length);
 
-                    if(py<spriteCeilingStartY && py>spriteFloorStartY)
-                    {
+                //    if(py<spriteCeilingStartY && py>spriteFloorStartY)
+                //    {
                         
-                        NEColorSample csample = m_Sprite.Texture.Sample(0.5f, py / (spriteFloorStartY - spriteCeilingStartY) + 0.5f, 1.0f);
-                        NEScreenBuffer.PutChar(csample.Character, csample.BitMask, x, y);
-                    }
+                //        NEColorSample csample = m_Sprite.Texture.Sample(0.5f, py / (spriteFloorStartY - spriteCeilingStartY) + 0.5f, 1.0f);
+                //        NEScreenBuffer.PutChar(csample.Character, csample.BitMask, x, y);
+                //    }
 
-                }
+                //}
                 // NEScreenBuffer.PutChar((char)NEBlock.Weak, 0x0000 | 0x0000, x, y);
             }
 
