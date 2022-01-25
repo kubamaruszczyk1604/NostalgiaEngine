@@ -9,6 +9,7 @@ using NostalgiaEngine.Core;
 using NostalgiaEngine.Raycaster;
 using NostalgiaEngine.GUI;
 using System.Diagnostics;
+using ImageReader;
 namespace NostalgiaEngineApplication
 {
 
@@ -18,16 +19,15 @@ namespace NostalgiaEngineApplication
 
         static void Main(string[] args)
         {
-            //NEConsoleColorDef d = new NEConsoleColorDef(144, 1255, 98);
 
-            //uint r = d.R;
-            //uint g = d.G;
-            //uint b = d.B;
-            //Console.ReadLine();
-            Engine engine = new Engine();
-            NETextureEditor ed = new NETextureEditor();
-            NERaycaster2D raycaster = new NERaycaster2D();
-            engine.Start(raycaster);
+            BitmapRGB b = BitmapRGB.FromFile("C:/test/fd.bmp");
+
+            PixelRGB p = b.GetPixel(2, 2);
+
+            //Engine engine = new Engine();
+            //NETextureEditor ed = new NETextureEditor();
+            //NERaycaster2D raycaster = new NERaycaster2D();
+            //engine.Start(raycaster);
 
         }
     }

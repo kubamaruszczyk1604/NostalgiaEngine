@@ -236,7 +236,9 @@ namespace NostalgiaEngine.Raycaster
 
                     if(py<spriteCeilingStartY && py>spriteFloorStartY)
                     {
-                        NEScreenBuffer.PutChar((char)NEBlock.Weak, 0x0000 | 10, x, y);
+                        
+                        NEColorSample csample = m_Sprite.Texture.Sample(0.5f, py / (spriteFloorStartY - spriteCeilingStartY) + 0.5f, 1.0f);
+                        NEScreenBuffer.PutChar(csample.Character, csample.BitMask, x, y);
                     }
 
                 }
