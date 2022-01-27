@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using NostalgiaEngine.TextureEditor;
 using NostalgiaEngine.Core;
 using NostalgiaEngine.Raycaster;
+using NostalgiaEngine.TextureDisplay;
 using NostalgiaEngine.GUI;
 using System.Diagnostics;
 using ImageReader;
@@ -27,7 +28,8 @@ namespace NostalgiaEngineApplication
             Engine engine = new Engine();
             NETextureEditor ed = new NETextureEditor();
             NERaycaster2D raycaster = new NERaycaster2D();
-            engine.Start(raycaster);
+            NETexturePreviewApp texprev = new NETexturePreviewApp();
+            engine.Start(texprev);
 
         }
     }

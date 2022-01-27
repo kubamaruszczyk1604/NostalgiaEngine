@@ -36,6 +36,33 @@ namespace NostalgiaEngine.Core
             new NEConsoleColorDef(242, 242, 242)
         };
 
+        static public NEColorPalette FromFile(string path)
+        {
+            NEColorPalette ret = new NEColorPalette();
+            using (System.IO.StreamReader reader = new System.IO.StreamReader(path))
+            {
+                try
+                {
+                    int cnt = 0;
+                    while (!reader.EndOfStream && cnt < 16)
+                    {
+                        string line = reader.ReadLine();
+                        string[] elements = line.Split(',');
+                        int r = int.Parse(elements[0]);
+                        int g = int.Parse(elements[1]);
+                        int b = int.Parse(elements[2]);
+                        ret.SetColor(cnt, new NEConsoleColorDef((uint)r, (uint)g, (uint)b));
+                        cnt++;
+                    }
+                }
+                catch
+                {
+                    reader.Close();
+                    return null;
+                }
+            }
+            return ret;
+        }
 
         public NEConsoleColorDef[] Colors { get; private set; }
 

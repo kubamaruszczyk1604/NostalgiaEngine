@@ -138,13 +138,14 @@ namespace NostalgiaEngine.Core
         public void Start(NEScene scene)
         {
             NEInput.FlushKeyboard();
-            if(!PushScene(scene))
+            NEColorManagement.SetNostalgiaPalette();
+            if (!PushScene(scene))
             {
                 return;
             }
             NEWindowControl.QuickEditMode(false);
             m_Running = true;
-            NEColorManagement.SetNostalgiaPalette();
+            
             m_TaskbarUpdateWorker.Start();
             while (m_Running)
             {

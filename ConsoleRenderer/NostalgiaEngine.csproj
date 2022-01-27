@@ -90,6 +90,7 @@
     <Compile Include="Raycaster2D\Raycaster.cs" />
     <Compile Include="Core\Texture16.cs" />
     <Compile Include="Core\WindowControl.cs" />
+    <Compile Include="TextureDisplay\NETexturePreviewApp.cs" />
     <Compile Include="TextureEditor\TextureEditor.cs" />
     <Compile Include="TextureEditor\WindowRect.cs" />
     <Compile Include="TextureEditor\MemTex16.cs" />
@@ -110,9 +111,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="TextureConverter\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="Resources\ImageReader.dll" />
   </ItemGroup>
