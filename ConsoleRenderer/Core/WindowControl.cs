@@ -40,7 +40,7 @@ namespace NostalgiaEngine.Core
         }
 
         [DllImport("user32.dll")]
-        public static extern int DeleteMenu(IntPtr hMenu, int nPosition, int wFlags);
+         static extern int DeleteMenu(IntPtr hMenu, int nPosition, int wFlags);
 
         [DllImport("user32.dll")]
         private static extern IntPtr GetSystemMenu(IntPtr hWnd, bool bRevert);
@@ -59,9 +59,12 @@ namespace NostalgiaEngine.Core
         static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint dwMode);
 
         [DllImport("user32.dll")]
-        public static extern bool GetWindowRect(IntPtr hwnd, ref NERect rectangle);
+         static extern bool GetWindowRect(IntPtr hwnd, ref NERect rectangle);
         [DllImport("user32.dll")]
-        public static extern bool GetClientRect(IntPtr hwnd, ref NERect rectangle );
+        static extern bool GetClientRect(IntPtr hwnd, ref NERect rectangle );
+
+        [DllImport("user32.dll", EntryPoint = "SetWindowPos")]
+        static extern IntPtr SetWindowPos(IntPtr hWnd, int hWndInsertAfter, int x, int y, int cx, int cy, uint wFlags);
 
         static public readonly int MF_BYCOMMAND = 0x00000000;
         static public readonly int SC_CLOSE = 0xF060;
@@ -70,6 +73,10 @@ namespace NostalgiaEngine.Core
         static public readonly int SC_VSCROLL = 0xF070;
         static public readonly int SC_HSCROLL = 0xF080;
         static public readonly int SC_SIZE = 0xF000;
+
+
+        static uint SWP_NOSIZE = 1;
+        static uint SWP_NOZORDER = 4;
 
 
         public static void DisableConsoleWindowButtons()
@@ -111,6 +118,12 @@ namespace NostalgiaEngine.Core
             c_MainWindowPos.Y = c_MainWindowRect.Top;
             return c_MainWindowPos;
            
+        }
+
+        public static void SetWindowPosition(int x, int y)
+        {
+            var consoleWnd = System.Diagnostics.Process.GetCurrentProcess().MainWindowHandle;
+            SetWindowPos(consoleWnd, 0, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
         }
     }
 }

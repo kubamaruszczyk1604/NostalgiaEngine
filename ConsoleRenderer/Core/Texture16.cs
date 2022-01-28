@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace NostalgiaEngine.Core
 {
+
     public class NEColorTexture16: NETexture
     {
 
@@ -16,7 +17,7 @@ namespace NostalgiaEngine.Core
 
         private NEColorTexture16()
         {
-           
+            SampleMode = NESampleMode.Clamp;
         }
 
         private bool ReadFromFile(string path)
@@ -90,6 +91,27 @@ namespace NostalgiaEngine.Core
 
         public override NEColorSample Sample(float u, float v, float intensity)
         {
+            // u = NEMathHelper.Abs(u);
+            //v = NEMathHelper.Abs(v);
+            
+            
+            if (SampleMode == NESampleMode.Clamp)
+            {
+                if (u < 0.0f || u > 1.0f )
+                {
+                    return NEColorSample.MakeCol10(ConsoleColor.Black, 0, intensity);
+                }
+                u -= (int)u;
+            }
+            else if(SampleMode == NESampleMode.Repeat)
+            {
+                u -= (int)u;
+                u = u < 0 ? 1.0f - NEMathHelper.Abs(u) : u;
+            }
+
+            v -= (int)v;
+            v = v < 0 ? 1.0f - NEMathHelper.Abs(v) : v;
+
             int x = (int)Math.Round(u * (float)Width);
             if (x >= (Width - 1)) x = Width - 1; 
 

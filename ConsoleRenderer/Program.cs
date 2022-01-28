@@ -28,8 +28,8 @@ namespace NostalgiaEngineApplication
             Engine engine = new Engine();
             NETextureEditor ed = new NETextureEditor();
             NERaycaster2D raycaster = new NERaycaster2D();
-            NETexturePreviewApp texprev = new NETexturePreviewApp();
-            engine.Start(texprev);
+            NETexturePreviewApp demo = new NETexturePreviewApp();
+            engine.Start(demo);
 
         }
     }

@@ -144,8 +144,8 @@ namespace NostalgiaEngine.Core
                 return;
             }
             NEWindowControl.QuickEditMode(false);
+            NEWindowControl.SetWindowPosition(90,20);
             m_Running = true;
-            
             m_TaskbarUpdateWorker.Start();
             while (m_Running)
             {
