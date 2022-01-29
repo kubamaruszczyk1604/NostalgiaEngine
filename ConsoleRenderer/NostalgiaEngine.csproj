@@ -65,6 +65,7 @@
   <ItemGroup>
     <Compile Include="Core\ColorManagement.cs" />
     <Compile Include="Core\ColorPalette.cs" />
+    <Compile Include="Core\Fbuffer.cs" />
     <Compile Include="Core\Texture.cs" />
     <Compile Include="Core\ScreenBuffer.cs" />
     <Compile Include="Core\Debug.cs" />

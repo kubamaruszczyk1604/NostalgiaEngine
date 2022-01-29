@@ -11,23 +11,26 @@ namespace NostalgiaEngine.TextureDisplay
     {
         NEColorTexture16 m_MainTex;
         NEColorPalette m_MainTexPal;
+        NEFBuffer m_LumaBuffer;
         bool sampled;
         float m_Col;
         public override bool OnLoad()
         {
-            ScreenWidth = 320;
-            ScreenHeight = 240;
+            ScreenWidth = 250;
+            ScreenHeight = 180;
             PixelWidth = 4;
             PixelHeight = 4;
             m_Col = 0;
             ParallelScreenDraw = true;
-            m_MainTex = NEColorTexture16.LoadFromFile(@"C:\test\nowa_textura7\color.tex");
+            m_MainTex = NEColorTexture16.LoadFromFile(@"C:\test\nowa_textura3\color.tex");
             sampled = false;
             if (m_MainTex == null) return false;
 
-            m_MainTexPal = NEColorPalette.FromFile(@"C:\test\nowa_textura7\palette.txt");
+            m_MainTexPal = NEColorPalette.FromFile(@"C:\test\nowa_textura3\palette.txt");
             if (m_MainTexPal == null) return false;
-           
+
+            m_LumaBuffer = NEFBuffer.FromFile(@"C:\test\nowa_textura8\luma.buf");
+
             return true;
         }
 
@@ -74,7 +77,12 @@ namespace NostalgiaEngine.TextureDisplay
                     }
                     float v = ((float)y) / ((float)ScreenHeight);
 
-                    NEColorSample sample = m_MainTex.Sample(du, v, 1.0f);
+                    float luma = 1.0f;
+                    if(m_LumaBuffer != null)
+                    {
+                        luma = m_LumaBuffer.Sample(du, v);
+                    }
+                    NEColorSample sample = m_MainTex.Sample(du, v, luma);
                     NEScreenBuffer.PutChar(sample.Character, sample.BitMask, x, y);
                 }
             }
