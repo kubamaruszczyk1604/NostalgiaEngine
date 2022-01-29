@@ -15,17 +15,17 @@ namespace NostalgiaEngine.TextureDisplay
         float m_Col;
         public override bool OnLoad()
         {
-            ScreenWidth = 250;
-            ScreenHeight = 180;
-            PixelWidth = 5;
-            PixelHeight = 5;
+            ScreenWidth = 320;
+            ScreenHeight = 240;
+            PixelWidth = 4;
+            PixelHeight = 4;
             m_Col = 0;
             ParallelScreenDraw = true;
-            m_MainTex = NEColorTexture16.LoadFromFile(@"C:\test\nowa_textura4\color.tex");
+            m_MainTex = NEColorTexture16.LoadFromFile(@"C:\test\nowa_textura7\color.tex");
             sampled = false;
             if (m_MainTex == null) return false;
 
-            m_MainTexPal = NEColorPalette.FromFile(@"C:\test\nowa_textura4\palette.txt");
+            m_MainTexPal = NEColorPalette.FromFile(@"C:\test\nowa_textura7\palette.txt");
             if (m_MainTexPal == null) return false;
            
             return true;
