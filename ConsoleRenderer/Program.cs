@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 using NostalgiaEngine.TextureEditor;
 using NostalgiaEngine.Core;
 using NostalgiaEngine.Raycaster;
-using NostalgiaEngine.TextureDisplay;
+using TextureDisplay;
 using NostalgiaEngine.GUI;
 using System.Diagnostics;
 using ImageReader;
