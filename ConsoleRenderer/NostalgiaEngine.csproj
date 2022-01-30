@@ -63,39 +63,39 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\ColorManagement.cs" />
-    <Compile Include="Core\ColorPalette.cs" />
-    <Compile Include="Core\Fbuffer.cs" />
-    <Compile Include="Core\Texture.cs" />
-    <Compile Include="Core\ScreenBuffer.cs" />
-    <Compile Include="Core\Debug.cs" />
-    <Compile Include="Core\DepthBuffer.cs" />
-    <Compile Include="Core\StaticSprite.cs" />
-    <Compile Include="Engine\NEScene.cs" />
-    <Compile Include="Engine\NostalgiaEngine.cs" />
-    <Compile Include="Core\CommonTypes.cs" />
-    <Compile Include="Core\FrameTimer.cs" />
-    <Compile Include="Core\Helper.cs" />
-    <Compile Include="Core\Input.cs" />
-    <Compile Include="Core\InputSimulator.cs" />
-    <Compile Include="Core\Materials.cs" />
-    <Compile Include="GUI\FileExplorer.cs" />
-    <Compile Include="GUI\ConsoleSounds.cs" />
-    <Compile Include="GUI\OpenDialog.cs" />
-    <Compile Include="GUI\TextInput.cs" />
-    <Compile Include="GUI\YesNoWindow.cs" />
-    <Compile Include="GUI\IGUIElement.cs" />
-    <Compile Include="GUI\SaveDialog.cs" />
+    <Compile Include="NostalgiaEngine\Core\ColorManagement.cs" />
+    <Compile Include="NostalgiaEngine\Core\ColorPalette.cs" />
+    <Compile Include="NostalgiaEngine\Core\Fbuffer.cs" />
+    <Compile Include="NostalgiaEngine\Core\Texture.cs" />
+    <Compile Include="NostalgiaEngine\Core\ScreenBuffer.cs" />
+    <Compile Include="NostalgiaEngine\Core\Debug.cs" />
+    <Compile Include="NostalgiaEngine\Core\DepthBuffer.cs" />
+    <Compile Include="NostalgiaEngine\Core\StaticSprite.cs" />
+    <Compile Include="NostalgiaEngine\Engine\NEScene.cs" />
+    <Compile Include="NostalgiaEngine\Engine\NostalgiaEngine.cs" />
+    <Compile Include="NostalgiaEngine\Core\CommonTypes.cs" />
+    <Compile Include="NostalgiaEngine\Core\FrameTimer.cs" />
+    <Compile Include="NostalgiaEngine\Core\Helper.cs" />
+    <Compile Include="NostalgiaEngine\Core\Input.cs" />
+    <Compile Include="NostalgiaEngine\Core\InputSimulator.cs" />
+    <Compile Include="NostalgiaEngine\Core\Materials.cs" />
+    <Compile Include="NostalgiaEngine\GUI\FileExplorer.cs" />
+    <Compile Include="NostalgiaEngine\GUI\ConsoleSounds.cs" />
+    <Compile Include="NostalgiaEngine\GUI\OpenDialog.cs" />
+    <Compile Include="NostalgiaEngine\GUI\TextInput.cs" />
+    <Compile Include="NostalgiaEngine\GUI\YesNoWindow.cs" />
+    <Compile Include="NostalgiaEngine\GUI\IGUIElement.cs" />
+    <Compile Include="NostalgiaEngine\GUI\SaveDialog.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Raycaster2D\Raycaster.cs" />
-    <Compile Include="Core\Texture16.cs" />
-    <Compile Include="Core\WindowControl.cs" />
-    <Compile Include="TextureDisplay\NETexturePreviewApp.cs" />
-    <Compile Include="TextureEditor\TextureEditor.cs" />
-    <Compile Include="GUI\WindowRect.cs" />
-    <Compile Include="TextureEditor\MemTex16.cs" />
-    <Compile Include="TextureEditor\StepSeries.cs" />
+    <Compile Include="Extensios\Raycaster2D\Raycaster.cs" />
+    <Compile Include="NostalgiaEngine\Core\Texture16.cs" />
+    <Compile Include="NostalgiaEngine\Core\WindowControl.cs" />
+    <Compile Include="Demos\TextureDisplay\NETexturePreviewApp.cs" />
+    <Compile Include="Extensios\TextureEditor\TextureEditor.cs" />
+    <Compile Include="NostalgiaEngine\GUI\WindowRect.cs" />
+    <Compile Include="Extensios\TextureEditor\MemTex16.cs" />
+    <Compile Include="Extensios\TextureEditor\StepSeries.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -112,9 +112,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
