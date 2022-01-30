@@ -7,7 +7,7 @@ using NostalgiaEngine.Core;
 
 namespace TextureDisplay
 {
-    public class NETexturePreviewApp: NEScene
+    public class PhotoViewer: NEScene
     {
         NEColorTexture16 m_MainTex;
         NEColorPalette m_MainTexPal;

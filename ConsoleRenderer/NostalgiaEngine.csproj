@@ -63,6 +63,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Demos\TextureDisplay\PhotoViewer.cs" />
     <Compile Include="NostalgiaEngine\Core\ColorManagement.cs" />
     <Compile Include="NostalgiaEngine\Core\ColorPalette.cs" />
     <Compile Include="NostalgiaEngine\Core\Fbuffer.cs" />

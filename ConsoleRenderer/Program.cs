@@ -24,7 +24,7 @@ namespace NostalgiaEngineApplication
             Engine engine = new Engine();
             NETextureEditor ed = new NETextureEditor();
             NERaycaster2D raycaster = new NERaycaster2D();
-            NETexturePreviewApp demo = new NETexturePreviewApp();
+            PhotoViewer demo = new PhotoViewer();
             engine.Start(demo);
 
         }
