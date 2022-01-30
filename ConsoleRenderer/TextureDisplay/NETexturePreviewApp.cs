@@ -29,7 +29,7 @@ namespace NostalgiaEngine.TextureDisplay
             m_MainTexPal = NEColorPalette.FromFile(@"C:\test\NE_Texture\palette.txt");
             if (m_MainTexPal == null) return false;
 
-            m_LumaBuffer = NEFBuffer.FromFile(@"C:\test\NE_Texture\luma.buf");
+           //m_LumaBuffer = NEFBuffer.FromFile(@"C:\test\NE_Texture2\luma.buf");
 
             return true;
         }
