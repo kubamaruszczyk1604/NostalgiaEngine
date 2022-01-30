@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NostalgiaEngine.Core;
 
-namespace NostalgiaEngine.GUI
+namespace NostalgiaEngine.ConsoleGUI
 {
     public class NEOpenDialog: NEScene
     {

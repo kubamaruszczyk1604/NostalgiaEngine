@@ -7,9 +7,9 @@ using NostalgiaEngine.Core;
 using NostalgiaEngine;
 using System.Runtime.InteropServices;
 using System.IO;
-using NostalgiaEngine.GUI;
+using NostalgiaEngine.ConsoleGUI;
 
-namespace NostalgiaEngine.TextureEditor
+namespace NostalgiaEngineExtensions.TextureEditor
 {
     class NETextureEditor : NEScene
     {

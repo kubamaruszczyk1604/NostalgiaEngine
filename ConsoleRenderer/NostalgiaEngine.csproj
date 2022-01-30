@@ -93,7 +93,7 @@
     <Compile Include="Core\WindowControl.cs" />
     <Compile Include="TextureDisplay\NETexturePreviewApp.cs" />
     <Compile Include="TextureEditor\TextureEditor.cs" />
-    <Compile Include="TextureEditor\WindowRect.cs" />
+    <Compile Include="GUI\WindowRect.cs" />
     <Compile Include="TextureEditor\MemTex16.cs" />
     <Compile Include="TextureEditor\StepSeries.cs" />
   </ItemGroup>

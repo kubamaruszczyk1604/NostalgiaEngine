@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NostalgiaEngine.Core;
 
-namespace NostalgiaEngine.TextureEditor
+namespace NostalgiaEngineExtensions.TextureEditor
 {
     class MemTex16
     {

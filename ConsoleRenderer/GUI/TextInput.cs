@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using NostalgiaEngine.Core;
 using System.IO;
-namespace NostalgiaEngine.GUI
+namespace NostalgiaEngine.ConsoleGUI
 {
     public class NETextInput : INEGUIElement
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NostalgiaEngine.TextureEditor
+namespace NostalgiaEngineExtensions.TextureEditor
 {
     class StepHistorySeries<T>
     {

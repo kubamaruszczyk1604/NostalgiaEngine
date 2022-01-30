@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NostalgiaEngine.Core;
 
-namespace NostalgiaEngine.GUI
+namespace NostalgiaEngine.ConsoleGUI
 {
     public enum NEWindowStyle { Normal = 0, Warning = 1, Error =2};
     public class NEYesNoWindow :INEGUIElement

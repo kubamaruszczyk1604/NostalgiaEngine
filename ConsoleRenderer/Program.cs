@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
-using NostalgiaEngine.TextureEditor;
+using NostalgiaEngineExtensions.TextureEditor;
 using NostalgiaEngine.Core;
 using NostalgiaEngine.Raycaster;
 using TextureDisplay;
-using NostalgiaEngine.GUI;
+using NostalgiaEngine.ConsoleGUI;
 using System.Diagnostics;
 using ImageReader;
 namespace NostalgiaEngineApplication
@@ -20,10 +20,6 @@ namespace NostalgiaEngineApplication
 
         static void Main(string[] args)
         {
-
-            //BitmapRGB b = BitmapRGB.FromFile("C:/test/fd.bmp");
-
-            //PixelRGB p = b.GetPixel(2, 2);
 
             Engine engine = new Engine();
             NETextureEditor ed = new NETextureEditor();
