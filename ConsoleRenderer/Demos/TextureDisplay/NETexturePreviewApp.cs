@@ -20,16 +20,21 @@ namespace TextureDisplay
             ScreenHeight = 180;
             PixelWidth = 5;
             PixelHeight = 5;
+
+            //ScreenWidth = 120;
+            //ScreenHeight = 50;
+            //PixelWidth = 8;
+            //PixelHeight = 12;
             m_Col = 0;
            // ParallelScreenDraw = true;
-            m_MainTex = NEColorTexture16.LoadFromFile(@"C:\test\NE_Texture6\color.tex");
+            m_MainTex = NEColorTexture16.LoadFromFile(@"C:\test\nowa_textura8\color.tex");
             sampled = false;
             if (m_MainTex == null) return false;
 
-            m_MainTexPal = NEColorPalette.FromFile(@"C:\test\NE_Texture6\palette.txt");
+            m_MainTexPal = NEColorPalette.FromFile(@"C:\test\nowa_textura8\palette.txt");
             if (m_MainTexPal == null) return false;
 
-          // m_LumaBuffer = NEFBuffer.FromFile(@"C:\test\NE_Texture6\luma.buf");
+           //m_LumaBuffer = NEFBuffer.FromFile(@"C:\test\NE_Texture4\luma.buf");
 
             return true;
         }

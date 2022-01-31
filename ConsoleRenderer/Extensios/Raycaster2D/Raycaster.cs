@@ -55,12 +55,16 @@ namespace NostalgiaEngine.Raycaster
         private NEStaticSprite m_Sprite;
         public override bool OnLoad()
         {
+            //ScreenWidth = 120;
+            //ScreenHeight = 50;
+            //PixelWidth = 8;
+            //PixelHeight = 12;
             ScreenWidth = 280;
             ScreenHeight = 180;
             PixelWidth = 4;
             PixelHeight = 4;
-           // ParallelScreenDraw = true;
-            m_WallTex = NEColorTexture16.LoadFromFile($"C:/test/murek2.tex");
+            ParallelScreenDraw = true;
+            m_WallTex = NEColorTexture16.LoadFromFile($"C:/test/video_test2.tex");
             if (m_WallTex == null) return false;
 
             NEColorTexture16 lampTex = NEColorTexture16.LoadFromFile("C:/test/lantern1.tex");

@@ -46,7 +46,7 @@ namespace NostalgiaEngine.Core
             Instance = this;
             PostMessage = "Thank you for using Nostalgia Engine!";
             Title = "NOSTALGIA ENGINE";
-            m_TaskbarUpdateWorker = new Thread(new ThreadStart(UpdateTaskbar));
+            //m_TaskbarUpdateWorker = new Thread(new ThreadStart(UpdateTaskbar));
             m_SuspendTaskbarFlag = false;
             
         }
@@ -146,6 +146,7 @@ namespace NostalgiaEngine.Core
             NEWindowControl.QuickEditMode(false);
             NEWindowControl.SetWindowPosition(90,20);
             m_Running = true;
+            m_TaskbarUpdateWorker = new Thread(new ThreadStart(UpdateTaskbar));
             m_TaskbarUpdateWorker.Start();
             while (m_Running)
             {
