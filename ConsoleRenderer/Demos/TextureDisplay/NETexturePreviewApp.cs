@@ -12,7 +12,6 @@ namespace TextureDisplay
         NEColorTexture16 m_MainTex;
         NEColorPalette m_MainTexPal;
         NEFBuffer m_LumaBuffer;
-        bool sampled;
         float m_Col;
         public override bool OnLoad()
         {
@@ -27,11 +26,10 @@ namespace TextureDisplay
             //PixelHeight = 12;
             m_Col = 0;
            // ParallelScreenDraw = true;
-            m_MainTex = NEColorTexture16.LoadFromFile(@"C:\test\nowa_textura8\color.tex");
-            sampled = false;
+            m_MainTex = NEColorTexture16.LoadFromFile(@"C:\test\nowa_textura7\color.tex");
             if (m_MainTex == null) return false;
 
-            m_MainTexPal = NEColorPalette.FromFile(@"C:\test\nowa_textura8\palette.txt");
+            m_MainTexPal = NEColorPalette.FromFile(@"C:\test\nowa_textura7\palette.txt");
             if (m_MainTexPal == null) return false;
 
            //m_LumaBuffer = NEFBuffer.FromFile(@"C:\test\NE_Texture4\luma.buf");

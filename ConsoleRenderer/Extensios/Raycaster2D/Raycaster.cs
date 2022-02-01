@@ -63,8 +63,8 @@ namespace NostalgiaEngine.Raycaster
             ScreenHeight = 180;
             PixelWidth = 4;
             PixelHeight = 4;
-            ParallelScreenDraw = true;
-            m_WallTex = NEColorTexture16.LoadFromFile($"C:/test/video_test2.tex");
+          //  ParallelScreenDraw = true;
+            m_WallTex = NEColorTexture16.LoadFromFile($"C:/test/murek2.tex");
             if (m_WallTex == null) return false;
 
             NEColorTexture16 lampTex = NEColorTexture16.LoadFromFile("C:/test/lantern1.tex");
@@ -206,10 +206,25 @@ namespace NostalgiaEngine.Raycaster
                     }
                     else
                     {
-                        float rayFract = (ray.X - (float)Math.Floor(ray.X) - (ray.Y - (float)Math.Floor(ray.Y)));
-                        rayFract = Math.Abs(rayFract);
+                        float fractX = ray.X - (float)Math.Floor(ray.X);
+                        float fractY = ray.Y - (float)Math.Floor(ray.Y);
 
-                        NEColorSample csample = m_WallTex.Sample(rayFract, py / (floorStartY - ceilingStartY) + 0.5f, intensity);
+                        //if viewer is left of the wall 
+                        if(m_ViewerPos.X < ray.X)
+                        {
+                            // swap forward mapping contribution 
+                            fractY = -fractY;
+                        }
+                        //if viewer is in front ofthe wall
+                        if(m_ViewerPos.Y < ray.Y)
+                        {
+                            //swap sidways mapping contribution
+                            fractX = -fractX;
+                        }
+
+                        float u = fractX - fractY;
+                        m_WallTex.SampleMode = NESampleMode.Repeat;
+                        NEColorSample csample = m_WallTex.Sample(u, py / (floorStartY - ceilingStartY) + 0.5f, intensity);
                         char wallChar = csample.Character;
                         short wallCol = csample.BitMask;
                         m_DepthBuffer.TryUpdate(x, y, depth);
