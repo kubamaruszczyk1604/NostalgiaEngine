@@ -15,8 +15,8 @@ namespace NostalgiaEngine.Raycaster
         private readonly float DEG_TO_RAD = 0.0174532f;
         private readonly float M_PI = 3.1415926535f;
         private readonly float DEPTH = 24.0f;
-        private readonly float ROTATION_SPEED = 1.5f;
-        private readonly float MOVEMENT_SPEED = 4.0f;
+        private readonly float ROTATION_SPEED = 1.0f;
+        private readonly float MOVEMENT_SPEED = 2.0f;
 
 
         private int m_MapWidth = 20;
@@ -202,7 +202,7 @@ namespace NostalgiaEngine.Raycaster
                 if (py < 0.3f + (float)Math.Sin(px * 10 + m_PlayerRotation * 4) * 0.1f)
                 {
                     //ceilSample = NEColorSample.MakeCol5((ConsoleColor)0, (ConsoleColor)9, Math.Abs(py * 1.75f) + NEMathHelper.Sin(px * 10 + m_PlayerRotation * 4) * 0.05f);
-                    ceilSample = NEColorSample.MakeCol5((ConsoleColor)0, (ConsoleColor)0,1.0f);
+                    ceilSample = NEColorSample.MakeCol5((ConsoleColor)0, (ConsoleColor)0, 1.0f);
                 }
 
                 if (hit)
