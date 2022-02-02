@@ -53,19 +53,32 @@ namespace NostalgiaEngine.Raycaster
         private NEColorTexture16 m_WallTex;
         private NEDepthBuffer m_DepthBuffer;
         private NEStaticSprite m_Sprite;
+        private NEFBuffer m_LumaBuffer;
         public override bool OnLoad()
         {
             //ScreenWidth = 120;
             //ScreenHeight = 50;
             //PixelWidth = 8;
             //PixelHeight = 12;
-            ScreenWidth = 280;
-            ScreenHeight = 180;
+            ScreenWidth = 320;
+            ScreenHeight = 200;
             PixelWidth = 4;
             PixelHeight = 4;
-          //  ParallelScreenDraw = true;
-            m_WallTex = NEColorTexture16.LoadFromFile($"C:/test/murek2.tex");
+
+            //ScreenWidth = 200;
+            //ScreenHeight = 120;
+            //PixelWidth = 6;
+            //PixelHeight = 6;
+            //ParallelScreenDraw = true;
+            m_WallTex = NEColorTexture16.LoadFromFile($"C:/test/murek.tex");
             if (m_WallTex == null) return false;
+
+            // NEColorPalette pal = NEColorPalette.FromFile($"C:/test/murek1/palette.txt");
+            // NEColorManagement.SetPalette(pal);
+
+            m_LumaBuffer = NEFBuffer.FromFile(@"C:\test\nt1\luma.buf");
+            m_LumaBuffer.SampleMode = NESampleMode.Repeat;
+            if (m_LumaBuffer == null) return false;
 
             NEColorTexture16 lampTex = NEColorTexture16.LoadFromFile("C:/test/lantern1.tex");
             if (lampTex == null) return false;
@@ -223,8 +236,15 @@ namespace NostalgiaEngine.Raycaster
                         }
 
                         float u = fractX - fractY;
+                        float v = py / (floorStartY - ceilingStartY) + 0.5f;
                         m_WallTex.SampleMode = NESampleMode.Repeat;
-                        NEColorSample csample = m_WallTex.Sample(u, py / (floorStartY - ceilingStartY) + 0.5f, intensity);
+                        float luma = m_LumaBuffer.Sample(u, v);
+                       // NEColorSample csample = m_WallTex.Sample(u, v, intensity*luma);
+
+
+
+                        NEColorSample csample = NEColorSample.MakeCol5(ConsoleColor.Black, ConsoleColor.DarkGray, luma*1.4f*intensity);
+
                         char wallChar = csample.Character;
                         short wallCol = csample.BitMask;
                         m_DepthBuffer.TryUpdate(x, y, depth);
