@@ -164,6 +164,7 @@ namespace NostalgiaEngine.Core
                     //For each column..
                     for (int x = 0; x < ScreenWidth; ++x)
                     {
+                        //m_CurrentScene.OnDrawPerColumn(x);
                         // Queue new task
                         ThreadPool.QueueUserWorkItem(
                            new WaitCallback(
@@ -179,7 +180,7 @@ namespace NostalgiaEngine.Core
                     }
 
                     resetEvent.WaitOne();
-                    
+
                 }
 
                 m_CurrentScene.OnDraw();

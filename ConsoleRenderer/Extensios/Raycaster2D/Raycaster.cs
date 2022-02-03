@@ -80,7 +80,7 @@ namespace NostalgiaEngine.Raycaster
             m_LumaBuffer.SampleMode = NESampleMode.Repeat;
             if (m_LumaBuffer == null) return false;
 
-            NEColorTexture16 lampTex = NEColorTexture16.LoadFromFile("C:/test/bull.tex");
+            NEColorTexture16 lampTex = NEColorTexture16.LoadFromFile("C:/test/lantern2.tex");
             if (lampTex == null) return false;
             m_Sprite = new NEStaticSprite(lampTex);
             m_Sprite.X = 6.0f;
@@ -158,7 +158,7 @@ namespace NostalgiaEngine.Raycaster
             m_DepthBuffer.ResetBuffer();
 
         }
-
+        float largestU = float.PositiveInfinity;
         override public void OnDrawPerColumn(int x)
         {
             float px = (((float)x / (float)ScreenWidth) - 0.5f) * 0.5f;
@@ -235,6 +235,7 @@ namespace NostalgiaEngine.Raycaster
                         }
 
                         float u = fractX - fractY;
+                        
                         float v = py / (floorStartY - ceilingStartY) + 0.5f;
                         m_WallTex.SampleMode = NESampleMode.Repeat;
                         float luma = m_LumaBuffer.Sample(u, v);
@@ -247,8 +248,6 @@ namespace NostalgiaEngine.Raycaster
                         char wallChar = csample.Character;
                         short wallCol = csample.BitMask;
                         m_DepthBuffer.TryUpdate(x, y, depth);
-                        //NEColorSample s = NEColorSample.MakeCol10(ConsoleColor.Black, ConsoleColor.Red, m_DepthBuffer.Sample(x,y));
-                        //NEScreenBuffer.PutChar(s.Character, s.BitMask, x, y);
                         NEScreenBuffer.PutChar(wallChar, wallCol, x, y);
                     }
 
@@ -263,36 +262,39 @@ namespace NostalgiaEngine.Raycaster
 
                 // Sprites
                 NEVector2 rayToSprite = m_Sprite.Position - m_ViewerPos;
-                float rayAngle = (float)Math.Acos(NEVector2.Dot(dir, rayToSprite.Normalized));
-               
+                float angleFromRay = (float)Math.Acos(NEVector2.Dot(dir, rayToSprite.Normalized));
+                NEVector2 rayPerp = NEVector2.FindNormal(rayToSprite.Normalized);
 
 
                 float distanceToSprite = rayToSprite.Length;
-                float scailingFactor = (1.0f / distanceToSprite);
+                float scailingFactor = (1.0f / distanceToSprite);// scale here
 
-                float lant = m_Sprite.AstpectRatio*0.5f;
-                bool inFov = (rayAngle*2.0f) < ( lant* scailingFactor);
-                if (inFov)
+                float aspectRatio = m_Sprite.AstpectRatio / m_Fov; 
+
+                //render only if deviation from sprite ray is within selected bounds
+                bool shouldRender = (angleFromRay) <= ( aspectRatio * scailingFactor) *0.5f;
+                if (shouldRender)
                 {
-
                     float spriteTop = scailingFactor;
                     float spriteFloor = -scailingFactor;
                     if (py < spriteTop && py > spriteFloor)
                     {
-
-                        float u = (rayAngle / lant / scailingFactor) + 0.5f;
-                        float v = py / (spriteFloor - spriteTop) + 0.5f;
-
+                        // figure out whether current pos is left or right of the sprite ray
+                        float sign = NEMathHelper.Sign(NEVector2.Dot(dir, rayPerp));
+                        float u = (angleFromRay / aspectRatio / scailingFactor)*sign + 0.5f;
+                        float v = py /(spriteFloor - spriteTop) + 0.5f;
                         NEColorSample csample = m_Sprite.Texture.Sample(u, v, 1.0f);
                         if (csample.Character != 't')
                         {
                             if (m_DepthBuffer.TryUpdate(x, y, distanceToSprite/DEPTH))
-                            NEScreenBuffer.PutChar(csample.Character, csample.BitMask, x, y);
+                                NEScreenBuffer.PutChar(csample.Character, csample.BitMask, x, y);
                         }
                     }
 
                 }
                 //NEScreenBuffer.PutChar((char)NEBlock.Weak, 0x0000 | 0x0000, x, 10);
+                //NEColorSample s = NEColorSample.MakeCol10(ConsoleColor.Black, ConsoleColor.Red, m_DepthBuffer.Sample(x, y));
+                //NEScreenBuffer.PutChar(s.Character, s.BitMask, x, y);
             }
 
         }
