@@ -16,7 +16,7 @@ namespace NostalgiaEngine.Raycaster
         private readonly float M_PI = 3.1415926535f;
         private readonly float DEPTH = 24.0f;
         private readonly float ROTATION_SPEED = 1.0f;
-        private readonly float MOVEMENT_SPEED = 2.0f;
+        private readonly float MOVEMENT_SPEED = 3.0f;
 
 
         private int m_MapWidth = 20;
@@ -80,7 +80,7 @@ namespace NostalgiaEngine.Raycaster
             m_LumaBuffer.SampleMode = NESampleMode.Repeat;
             if (m_LumaBuffer == null) return false;
 
-            NEColorTexture16 lampTex = NEColorTexture16.LoadFromFile("C:/test/lantern1.tex");
+            NEColorTexture16 lampTex = NEColorTexture16.LoadFromFile("C:/test/bull.tex");
             if (lampTex == null) return false;
             m_Sprite = new NEStaticSprite(lampTex);
             m_Sprite.X = 6.0f;
@@ -193,7 +193,6 @@ namespace NostalgiaEngine.Raycaster
                 float pixelY = -(y - ScreenHeight / 2);
                 float py = pixelY / ((float)ScreenHeight);
                 py *= m_Fov;
-
                 //ColorSample floorSample = ColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkGray, fd);
                 NEColorSample floorSample = NEColorSample.MakeCol5(ConsoleColor.Black, (ConsoleColor)7, 0.2f);// Math.Abs(py) -Math.Abs(px * 0.1f));
 
@@ -263,25 +262,37 @@ namespace NostalgiaEngine.Raycaster
                 }
 
                 // Sprites
-                //NEVector2 rayToSprite = m_Sprite.Position - m_ViewerPos;
-                //float rayAngle = (float)Math.Acos(NEVector2.Dot(dir, rayToSprite.Normalized));
-                //bool inFov = rayAngle < (0.5f * m_Fov);
-                //if(inFov)
-                //{
-                   
-                //    //float sprDepth = rayToSprite.Length / DEPTH;
-                //    float spriteCeilingStartY = (1.0f / rayToSprite.Length);
-                //    float spriteFloorStartY = (-1.0f / rayToSprite.Length);
+                NEVector2 rayToSprite = m_Sprite.Position - m_ViewerPos;
+                float rayAngle = (float)Math.Acos(NEVector2.Dot(dir, rayToSprite.Normalized));
+               
 
-                //    if(py<spriteCeilingStartY && py>spriteFloorStartY)
-                //    {
-                        
-                //        NEColorSample csample = m_Sprite.Texture.Sample(0.5f, py / (spriteFloorStartY - spriteCeilingStartY) + 0.5f, 1.0f);
-                //        NEScreenBuffer.PutChar(csample.Character, csample.BitMask, x, y);
-                //    }
 
-                //}
-                // NEScreenBuffer.PutChar((char)NEBlock.Weak, 0x0000 | 0x0000, x, y);
+                float distanceToSprite = rayToSprite.Length;
+                float scailingFactor = (1.0f / distanceToSprite);
+
+                float lant = m_Sprite.AstpectRatio*0.5f;
+                bool inFov = (rayAngle*2.0f) < ( lant* scailingFactor);
+                if (inFov)
+                {
+
+                    float spriteTop = scailingFactor;
+                    float spriteFloor = -scailingFactor;
+                    if (py < spriteTop && py > spriteFloor)
+                    {
+
+                        float u = (rayAngle / lant / scailingFactor) + 0.5f;
+                        float v = py / (spriteFloor - spriteTop) + 0.5f;
+
+                        NEColorSample csample = m_Sprite.Texture.Sample(u, v, 1.0f);
+                        if (csample.Character != 't')
+                        {
+                            if (m_DepthBuffer.TryUpdate(x, y, distanceToSprite/DEPTH))
+                            NEScreenBuffer.PutChar(csample.Character, csample.BitMask, x, y);
+                        }
+                    }
+
+                }
+                //NEScreenBuffer.PutChar((char)NEBlock.Weak, 0x0000 | 0x0000, x, 10);
             }
 
         }
@@ -291,17 +302,17 @@ namespace NostalgiaEngine.Raycaster
             float imgW = (0.25f * ScreenWidth);
             float imgH = (0.25f * ScreenWidth);
 
-            //for(int x = 0; x < m_Sprite.Texture.Width*2;++x)
+            //for (int x = 0; x < m_Sprite.Texture.Width * 2; ++x)
             //{
-            //    for (int y = 0; y <  m_Sprite.Texture.Height*2;++y)
+            //    for (int y = 0; y < m_Sprite.Texture.Height * 2; ++y)
             //    {
             //        float u = (float)x / (float)m_Sprite.Texture.Width;
             //        float v = (float)y / (float)m_Sprite.Texture.Height;
-            //        NEColorSample s = m_Sprite.Texture.Sample(u*0.5f, v*0.5f , 0.9f);
+            //        NEColorSample s = m_Sprite.Texture.Sample(u * 0.5f, v * 0.5f, 0.9f);
 
-            //        if(s.Character != 't')
+            //        if (s.Character != 't')
             //        {
-            //            NEScreenBuffer.PutChar(s.Character, s.BitMask, 90+ x, 50+y);
+            //            NEScreenBuffer.PutChar(s.Character, s.BitMask, 90 + x, 50 + y);
             //        }
             //    }
             //}
