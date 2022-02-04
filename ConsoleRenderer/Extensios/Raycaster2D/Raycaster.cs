@@ -54,7 +54,8 @@ namespace NostalgiaEngine.Raycaster
         private NEDepthBuffer m_DepthBuffer;
         private NEStaticSprite m_Lamp1Sprite;
         private NEStaticSprite m_Lamp2Sprite;
-        private NEFBuffer m_LumaBuffer;
+        private NEFloatBuffer m_LumaBuffer;
+        private NEFloatBuffer m_Sky;
         public override bool OnLoad()
         {
             //ScreenWidth = 120;
@@ -77,9 +78,13 @@ namespace NostalgiaEngine.Raycaster
             // NEColorPalette pal = NEColorPalette.FromFile($"C:/test/murek1/palette.txt");
             // NEColorManagement.SetPalette(pal);
 
-            m_LumaBuffer = NEFBuffer.FromFile(@"C:\test\nt1\luma.buf");
-            m_LumaBuffer.SampleMode = NESampleMode.Repeat;
+            m_LumaBuffer = NEFloatBuffer.FromFile(@"C:\test\nt1\luma.buf");
             if (m_LumaBuffer == null) return false;
+            m_LumaBuffer.SampleMode = NESampleMode.Repeat;
+
+            m_Sky = NEFloatBuffer.FromFile(@"C:\test\sky\luma.buf");
+            if (m_Sky == null) return false;
+            m_Sky.SampleMode = NESampleMode.Repeat;
 
             NEColorTexture16 lampTex = NEColorTexture16.LoadFromFile("C:/test/lantern1.tex");
             if (lampTex == null) return false;
@@ -163,7 +168,7 @@ namespace NostalgiaEngine.Raycaster
             m_DepthBuffer.ResetBuffer();
 
         }
-        float largestU = float.PositiveInfinity;
+
         override public void OnDrawPerColumn(int x)
         {
             float px = (((float)x / (float)ScreenWidth) - 0.5f) * 0.5f;
@@ -202,7 +207,9 @@ namespace NostalgiaEngine.Raycaster
                 NEColorSample floorSample = NEColorSample.MakeCol5(ConsoleColor.Black, (ConsoleColor)7, 0.2f);// Math.Abs(py) -Math.Abs(px * 0.1f));
 
 
-                NEColorSample ceilSample = NEColorSample.MakeCol5((ConsoleColor)12, (ConsoleColor)0, Math.Abs(py) - 0.71f);
+               // NEColorSample ceilSample = NEColorSample.MakeCol5((ConsoleColor)12, (ConsoleColor)0, Math.Abs(py) - 0.71f);
+               float dd = m_Sky.Sample((((float)x)/((float)ScreenWidth) ) +m_PlayerRotation*0.4f, py);
+                NEColorSample ceilSample = NEColorSample.MakeCol5((ConsoleColor)12, (ConsoleColor)0, dd* (Math.Abs(py) - 0.71f));
                 if (py < 0.3f + (float)Math.Sin(px * 10 + m_PlayerRotation * 4) * 0.1f)
                 {
                     //ceilSample = NEColorSample.MakeCol5((ConsoleColor)0, (ConsoleColor)9, Math.Abs(py * 1.75f) + NEMathHelper.Sin(px * 10 + m_PlayerRotation * 4) * 0.05f);

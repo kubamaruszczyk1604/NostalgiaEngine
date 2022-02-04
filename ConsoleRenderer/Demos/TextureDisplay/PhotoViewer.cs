@@ -11,7 +11,7 @@ namespace TextureDisplay
     {
         NEColorTexture16 m_MainTex;
         NEColorPalette m_MainTexPal;
-        NEFBuffer m_LumaBuffer;
+        NEFloatBuffer m_LumaBuffer;
         bool sampled;
         float m_Col;
         public override bool OnLoad()
@@ -29,7 +29,7 @@ namespace TextureDisplay
             m_MainTexPal = NEColorPalette.FromFile(@"C:\test\nt1\palette.txt");
             if (m_MainTexPal == null) return false;
 
-             m_LumaBuffer = NEFBuffer.FromFile(@"C:\test\nt1\luma.buf");
+             m_LumaBuffer = NEFloatBuffer.FromFile(@"C:\test\nt1\luma.buf");
             m_MainTex.SampleMode = NESampleMode.Repeat;
             return true;
         }

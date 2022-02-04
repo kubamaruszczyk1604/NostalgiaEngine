@@ -11,7 +11,7 @@ namespace TextureDisplay
     {
         NEColorTexture16 m_MainTex;
         NEColorPalette m_MainTexPal;
-        NEFBuffer m_LumaBuffer;
+        NEFloatBuffer m_LumaBuffer;
         float m_Col;
         public override bool OnLoad()
         {

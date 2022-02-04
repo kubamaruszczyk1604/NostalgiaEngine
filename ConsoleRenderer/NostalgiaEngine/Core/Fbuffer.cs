@@ -6,7 +6,7 @@ using System.IO;
 
 namespace NostalgiaEngine.Core
 {
-    public class NEFBuffer
+    public class NEFloatBuffer
     {
         public float[] Data { get; private set; }
         public int Width { get; private set; }
@@ -15,11 +15,11 @@ namespace NostalgiaEngine.Core
         public static string LastErrorMessage { get; private set; }
         public NESampleMode SampleMode { get; set; }
 
-        public static NEFBuffer FromFile(string path)
+        public static NEFloatBuffer FromFile(string path)
         {
             int h = 0;
             List<float> data = new List<float>();
-            NEFBuffer ret = null;
+            NEFloatBuffer ret = null;
             try
             {
                 using (System.IO.StreamReader reader = new System.IO.StreamReader(path))
@@ -57,7 +57,7 @@ namespace NostalgiaEngine.Core
                         LastErrorMessage = "Texture height cannot be lower than 5 pixels. It is: " + h.ToString() + " pixels high.";
                         return null;
                     }
-                    ret = new NEFBuffer(lastW, h, data.ToArray());
+                    ret = new NEFloatBuffer(lastW, h, data.ToArray());
                 }
             }
             catch (Exception e)
@@ -70,7 +70,7 @@ namespace NostalgiaEngine.Core
             return ret;
         }
 
-        public NEFBuffer(int w, int h)
+        public NEFloatBuffer(int w, int h)
         {
             Width = w;
             Height = h;
@@ -78,7 +78,7 @@ namespace NostalgiaEngine.Core
             SampleMode = NESampleMode.Clamp;
         }
 
-        public NEFBuffer(int w, int h, float[] data)
+        public NEFloatBuffer(int w, int h, float[] data)
         {
             if ((w * h) != data.Length)
             {
