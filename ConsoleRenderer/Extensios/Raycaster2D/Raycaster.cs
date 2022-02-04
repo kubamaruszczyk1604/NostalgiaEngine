@@ -52,7 +52,8 @@ namespace NostalgiaEngine.Raycaster
         private float m_PlayerRotation = 0.0f;
         private NEColorTexture16 m_WallTex;
         private NEDepthBuffer m_DepthBuffer;
-        private NEStaticSprite m_Sprite;
+        private NEStaticSprite m_Lamp1Sprite;
+        private NEStaticSprite m_Lamp2Sprite;
         private NEFBuffer m_LumaBuffer;
         public override bool OnLoad()
         {
@@ -80,11 +81,15 @@ namespace NostalgiaEngine.Raycaster
             m_LumaBuffer.SampleMode = NESampleMode.Repeat;
             if (m_LumaBuffer == null) return false;
 
-            NEColorTexture16 lampTex = NEColorTexture16.LoadFromFile("C:/test/lantern2.tex");
+            NEColorTexture16 lampTex = NEColorTexture16.LoadFromFile("C:/test/lantern1.tex");
             if (lampTex == null) return false;
-            m_Sprite = new NEStaticSprite(lampTex);
-            m_Sprite.X = 6.0f;
-            m_Sprite.Y = 4.0f;
+            m_Lamp1Sprite = new NEStaticSprite(lampTex);
+            m_Lamp1Sprite.X = 7.8f;
+            m_Lamp1Sprite.Y = 4.0f;
+
+            m_Lamp2Sprite = new NEStaticSprite(lampTex);
+            m_Lamp2Sprite.X = 5.2f;
+            m_Lamp2Sprite.Y = 4.0f;
             return true;
         }
 
@@ -261,37 +266,8 @@ namespace NostalgiaEngine.Raycaster
                 }
 
                 // Sprites
-                NEVector2 rayToSprite = m_Sprite.Position - m_ViewerPos;
-                float angleFromRay = (float)Math.Acos(NEVector2.Dot(dir, rayToSprite.Normalized));
-                NEVector2 rayPerp = NEVector2.FindNormal(rayToSprite.Normalized);
-
-
-                float distanceToSprite = rayToSprite.Length;
-                float scailingFactor = (1.0f / distanceToSprite);// scale here
-
-                float aspectRatio = m_Sprite.AstpectRatio / m_Fov; 
-
-                //render only if deviation from sprite ray is within selected bounds
-                bool shouldRender = (angleFromRay) <= ( aspectRatio * scailingFactor) *0.5f;
-                if (shouldRender)
-                {
-                    float spriteTop = scailingFactor;
-                    float spriteFloor = -scailingFactor;
-                    if (py < spriteTop && py > spriteFloor)
-                    {
-                        // figure out whether current pos is left or right of the sprite ray
-                        float sign = NEMathHelper.Sign(NEVector2.Dot(dir, rayPerp));
-                        float u = (angleFromRay / aspectRatio / scailingFactor)*sign + 0.5f;
-                        float v = py /(spriteFloor - spriteTop) + 0.5f;
-                        NEColorSample csample = m_Sprite.Texture.Sample(u, v, 1.0f);
-                        if (csample.Character != 't')
-                        {
-                            if (m_DepthBuffer.TryUpdate(x, y, distanceToSprite/DEPTH))
-                                NEScreenBuffer.PutChar(csample.Character, csample.BitMask, x, y);
-                        }
-                    }
-
-                }
+                //RenderSpriteCol(m_Lamp1Sprite, dir, py, x, y);
+                //RenderSpriteCol(m_Lamp2Sprite, dir, py, x, y);
                 //NEScreenBuffer.PutChar((char)NEBlock.Weak, 0x0000 | 0x0000, x, 10);
                 //NEColorSample s = NEColorSample.MakeCol10(ConsoleColor.Black, ConsoleColor.Red, m_DepthBuffer.Sample(x, y));
                 //NEScreenBuffer.PutChar(s.Character, s.BitMask, x, y);
@@ -299,18 +275,104 @@ namespace NostalgiaEngine.Raycaster
 
         }
 
+        private void RenderSpriteCol(NEStaticSprite sprite, NEVector2 dir, float py, int x, int y)
+        {
+            // Sprites
+            NEVector2 rayToSprite = sprite.Position - m_ViewerPos;
+
+            float angleFromRay = (float)Math.Acos(NEVector2.Dot(dir, rayToSprite.Normalized));
+            NEVector2 rayPerp = NEVector2.FindNormal(rayToSprite.Normalized);
+
+
+            float distanceToSprite = rayToSprite.Length;
+            float scailingFactor = (1.0f / distanceToSprite)*m_Fov ;// scale here
+
+            float aspectRatio = sprite.AstpectRatio / m_Fov;
+
+            //render only if deviation from sprite ray is within selected bounds
+            bool shouldRender = (angleFromRay) <= (aspectRatio * scailingFactor) * 0.5f;
+            if (shouldRender)
+            {
+                float spriteTop = scailingFactor;
+                float spriteFloor = -scailingFactor;
+                if (py < spriteTop && py >= spriteFloor)
+                {
+                    // figure out whether current pos is left or right of the sprite ray
+                    float sign = NEMathHelper.Sign(NEVector2.Dot(dir, rayPerp));
+                    float u = (angleFromRay / aspectRatio / scailingFactor) * sign + 0.5f;
+                    float v = py / (spriteFloor - spriteTop) + 0.5f;
+                    NEColorSample csample = sprite.Texture.Sample(u, v, 1.0f);
+                    if (csample.Character != 't')
+                    {
+                        if (m_DepthBuffer.TryUpdate(x, y, distanceToSprite / DEPTH))
+                            NEScreenBuffer.PutChar(csample.Character, csample.BitMask, x, y);
+                    }
+                }
+
+            }
+        }
+
+        void RenderSpriteFull(NEStaticSprite sprite)
+        {
+            NEVector2 rayToSprite = sprite.Position - m_ViewerPos;
+
+            float angleFromRay = (float)Math.Acos(NEVector2.Dot(m_ViewerDir, rayToSprite.Normalized));
+            if (angleFromRay < (m_Fov*0.3f))
+            {
+                NEVector2 rayPerp = NEVector2.FindNormal(rayToSprite.Normalized);
+                float sign = -NEMathHelper.Sign(NEVector2.Dot(m_ViewerDir, rayPerp));
+
+                float distanceToSprite = rayToSprite.Length;
+                float scalingFactor = (1.0f / distanceToSprite);// scale here
+
+                float aspectRatio = sprite.AstpectRatio / m_Fov;
+
+                int middleSpriteOnScreen = (int)((0.5f + ((angleFromRay * sign) / (m_Fov*0.5f) ))  * ScreenWidth);
+
+                float ceiling = ((float)ScreenHeight * 0.5f) - ((float)ScreenHeight) * scalingFactor;
+                float floor = ScreenHeight - ceiling;
+                float height = floor - ceiling;
+                float width = height * aspectRatio*m_AspectRatio;
+                for (int x = 0; x < width; ++x)
+                {
+                    float u = ((float)x) / width;
+                    for (int y = 0; y < height; ++y)
+                    {
+                       
+                        float v = (float)y / height;
+                        NEColorSample s = sprite.Texture.Sample(u, v, 1.0f);
+
+                        if (s.Character != 't')
+                        {
+
+                            int drawX = middleSpriteOnScreen + x - (int)(width*0.5f);
+                            int drawY = (int)ceiling + y;
+                            if(drawX>0 && drawX <ScreenWidth && drawY>0 && drawY<ScreenHeight)
+                            { 
+
+                                if (m_DepthBuffer.TryUpdate(drawX,drawY , distanceToSprite / DEPTH))
+                                {
+                                    NEScreenBuffer.PutChar(s.Character, s.BitMask, drawX, drawY);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         public override void OnDraw()
         {
-            float imgW = (0.25f * ScreenWidth);
-            float imgH = (0.25f * ScreenWidth);
-
-            //for (int x = 0; x < m_Sprite.Texture.Width * 2; ++x)
+            
+            RenderSpriteFull(m_Lamp1Sprite);
+            RenderSpriteFull(m_Lamp2Sprite);
+            //for (int x = 0; x < m_Lamp1Sprite.Texture.Width; ++x)
             //{
-            //    for (int y = 0; y < m_Sprite.Texture.Height * 2; ++y)
+            //    for (int y = 0; y < m_Lamp1Sprite.Texture.Height; ++y)
             //    {
-            //        float u = (float)x / (float)m_Sprite.Texture.Width;
-            //        float v = (float)y / (float)m_Sprite.Texture.Height;
-            //        NEColorSample s = m_Sprite.Texture.Sample(u * 0.5f, v * 0.5f, 0.9f);
+            //        float u = (float)x / (float)m_Lamp1Sprite.Texture.Width;
+            //        float v = (float)y / (float)m_Lamp1Sprite.Texture.Height;
+            //        NEColorSample s = m_Lamp1Sprite.Texture.Sample(u, v, 0.9f);
 
             //        if (s.Character != 't')
             //        {
@@ -319,6 +381,10 @@ namespace NostalgiaEngine.Raycaster
             //    }
             //}
 
+
+
+            float imgW = (0.25f * ScreenWidth);
+            float imgH = (0.25f * ScreenWidth);
             NEVector2 mapXY = new NEVector2(0, 0);
             for (int x = 0; x < imgW; ++x)
             {
@@ -353,7 +419,7 @@ namespace NostalgiaEngine.Raycaster
                         NEScreenBuffer.PutChar('@', 13 << 4, (int)imgW - x, (int)imgH - y);
                     }
 
-                    if(NEVector2.CalculateLength(mapXY - m_Sprite.Position) < 0.4f)
+                    if(NEVector2.CalculateLength(mapXY - m_Lamp1Sprite.Position) < 0.4f)
                     {
                         NEScreenBuffer.PutChar('@', 13 << 4, (int)imgW - x, (int)imgH - y);
                     }
