@@ -315,14 +315,20 @@ namespace NostalgiaEngine.Raycaster
         void RenderSpriteFull(NEStaticSprite sprite)
         {
             NEVector2 rayToSprite = sprite.Position - m_ViewerPos;
-
+            float distanceToSprite = rayToSprite.Length;
+            if (distanceToSprite > 15) return;
             float angleFromRay = (float)Math.Acos(NEVector2.Dot(m_ViewerDir, rayToSprite.Normalized));
+            // 0.3 because:
+            //   2* angleFromRay < m_Fov*0.5
+            //   angleFromRay< m_Fov*0.5/2.0
+            //   angleFromRay< m_Fov*0.25 
+            //   rounded up to 0.3 so objects dont pop up suddenly from sides
             if (angleFromRay < (m_Fov*0.3f))
             {
                 NEVector2 rayPerp = NEVector2.FindNormal(rayToSprite.Normalized);
                 float sign = -NEMathHelper.Sign(NEVector2.Dot(m_ViewerDir, rayPerp));
 
-                float distanceToSprite = rayToSprite.Length;
+                //float distanceToSprite = rayToSprite.Length;
                 float scalingFactor = (1.0f / distanceToSprite);// scale here
 
                 float aspectRatio = sprite.AstpectRatio / m_Fov;
@@ -366,6 +372,7 @@ namespace NostalgiaEngine.Raycaster
             
             RenderSpriteFull(m_Lamp1Sprite);
             RenderSpriteFull(m_Lamp2Sprite);
+
             //for (int x = 0; x < m_Lamp1Sprite.Texture.Width; ++x)
             //{
             //    for (int y = 0; y < m_Lamp1Sprite.Texture.Height; ++y)
