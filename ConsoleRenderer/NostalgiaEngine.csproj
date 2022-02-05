@@ -67,6 +67,7 @@
     <Compile Include="NostalgiaEngine\Core\ColorManagement.cs" />
     <Compile Include="NostalgiaEngine\Core\ColorPalette.cs" />
     <Compile Include="NostalgiaEngine\Core\Fbuffer.cs" />
+    <Compile Include="NostalgiaEngine\Core\NESoundSynth.cs" />
     <Compile Include="NostalgiaEngine\Core\Texture.cs" />
     <Compile Include="NostalgiaEngine\Core\ScreenBuffer.cs" />
     <Compile Include="NostalgiaEngine\Core\Debug.cs" />

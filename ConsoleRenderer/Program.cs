@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Runtime.InteropServices;
 using NostalgiaEngineExtensions.TextureEditor;
 using NostalgiaEngine.Core;
@@ -17,16 +17,34 @@ namespace NostalgiaEngineApplication
     class Program
     {
 
-
         static void Main(string[] args)
         {
+            Note[] notes = new Note[] { new Note(Note.GetNoteFrequency(12), 510)
+            //    new Note(Note.GetNoteFrequency(13), 110),
+            //new Note(Note.GetNoteFrequency(14), 110),
+            // new Note(Note.GetNoteFrequency(15), 110),
+            //  new Note(Note.GetNoteFrequency(16), 110),
+            //   new Note(Note.GetNoteFrequency(17), 110),
+            //    new Note(Note.GetNoteFrequency(18), 110),
+            //     new Note(Note.GetNoteFrequency(19), 110),
+            //      new Note(Note.GetNoteFrequency(20), 110),
+            //       new Note(Note.GetNoteFrequency(21), 110),
+            //        new Note(Note.GetNoteFrequency(22), 110),
+            //         new Note(Note.GetNoteFrequency(23), 110),
+            //          new Note(Note.GetNoteFrequency(24), 110),
+            };
+            //NESoundSynth.Play(notes);
+            //Engine engine = new Engine();
+            //NETextureEditor ed = new NETextureEditor();
+            //NERaycaster2D raycaster = new NERaycaster2D();
+            //PhotoViewer demo = new PhotoViewer();
+            //engine.Start(raycaster);
 
-            Engine engine = new Engine();
-            NETextureEditor ed = new NETextureEditor();
-            NERaycaster2D raycaster = new NERaycaster2D();
-            PhotoViewer demo = new PhotoViewer();
-            engine.Start(raycaster);
 
+            Envelope env = new Envelope(200, 300, 200);
+            env.SampleEnvelope(44199, 300);
+
+            Console.ReadLine();
 
         }
     }
