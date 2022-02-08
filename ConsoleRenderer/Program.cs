@@ -10,7 +10,7 @@ using NostalgiaEngine.Raycaster;
 using TextureDisplay;
 using NostalgiaEngine.ConsoleGUI;
 using System.Diagnostics;
-using ImageReader;
+
 using NostalgiaEngine.Demos;
 namespace NostalgiaEngineApplication
 {
@@ -40,7 +40,7 @@ namespace NostalgiaEngineApplication
             NERaycaster2D raycaster = new NERaycaster2D();
             PhotoViewer demo = new PhotoViewer();
             BandLevelDemo bld = new BandLevelDemo();
-            engine.Start(bld);
+            engine.Start(raycaster);
 
 
             //Envelope env = new Envelope(200, 300, 200);

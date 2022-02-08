@@ -27,7 +27,7 @@ namespace NostalgiaEngine.Demos
             base.OnLoad();
             ScreenWidth = 161;
             ScreenHeight = 100;
-            PixelWidth = 5;
+            PixelWidth = 6;
             PixelHeight = 7;
 
             m_LumaBuffer = NEFloatBuffer.FromFile(@"C:\test\band\luma.buf");

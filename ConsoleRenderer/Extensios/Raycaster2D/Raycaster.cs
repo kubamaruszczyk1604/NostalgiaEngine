@@ -54,7 +54,7 @@ namespace NostalgiaEngine.Raycaster
         private NEDepthBuffer m_DepthBuffer;
         private NEStaticSprite m_Lamp1Sprite;
         private NEStaticSprite m_Lamp2Sprite;
-        private NEFloatBuffer m_LumaBuffer;
+        private NEFloatBuffer m_Wall;
         private NEFloatBuffer m_Sky;
         public override bool OnLoad()
         {
@@ -72,21 +72,21 @@ namespace NostalgiaEngine.Raycaster
             //PixelWidth = 6;
             //PixelHeight = 6;
             //ParallelScreenDraw = true;
-            m_WallTex = NEColorTexture16.LoadFromFile($"C:/test/murek.tex");
-            if (m_WallTex == null) return false;
+            //m_WallTex = NEColorTexture16.LoadFromFile($"C:/test/murek.tex");
+            //if (m_WallTex == null) return false;
 
             // NEColorPalette pal = NEColorPalette.FromFile($"C:/test/murek1/palette.txt");
             // NEColorManagement.SetPalette(pal);
 
-            m_LumaBuffer = NEFloatBuffer.FromFile(@"C:\test\nt1\luma.buf");
-            if (m_LumaBuffer == null) return false;
-            m_LumaBuffer.SampleMode = NESampleMode.Repeat;
+            m_Wall = NEFloatBuffer.FromFile(@"textures\nt1\luma.buf");
+            if (m_Wall == null) return false;
+            m_Wall.SampleMode = NESampleMode.Repeat;
 
-            m_Sky = NEFloatBuffer.FromFile(@"C:\test\sky\luma.buf");
+            m_Sky = NEFloatBuffer.FromFile(@"textures\sky\luma.buf");
             if (m_Sky == null) return false;
             m_Sky.SampleMode = NESampleMode.Repeat;
 
-            NEColorTexture16 lampTex = NEColorTexture16.LoadFromFile("C:/test/lantern1.tex");
+            NEColorTexture16 lampTex = NEColorTexture16.LoadFromFile("textures/lantern1.tex");
             if (lampTex == null) return false;
             m_Lamp1Sprite = new NEStaticSprite(lampTex);
             m_Lamp1Sprite.X = 7.8f;
@@ -249,8 +249,8 @@ namespace NostalgiaEngine.Raycaster
                         float u = fractX - fractY;
                         
                         float v = py / (floorStartY - ceilingStartY) + 0.5f;
-                        m_WallTex.SampleMode = NESampleMode.Repeat;
-                        float luma = m_LumaBuffer.Sample(u, v);
+                       // m_WallTex.SampleMode = NESampleMode.Repeat;
+                        float luma = m_Wall.Sample(u, v);
                        // NEColorSample csample = m_WallTex.Sample(u, v, intensity*luma);
 
 

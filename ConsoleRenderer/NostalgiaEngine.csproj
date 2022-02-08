@@ -102,6 +102,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Extensios\Raycaster2D\Textures\lantern1.tex" />
+    <None Include="Extensios\Raycaster2D\Textures\nt1\color.tex" />
+    <None Include="Extensios\Raycaster2D\Textures\nt1\luma.buf" />
+    <None Include="Extensios\Raycaster2D\Textures\sky\color.tex" />
+    <None Include="Extensios\Raycaster2D\Textures\sky\luma.buf" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
@@ -115,8 +120,14 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Extensios\Raycaster2D\Textures\nt1\palette.txt" />
+    <Content Include="Extensios\Raycaster2D\Textures\sky\palette.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>xcopy $(ProjectDir)Extensios\Raycaster2D\Textures\  $(TargetDir)Textures /Y /I /E</PreBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
