@@ -30,7 +30,7 @@ namespace NostalgiaEngine.Demos
             PixelWidth = 6;
             PixelHeight = 7;
 
-            m_LumaBuffer = NEFloatBuffer.FromFile(@"C:\test\band\luma.buf");
+            m_LumaBuffer = NEFloatBuffer.FromFile(@"textures\band\luma.buf");
             if (m_LumaBuffer == null) return false;
             return true;
         }
@@ -99,10 +99,7 @@ namespace NostalgiaEngine.Demos
                     if (currentBand > 19) currentBand = 19;
                     NEColorSample sa = NEColorSample.MakeCol5((ConsoleColor)0, (ConsoleColor)8, luma * 0.5f);
                     NEScreenBuffer.PutChar(sa.Character, sa.BitMask, x, y);
-                    if (yNormRev > m_SignalBands[currentBand])
-                    {
-                        continue;
-                    }
+                    if (yNormRev > m_SignalBands[currentBand]) continue;
                     if (x % 8 == 0) continue;
                     NEColorSample cs = NEColorSample.MakeCol5((ConsoleColor)4, (ConsoleColor)12, (1.0f - NEMathHelper.Pow(yNorm, 1.987f))*(luma));
                     NEScreenBuffer.PutChar(cs.Character, cs.BitMask, x, y);

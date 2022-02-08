@@ -63,7 +63,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Demos\BandLevelDemo.cs" />
+    <Compile Include="Demos\BandLevelsDemo\BandLevelDemo.cs" />
     <Compile Include="Demos\TextureDisplay\PhotoViewer.cs" />
     <Compile Include="NostalgiaEngine\Core\ColorManagement.cs" />
     <Compile Include="NostalgiaEngine\Core\ColorPalette.cs" />
@@ -102,6 +102,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Demos\BandLevelsDemo\Textures\band\luma.buf" />
     <None Include="Extensios\Raycaster2D\Textures\lantern1.tex" />
     <None Include="Extensios\Raycaster2D\Textures\nt1\color.tex" />
     <None Include="Extensios\Raycaster2D\Textures\nt1\luma.buf" />
@@ -126,7 +127,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>xcopy $(ProjectDir)Extensios\Raycaster2D\Textures\  $(TargetDir)Textures /Y /I /E</PreBuildEvent>
+    <PreBuildEvent>xcopy $(ProjectDir)Extensios\Raycaster2D\Textures\  $(TargetDir)Textures /Y /I /E
+xcopy $(ProjectDir)Demos\BandLevelsDemo\Textures\  $(TargetDir)Textures /Y /I /E</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
