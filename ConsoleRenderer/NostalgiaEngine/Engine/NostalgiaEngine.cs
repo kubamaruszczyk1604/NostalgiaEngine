@@ -30,7 +30,7 @@ namespace NostalgiaEngine.Core
         public int ScreenHeight { get; private set; }
         public int PixelWidth { get; private set; }
         public int PixelHeight { get; private set; }
-        public float RunningTime { get; private set; }
+        public float TotalTime { get; private set; }
         public string PostMessage { get; set; }
 
 
@@ -185,7 +185,7 @@ namespace NostalgiaEngine.Core
 
                 m_CurrentScene.OnDraw();
                 NEScreenBuffer.SwapBuffers();
-                RunningTime += NEFrameTimer.GetDeltaTime();
+                TotalTime += NEFrameTimer.GetDeltaTime();
                
             }
             m_TaskbarUpdateWorker.Join();

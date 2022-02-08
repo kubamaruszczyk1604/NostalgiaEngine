@@ -212,8 +212,8 @@ namespace NostalgiaEngine.Raycaster
                 NEColorSample ceilSample = NEColorSample.MakeCol5((ConsoleColor)12, (ConsoleColor)4, dd* (Math.Abs(py) - 0.71f));
                 if (py < 0.3f + (float)Math.Sin(px * 10 + m_PlayerRotation * 4) * 0.1f)
                 {
-                    //ceilSample = NEColorSample.MakeCol5((ConsoleColor)0, (ConsoleColor)9, Math.Abs(py * 1.75f) + NEMathHelper.Sin(px * 10 + m_PlayerRotation * 4) * 0.05f);
-                    ceilSample = NEColorSample.MakeCol5((ConsoleColor)0, (ConsoleColor)0, 1.0f);
+                    //ceilSample = NEColorSample.MakeCol5((ConsoleColor)0, (ConsoleColor)4, Math.Abs(py * 1.75f) + NEMathHelper.Sin(px * 10 + m_PlayerRotation * 4) * 0.05f);
+                    ceilSample = NEColorSample.MakeCol5((ConsoleColor)0, (ConsoleColor)0, 0.0f);
                 }
 
                 if (hit)

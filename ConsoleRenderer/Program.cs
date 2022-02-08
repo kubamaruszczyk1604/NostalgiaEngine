@@ -11,6 +11,7 @@ using TextureDisplay;
 using NostalgiaEngine.ConsoleGUI;
 using System.Diagnostics;
 using ImageReader;
+using NostalgiaEngine.Demos;
 namespace NostalgiaEngineApplication
 {
 
@@ -34,17 +35,18 @@ namespace NostalgiaEngineApplication
             //          new Note(Note.GetNoteFrequency(24), 110),
             };
             //NESoundSynth.Play(notes);
-            //Engine engine = new Engine();
-            //NETextureEditor ed = new NETextureEditor();
-            //NERaycaster2D raycaster = new NERaycaster2D();
-            //PhotoViewer demo = new PhotoViewer();
-            //engine.Start(raycaster);
+            Engine engine = new Engine();
+            NETextureEditor ed = new NETextureEditor();
+            NERaycaster2D raycaster = new NERaycaster2D();
+            PhotoViewer demo = new PhotoViewer();
+            BandLevelDemo bld = new BandLevelDemo();
+            engine.Start(bld);
 
 
-            Envelope env = new Envelope(200, 300, 200);
-            env.SampleEnvelope(44199, 300);
+            //Envelope env = new Envelope(200, 300, 200);
+            //env.SampleEnvelope(44000, 300);
 
-            Console.ReadLine();
+            //Console.ReadLine();
 
         }
     }

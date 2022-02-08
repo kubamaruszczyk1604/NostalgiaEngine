@@ -124,7 +124,8 @@ namespace NostalgiaEngine.Core
                     FontWidth = pixelW
                 };
                 SetCurrentConsoleFontEx(m_ConsoleHandle.DangerousGetHandle(), false, ref set);
-                Console.SetWindowSize(width + 10, height + 4);
+                //Console.SetWindowSize(width + 10, height + 4);
+                Console.SetWindowSize(width+2, height+4);
             }
             catch
             {
@@ -133,8 +134,9 @@ namespace NostalgiaEngine.Core
             m_Bufer = new List<CharInfo[]>(2);
             m_Bufer.Add(new CharInfo[width * height]);
             m_Bufer.Add(new CharInfo[width * height]);
-            m_ConsoleRect = new NERect() { Left = 5, Top = 2, Right = (short)(width + 5), Bottom = (short)(height + 2) };
-            
+           // m_ConsoleRect = new NERect() { Left = 5, Top = 2, Right = (short)(width + 5), Bottom = (short)(height + 2) };
+            m_ConsoleRect = new NERect() { Left = 1, Top = 2, Right = (short)(width + 1), Bottom = (short)(height +2) };
+
             Console.CursorVisible = false;
             Console.Clear();
             m_WriteBufferPtr = 0;

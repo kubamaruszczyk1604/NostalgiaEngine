@@ -208,6 +208,7 @@ namespace NostalgiaEngine.Core
 
             mStrm.Seek(0, SeekOrigin.Begin);
             var player = new System.Media.SoundPlayer();
+          
             player.Stream = mStrm;
             player.Play();
             writer.Close();
