@@ -63,25 +63,28 @@ namespace NostalgiaEngine.Demos
             tCount += deltaTime;
             if (tCount < 1.0f / 30.0f) return; //this bit below is clocked at 30Hz for more consistent and smoother effect
             tCount = 0;
+
+            RandomNoiseDemo(deltaTime);
+
+        }
+
+        private void RandomNoiseDemo(float  dt)
+        {
             float time = Engine.Instance.TotalTime;
-            
-            m_RandomNoise += 0.93f*(((float)m_Rng.NextDouble()-0.5f) - m_RandomNoise);
+
+            m_RandomNoise += 0.93f * (((float)m_Rng.NextDouble() - 0.5f) - m_RandomNoise);
             for (int i = 0; i < 20; ++i)
             {
                 int ri = m_Rng.Next(0, 19);
                 m_SignalBands[i] +=
-                    (1.0f - (((i + 1) / 19.0f)) * 0.7f + 0.09f * (NEMathHelper.Sin(m_RandomNoise * i * deltaTime * 40.0f + i + time * 0.08f) + 1.0f) - m_SignalBands[i]) * 0.2f;
+                    (1.0f - (((i + 1) / 19.0f)) * 0.7f + 0.09f * (NEMathHelper.Sin(m_RandomNoise * i * dt * 40.0f + i + time * 0.08f) + 1.0f) - m_SignalBands[i]) * 0.2f;
 
 
                 m_SignalBands[ri] += 0.1f * (m_RandomNoise - m_SignalBands[i]);
 
                 //m_SignalBands[i] *= (NEMathHelper.Sin(time+i)+1.0f)*0.3f + 0.3f;
             }
-           
-
         }
-
-
 
         public override void OnDraw()
         {
