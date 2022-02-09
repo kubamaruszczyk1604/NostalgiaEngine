@@ -95,7 +95,7 @@ namespace NostalgiaEngine.Core
             {
                 NEScreenBuffer.SetDefaultConsole();
                 NEInput.FlushKeyboard();
-
+                NEColorManagement.SetDefaultPalette();
                 Console.Clear();
                 Console.Title = Title;
                 m_SuspendTaskbarFlag = true;
@@ -108,6 +108,7 @@ namespace NostalgiaEngine.Core
                 Console.WriteLine("OnLoad() status:                " + (loadOK ? "OK" : "Failed"));
                 Console.WriteLine("Window and Screen status:       " + (screenOK ? "OK" : "Failed"));
                 Console.WriteLine("\n\n\nPress ENTER to continue...");
+
                 NEInput.BlockUntilKeyPress(NEKey.Enter);
                 m_SuspendTaskbarFlag = false;
                 if (m_CurrentScene != null)

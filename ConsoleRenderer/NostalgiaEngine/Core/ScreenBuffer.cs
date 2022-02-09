@@ -129,6 +129,7 @@ namespace NostalgiaEngine.Core
             }
             catch
             {
+                SetDefaultConsole();
                 return false;
             }
             m_Bufer = new List<CharInfo[]>(2);
@@ -247,7 +248,7 @@ namespace NostalgiaEngine.Core
         }
         static public void Reallign()
         {
-            Console.SetWindowSize(m_sWidth + 10, m_sHeight + 4);
+            Console.SetWindowSize(m_sWidth + 2, m_sHeight + 4);
         }
     }
     
