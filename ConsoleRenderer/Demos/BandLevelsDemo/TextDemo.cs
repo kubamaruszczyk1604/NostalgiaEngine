@@ -1,0 +1,150 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using NostalgiaEngine.Core;
+
+namespace NostalgiaEngine.Demos
+{
+    public class TextDemo : NEScene
+    {
+
+        Random m_Rng;
+        float[] m_SignalBands;
+        private NEFloatBuffer m_LumaBuffer;
+        private float m_AspectRatio = 1.0f;
+        public TextDemo()
+        {
+            m_SignalBands = new float[20];
+            for (int i = 0; i < 20; ++i)
+            {
+                m_SignalBands[i] = i / 19.0f;
+            }
+            m_Rng = new Random();
+        }
+
+        public override bool OnLoad()
+        {
+            base.OnLoad();
+            ScreenWidth = 200;
+            ScreenHeight = 150;
+            PixelWidth = 5;
+            PixelHeight = 5;
+            m_AspectRatio = (float)ScreenWidth / (float)ScreenHeight;
+            m_LumaBuffer = NEFloatBuffer.FromFile(@"textures\band\luma.buf");
+           // m_LumaBuffer = NEFloatBuffer.FromFile(@"c:\test\text\luma.buf");
+            m_LumaBuffer.SampleMode = NESampleMode.Repeat;
+
+            if (m_LumaBuffer == null) return false;
+            return true;
+        }
+        public override void OnStart()
+        {
+            //NEColorManagement.SetSpectralPalette1();
+            base.OnStart();
+        }
+        public override void OnPause()
+        {
+            base.OnPause();
+        }
+
+        public override void OnResume()
+        {
+            base.OnResume();
+        }
+
+        float tCount = 0;
+        public override void OnUpdate(float deltaTime)
+        {
+
+            base.OnUpdate(deltaTime);
+            if (NEInput.CheckKeyPress(NEKey.Escape))
+            {
+                Exit();
+            }
+
+            //tCount += deltaTime;
+            //if (tCount < 1.0f / 30.0f) return; //this bit below is clocked at 30Hz for more consistent and smoother effect
+            //tCount = 0;
+
+        }
+
+
+
+        private bool DrawArm( NEVector2 uvs, float num, float armLen, float thickness)
+        {
+            uvs.Y *= -1;
+            float rt = num * 3.141f;
+            //if (NEVector2.CalculateLength(uvs) < 0.015f) return false;
+            bool isOnLine = NEMathHelper.IsOnLine(uvs, new NEVector2(0, 0), new NEVector2(NEMathHelper.Sin(rt), NEMathHelper.Cos(-rt) + 0.02f),thickness);
+            if (!isOnLine) return false;
+            if (NEVector2.CalculateLength(uvs) > armLen) return false;
+
+            return true;
+        }
+
+        public override void OnDraw()
+        {
+            float seconds = (DateTime.UtcNow.Second / 60.0f) * 2.0f;
+            float minutes = (DateTime.UtcNow.Minute / 60.0f) * 2.0f;
+            float hours = ( (DateTime.UtcNow.Hour%12 + minutes*0.5f)/ 12.0f) * 2.0f;
+
+            float time = Engine.Instance.TotalTime;
+            NEScreenBuffer.Clear();
+            for (int x = 0; x < ScreenWidth; ++x)
+            {
+                float u = (float)x / (float)ScreenWidth;
+
+                for (int y = 0; y < ScreenHeight; ++y)
+                {
+                    float yNorm = (float)y / (float)ScreenHeight;
+                    float yNormRev = 1.0f - yNorm;
+
+                    //NEVector2 uvTex = new NEVector2(u+ time*0.05f, yNorm + NEMathHelper.Sin(u*15.0f)*0.02f);
+                    NEVector2 uvTex = new NEVector2(u, yNorm);
+                    //uvTex.X -= 0.5f;
+                    //uvTex.Y -= 0.5f;
+                    //NEMathHelper.Rotate(ref uvTex, Engine.Instance.TotalTime * 0.1f);
+
+                    //uvTex.X += 0.5f;
+                    //uvTex.Y += 0.5f;
+                    float luma = m_LumaBuffer.Sample(uvTex.X, uvTex.Y);
+                    NEColorSample cs = NEColorSample.MakeCol5((ConsoleColor)0, (ConsoleColor)7, (1.0f - NEMathHelper.Pow(yNorm, 2)) * (luma));
+
+                    NEVector2 uvs = new NEVector2(u, yNorm) * 2.0f;
+                    uvs.X -= 1;
+                    uvs.Y -= 1;
+                    uvs.X *= m_AspectRatio;
+                    float circleL = NEVector2.CalculateLength(uvs);
+                    float low = 0.74f;
+                    float high = 0.8f;
+                    if (circleL > low && circleL < high)
+                    {
+                        float d = (circleL - low) / (high - low);
+                        float brightness = NEMathHelper.Sin(d * 3.14f);
+                        brightness *= brightness * brightness;
+                        cs = NEColorSample.MakeCol5((ConsoleColor)0, (ConsoleColor)10, luma * brightness + 0.15f);
+                    }
+
+
+                    if (DrawArm(uvs, seconds, 0.72f, 0.008f))
+                    {
+                        cs = NEColorSample.MakeCol10((ConsoleColor)0, (ConsoleColor)10, 1.0f - circleL + 0.1f);
+                    }
+                    if (DrawArm(uvs, minutes, 0.7f, 0.022f))
+                    {
+                        cs = NEColorSample.MakeCol10((ConsoleColor)0, (ConsoleColor)10, 0.8f);
+                    }
+                    if (DrawArm(uvs, hours, 0.46f, 0.025f))
+                    {
+                        cs = NEColorSample.MakeCol5((ConsoleColor)0, (ConsoleColor)10, 0.7f);
+                    }
+
+                    NEScreenBuffer.PutChar(cs.Character, cs.BitMask, x, y);
+                }
+            }
+            base.OnDraw();
+        }
+    }
+}

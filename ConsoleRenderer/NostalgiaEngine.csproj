@@ -64,6 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Demos\BandLevelsDemo\BandLevelDemo.cs" />
+    <Compile Include="Demos\BandLevelsDemo\TextDemo.cs" />
     <Compile Include="Demos\TextureDisplay\PhotoViewer.cs" />
     <Compile Include="NostalgiaEngine\Core\ColorManagement.cs" />
     <Compile Include="NostalgiaEngine\Core\ColorPalette.cs" />

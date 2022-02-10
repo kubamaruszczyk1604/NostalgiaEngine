@@ -40,7 +40,8 @@ namespace NostalgiaEngineApplication
             NERaycaster2D raycaster = new NERaycaster2D();
             PhotoViewer demo = new PhotoViewer();
             BandLevelDemo bld = new BandLevelDemo();
-            engine.Start(bld);
+            TextDemo ted = new TextDemo();
+            engine.Start(ted);
 
 
             //Envelope env = new Envelope(200, 300, 200);

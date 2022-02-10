@@ -79,6 +79,7 @@ namespace NostalgiaEngine.Raycaster
             // NEColorManagement.SetPalette(pal);
 
             m_Wall = NEFloatBuffer.FromFile(@"textures\nt1\luma.buf");
+            //m_Wall= NEFloatBuffer.FromFile(@"c:\test\text\luma.buf");
             if (m_Wall == null) return false;
             m_Wall.SampleMode = NESampleMode.Repeat;
 
