@@ -76,7 +76,7 @@ namespace NostalgiaEngine.Demos
         {
             uvs.Y *= -1;
             float rt = num * 3.141f;
-            //if (NEVector2.CalculateLength(uvs) < 0.015f) return false;
+            if (NEVector2.CalculateLength(uvs) < 0.075f) return false;
             bool isOnLine = NEMathHelper.IsOnLine(uvs, new NEVector2(0, 0), new NEVector2(NEMathHelper.Sin(rt), NEMathHelper.Cos(-rt) + 0.02f),thickness);
             if (!isOnLine) return false;
             if (NEVector2.CalculateLength(uvs) > armLen) return false;
@@ -117,7 +117,7 @@ namespace NostalgiaEngine.Demos
                     uvs.Y -= 1;
                     uvs.X *= m_AspectRatio;
                     float circleL = NEVector2.CalculateLength(uvs);
-                    float low = 0.74f;
+                    float low = 0.76f;
                     float high = 0.8f;
                     if (circleL > low && circleL < high)
                     {
