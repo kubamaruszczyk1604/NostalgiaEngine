@@ -27,10 +27,10 @@ namespace NostalgiaEngine.Demos
         public override bool OnLoad()
         {
             base.OnLoad();
-            ScreenWidth = 200;
-            ScreenHeight = 150;
-            PixelWidth = 5;
-            PixelHeight = 5;
+            ScreenWidth = 250;
+            ScreenHeight = 200;
+            PixelWidth = 4;
+            PixelHeight = 4;
             m_AspectRatio = (float)ScreenWidth / (float)ScreenHeight;
             m_LumaBuffer = NEFloatBuffer.FromFile(@"textures\band\luma.buf");
            // m_LumaBuffer = NEFloatBuffer.FromFile(@"c:\test\text\luma.buf");
@@ -64,9 +64,7 @@ namespace NostalgiaEngine.Demos
                 Exit();
             }
 
-            //tCount += deltaTime;
-            //if (tCount < 1.0f / 30.0f) return; //this bit below is clocked at 30Hz for more consistent and smoother effect
-            //tCount = 0;
+            tCount += deltaTime;
 
         }
 
@@ -76,7 +74,7 @@ namespace NostalgiaEngine.Demos
         {
             uvs.Y *= -1;
             float rt = num * 3.141f;
-            if (NEVector2.CalculateLength(uvs) < 0.075f) return false;
+            //if (NEVector2.CalculateLength(uvs) < 0.025f) return false;
             bool isOnLine = NEMathHelper.IsOnLine(uvs, new NEVector2(0, 0), new NEVector2(NEMathHelper.Sin(rt), NEMathHelper.Cos(-rt) + 0.02f),thickness);
             if (!isOnLine) return false;
             if (NEVector2.CalculateLength(uvs) > armLen) return false;
@@ -91,6 +89,10 @@ namespace NostalgiaEngine.Demos
             float hours = ( (DateTime.UtcNow.Hour%12 + minutes*0.5f)/ 12.0f) * 2.0f;
 
             float time = Engine.Instance.TotalTime;
+            
+            if (tCount < 1.0f / 5.0f) return; //this bit below is clocked at 5Hz for more consistent and smoother effect
+            tCount = 0;
+
             NEScreenBuffer.Clear();
             for (int x = 0; x < ScreenWidth; ++x)
             {
@@ -110,7 +112,7 @@ namespace NostalgiaEngine.Demos
                     //uvTex.X += 0.5f;
                     //uvTex.Y += 0.5f;
                     float luma = m_LumaBuffer.Sample(uvTex.X, uvTex.Y);
-                    NEColorSample cs = NEColorSample.MakeCol5((ConsoleColor)0, (ConsoleColor)7, (1.0f - NEMathHelper.Pow(yNorm, 2)) * (luma));
+                    NEColorSample cs = NEColorSample.MakeCol5((ConsoleColor)0, (ConsoleColor)7, (luma)*yNormRev);
 
                     NEVector2 uvs = new NEVector2(u, yNorm) * 2.0f;
                     uvs.X -= 1;
@@ -124,21 +126,21 @@ namespace NostalgiaEngine.Demos
                         float d = (circleL - low) / (high - low);
                         float brightness = NEMathHelper.Sin(d * 3.14f);
                         brightness *= brightness * brightness;
-                        cs = NEColorSample.MakeCol5((ConsoleColor)0, (ConsoleColor)10, luma * brightness + 0.15f);
+                        cs = NEColorSample.MakeCol5((ConsoleColor)0, (ConsoleColor)10,brightness + 0.25f);
                     }
 
 
-                    if (DrawArm(uvs, seconds, 0.72f, 0.008f))
+                    if (DrawArm(uvs, seconds, 0.72f, 0.007f))
                     {
-                        cs = NEColorSample.MakeCol10((ConsoleColor)0, (ConsoleColor)10, 1.0f - circleL + 0.1f);
+                        cs = NEColorSample.MakeCol10((ConsoleColor)0, (ConsoleColor)10,1);
                     }
-                    if (DrawArm(uvs, minutes, 0.7f, 0.022f))
+                    if (DrawArm(uvs, minutes, 0.72f, 0.02f))
                     {
-                        cs = NEColorSample.MakeCol10((ConsoleColor)0, (ConsoleColor)10, 0.8f);
+                        cs = NEColorSample.MakeCol10((ConsoleColor)0, (ConsoleColor)10,1);
                     }
-                    if (DrawArm(uvs, hours, 0.46f, 0.025f))
+                    if (DrawArm(uvs, hours, 0.46f, 0.02f))
                     {
-                        cs = NEColorSample.MakeCol5((ConsoleColor)0, (ConsoleColor)10, 0.7f);
+                        cs = NEColorSample.MakeCol5((ConsoleColor)0, (ConsoleColor)10, 1);
                     }
 
                     NEScreenBuffer.PutChar(cs.Character, cs.BitMask, x, y);
