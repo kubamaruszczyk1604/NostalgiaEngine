@@ -41,7 +41,7 @@ namespace NostalgiaEngineApplication
             PhotoViewer demo = new PhotoViewer();
             BandLevelDemo bld = new BandLevelDemo();
             TextDemo ted = new TextDemo();
-            engine.Start(ted);
+            engine.Start(raycaster);
 
 
             //Envelope env = new Envelope(200, 300, 200);
