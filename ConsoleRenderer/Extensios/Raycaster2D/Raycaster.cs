@@ -122,7 +122,7 @@ namespace NostalgiaEngine.Raycaster
                 {
                     float deltaR = -ROTATION_SPEED * deltaT;
                     m_PlayerRotation += deltaR;
-                    NEVector2.Rotate(ref m_ViewerDir, deltaR);
+                    NEVector2.RotateClockWise(ref m_ViewerDir, deltaR);
                     NEVector2.Normalize(m_ViewerDir);
                 }
 
@@ -141,7 +141,7 @@ namespace NostalgiaEngine.Raycaster
                 {
                     float deltaR = ROTATION_SPEED * deltaT;
                     m_PlayerRotation += deltaR;
-                    NEVector2.Rotate(ref m_ViewerDir, deltaR);
+                    NEVector2.RotateClockWise(ref m_ViewerDir, deltaR);
                     NEVector2.Normalize(m_ViewerDir);
                 }
             }
@@ -177,7 +177,7 @@ namespace NostalgiaEngine.Raycaster
             px *= m_Fov; // TO DO: consider aspect ratio 
 
             NEVector2 dir = new NEVector2(m_ViewerDir.X, m_ViewerDir.Y);
-            NEVector2.Rotate(ref dir, px);
+            NEVector2.RotateClockWise(ref dir, px);
             dir = NEVector2.Normalize(dir);
 
             float t = 0.0f;
@@ -423,9 +423,9 @@ namespace NostalgiaEngine.Raycaster
                     NEVector2 B = new NEVector2(0.0f, 1.28f);
                     NEVector2 C = new NEVector2(0.65f, -0.65f);
 
-                    NEVector2.Rotate(ref A, m_PlayerRotation);
-                    NEVector2.Rotate(ref B, m_PlayerRotation);
-                    NEVector2.Rotate(ref C, m_PlayerRotation);
+                    NEVector2.RotateClockWise(ref A, m_PlayerRotation);
+                    NEVector2.RotateClockWise(ref B, m_PlayerRotation);
+                    NEVector2.RotateClockWise(ref C, m_PlayerRotation);
                     A += m_ViewerPos;
                     B += m_ViewerPos;
                     C += m_ViewerPos;

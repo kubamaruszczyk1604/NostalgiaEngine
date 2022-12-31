@@ -70,7 +70,7 @@ namespace NostalgiaEngine.Demos
 
 
 
-        private bool DrawArm( NEVector2 uvs, float num, float armLen, float thickness)
+        private bool DrawArm(NEVector2 uvs, float num, float armLen, float thickness)
         {
             uvs.Y *= -1;
             float rt = num * 3.141f;
