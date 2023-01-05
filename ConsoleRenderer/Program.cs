@@ -37,13 +37,13 @@ namespace NostalgiaEngineApplication
             //NESoundSynth.Play(notes);
 
 
-            //Engine engine = new Engine();
-            //NETextureEditor ed = new NETextureEditor();
-            //NERaycaster2D raycaster = new NERaycaster2D();
-            //PhotoViewer demo = new PhotoViewer();
-            //BandLevelDemo bld = new BandLevelDemo();
-            //TextDemo ted = new TextDemo();
-            //engine.Start(raycaster);
+            Engine engine = new Engine();
+            NETextureEditor ed = new NETextureEditor();
+            NERaycaster2D raycaster = new NERaycaster2D();
+            PhotoViewer demo = new PhotoViewer();
+            BandLevelDemo bld = new BandLevelDemo();
+            TextDemo ted = new TextDemo();
+            engine.Start(demo);
 
 
             //Envelope env = new Envelope(200, 300, 200);
@@ -51,14 +51,14 @@ namespace NostalgiaEngineApplication
 
 
 
-            NEMatrix2x2 m1 = NEMatrix2x2.CreateRotation(0.5f);
-            NEMatrix2x2 m2 = new NEMatrix2x2(3, 8, 8, 9);
+            //NEMatrix2x2 m1 = NEMatrix2x2.CreateRotation(0.5f);
+            //NEMatrix2x2 m2 = new NEMatrix2x2(3, 8, 8, 9);
 
-            NEVector2 r = m1 * new NEVector2(3, 4);
-            
-      
-            Console.Write(r.ToString());
-            Console.ReadLine();
+            //NEVector2 r = m1 * new NEVector2(3, 4);
+
+
+            //Console.Write(r.ToString());
+            //Console.ReadLine();
 
         }
     }
