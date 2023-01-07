@@ -434,6 +434,17 @@ namespace NostalgiaEngine.Core
             ColMask = ri | (gi << 8) | (bi << 16);
         }
 
+        static public NEConsoleColorDef Black { get { return new NEConsoleColorDef(0.0f, 0.0f, 0.0f); } }
+        static public NEConsoleColorDef White { get { return new NEConsoleColorDef(1.0f, 1.0f, 1.0f); } }
+        static public NEConsoleColorDef Gray { get { return new NEConsoleColorDef(0.5f, 0.5f, 0.5f); } }
+        static public NEConsoleColorDef Red { get { return new NEConsoleColorDef(1.0f, 0.0f, 0.0f); } }
+        static public NEConsoleColorDef Green { get { return new NEConsoleColorDef(0.0f, 1.0f, 0.0f); } }
+        static public NEConsoleColorDef Blue { get { return new NEConsoleColorDef(0.0f, 0.0f, 1.0f); } }
+        static public NEConsoleColorDef Yellow { get { return new NEConsoleColorDef(1.0f, 1.0f, 0.0f); } }
+        static public NEConsoleColorDef Magenta { get { return new NEConsoleColorDef(1.0f, 0.0f, 1.0f); } }
+        static public NEConsoleColorDef Cyan { get { return new NEConsoleColorDef(0.0f, 1.0f, 1.0f); } }
+        static public NEConsoleColorDef Orange { get { return new NEConsoleColorDef(0.9f, 0.5f, 0.0f); } }
+
         static public NEConsoleColorDef operator *(NEConsoleColorDef lhs, NEConsoleColorDef rhs)
         {
             float r = NEMathHelper.Clamp(lhs.RNormalized * rhs.RNormalized, 0.0f, 1.0f);
@@ -460,10 +471,10 @@ namespace NostalgiaEngine.Core
 
         static public NEConsoleColorDef operator -(NEConsoleColorDef lhs, NEConsoleColorDef rhs)
         {
-            uint r = NEMathHelper.Clamp(lhs.R - rhs.R, 0, 255);
-            uint g = NEMathHelper.Clamp(lhs.G - rhs.G, 0, 255);
-            uint b = NEMathHelper.Clamp(lhs.B - rhs.B, 0, 255);
-            return new NEConsoleColorDef(r, g, b);
+            int r =  NEMathHelper.Clamp((int)lhs.R - (int)rhs.R, 0, 255);
+            int g =  NEMathHelper.Clamp((int)lhs.G - (int)rhs.G, 0, 255);
+            int b =  NEMathHelper.Clamp((int)lhs.B - (int)rhs.B, 0, 255);
+            return new NEConsoleColorDef((uint)r, (uint)g, (uint)b);
         }
 
         static public NEConsoleColorDef operator -(NEConsoleColorDef val)

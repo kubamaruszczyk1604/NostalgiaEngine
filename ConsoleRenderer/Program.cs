@@ -40,7 +40,12 @@ namespace NostalgiaEngineApplication
             Engine engine = new Engine();
             NETextureEditor ed = new NETextureEditor();
             NERaycaster2D raycaster = new NERaycaster2D();
-            PhotoViewer demo = new PhotoViewer();
+            string[] paths = new string[] {
+                @"C:\test\nowa_textura10", @"C:\test\nowa_textura4",
+                @"C:\test\nowa_textura6", @"C:\test\nowa_textura5",@"C:\test\balcony",@"C:\test\water",
+                @"C:\test\playground", @"C:\test\nowa_textura", @"C:\test\nowa_textura2", @"C:\test\food",
+                @"C:\test\example1"};
+            PhotoViewer demo = new PhotoViewer(paths);
             BandLevelDemo bld = new BandLevelDemo();
             TextDemo ted = new TextDemo();
             engine.Start(demo);

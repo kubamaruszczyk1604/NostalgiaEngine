@@ -49,7 +49,7 @@ namespace NostalgiaEngine.Core
         static public int Clamp(int val, int low, int high)
         {
             val = (val < low) ? low : val;
-            val = (val > high) ? high : val;
+            val = (val >= high) ? high : val;
             return val;
         }
 
@@ -57,6 +57,7 @@ namespace NostalgiaEngine.Core
         {
             val = (val < low) ? low : val;
             val = (val > high) ? high : val;
+
             return val;
         }
 

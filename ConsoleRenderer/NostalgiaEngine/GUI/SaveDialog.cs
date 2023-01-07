@@ -73,7 +73,7 @@ namespace NostalgiaEngine.ConsoleGUI
         }
 
 
-        public override void OnDraw()
+        public override bool OnDraw()
         {
             NEScreenBuffer.Clear();
             m_FileExplorer.Draw(ScreenWidth);
@@ -103,7 +103,7 @@ namespace NostalgiaEngine.ConsoleGUI
                 NEScreenBuffer.WriteXY(34, 29, 15 | (4 << 4), " ESC - BACK ");
                 NEScreenBuffer.WriteXY(12, 27, 15 | (0 << 4), "ENTER NAME: ");
             }
-
+            return base.OnDraw();
         }
 
         void OnPathReady(string path)

@@ -18,6 +18,8 @@ namespace NostalgiaEngine.Core
         public object ReturnData { get; private set; }
         public Type ReturnDataType { get; private set; }
         public OnSceneExit onSceneExit { get; set; }
+
+        
         
 
         public void Exit(object returnData = null)
@@ -38,7 +40,7 @@ namespace NostalgiaEngine.Core
         public virtual void OnResume() { NEInput.FlushKeyboard(); }
         public virtual void OnUpdate(float deltaTime) { }
         public virtual void OnDrawPerColumn(int x) { }
-        public virtual void OnDraw() { }
+        public virtual bool OnDraw() { return true; }
         public virtual void OnExit()
         {
             NEInput.FlushKeyboard();

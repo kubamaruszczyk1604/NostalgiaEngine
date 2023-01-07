@@ -87,7 +87,7 @@ namespace NostalgiaEngine.Demos
             }
         }
 
-        public override void OnDraw()
+        public override bool OnDraw()
         {
             NEScreenBuffer.Clear();
             for (int x = 0; x < ScreenWidth; ++x)
@@ -111,7 +111,8 @@ namespace NostalgiaEngine.Demos
                     NEScreenBuffer.PutChar(cs.Character, cs.BitMask, x, y);
                 }
             }
-            base.OnDraw();
+             return base.OnDraw();
+            
         }
     }
 }

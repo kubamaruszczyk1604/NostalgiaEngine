@@ -184,8 +184,10 @@ namespace NostalgiaEngine.Core
 
                 }
 
-                m_CurrentScene.OnDraw();
-                NEScreenBuffer.SwapBuffers();
+                if (m_CurrentScene.OnDraw())
+                {
+                    NEScreenBuffer.SwapBuffers();
+                }
                 TotalTime += NEFrameTimer.GetDeltaTime();
                
             }

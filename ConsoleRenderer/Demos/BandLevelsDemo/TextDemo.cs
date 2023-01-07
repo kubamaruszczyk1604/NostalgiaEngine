@@ -82,7 +82,7 @@ namespace NostalgiaEngine.Demos
             return true;
         }
 
-        public override void OnDraw()
+        public override bool OnDraw()
         {
             float seconds = (DateTime.UtcNow.Second / 60.0f) * 2.0f;
             float minutes = (DateTime.UtcNow.Minute / 60.0f) * 2.0f;
@@ -90,7 +90,7 @@ namespace NostalgiaEngine.Demos
 
             float time = Engine.Instance.TotalTime;
             
-            if (tCount < 1.0f / 5.0f) return; //this bit below is clocked at 5Hz for more consistent and smoother effect
+            if (tCount < 1.0f / 5.0f) return true; //this bit below is clocked at 5Hz for more consistent and smoother effect
             tCount = 0;
 
             NEScreenBuffer.Clear();
@@ -146,7 +146,7 @@ namespace NostalgiaEngine.Demos
                     NEScreenBuffer.PutChar(cs.Character, cs.BitMask, x, y);
                 }
             }
-            base.OnDraw();
+           return base.OnDraw();
         }
     }
 }

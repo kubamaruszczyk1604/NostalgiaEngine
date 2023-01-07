@@ -375,7 +375,7 @@ namespace NostalgiaEngine.Raycaster
             }
         }
 
-        public override void OnDraw()
+        public override bool OnDraw()
         {
             
             RenderSpriteFull(m_Lamp1Sprite);
@@ -440,7 +440,7 @@ namespace NostalgiaEngine.Raycaster
                     }
                 }
             }
-
+            return base.OnDraw();
         }
 
         int GetCoord(int x, int y)

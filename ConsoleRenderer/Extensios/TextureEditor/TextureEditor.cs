@@ -331,7 +331,7 @@ namespace NostalgiaEngineExtensions.TextureEditor
         }
 
 
-        public override void OnDraw()
+        public override bool OnDraw()
         {
             Console.SetCursorPosition(0, 0);
             Console.CursorVisible = false;
@@ -360,6 +360,7 @@ namespace NostalgiaEngineExtensions.TextureEditor
             {
                 NEScreenBuffer.PutChar(c_Brush[i], (short)(m_BrushFlag ? 10 : 8), offset + i, (int)c_DrawingCanvasPos.Y - 2);
             }
+            return base.OnDraw();
         }
         public override void OnExit()
         {

@@ -4,16 +4,68 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NostalgiaEngine.Core;
-
+using NostalgiaEngine.ConsoleGUI;
 namespace TextureDisplay
 {
-    public class PhotoViewer: NEScene
+    public class PhotoViewer : NEScene
     {
+
+        class TexImage
+        {
+            public bool OK { get { return Color != null; } }
+
+            public int Width { get { return Color != null ? Color.Width : 50; } }
+            public int Height { get { return Color != null ? Color.Height : 50; } }
+
+            public NEColorTexture16 Color { get; private set; }
+            public NEColorPalette Palette { get; private set; }
+            public NEFloatBuffer Luma { get; private set; }
+
+            public TexImage(string path)
+            {
+                Color = NEColorTexture16.LoadFromFile(path + "/color.tex");
+                Palette = NEColorPalette.FromFile(path + "/palette.txt");
+                Luma = NEFloatBuffer.FromFile(path + "/luma.buf");
+            }
+
+            public void SetPalette()
+            {
+                if (Palette != null)
+                {
+                    NEColorManagement.SetPalette(Palette);
+                }
+                else
+                {
+                    NEColorManagement.SetDefaultPalette();
+                }
+            }
+        }
+
         NEColorTexture16 m_MainTex;
         NEColorPalette m_MainTexPal;
         NEFloatBuffer m_LumaBuffer;
-        bool sampled;
+        float m_RefreshIntervalCounter;
         float m_Col;
+        bool m_IntroPhase;
+        int m_Index = 0;
+
+        List<TexImage> m_Images;
+
+        public PhotoViewer(string[] paths)
+        {
+            m_IntroPhase = true;
+
+            m_Images = new List<TexImage>(paths.Length);
+            for (int i = 0; i < paths.Length; ++i)
+            {
+                TexImage img = new TexImage(paths[i]);
+                if (img.OK)
+                {
+                    m_Images.Add(img);
+                }
+            }
+        }
+
         public override bool OnLoad()
         {
             ScreenWidth = 220;
@@ -22,21 +74,15 @@ namespace TextureDisplay
             PixelHeight = 5;
             m_Col = 0;
            // ParallelScreenDraw = true;
-            m_MainTex = NEColorTexture16.LoadFromFile(@"C:\test\nowa_textura10\color.tex");
-            sampled = false;
+
+            m_MainTex = NEColorTexture16.LoadFromFile(@"resources\intro.dat");
+            m_RefreshIntervalCounter = 0.0f;
             if (m_MainTex == null) return false;
 
-            m_MainTexPal = NEColorPalette.FromFile(@"C:\test\nowa_textura10\palette.txt");
+            m_MainTexPal = NEColorPalette.FromFile(@"resources\intro.res");
+            m_Col = 1.0f;
             if (m_MainTexPal == null) return false;
-            try
-            {
-                //m_LumaBuffer = NEFloatBuffer.FromFile(@"C:\test\nowa_textura10\luma.buf");
-            }
-            catch
-            {
 
-            }
-            //m_MainTex.SampleMode = NESampleMode.Repeat;
             return true;
         }
 
@@ -46,30 +92,49 @@ namespace TextureDisplay
             NEColorManagement.SetPalette(m_MainTexPal);
 
         }
+
         override public void OnUpdate(float dt)
         {
+
+
+            if (m_RefreshIntervalCounter <= 2.0f)
+            {
+                m_RefreshIntervalCounter += dt;
+
+            }
+
             if (NEInput.CheckKeyPress(ConsoleKey.Escape))
             {
                 Exit();
             }
-            if(NEInput.CheckKeyPress(NEKey.RightArrow))
+            if (NEInput.CheckKeyPress(NEKey.RightArrow))
             {
                 m_Col = 0;
+                SetImage(1);
+            }
+            if (NEInput.CheckKeyPress(NEKey.LeftArrow))
+            {
+                m_Col = 0;
+                SetImage(-1);
             }
             //m_Col -= dt;
-            m_Col = m_Col >= 1.0f ? 1.0f : m_Col + dt;
-            
+            m_Col = m_Col >= 1.0f ? 1.0f : m_Col + dt * 1.5f;
+
+
+            if (!m_IntroPhase) return;
+            m_MainTexPal.FadeIn(dt * 0.65f);
+            NEColorManagement.SetPalette(m_MainTexPal);
         }
 
 
-        public override void OnDraw()
+        public override bool OnDraw()
         {
-            //if (sampled) return;
+            if (m_RefreshIntervalCounter>2.0f) return false;
             NEScreenBuffer.Clear();
             for (int x = 0; x < ScreenWidth; ++x)
             {
                 float u = ((float)x) / ((float)ScreenWidth);
-                
+
                 for (int y = 0; y < ScreenHeight; ++y)
                 {
                     float du = u;
@@ -93,7 +158,42 @@ namespace TextureDisplay
                     NEScreenBuffer.PutChar(sample.Character, sample.BitMask, x, y);
                 }
             }
-           // sampled = true;
+            return true;
         }
+
+
+        private void SetImage(int step)
+        {
+            m_RefreshIntervalCounter = 0.0f;
+            if (m_IntroPhase)
+            {
+                m_IntroPhase = false;
+                step = 0;
+            }
+            if (m_Images.Count == 0)
+            {
+                NEConsoleSounds.ErrorBeep();
+                return;
+            }
+            m_Index += step;
+            m_Index %= m_Images.Count;
+
+            if (m_Index < 0)
+            {
+                m_Index += m_Images.Count;
+            }
+
+            m_MainTex = m_Images[m_Index].Color;
+            m_Images[m_Index].SetPalette();
+            m_LumaBuffer = null;
+            if (m_Images[m_Index].Luma != null)
+            {
+                m_LumaBuffer = m_Images[m_Index].Luma;
+            }
+
+
+
+        }
+
     }
 }

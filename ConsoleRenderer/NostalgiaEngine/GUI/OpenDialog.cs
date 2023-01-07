@@ -44,13 +44,14 @@ namespace NostalgiaEngine.ConsoleGUI
             }
         }
 
-        public override void OnDraw()
+        public override bool OnDraw()
         {
-            base.OnDraw();
+            
             NEScreenBuffer.Clear();
             m_FileExplorer.Draw(ScreenWidth);
             NEScreenBuffer.WriteXY(54, 28, 15|2<<4, " ENTER - CONFIRM ");
             NEScreenBuffer.WriteXY(34, 28, 15 | 4 << 4, " ESC - CANCEL ");
+            return base.OnDraw();
         }
 
         private void OnPathUpdate(string path)

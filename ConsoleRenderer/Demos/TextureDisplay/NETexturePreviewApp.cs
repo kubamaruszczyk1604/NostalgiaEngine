@@ -59,7 +59,7 @@ namespace TextureDisplay
         }
 
 
-        public override void OnDraw()
+        public override bool OnDraw()
         {
             //if (sampled) return;
             NEScreenBuffer.Clear();
@@ -90,7 +90,8 @@ namespace TextureDisplay
                     NEScreenBuffer.PutChar(sample.Character, sample.BitMask, x, y);
                 }
             }
-           // sampled = true;
+            // sampled = true;
+            return true;
         }
     }
 }

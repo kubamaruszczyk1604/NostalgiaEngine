@@ -165,7 +165,7 @@ namespace NostalgiaEngine.Core
 
         static public int SetPalette(NEColorPalette pal)
         {
-            return SetPalette(pal.Colors);
+            return SetPalette(pal.OutputColors);
         }
 
         static public int SetPalette(NEConsoleColorDef[] pal)

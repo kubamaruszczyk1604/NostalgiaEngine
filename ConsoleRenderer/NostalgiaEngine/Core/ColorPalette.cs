@@ -38,11 +38,12 @@ namespace NostalgiaEngine.Core
 
         static public NEColorPalette FromFile(string path)
         {
-            NEColorPalette ret = new NEColorPalette();
-            using (System.IO.StreamReader reader = new System.IO.StreamReader(path))
+            try
             {
-                try
+                NEColorPalette ret = new NEColorPalette();
+                using (System.IO.StreamReader reader = new System.IO.StreamReader(path))
                 {
+
                     int cnt = 0;
                     while (!reader.EndOfStream && cnt < 16)
                     {
@@ -54,90 +55,118 @@ namespace NostalgiaEngine.Core
                         ret.SetColor(cnt, new NEConsoleColorDef((uint)r, (uint)g, (uint)b));
                         cnt++;
                     }
-                }
-                catch
-                {
-                    reader.Close();
-                    return null;
+                    return ret;
                 }
             }
-            return ret;
+            catch
+            {
+                return null;
+            }
+
         }
 
-        public NEConsoleColorDef[] Colors { get; private set; }
+        public  NEConsoleColorDef[] UnmodifiedColors { get; private set; }
+        public NEConsoleColorDef[] OutputColors { get; private set; }
 
 
         public NEColorPalette()
         {
-            Colors = new NEConsoleColorDef[16];
-            Array.Copy(DefaultPalette, Colors, 16);
+            UnmodifiedColors = new NEConsoleColorDef[16];
+            Array.Copy(DefaultPalette, UnmodifiedColors, 16);
+            OutputColors = new NEConsoleColorDef[16];
+            Array.Copy(DefaultPalette, OutputColors, 16);
         }
 
         public NEColorPalette(NEConsoleColorDef[] src)
         {
-            Colors = new NEConsoleColorDef[16];
-            Array.Copy(src, Colors, 16);          
+            UnmodifiedColors = new NEConsoleColorDef[16];
+            Array.Copy(src, UnmodifiedColors, 16);
+            OutputColors = new NEConsoleColorDef[16];
+            Array.Copy(src, OutputColors, 16);
+        }
+
+        public void Reset()
+        {
+            Array.Copy(UnmodifiedColors, OutputColors, 16);
         }
 
         public void MultiplyBy(float val)
         {
-            for (int i = 0; i < Colors.Length; ++i)
+            for (int i = 0; i < UnmodifiedColors.Length; ++i)
             {
-                Colors[i] *= val;
+                OutputColors[i] *= val;
             }
         }
 
         public void MultiplyBy(NEConsoleColorDef col)
         {
-            for(int i =0; i < Colors.Length; ++i)
+            for (int i = 0; i < UnmodifiedColors.Length; ++i)
             {
-                Colors[i] *= col;
+                OutputColors[i] *= col;
             }
         }
 
         public void MultiplyBy(NEColorPalette pal)
         {
-            for (int i = 0; i < Colors.Length; ++i)
+            for (int i = 0; i < UnmodifiedColors.Length; ++i)
             {
-                Colors[i] *= pal.Colors[i];
+                OutputColors[i] *= pal.UnmodifiedColors[i];
             }
         }
 
         public void Subtract(NEConsoleColorDef col)
         {
-            for (int i = 0; i < Colors.Length; ++i)
+            for (int i = 0; i < UnmodifiedColors.Length; ++i)
             {
-                Colors[i] -= col;
+                OutputColors[i] -= col;
+            }
+        }
+
+
+        private float m_Fade = 0.0f;
+        public void FadeIn(float t)
+        {
+            m_Fade += t;
+            if (m_Fade > 2.0f) return;
+            if (m_Fade < 0.0f) return;
+            NEConsoleColorDef black = NEConsoleColorDef.Black;
+            if(m_Fade<=1.0f)
+            {
+                for (int i = 0; i < UnmodifiedColors.Length; ++i)
+                {
+                    OutputColors[i] =    black*(1.0f - m_Fade) + UnmodifiedColors[i] * m_Fade;
+                }
             }
         }
 
         public void Subtract(NEColorPalette pal)
         {
-            for (int i = 0; i < Colors.Length; ++i)
+            for (int i = 0; i < UnmodifiedColors.Length; ++i)
             {
-                Colors[i] -= pal.Colors[i];
+                OutputColors[i] -= pal.UnmodifiedColors[i];
             }
         }
 
         public void InvertColors()
-        { 
-            for (int i = 0; i < Colors.Length; ++i)
+        {
+            for (int i = 0; i < UnmodifiedColors.Length; ++i)
             {
-                Colors[i] = -Colors[i];
+                OutputColors[i] = -UnmodifiedColors[i];
             }
         }
 
         public NEConsoleColorDef GetColor(int colIndex)
         {
             colIndex = NEMathHelper.Clamp(colIndex, 0, 15);
-            return Colors[colIndex];
+            return OutputColors[colIndex];
         }
 
         public bool SetColor(int colIndex, NEConsoleColorDef col)
         {
             if (colIndex > 15) return false;
             if (colIndex < 0) return false;
-            Colors[colIndex] = col;
+            UnmodifiedColors[colIndex] = col;
+            OutputColors[colIndex] = col;
             return true;
         }
 
