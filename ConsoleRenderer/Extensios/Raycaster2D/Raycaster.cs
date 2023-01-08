@@ -341,7 +341,7 @@ namespace NostalgiaEngine.Raycaster
 
                 float aspectRatio = sprite.AstpectRatio / m_Fov;
 
-                int middleSpriteOnScreen = (int)((0.5f + ((angleFromRay * sign) / (m_Fov*0.5f) ))  * ScreenWidth);
+                int middleSpriteOnScreen = (int)((0.5f + ((angleFromRay * sign) / (m_Fov * 0.5f)))  * ScreenWidth);
 
                 float ceiling = ((float)ScreenHeight * 0.5f) - ((float)ScreenHeight) * scalingFactor;
                 float floor = ScreenHeight - ceiling;
