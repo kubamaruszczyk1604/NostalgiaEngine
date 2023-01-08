@@ -20,7 +20,7 @@ namespace NostalgiaEngineApplication
 
         static void Main(string[] args)
         {
-            Note[] notes = new Note[] { new Note(Note.GetNoteFrequency(12), 510)
+            //Note[] notes = new Note[] { new Note(Note.GetNoteFrequency(12), 510),
             //    new Note(Note.GetNoteFrequency(13), 110),
             //new Note(Note.GetNoteFrequency(14), 110),
             // new Note(Note.GetNoteFrequency(15), 110),
@@ -33,7 +33,7 @@ namespace NostalgiaEngineApplication
             //        new Note(Note.GetNoteFrequency(22), 110),
             //         new Note(Note.GetNoteFrequency(23), 110),
             //          new Note(Note.GetNoteFrequency(24), 110),
-            };
+            //};
             //NESoundSynth.Play(notes);
 
 
