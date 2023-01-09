@@ -121,9 +121,9 @@ namespace NostalgiaEngine.Core
             float b = NEVector2.Dot((p - B), FindNormal(B, C));
             float c = NEVector2.Dot((p - C), FindNormal(C, A));
 
-            if (Sign(a) + Sign(b) + Sign(c) <= -3.0)
-                return true;
-            return false;
+            return (Sign(a) + Sign(b) + Sign(c) <= -3.0);
+            //    return true;
+            //return false;
         }
 
         public static bool InRectangle(NEVector2 p, NEVector2 orgin, float W, float H)
@@ -194,6 +194,20 @@ namespace NostalgiaEngine.Core
             v.Y = ty;
         }
 
+
+        public void Swap(ref float a, ref float b)
+        {
+            float temp = a;
+            a = b;
+            b = temp;
+        }
+
+        public void Swap(ref NEVector2 a, ref NEVector2 b)
+        {
+            NEVector2 temp = a;
+            a = b;
+            b = a;
+        }
 
     }
 }

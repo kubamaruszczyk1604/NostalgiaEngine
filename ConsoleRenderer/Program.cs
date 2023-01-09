@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using NostalgiaEngineExtensions.TextureEditor;
 using NostalgiaEngine.Core;
 using NostalgiaEngine.Raycaster;
+using NostalgiaEngine.RasterizerPipeline;
 using TextureDisplay;
 using NostalgiaEngine.ConsoleGUI;
 using System.Diagnostics;
@@ -48,7 +49,8 @@ namespace NostalgiaEngineApplication
             PhotoViewer demo = new PhotoViewer(paths);
             BandLevelDemo bld = new BandLevelDemo();
             TextDemo ted = new TextDemo();
-            engine.Start(demo);
+            Scene3D sc = new Scene3D();
+            engine.Start(sc);
 
 
             //Envelope env = new Envelope(200, 300, 200);
