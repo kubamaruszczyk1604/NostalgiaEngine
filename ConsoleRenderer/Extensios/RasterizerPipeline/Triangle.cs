@@ -8,22 +8,24 @@ namespace NostalgiaEngine.RasterizerPipeline
 {
     public class Triangle
     {
-        public Vertex[] Vertices {get; private set; }
-
+        public Vertex[] Vertices { get; private set; }
+        public Vertex[] LeftSortedVertices { get; private set; }
         
         public NEVector4 Normal { get; private set; }
         
         public Triangle(Vertex v1, Vertex v2, Vertex v3, NEVector4 normal)
         {
             Vertices = new Vertex[] { v1, v2, v3 };
+            LeftSortedVertices = new Vertex[3];
             Normal = normal;
+            GetXSortedVertices(out LeftSortedVertices[0], out LeftSortedVertices[1], out LeftSortedVertices[2]);
         }
 
-        public Triangle(Vertex v1, Vertex v2, Vertex v3)
+        public Triangle(Vertex v1, Vertex v2, Vertex v3): this(v1,v2,v3, new NEVector4())
         {
-            Vertices = new Vertex[] { v1, v2, v3 };
             CalculateNormal();
         }
+
 
         public void SetVertexPos(uint index)
         {
@@ -31,7 +33,12 @@ namespace NostalgiaEngine.RasterizerPipeline
         }
 
 
-        public void GetXSortedVertices(out Vertex left, out Vertex middle, out Vertex right)
+        public void LeftSortVertices()
+        {
+            GetXSortedVertices(out LeftSortedVertices[0], out LeftSortedVertices[1], out LeftSortedVertices[2]);
+        }
+
+        private void GetXSortedVertices(out Vertex left, out Vertex middle, out Vertex right)
         {
             left = Vertices[0];
             middle = Vertices[1];

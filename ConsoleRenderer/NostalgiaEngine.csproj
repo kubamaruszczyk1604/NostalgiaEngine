@@ -69,6 +69,7 @@
     <Compile Include="Extensios\RasterizerPipeline\Scene3D.cs" />
     <Compile Include="Extensios\RasterizerPipeline\Triangle.cs" />
     <Compile Include="Extensios\RasterizerPipeline\Vertex.cs" />
+    <Compile Include="Extensios\RasterizerPipeline\VertexBuffer.cs" />
     <Compile Include="NostalgiaEngine\Core\ColorManagement.cs" />
     <Compile Include="NostalgiaEngine\Core\ColorPalette.cs" />
     <Compile Include="NostalgiaEngine\Core\Fbuffer.cs" />

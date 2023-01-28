@@ -23,6 +23,8 @@ namespace NostalgiaEngine.RasterizerPipeline
         public float U { get { return m_UVs.X; } }
         public float V { get { return m_UVs.Y; } }
 
+        
+
         public Vertex(float x, float y, float z)
         {
             m_Position = new NEVector4(x, y, z, 0.0f);
@@ -42,5 +44,19 @@ namespace NostalgiaEngine.RasterizerPipeline
             v2 = tmp;
             return;
         }
+
+        public void Translate(float x, float y, float z)
+        {
+            m_Position.X += x;
+            m_Position.Y += y;
+            m_Position.Z += z;
+        }
+
+        public void Translate(NEVector4 delta)
+        {
+            m_Position += delta;
+        }
+
+
     }
 }

@@ -8,7 +8,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 {
     public class Scene3D : NEScene
     {
-        Triangle[] m_Triangles = new Triangle[10];
+        Triangle[] m_Triangles = new Triangle[16];
 
         public override bool OnLoad()
         {
@@ -19,32 +19,36 @@ namespace NostalgiaEngine.RasterizerPipeline
             return base.OnLoad();
         }
 
+
+
         public override void OnStart()
         {
-            m_Triangles[0] = new Triangle(
-                new Vertex(0.5f, 0.0f, 1.0f),
-                new Vertex(0.0f, 0.9f, 1.0f),
-                new Vertex(-0.5f, 0.0f, 1.0f));
+            //m_Triangles[0] = new Triangle(
+            //    new Vertex(0.5f, 0.0f, 1.0f),
+            //    new Vertex(0.0f, 0.5f, 1.0f),
+            //    new Vertex(-0.5f, 0.0f, 1.0f));
 
             //m_Triangles[1] = new Triangle(
             //   new Vertex(-0.5f, 0.0f, 1.0f),
-            //   new Vertex(0.0f, 0.8f, 1.0f),
+            //   new Vertex(0.0f, 0.5f, 1.0f),
             //   new Vertex(0.5f, 0.0f, 1.0f));
 
             //m_Triangles[2] = new Triangle(
             //   new Vertex(-0.5f, 0.0f, 1.0f),
-            //   new Vertex(0.0f, 0.7f, 1.0f),
+            //   new Vertex(0.0f, 0.5f, 1.0f),
             //   new Vertex(0.5f, 0.0f, 1.0f));
 
             //m_Triangles[3] = new Triangle(
             //   new Vertex(-0.5f, 0.0f, 1.0f),
-            //   new Vertex(0.0f, 0.6f, 1.0f),
+            //   new Vertex(0.0f, 0.5f, 1.0f),
             //   new Vertex(0.5f, 0.0f, 1.0f));
 
             //m_Triangles[4] = new Triangle(
             //   new Vertex(-0.5f, 0.0f, 1.0f),
             //   new Vertex(0.0f, 0.5f, 1.0f),
             //   new Vertex(0.5f, 0.0f, 1.0f));
+
+            GenerateTestTriangles();
             base.OnStart();
         }
 
@@ -76,11 +80,11 @@ namespace NostalgiaEngine.RasterizerPipeline
 
                 float v = ((float)y) / ((float)ScreenHeight);
                 v = -((2.0f * v) - 1.0f);
-                for (short i = 0; i < 1; ++i)
+                for (short i = 0; i < m_Triangles.Length; ++i)
                 {
                     if (CheckTriangle(m_Triangles[i], new NEVector2(u, v)))
                     {
-                        NEScreenBuffer.PutChar((char)NEBlock.Solid, i, x, y);
+                        NEScreenBuffer.PutChar((char)NEBlock.Solid, (Int16)(1 + i), x, y);
                     }
                 }
             }
@@ -123,9 +127,33 @@ namespace NostalgiaEngine.RasterizerPipeline
         private bool CheckTriangle(Triangle triangle, NEVector2 p)
         {
 
-            triangle.GetXSortedVertices(out Vertex l, out Vertex m, out Vertex r);
-            return NEMathHelper.InTriangle(p, l.Position.XY, 
+            Vertex l = triangle.LeftSortedVertices[0];
+            Vertex m = triangle.LeftSortedVertices[1];
+            Vertex r = triangle.LeftSortedVertices[2];
+            return NEMathHelper.InTriangle(p, l.Position.XY,
                 m.Position.XY, r.Position.XY);
+        }
+
+        private void GenerateTestTriangles()
+        {
+            float deltaX = 0.5f;
+            float deltaY = -0.5f;
+            float deltaZ = 0.1f;
+            float orginX = 0.0f;
+            float orginY = 0.0f;
+            float orginZ = 1.0f;
+            for (int i = 0; i < m_Triangles.Length; ++i)
+            {
+                float normI = (float)i / (float)m_Triangles.Length;
+                float xDisp = deltaX * (float)Math.Cos(normI * 6.28f);
+                float yDisp = deltaY * (float)Math.Sin(normI * 6.28f);
+                float zDisp = deltaZ * i;
+                m_Triangles[i] = new Triangle(new Vertex(orginX + 0.5f + xDisp, orginY + yDisp, orginZ + zDisp),
+                             new Vertex(orginX + 0.0f + xDisp, orginY + 0.5f + yDisp, orginZ + zDisp),
+                             new Vertex(orginX - 0.5f + xDisp, orginY + yDisp, orginZ + zDisp));
+
+
+            }
         }
 
     }
