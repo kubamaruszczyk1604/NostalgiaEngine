@@ -19,18 +19,18 @@ namespace NostalgiaEngine.RasterizerPipeline
         public NEEdge AC { get; private set; }
         public NEEdge BC { get; private set; }
 
+        public Vertex A { get; private set; }
+        public Vertex B { get; private set; }
+        public Vertex C { get; private set; }
+
         public Triangle(int i0, int i1, int i2, VertexBuffer vbo)
         {
             VBO = vbo;
             Indices = new int[] { i0, i1, i2 };
             LeftSortedIndices = new int[3];
-            //LeftSort();
-            //CalculateEdges();
             
         }
-        private Vertex A;
-        private Vertex B;
-        private Vertex C;
+
 
         public void CalculateEdges()
         {
@@ -77,10 +77,10 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         }
 
-       private  void LeftSort()
-        {
-            GetXSortedVertices(out LeftSortedIndices[0], out LeftSortedIndices[1], out LeftSortedIndices[2]);
-        }
+       //private  void LeftSort()
+       // {
+       //     GetXSortedVertices(out LeftSortedIndices[0], out LeftSortedIndices[1], out LeftSortedIndices[2]);
+       // }
 
         private void GetXSortedVertices(out int left, out int middle, out int right)
         {

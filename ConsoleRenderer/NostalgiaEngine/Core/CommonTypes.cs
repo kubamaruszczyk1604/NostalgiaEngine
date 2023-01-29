@@ -99,6 +99,7 @@ namespace NostalgiaEngine.Core
         public float X { get; set; }
         public float Y { get; set; }
         public float Length { get { return CalculateLength(this); } }
+        public float LengthSqared { get { return X * X + Y * Y; } }
         public NEVector2 Normalized { get { return Normalize(this); } }
 
         public override string ToString()

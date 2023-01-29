@@ -33,6 +33,13 @@ namespace NostalgiaEngine.Core
             return DATA[XY2I(x, y)];
         }
 
+        public bool TestLess(int x, int y, float val)
+        {
+            int i = XY2I(x, y);
+            if (val <= DATA[i]) return true;
+            return false;
+        }
+
         /// <summary>
         /// Resets entire buffer to initial value. Usually this will be infinity, unless specified differently when buffer was created.
         /// </summary>
