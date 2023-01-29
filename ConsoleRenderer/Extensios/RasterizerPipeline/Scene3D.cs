@@ -21,8 +21,9 @@ namespace NostalgiaEngine.RasterizerPipeline
             m_DepthBuffer = new NEDepthBuffer(ScreenWidth, ScreenHeight);
             m_VBO = new VertexBuffer();
             //GenerateTestTriangles();
-            GenerateSquare(0.0f, 0.0f, 0.5f);
-            GenerateSquare(0.2f, 0.1f, 0.45f);
+            GenerateSquare(0.0f, 0.0f, 0.5f,1);
+            GenerateSquare(0.2f, 0.1f, 0.45f,3);
+            GenerateSquare(0.3f, 0.3f, 0.4f, 9);
             return base.OnLoad();
         }
 
@@ -98,7 +99,7 @@ namespace NostalgiaEngine.RasterizerPipeline
                    // float fragmentDepth = tr.A.Z / maxDist;
                     if (m_DepthBuffer.TryUpdate(x, y, fragmentDepth))
                     {
-                        NEScreenBuffer.PutChar((char)NEBlock.Solid, (Int16)(1 + i), x, y);
+                        NEScreenBuffer.PutChar((char)NEBlock.Solid, (Int16)(tr.ColorAttrib), x, y);
 
 
                     }
@@ -185,7 +186,7 @@ namespace NostalgiaEngine.RasterizerPipeline
         }
 
         int squareCount = 0;
-        private void GenerateSquare(float x, float y, float depth)
+        private void GenerateSquare(float x, float y, float depth, int col)
         {
             float size = 0.25f;
             m_VBO.AddVertex(new Vertex(-size+x,-size+y,depth));
@@ -196,7 +197,9 @@ namespace NostalgiaEngine.RasterizerPipeline
             int startAt = squareCount * 4;
             m_VBO.AddTriangle(0+ startAt, 1 + startAt, 2 + startAt);
             m_VBO.AddTriangle(0 + startAt, 2 + startAt, 3 + startAt);
-
+            int colStart = squareCount * 2;
+            m_VBO.Triangles[colStart].ColorAttrib = col;
+            m_VBO.Triangles[colStart + 1].ColorAttrib = col;
             squareCount++;
 
         }

@@ -23,6 +23,8 @@ namespace NostalgiaEngine.RasterizerPipeline
         public Vertex B { get; private set; }
         public Vertex C { get; private set; }
 
+        public int ColorAttrib = 1;
+
         public Triangle(int i0, int i1, int i2, VertexBuffer vbo)
         {
             VBO = vbo;
