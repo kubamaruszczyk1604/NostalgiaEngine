@@ -10,58 +10,43 @@ namespace NostalgiaEngine.RasterizerPipeline
     public class VertexBuffer
     {
 
+        public List<Vertex> ModelVertices { get; private set; }
         public List<Vertex> Vertices { get; private set; }
         public List<Triangle> Triangles { get; private set; }
 
         public VertexBuffer()
         {
+            ModelVertices = new List<Vertex>(100);
             Vertices = new List<Vertex>(100);
+            Triangles = new List<Triangle>(100);
         }
 
-        public bool Create(Triangle[] triangles)
+
+
+
+        public void AddVertex(Vertex v)
         {
-            if (triangles.Length == 0) return false;
-            Vertices.Clear();
-            Triangles = new List<Triangle>(triangles.Length);
-            for (int i = 0; i < triangles.Length; ++i)
-            {
-                Vertices.AddRange(triangles[i].Vertices);
-                Triangles.Add(triangles[i]);
-            }
-            return true;
-        }
-
-        //public bool Create(int[] indexBuffer)
-        //{
-        //    if(indexBuffer == null) return false;
-        //    if (indexBuffer.Length < 3) return false;
-        //    if (Vertices.Count < 3) return false;
-
-
-
-        //    return true;
-        //}
-
-
-        public void AddNewVertex(Vertex v)
-        {
+            ModelVertices.Add(v);
             Vertices.Add(v);
         }
 
-        public void AddNewVertex(float x, float y, float z)
+        public void AddVertex(float x, float y, float z)
         {
+            ModelVertices.Add(new Vertex(x, y, z));
             Vertices.Add(new Vertex(x, y, z));
-
         }
 
-        public void AddNewVertex(float x, float y, float z, float u, float v)
+        public void AddVertex(float x, float y, float z, float u, float v)
         {
+            ModelVertices.Add(new Vertex(x, y, z, u, v));
             Vertices.Add(new Vertex(x, y, z, u, v));
         }
 
-        public void Translate()
+        public void AddTriangle(int i0, int i1, int i2)
         {
-
+            Triangles.Add(new Triangle(i0, i1, i2, this));
         }
+
+
     }
 }

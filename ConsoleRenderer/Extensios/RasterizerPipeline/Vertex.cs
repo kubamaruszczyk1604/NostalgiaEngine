@@ -57,6 +57,11 @@ namespace NostalgiaEngine.RasterizerPipeline
             m_Position += delta;
         }
 
+        public void SetValue(Vertex v)
+        {
+            m_Position = v.Position;
+            m_UVs = v.UV;
+        }
 
     }
 }

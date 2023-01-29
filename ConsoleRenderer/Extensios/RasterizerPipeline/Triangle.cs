@@ -8,59 +8,77 @@ namespace NostalgiaEngine.RasterizerPipeline
 {
     public class Triangle
     {
-        public Vertex[] Vertices { get; private set; }
-        public Vertex[] LeftSortedVertices { get; private set; }
-        
-        public NEVector4 Normal { get; private set; }
-        
-        public Triangle(Vertex v1, Vertex v2, Vertex v3, NEVector4 normal)
-        {
-            Vertices = new Vertex[] { v1, v2, v3 };
-            LeftSortedVertices = new Vertex[3];
-            Normal = normal;
-            GetXSortedVertices(out LeftSortedVertices[0], out LeftSortedVertices[1], out LeftSortedVertices[2]);
-        }
-
-        public Triangle(Vertex v1, Vertex v2, Vertex v3): this(v1,v2,v3, new NEVector4())
-        {
-            CalculateNormal();
-        }
 
 
-        public void SetVertexPos(uint index)
+
+        public VertexBuffer VBO { get; private set; }
+        public int[] Indices { get; private set; }
+        public int[] LeftSortedIndices { get; private set; }
+ 
+        public Triangle(int i0, int i1, int i2, VertexBuffer vbo)
         {
-            if (index > 2) return;
+            VBO = vbo;
+            Indices = new int[] { i0, i1, i2 };
+            LeftSortedIndices = new int[3];
+            LeftSort();
+          
         }
 
 
-        public void LeftSortVertices()
+
+
+        public void LeftSort()
         {
-            GetXSortedVertices(out LeftSortedVertices[0], out LeftSortedVertices[1], out LeftSortedVertices[2]);
+            GetXSortedVertices(out LeftSortedIndices[0], out LeftSortedIndices[1], out LeftSortedIndices[2]);
         }
 
-        private void GetXSortedVertices(out Vertex left, out Vertex middle, out Vertex right)
+        private void GetXSortedVertices(out int left, out int middle, out int right)
         {
-            left = Vertices[0];
-            middle = Vertices[1];
-            right = Vertices[2];
+            left = Indices[0];
+            middle = Indices[1];
+            right = Indices[2];
 
-            if (left.X > middle.X) Vertex.Swap(ref left, ref middle);
-            if (middle.X > right.X) Vertex.Swap(ref middle, ref right);
-            if (left.X > middle.X) Vertex.Swap(ref left, ref middle);
+
+
+            //if (left.X > middle.X) Vertex.Swap(ref left, ref middle);
+
+            if(VBO.Vertices[left].X > VBO.Vertices[middle].X)
+            {
+                SwapInt(ref left, ref middle);
+            }
+
+            //if (middle.X > right.X) Vertex.Swap(ref middle, ref right);
+            if (VBO.Vertices[middle].X > VBO.Vertices[right].X)
+            {
+                SwapInt(ref middle, ref right);
+            }
+
+
+            //if (left.X > middle.X) Vertex.Swap(ref left, ref middle);
+            if (VBO.Vertices[left].X > VBO.Vertices[middle].X)
+            {
+                SwapInt(ref left, ref middle);
+            }
+
         }
 
        
-
-
-        private void CalculateNormal()
+        private void SwapInt(ref int a, ref int b)
         {
-            NEVector4 a = (Vertices[1].Position - Vertices[0].Position).Normalized;
-            NEVector4 b = (Vertices[2].Position - Vertices[0].Position).Normalized;
-
-            float x = a.Y * b.Z - a.Z * b.Y;
-            float y = a.Z * b.X - a.X * b.Z;
-            float z = a.X * b.Y - a.Y * b.X;
-            Normal = new NEVector4(x, y,z);
+           int tmp = a;
+            a = b;
+            b = tmp;
         }
+
+        //private void CalculateNormal()
+        //{
+        //    NEVector4 a = (Vertices[1].Position - Vertices[0].Position).Normalized;
+        //    NEVector4 b = (Vertices[2].Position - Vertices[0].Position).Normalized;
+
+        //    float x = a.Y * b.Z - a.Z * b.Y;
+        //    float y = a.Z * b.X - a.X * b.Z;
+        //    float z = a.X * b.Y - a.Y * b.X;
+        //    Normal = new NEVector4(x, y,z);
+        //}
     }
 }

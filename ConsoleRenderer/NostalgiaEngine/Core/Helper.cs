@@ -202,6 +202,13 @@ namespace NostalgiaEngine.Core
             b = temp;
         }
 
+        private void Swap(ref int a, ref int b)
+        {
+            int tmp = a;
+            a = b;
+            b = tmp;
+        }
+
         public void Swap(ref NEVector2 a, ref NEVector2 b)
         {
             NEVector2 temp = a;

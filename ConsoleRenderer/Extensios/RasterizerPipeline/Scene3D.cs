@@ -8,7 +8,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 {
     public class Scene3D : NEScene
     {
-        Triangle[] m_Triangles = new Triangle[16];
+        VertexBuffer m_VBO;
 
         public override bool OnLoad()
         {
@@ -16,6 +16,10 @@ namespace NostalgiaEngine.RasterizerPipeline
             ScreenHeight = 200;
             PixelWidth = 4;
             PixelHeight = 4;
+
+
+            m_VBO = new VertexBuffer();
+            GenerateTestTriangles();
             return base.OnLoad();
         }
 
@@ -23,32 +27,9 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         public override void OnStart()
         {
-            //m_Triangles[0] = new Triangle(
-            //    new Vertex(0.5f, 0.0f, 1.0f),
-            //    new Vertex(0.0f, 0.5f, 1.0f),
-            //    new Vertex(-0.5f, 0.0f, 1.0f));
 
-            //m_Triangles[1] = new Triangle(
-            //   new Vertex(-0.5f, 0.0f, 1.0f),
-            //   new Vertex(0.0f, 0.5f, 1.0f),
-            //   new Vertex(0.5f, 0.0f, 1.0f));
 
-            //m_Triangles[2] = new Triangle(
-            //   new Vertex(-0.5f, 0.0f, 1.0f),
-            //   new Vertex(0.0f, 0.5f, 1.0f),
-            //   new Vertex(0.5f, 0.0f, 1.0f));
-
-            //m_Triangles[3] = new Triangle(
-            //   new Vertex(-0.5f, 0.0f, 1.0f),
-            //   new Vertex(0.0f, 0.5f, 1.0f),
-            //   new Vertex(0.5f, 0.0f, 1.0f));
-
-            //m_Triangles[4] = new Triangle(
-            //   new Vertex(-0.5f, 0.0f, 1.0f),
-            //   new Vertex(0.0f, 0.5f, 1.0f),
-            //   new Vertex(0.5f, 0.0f, 1.0f));
-
-            GenerateTestTriangles();
+           
             base.OnStart();
         }
 
@@ -80,9 +61,9 @@ namespace NostalgiaEngine.RasterizerPipeline
 
                 float v = ((float)y) / ((float)ScreenHeight);
                 v = -((2.0f * v) - 1.0f);
-                for (short i = 0; i < m_Triangles.Length; ++i)
+                for (short i = 0; i < m_VBO.Triangles.Count; ++i)
                 {
-                    if (CheckTriangle(m_Triangles[i], new NEVector2(u, v)))
+                    if (CheckTriangle(m_VBO.Triangles[i], new NEVector2(u, v)))
                     {
                         NEScreenBuffer.PutChar((char)NEBlock.Solid, (Int16)(1 + i), x, y);
                     }
@@ -96,25 +77,6 @@ namespace NostalgiaEngine.RasterizerPipeline
         {
 
 
-            //for (int x = 0; x < ScreenWidth; ++x)
-            //{
-            //    float u = ((float)x) / ((float)ScreenWidth);
-
-            //    u = 2.0f * u - 1.0f;
-
-            //    for (int y = 0; y < ScreenHeight; ++y)
-            //    {
-
-            //        float v = ((float)y) / ((float)ScreenHeight);
-            //        v = -((2.0f * v) - 1.0f);
-            //        if (CheckTriangle(m_Triangles[0], new NEVector2(u, v)))
-            //        {
-            //            NEScreenBuffer.PutChar((char)NEBlock.Solid, 4, x, y);
-            //        }
-
-            //    }
-            //}
-
             return base.OnDraw();
         }
 
@@ -127,9 +89,10 @@ namespace NostalgiaEngine.RasterizerPipeline
         private bool CheckTriangle(Triangle triangle, NEVector2 p)
         {
 
-            Vertex l = triangle.LeftSortedVertices[0];
-            Vertex m = triangle.LeftSortedVertices[1];
-            Vertex r = triangle.LeftSortedVertices[2];
+            Vertex l = m_VBO.Vertices[triangle.LeftSortedIndices[0]];
+                //triangle.LeftSortedVertices[0];
+            Vertex m = m_VBO.Vertices[triangle.LeftSortedIndices[1]];
+            Vertex r = m_VBO.Vertices[triangle.LeftSortedIndices[2]];
             return NEMathHelper.InTriangle(p, l.Position.XY,
                 m.Position.XY, r.Position.XY);
         }
@@ -142,16 +105,17 @@ namespace NostalgiaEngine.RasterizerPipeline
             float orginX = 0.0f;
             float orginY = 0.0f;
             float orginZ = 1.0f;
-            for (int i = 0; i < m_Triangles.Length; ++i)
+            for (int i = 0; i < 16; ++i)
             {
-                float normI = (float)i / (float)m_Triangles.Length;
+                float normI = (float)i / (float)16;
                 float xDisp = deltaX * (float)Math.Cos(normI * 6.28f);
                 float yDisp = deltaY * (float)Math.Sin(normI * 6.28f);
                 float zDisp = deltaZ * i;
-                m_Triangles[i] = new Triangle(new Vertex(orginX + 0.5f + xDisp, orginY + yDisp, orginZ + zDisp),
-                             new Vertex(orginX + 0.0f + xDisp, orginY + 0.5f + yDisp, orginZ + zDisp),
-                             new Vertex(orginX - 0.5f + xDisp, orginY + yDisp, orginZ + zDisp));
 
+                m_VBO.AddVertex(new Vertex(orginX + 0.5f + xDisp, orginY + yDisp, orginZ + zDisp));
+                m_VBO.AddVertex(new Vertex(orginX + 0.0f + xDisp, orginY + 0.5f + yDisp, orginZ + zDisp));
+                m_VBO.AddVertex(new Vertex(orginX - 0.5f + xDisp, orginY + yDisp, orginZ + zDisp));
+                m_VBO.AddTriangle(i * 3 , i * 3 + 1, i * 3 + 2);
 
             }
         }
