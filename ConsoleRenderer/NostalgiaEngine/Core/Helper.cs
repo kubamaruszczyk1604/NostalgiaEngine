@@ -195,7 +195,7 @@ namespace NostalgiaEngine.Core
         }
 
 
-        public void Swap(ref float a, ref float b)
+        static public void Swap(ref float a, ref float b)
         {
             float temp = a;
             a = b;

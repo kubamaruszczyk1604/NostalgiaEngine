@@ -48,5 +48,13 @@ namespace NostalgiaEngine.RasterizerPipeline
         }
 
 
+        public void CalculateTriangleEdges()
+        {
+            for (int i =0; i < Triangles.Count; ++i)
+            {
+                Triangles[i].CalculateEdges();
+            }
+        }
+
     }
 }
