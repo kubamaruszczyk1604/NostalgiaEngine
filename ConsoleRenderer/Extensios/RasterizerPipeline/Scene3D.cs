@@ -21,9 +21,11 @@ namespace NostalgiaEngine.RasterizerPipeline
             m_DepthBuffer = new NEDepthBuffer(ScreenWidth, ScreenHeight);
             m_VBO = new VertexBuffer();
             //GenerateTestTriangles();
-            GenerateSquare(0.0f, 0.0f, 0.5f,1);
-            GenerateSquare(0.2f, 0.1f, 0.45f,3);
-            GenerateSquare(0.3f, 0.3f, 0.4f, 9);
+            GenerateSquare(0.0f, 0.0f, 0.5f, 1);
+            GenerateSquare(0.2f, 0.1f, 0.45f, 3);
+            GenerateSquare2(0.3f, 0.3f, 0.04f, 9);
+
+            //GenerateCube(0, 0, 0.22f,2);
             return base.OnLoad();
         }
 
@@ -31,9 +33,6 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         public override void OnStart()
         {
-
-
-
             base.OnStart();
         }
 
@@ -69,9 +68,9 @@ namespace NostalgiaEngine.RasterizerPipeline
             {
                 Triangle tr = m_VBO.Triangles[i];
                 if (!tr.IsXInTriangle(u)) continue;
-                float yA = (-tr.A.Y + 1.0f) * 0.5f;
-                float yB = (-tr.B.Y + 1.0f) * 0.5f;
-                float yC = (-tr.C.Y + 1.0f) * 0.5f;
+                //float yA = (-tr.A.Y + 1.0f) * 0.5f;
+                //float yB = (-tr.B.Y + 1.0f) * 0.5f;
+                //float yC = (-tr.C.Y + 1.0f) * 0.5f;
 
                 float y0;
                 float y1 ;
@@ -93,15 +92,16 @@ namespace NostalgiaEngine.RasterizerPipeline
 
                     float sm = 1.0f / (dA + dB + dC);
                     dA *= sm;
+                    dA = 1.0f - dA;
                     dB *= sm;
+                    dB = 1.0f - dB;
                     dC *= sm;
+                    dC = 1.0f - dC;
                     float fragmentDepth = (dA * tr.A.Z + dB * tr.B.Z + dC * tr.C.Z) * oneOverMaxDist;
                    // float fragmentDepth = tr.A.Z / maxDist;
                     if (m_DepthBuffer.TryUpdate(x, y, fragmentDepth))
                     {
                         NEScreenBuffer.PutChar((char)NEBlock.Solid, (Int16)(tr.ColorAttrib), x, y);
-
-
                     }
                 }
 
@@ -201,6 +201,57 @@ namespace NostalgiaEngine.RasterizerPipeline
             m_VBO.Triangles[colStart].ColorAttrib = col;
             m_VBO.Triangles[colStart + 1].ColorAttrib = col;
             squareCount++;
+
+        }
+
+        private void GenerateSquare2(float x, float y, float depth, int col)
+        {
+            float size = 0.25f;
+            m_VBO.AddVertex(new Vertex(-size + x, -size + y, depth));
+            m_VBO.AddVertex(new Vertex(-size + x, size + y, depth));
+            m_VBO.AddVertex(new Vertex(size + x, size + y, depth));
+            m_VBO.AddVertex(new Vertex(size + x, -size + y, depth));
+
+            int startAt = squareCount * 4;
+            m_VBO.AddTriangle(0 + startAt, 1 + startAt, 2 + startAt);
+            m_VBO.AddTriangle(0 + startAt, 2 + startAt, 3 + startAt);
+            int colStart = squareCount * 2;
+            m_VBO.Triangles[colStart].ColorAttrib = col;
+            m_VBO.Triangles[colStart + 1].ColorAttrib = col;
+            squareCount++;
+
+        }
+
+
+        private void GenerateCube(float x, float y, float depth, int col)
+        {
+            float size = 0.25f;
+            m_VBO.AddVertex(new Vertex(-size + x, -size + y, depth));
+            m_VBO.AddVertex(new Vertex(-size + x, size + y, depth));
+            m_VBO.AddVertex(new Vertex(size + x, size + y, depth));
+            m_VBO.AddVertex(new Vertex(size + x, -size + y, depth));
+
+            m_VBO.AddVertex(new Vertex(-size + x, -size + y, depth + size));
+            m_VBO.AddVertex(new Vertex(-size + x, size + y, depth + size));
+            m_VBO.AddVertex(new Vertex(size + x, size + y, depth + size));
+            m_VBO.AddVertex(new Vertex(size + x, -size + y, depth + size));
+
+
+            m_VBO.AddTriangle(0, 1 , 2 );
+            m_VBO.AddTriangle(0 , 2 , 3 );
+
+
+            m_VBO.AddTriangle(4, 6, 5);
+            m_VBO.AddTriangle(4, 7, 6);
+
+
+            m_VBO.AddTriangle(4, 5, 1);
+            m_VBO.AddTriangle(4, 1, 0);
+
+
+            m_VBO.AddTriangle(3, 2, 6);
+            m_VBO.AddTriangle(3, 6, 7);
+
 
         }
 
