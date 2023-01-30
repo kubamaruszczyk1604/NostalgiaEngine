@@ -11,6 +11,8 @@ namespace NostalgiaEngine.RasterizerPipeline
         VertexBuffer m_VBO;
         NEDepthBuffer m_DepthBuffer;
 
+        NEMatrix4x4 m_ProjectionMat;
+
         public override bool OnLoad()
         {
             ScreenWidth = 320;
@@ -20,12 +22,13 @@ namespace NostalgiaEngine.RasterizerPipeline
 
             m_DepthBuffer = new NEDepthBuffer(ScreenWidth, ScreenHeight);
             m_VBO = new VertexBuffer();
+            m_ProjectionMat = NEMatrix4x4.CreatePerspectiveProjection((float)ScreenHeight / (float)ScreenWidth, 1.05f, 0.3f, 10.0f);
             //GenerateTestTriangles();
-            GenerateSquare(0.0f, 0.0f, 0.5f, 1);
-            GenerateSquare(0.2f, 0.1f, 0.45f, 3);
-            GenerateSquare2(0.3f, 0.3f, 0.04f, 9);
+            //GenerateSquare(0.0f, 0.0f, 0.5f, 1);
+            //GenerateSquare(0.2f, 0.1f, 0.45f, 3);
+            //GenerateSquare2(0.3f, 0.3f, 0.04f, 9);
 
-            //GenerateCube(0, 0, 0.22f,2);
+            GenerateCube(0.0f, 0.2f, 2.23f,2);
             return base.OnLoad();
         }
 
@@ -49,7 +52,14 @@ namespace NostalgiaEngine.RasterizerPipeline
         public override void OnUpdate(float deltaTime)
         {
             base.OnUpdate(deltaTime);
+            
+            for(int i=0; i < m_VBO.Vertices.Count;++i)
+            {
+                m_VBO.Vertices[i].Position = m_ProjectionMat * m_VBO.ModelVertices[i].Position;
+                m_VBO.Vertices[i].WDivide();
+            }
             NEScreenBuffer.ClearColor(0);
+
             m_VBO.CalculateTriangleEdges();
         }
 
@@ -87,9 +97,9 @@ namespace NostalgiaEngine.RasterizerPipeline
                     float v = ((float)y) * oneOverScr;
                     v = -((2.0f * v) - 1.0f);
                     NEVector2 frag = new NEVector2(u, v);
-                    float dA = (tr.A.Position.XY - frag).LengthSqared;
-                    float dB = (tr.B.Position.XY - frag).LengthSqared;
-                    float dC = (tr.C.Position.XY - frag).LengthSqared;
+                    float dA = (tr.A.Position.XY - frag).Length;
+                    float dB = (tr.B.Position.XY - frag).Length;
+                    float dC = (tr.C.Position.XY - frag).Length;
 
                     float sm = 1.0f / (dA + dB + dC);
                     dA *= sm;
@@ -98,7 +108,7 @@ namespace NostalgiaEngine.RasterizerPipeline
                     dB = 1.0f - dB;
                     dC *= sm;
                     dC = 1.0f - dC;
-                    float fragmentDepth = (dA * tr.A.Z + dB * tr.B.Z + dC * tr.C.Z) * oneOverMaxDist;
+                    float fragmentDepth = (dA * tr.A.Z + dB * tr.B.Z + dC * tr.C.Z);// * oneOverMaxDist;
                    // float fragmentDepth = tr.A.Z / maxDist;
                     if (m_DepthBuffer.TryUpdate(x, y, fragmentDepth))
                     {
@@ -241,17 +251,29 @@ namespace NostalgiaEngine.RasterizerPipeline
             m_VBO.AddTriangle(0, 1 , 2 );
             m_VBO.AddTriangle(0 , 2 , 3 );
 
+            m_VBO.Triangles[0].ColorAttrib = 1;
+            m_VBO.Triangles[1].ColorAttrib = 1;
+
 
             m_VBO.AddTriangle(4, 6, 5);
             m_VBO.AddTriangle(4, 7, 6);
+
+            m_VBO.Triangles[2].ColorAttrib = 2;
+            m_VBO.Triangles[3].ColorAttrib = 2;
 
 
             m_VBO.AddTriangle(4, 5, 1);
             m_VBO.AddTriangle(4, 1, 0);
 
+            m_VBO.Triangles[4].ColorAttrib = 3;
+            m_VBO.Triangles[5].ColorAttrib = 3;
+
 
             m_VBO.AddTriangle(3, 2, 6);
             m_VBO.AddTriangle(3, 6, 7);
+
+            m_VBO.Triangles[6].ColorAttrib = 5;
+            m_VBO.Triangles[7].ColorAttrib = 5;
 
 
         }

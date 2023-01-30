@@ -12,8 +12,8 @@ namespace NostalgiaEngine.RasterizerPipeline
         NEVector4 m_Position;
         NEVector2 m_UVs;
 
-        public NEVector4 Position { get { return m_Position; } }
-        public NEVector2 UV { get { return m_UVs; } }
+        public NEVector4 Position { get { return m_Position; } set { m_Position = value; } }
+        public NEVector2 UV { get { return m_UVs; }  set { m_UVs = value; } }
 
 
         public float X { get { return m_Position.X; } }
@@ -27,13 +27,13 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         public Vertex(float x, float y, float z)
         {
-            m_Position = new NEVector4(x, y, z, 0.0f);
+            m_Position = new NEVector4(x, y, z, 1.0f);
             m_UVs = new NEVector2(0.0f, 0.0f);
         }
 
         public Vertex(float x, float y, float z, float u, float v)
         {
-            m_Position = new NEVector4(x, y, z, 0.0f);
+            m_Position = new NEVector4(x, y, z, 1.0f);
             m_UVs = new NEVector2(u, v);
         }
 
@@ -62,6 +62,19 @@ namespace NostalgiaEngine.RasterizerPipeline
             m_Position = v.Position;
             m_UVs = v.UV;
         }
+
+        public void WDivide()
+        {
+            m_Position.X /= m_Position.W;
+            m_Position.Y /= m_Position.W;
+            m_Position.Z /= m_Position.W;
+        }
+
+        public Vertex Duplicate()
+        {
+            return new Vertex(X, Y, Z, U, V);
+        }
+        
 
     }
 }

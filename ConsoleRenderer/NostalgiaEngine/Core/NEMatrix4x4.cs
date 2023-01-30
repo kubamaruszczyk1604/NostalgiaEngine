@@ -119,6 +119,21 @@ namespace NostalgiaEngine.Core
         }
 
 
+        static public NEMatrix4x4 CreatePerspectiveProjection(float aspectRatio, float fovRad, float near, float far)
+        {
+            float invTanFov = 1.0f/(float)Math.Tan(fovRad * 0.5f);
+            float frustumZLength = far - near;
+            float zScalingFactor = far / frustumZLength;
+            float zCorrection = zScalingFactor * near;
+            NEMatrix4x4 mat = new NEMatrix4x4();
+            mat.m_Data = new float[,] { { aspectRatio*invTanFov, 0.0f, 0.0f, 0.0f },
+                                        { 0.0f, invTanFov, 0.0f, 0.0f },
+                                       { 0.0f, 0.0f, zScalingFactor, -zCorrection},
+                                       { 0.0f, 0.0f, 1.0f, 0.0f }};
+            return mat;
+
+        }
+
 
         static public bool UnitTest_MatMatMultiply()
         {
