@@ -50,7 +50,7 @@ namespace NostalgiaEngineApplication
             BandLevelDemo bld = new BandLevelDemo();
             TextDemo ted = new TextDemo();
             Scene3D sc = new Scene3D();
-            engine.Start(sc);
+            //engine.Start(sc);
 
 
             //Envelope env = new Envelope(200, 300, 200);
@@ -58,14 +58,12 @@ namespace NostalgiaEngineApplication
 
 
 
-            //NEMatrix2x2 m1 = NEMatrix2x2.CreateRotation(0.5f);
-            //NEMatrix2x2 m2 = new NEMatrix2x2(3, 8, 8, 9);
-
-            //NEVector2 r = m1 * new NEVector2(3, 4);
 
 
-            //Console.Write(r.ToString());
-            //Console.ReadLine();
+
+            Console.WriteLine("Matrix-Vector multiply test: " + (NEMatrix4x4.UnitTest_MatVecMultiply()?"pass":"fail"));
+            Console.WriteLine("Matrix-Matrix multiply test: " + (NEMatrix4x4.UnitTest_MatMatMultiply() ? "pass" : "fail"));
+            Console.ReadLine();
 
         }
     }

@@ -78,11 +78,12 @@ namespace NostalgiaEngine.RasterizerPipeline
 
                 float y0ss = (-y0 + 1.0f) * 0.5f;
                 float y1ss = (-y1 + 1.0f) * 0.5f;
-                if (y0 > y1) NEMathHelper.Swap(ref y0, ref y1);
-               
-                
+                if (y0ss > y1ss) NEMathHelper.Swap(ref y0ss, ref y1ss);
+                y0ss = NEMathHelper.Clamp(y0ss, 0, 1.0f);
+                y1ss = NEMathHelper.Clamp(y1ss, 0, 1.0f);
                 for (int y = (int)(y0ss * ScreenHeight); y < (int)(y1ss * ScreenHeight); ++y)
                 {
+                    //if ((y<0)||(y >= ScreenHeight)) continue;
                     float v = ((float)y) * oneOverScr;
                     v = -((2.0f * v) - 1.0f);
                     NEVector2 frag = new NEVector2(u, v);
@@ -170,9 +171,9 @@ namespace NostalgiaEngine.RasterizerPipeline
             float orginX = 0.0f;
             float orginY = 0.0f;
             float orginZ = 1.0f;
-            for (int i = 0; i < 1000; ++i)
+            for (int i = 0; i < 2; ++i)
             {
-                float normI = (float)i / (float)1000;
+                float normI = (float)i / (float)2;
                 float xDisp = deltaX * (float)Math.Cos(normI * 6.28f);
                 float yDisp = deltaY * (float)Math.Sin(normI * 6.28f);
                 float zDisp = deltaZ*i*0.3f ;

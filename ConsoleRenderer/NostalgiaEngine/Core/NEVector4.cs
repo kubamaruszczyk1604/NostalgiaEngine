@@ -39,6 +39,10 @@ namespace NostalgiaEngine.Core
             W = 0.0f;
         }
 
+        public static bool Compare(NEVector4 lhs, NEVector4 rhs)
+        {
+            return ((lhs.X == rhs.X) && (lhs.Y == rhs.Y) && (lhs.Z == rhs.Z) && (lhs.W == rhs.W));
+        }
 
         public static float CalculateLength(NEVector4 v)
         {

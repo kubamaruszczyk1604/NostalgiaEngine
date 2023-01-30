@@ -74,6 +74,7 @@
     <Compile Include="NostalgiaEngine\Core\ColorPalette.cs" />
     <Compile Include="NostalgiaEngine\Core\Fbuffer.cs" />
     <Compile Include="NostalgiaEngine\Core\NEMatrix2x2.cs" />
+    <Compile Include="NostalgiaEngine\Core\NEMatrix4x4.cs" />
     <Compile Include="NostalgiaEngine\Core\NEPoint.cs" />
     <Compile Include="NostalgiaEngine\Core\NERect.cs" />
     <Compile Include="NostalgiaEngine\Core\NESoundSynth.cs" />
