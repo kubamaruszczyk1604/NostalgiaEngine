@@ -73,7 +73,12 @@
     <Compile Include="NostalgiaEngine\Core\ColorManagement.cs" />
     <Compile Include="NostalgiaEngine\Core\ColorPalette.cs" />
     <Compile Include="NostalgiaEngine\Core\Fbuffer.cs" />
+    <Compile Include="NostalgiaEngine\Core\NEMatrix2x2.cs" />
+    <Compile Include="NostalgiaEngine\Core\NEPoint.cs" />
+    <Compile Include="NostalgiaEngine\Core\NERect.cs" />
     <Compile Include="NostalgiaEngine\Core\NESoundSynth.cs" />
+    <Compile Include="NostalgiaEngine\Core\NEVector2.cs" />
+    <Compile Include="NostalgiaEngine\Core\NEVector4.cs" />
     <Compile Include="NostalgiaEngine\Core\Texture.cs" />
     <Compile Include="NostalgiaEngine\Core\ScreenBuffer.cs" />
     <Compile Include="NostalgiaEngine\Core\Debug.cs" />
@@ -81,7 +86,7 @@
     <Compile Include="NostalgiaEngine\Core\StaticSprite.cs" />
     <Compile Include="NostalgiaEngine\Engine\NEScene.cs" />
     <Compile Include="NostalgiaEngine\Engine\NostalgiaEngine.cs" />
-    <Compile Include="NostalgiaEngine\Core\CommonTypes.cs" />
+    <Compile Include="NostalgiaEngine\Core\NEConsoleColorDef.cs" />
     <Compile Include="NostalgiaEngine\Core\FrameTimer.cs" />
     <Compile Include="NostalgiaEngine\Core\Helper.cs" />
     <Compile Include="NostalgiaEngine\Core\Input.cs" />
