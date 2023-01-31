@@ -22,7 +22,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 
             m_DepthBuffer = new NEDepthBuffer(ScreenWidth, ScreenHeight);
             m_VBO = new VertexBuffer();
-            m_ProjectionMat = NEMatrix4x4.CreatePerspectiveProjection((float)ScreenHeight / (float)ScreenWidth, 1.05f, 0.3f, 10.0f);
+            m_ProjectionMat = NEMatrix4x4.CreatePerspectiveProjection((float)ScreenHeight / (float)ScreenWidth, 1.05f, 0.1f, 100.0f);
             //GenerateTestTriangles();
             //GenerateSquare(0.0f, 0.0f, 0.5f, 1);
             //GenerateSquare(0.2f, 0.1f, 0.45f, 3);
@@ -54,7 +54,9 @@ namespace NostalgiaEngine.RasterizerPipeline
             base.OnUpdate(deltaTime);
             NEMatrix4x4 rotation = NEMatrix4x4.CreateRotationY(Engine.Instance.TotalTime)
                 * NEMatrix4x4.CreateRotationZ(Engine.Instance.TotalTime);
-            for(int i=0; i < m_VBO.Vertices.Count;++i)
+
+            //NEMatrix4x4 rotation = NEMatrix4x4.CreateRotationX(Engine.Instance.TotalTime);
+            for (int i=0; i < m_VBO.Vertices.Count;++i)
             {
                 m_VBO.Vertices[i].Position = ( rotation)  * m_VBO.ModelVertices[i].Position;
                 m_VBO.Vertices[i].Position += new NEVector4(0,0,2.0f,0.0f);
@@ -72,22 +74,21 @@ namespace NostalgiaEngine.RasterizerPipeline
             float u = ((float)x) / ((float)ScreenWidth);
 
             u = 2.0f * u - 1.0f;
-
-            float maxDist = m_VBO.Triangles.Count;
             float oneOverScr = 1.0f / ScreenHeight;
-            float oneOverMaxDist = 1.0f / maxDist;
+
 
             for (short i = 0; i < m_VBO.Triangles.Count; ++i)
             {
                 Triangle tr = m_VBO.Triangles[i];
-                if (!tr.IsXInTriangle(u)) continue;
+                if (!tr.IsColScanlineInTriangle(u)) continue;
+                if (tr.CalculateNormal().Z > 0) continue;
                 //float yA = (-tr.A.Y + 1.0f) * 0.5f;
                 //float yB = (-tr.B.Y + 1.0f) * 0.5f;
                 //float yC = (-tr.C.Y + 1.0f) * 0.5f;
 
                 float y0;
                 float y1 ;
-                tr.FindYs(u, out y0, out y1);
+                tr.FindIntersectionHeights(u, out y0, out y1);
 
                 float y0ss = (-y0 + 1.0f) * 0.5f;
                 float y1ss = (-y1 + 1.0f) * 0.5f;
@@ -105,14 +106,11 @@ namespace NostalgiaEngine.RasterizerPipeline
                     float dC = (tr.C.Position.XY - frag).Length;
 
                     float sm = 1.0f / (dA + dB + dC);
-                    dA *= sm;
-                    dA = 1.0f - dA;
-                    dB *= sm;
-                    dB = 1.0f - dB;
-                    dC *= sm;
-                    dC = 1.0f - dC;
-                    float fragmentDepth = (dA * tr.A.Z + dB * tr.B.Z + dC * tr.C.Z);// * oneOverMaxDist;
-                   // float fragmentDepth = tr.A.Z / maxDist;
+                    dA = 1.0f - dA * sm;
+                    dB = 1.0f - dB * sm;
+                    dC = 1.0f - dC * sm;
+
+                    float fragmentDepth = (dA * tr.A.Z + dB * tr.B.Z + dC * tr.C.Z);
                     if (m_DepthBuffer.TryUpdate(x, y, fragmentDepth))
                     {
                         NEScreenBuffer.PutChar((char)NEBlock.Solid, (Int16)(tr.ColorAttrib), x, y);
@@ -166,15 +164,15 @@ namespace NostalgiaEngine.RasterizerPipeline
         }
 
 
-        private bool CheckTriangle(Triangle triangle, NEVector2 p)
-        {
+        //private bool CheckTriangle(Triangle triangle, NEVector2 p)
+        //{
 
-            Vertex l = m_VBO.Vertices[triangle.LeftSortedIndices[0]];
-            Vertex m = m_VBO.Vertices[triangle.LeftSortedIndices[1]];
-            Vertex r = m_VBO.Vertices[triangle.LeftSortedIndices[2]];
-            return NEMathHelper.InTriangle(p, l.Position.XY,
-                m.Position.XY, r.Position.XY);
-        }
+        //    Vertex l = m_VBO.Vertices[triangle.LeftSortedIndices[0]];
+        //    Vertex m = m_VBO.Vertices[triangle.LeftSortedIndices[1]];
+        //    Vertex r = m_VBO.Vertices[triangle.LeftSortedIndices[2]];
+        //    return NEMathHelper.InTriangle(p, l.Position.XY,
+        //        m.Position.XY, r.Position.XY);
+        //}
 
         private void GenerateTestTriangles()
         {
@@ -278,6 +276,20 @@ namespace NostalgiaEngine.RasterizerPipeline
             m_VBO.Triangles[6].ColorAttrib = 5;
             m_VBO.Triangles[7].ColorAttrib = 5;
 
+
+
+            m_VBO.AddTriangle(1, 5, 6);
+            m_VBO.AddTriangle(1, 6, 2);
+
+            m_VBO.Triangles[8].ColorAttrib = 6;
+            m_VBO.Triangles[9].ColorAttrib = 6;
+
+
+            m_VBO.AddTriangle(0, 3, 7);
+            m_VBO.AddTriangle(0, 7, 4);
+
+            m_VBO.Triangles[10].ColorAttrib = 7;
+            m_VBO.Triangles[11].ColorAttrib = 7;
 
         }
 

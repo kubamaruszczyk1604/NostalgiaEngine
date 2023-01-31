@@ -9,8 +9,6 @@ namespace NostalgiaEngine.RasterizerPipeline
     public class Triangle
     {
 
-
-
         public VertexBuffer VBO { get; private set; }
         public int[] Indices { get; private set; }
         public int[] LeftSortedIndices { get; private set; }
@@ -24,13 +22,14 @@ namespace NostalgiaEngine.RasterizerPipeline
         public Vertex C { get; private set; }
 
         public int ColorAttrib = 1;
+        public NEVector4 Normal { get; private set; }
 
         public Triangle(int i0, int i1, int i2, VertexBuffer vbo)
         {
             VBO = vbo;
             Indices = new int[] { i0, i1, i2 };
             LeftSortedIndices = new int[3];
-            
+            CalculateNormal();
         }
 
 
@@ -55,12 +54,12 @@ namespace NostalgiaEngine.RasterizerPipeline
         }
 
 
-        public bool IsXInTriangle(float x)
+        public bool IsColScanlineInTriangle(float x)
         {
             return ((x >= A.X) && (x <= C.X));
         }
 
-        public void FindYs(float x, out float y0, out float y1)
+        public void FindIntersectionHeights(float x, out float y0, out float y1)
         {
             y0 = 0;
             y1 = 0;
@@ -79,11 +78,6 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         }
 
-       //private  void LeftSort()
-       // {
-       //     GetXSortedVertices(out LeftSortedIndices[0], out LeftSortedIndices[1], out LeftSortedIndices[2]);
-       // }
-
         private void GetXSortedVertices(out int left, out int middle, out int right)
         {
             left = Indices[0];
@@ -91,22 +85,16 @@ namespace NostalgiaEngine.RasterizerPipeline
             right = Indices[2];
 
 
-
-            //if (left.X > middle.X) Vertex.Swap(ref left, ref middle);
-
             if(VBO.Vertices[left].X > VBO.Vertices[middle].X)
             {
                 SwapInt(ref left, ref middle);
             }
 
-            //if (middle.X > right.X) Vertex.Swap(ref middle, ref right);
             if (VBO.Vertices[middle].X > VBO.Vertices[right].X)
             {
                 SwapInt(ref middle, ref right);
             }
 
-
-            //if (left.X > middle.X) Vertex.Swap(ref left, ref middle);
             if (VBO.Vertices[left].X > VBO.Vertices[middle].X)
             {
                 SwapInt(ref left, ref middle);
@@ -122,16 +110,17 @@ namespace NostalgiaEngine.RasterizerPipeline
             b = tmp;
         }
 
-        //private void CalculateNormal()
-        //{
-        //    NEVector4 a = (Vertices[1].Position - Vertices[0].Position).Normalized;
-        //    NEVector4 b = (Vertices[2].Position - Vertices[0].Position).Normalized;
+        public NEVector4 CalculateNormal()
+        {
+            NEVector4 a = (VBO.Vertices[Indices[1]].Position - VBO.Vertices[Indices[0]].Position);//.Normalized;
+            NEVector4 b = (VBO.Vertices[Indices[2]].Position - VBO.Vertices[Indices[0]].Position);//.Normalized;
 
-        //    float x = a.Y * b.Z - a.Z * b.Y;
-        //    float y = a.Z * b.X - a.X * b.Z;
-        //    float z = a.X * b.Y - a.Y * b.X;
-        //    Normal = new NEVector4(x, y, z);
-        //}
+            float x = a.Y * b.Z - a.Z * b.Y;
+            float y = a.Z * b.X - a.X * b.Z;
+            float z = a.X * b.Y - a.Y * b.X;
+            Normal = new NEVector4(x, y, z).Normalized;
+            return Normal;
+        }
     }
 
     public class NEEdge
