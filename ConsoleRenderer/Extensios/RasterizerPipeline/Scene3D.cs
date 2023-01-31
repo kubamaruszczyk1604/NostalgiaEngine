@@ -28,7 +28,11 @@ namespace NostalgiaEngine.RasterizerPipeline
             //GenerateSquare(0.2f, 0.1f, 0.45f, 3);
             //GenerateSquare2(0.3f, 0.3f, 0.04f, 9);
 
-            GenerateCube(0.0f, 0.0f, 0f,2);
+            //GenerateCube(0.0f, 0.0f, 0f,2);
+
+            m_VBO = NEObjLoader.LoadObj("C:/Users/Kuba/Desktop/tst/teapot.obj");
+
+            //GenerateTestTriangles();
             return base.OnLoad();
         }
 
@@ -55,11 +59,12 @@ namespace NostalgiaEngine.RasterizerPipeline
             NEMatrix4x4 rotation = NEMatrix4x4.CreateRotationY(Engine.Instance.TotalTime)
                 * NEMatrix4x4.CreateRotationZ(Engine.Instance.TotalTime);
 
-            //NEMatrix4x4 rotation = NEMatrix4x4.CreateRotationX(Engine.Instance.TotalTime);
+            //NEMatrix4x4 rotation = NEMatrix4x4.CreateRotationZ(Engine.Instance.TotalTime)
+            //    *NEMatrix4x4.CreateRotationX((float)Math.Sin(Engine.Instance.TotalTime));
             for (int i=0; i < m_VBO.Vertices.Count;++i)
             {
-                m_VBO.Vertices[i].Position = ( rotation)  * m_VBO.ModelVertices[i].Position;
-                m_VBO.Vertices[i].Position += new NEVector4(0,0,2.0f,0.0f);
+                m_VBO.Vertices[i].Position = (rotation) * m_VBO.ModelVertices[i].Position;
+                m_VBO.Vertices[i].Position += new NEVector4(0,0,10.6f,0.0f);
                 m_VBO.Vertices[i].Position = (m_ProjectionMat) * m_VBO.Vertices[i].Position;
                 m_VBO.Vertices[i].WDivide();
             }
@@ -178,21 +183,22 @@ namespace NostalgiaEngine.RasterizerPipeline
         {
             float deltaX = 0.5f;
             float deltaY = -0.5f;
-            float deltaZ = 0.1f;
+            float deltaZ = 0.01f;
             float orginX = 0.0f;
             float orginY = 0.0f;
-            float orginZ = 1.0f;
-            for (int i = 0; i < 2; ++i)
+            float orginZ = 0.0f;
+            for (int i = 0; i < 2000; ++i)
             {
-                float normI = (float)i / (float)2;
-                float xDisp = deltaX * (float)Math.Cos(normI * 6.28f);
-                float yDisp = deltaY * (float)Math.Sin(normI * 6.28f);
-                float zDisp = deltaZ*i*0.3f ;
+                float normI = (float)i / (float)2000;
+                float xDisp = deltaX * (float)Math.Cos(normI * 6.28f*3.0f);
+                float yDisp = deltaY * (float)Math.Sin(normI * 6.28f * 3.0f);
+                float zDisp = deltaZ * i * 0.6f;
 
-                m_VBO.AddVertex(new Vertex(orginX + 0.5f + xDisp, orginY + yDisp, orginZ + zDisp));
-                m_VBO.AddVertex(new Vertex(orginX + 0.0f + xDisp, orginY + 0.5f + yDisp, orginZ + zDisp));
-                m_VBO.AddVertex(new Vertex(orginX - 0.5f + xDisp, orginY + yDisp, orginZ + zDisp));
+                m_VBO.AddVertex(new Vertex(orginX - 0.2f + xDisp, orginY + yDisp, orginZ + zDisp));
+                m_VBO.AddVertex(new Vertex(orginX + 0.0f + xDisp, orginY + 0.2f + yDisp, orginZ + zDisp));
+                m_VBO.AddVertex(new Vertex(orginX + 0.2f + xDisp, orginY + yDisp, orginZ + zDisp));
                 m_VBO.AddTriangle(i * 3, i * 3 + 1, i * 3 + 2);
+                m_VBO.Triangles[i].ColorAttrib = 1 + i;
 
             }
         }
