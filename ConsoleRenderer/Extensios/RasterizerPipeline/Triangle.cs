@@ -22,7 +22,7 @@ namespace NostalgiaEngine.RasterizerPipeline
         public Vertex C { get; private set; }
 
         public int ColorAttrib = 1;
-        public NEVector4 Normal { get; private set; }
+        public NEVector4 ModelNormal { get; private set; }
         public NEVector4 TransformedNormal { get; set; }
 
         public Triangle(int i0, int i1, int i2, VertexBuffer vbo)
@@ -111,7 +111,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             b = tmp;
         }
 
-        private NEVector4 CalculateNormal()
+        private void CalculateNormal()
         {
             NEVector4 a = (VBO.ModelVertices[Indices[1]].Position - VBO.ModelVertices[Indices[0]].Position).Normalized;
             NEVector4 b = (VBO.ModelVertices[Indices[2]].Position - VBO.ModelVertices[Indices[0]].Position).Normalized;
@@ -119,8 +119,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             float x = a.Y * b.Z - a.Z * b.Y;
             float y = a.Z * b.X - a.X * b.Z;
             float z = a.X * b.Y - a.Y * b.X;
-            Normal = new NEVector4(x, y, z,0.0f).Normalized;
-            return Normal;
+            ModelNormal = new NEVector4(x, y, z,0.0f).Normalized;
         }
 
 

@@ -22,8 +22,6 @@ namespace NostalgiaEngine.RasterizerPipeline
         }
 
 
-
-
         public void AddVertex(Vertex v)
         {
             ModelVertices.Add(v);

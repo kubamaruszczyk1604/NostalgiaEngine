@@ -8,7 +8,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 {
     public class NEObjLoader
     {
-
+        static int index = 1;
         static public VertexBuffer LoadObj(string path)
         {
             VertexBuffer vbo = new VertexBuffer();
@@ -30,6 +30,9 @@ namespace NostalgiaEngine.RasterizerPipeline
                         {
                             string[] pieces = line.Split(' ');
                             vbo.AddTriangle(int.Parse(pieces[1])-1, int.Parse(pieces[2])-1, int.Parse(pieces[3])-1);
+                            vbo.Triangles[vbo.Triangles.Count - 1].ColorAttrib = 6;
+                            //index++;
+                            //index %= 15;
                         }
                     }
                 }
