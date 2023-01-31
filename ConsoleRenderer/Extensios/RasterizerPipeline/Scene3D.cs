@@ -56,11 +56,21 @@ namespace NostalgiaEngine.RasterizerPipeline
         public override void OnUpdate(float deltaTime)
         {
             base.OnUpdate(deltaTime);
-            NEMatrix4x4 rotation = NEMatrix4x4.CreateRotationY(Engine.Instance.TotalTime)
-                * NEMatrix4x4.CreateRotationZ(Engine.Instance.TotalTime);
+            //NEMatrix4x4 rotation = NEMatrix4x4.CreateRotationY(Engine.Instance.TotalTime)
+            //    * NEMatrix4x4.CreateRotationZ(Engine.Instance.TotalTime);
+            float yDisp = (float)Math.Sin(Engine.Instance.TotalTime);
+            NEMatrix4x4 rotation = NEMatrix4x4.CreateRotationX(0.5f+yDisp)*
+            NEMatrix4x4.CreateRotationY(Engine.Instance.TotalTime);
 
-            //NEMatrix4x4 rotation = NEMatrix4x4.CreateRotationZ(Engine.Instance.TotalTime)
-            //    *NEMatrix4x4.CreateRotationX((float)Math.Sin(Engine.Instance.TotalTime));
+                 
+
+
+          
+            for (int i = 0; i < m_VBO.Triangles.Count; ++i)
+            {
+                m_VBO.Triangles[i].TransformedNormal = rotation * m_VBO.Triangles[i].Normal;
+            }
+
             for (int i=0; i < m_VBO.Vertices.Count;++i)
             {
                 m_VBO.Vertices[i].Position = (rotation) * m_VBO.ModelVertices[i].Position;
@@ -82,14 +92,11 @@ namespace NostalgiaEngine.RasterizerPipeline
             float oneOverScr = 1.0f / ScreenHeight;
 
 
-            for (short i = 0; i < m_VBO.Triangles.Count; ++i)
+            for (int i = 0; i < m_VBO.Triangles.Count; ++i)
             {
                 Triangle tr = m_VBO.Triangles[i];
                 if (!tr.IsColScanlineInTriangle(u)) continue;
-                if (tr.CalculateNormal().Z > 0) continue;
-                //float yA = (-tr.A.Y + 1.0f) * 0.5f;
-                //float yB = (-tr.B.Y + 1.0f) * 0.5f;
-                //float yC = (-tr.C.Y + 1.0f) * 0.5f;
+                if (tr.TransformedNormal.Z >  0) continue;
 
                 float y0;
                 float y1 ;
@@ -118,7 +125,11 @@ namespace NostalgiaEngine.RasterizerPipeline
                     float fragmentDepth = (dA * tr.A.Z + dB * tr.B.Z + dC * tr.C.Z);
                     if (m_DepthBuffer.TryUpdate(x, y, fragmentDepth))
                     {
-                        NEScreenBuffer.PutChar((char)NEBlock.Solid, (Int16)(tr.ColorAttrib), x, y);
+                        float dot = NEVector4.Dot(tr.TransformedNormal, new NEVector4(0.0f, 0.0f, -1.0f, 0.0f));
+
+                        dot = NEMathHelper.Clamp(dot, 0.0f, 1.0f);
+                        var col = NEColorSample.MakeCol10(ConsoleColor.Black, (ConsoleColor)6, dot);
+                        NEScreenBuffer.PutChar(col.Character, col.BitMask, x, y);
                     }
                 }
 
