@@ -43,7 +43,7 @@ namespace NostalgiaEngine.Core
         /// <summary>
         /// Resets entire buffer to initial value. Usually this will be infinity, unless specified differently when buffer was created.
         /// </summary>
-        public void ResetBuffer()
+        public void Clear()
         {
             for (int i = 0; i < DATA.Length; ++i)
             {
@@ -55,7 +55,7 @@ namespace NostalgiaEngine.Core
         /// Resets entire bufer to requested value.
         /// </summary>
         /// <param name="val">Default value</param>
-        public void ResetBuffer(float val)
+        public void Clear(float val)
         {
             for (int i = 0; i < DATA.Length; ++i)
             {

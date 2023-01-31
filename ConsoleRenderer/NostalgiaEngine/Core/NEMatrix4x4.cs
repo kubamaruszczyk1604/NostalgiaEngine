@@ -23,9 +23,9 @@ namespace NostalgiaEngine.Core
 
         public override string ToString()
         {
-            string ret ="";
+            string ret = "";
 
-            for(int i=0; i < 4; ++i)
+            for (int i = 0; i < 4; ++i)
             {
                 ret += m_Data[i, 0].ToString() + " " + m_Data[i, 1].ToString()
                     + " " + m_Data[i, 2].ToString() + " " + m_Data[i, 3].ToString() + "\n";
@@ -37,11 +37,11 @@ namespace NostalgiaEngine.Core
 
         static public bool Compare(NEMatrix4x4 lhs, NEMatrix4x4 rhs)
         {
-            for(int i = 0; i < 4; ++i)
+            for (int i = 0; i < 4; ++i)
             {
-                for(int j = 0; j < 4; ++j)
+                for (int j = 0; j < 4; ++j)
                 {
-                    if (lhs.m_Data[i, j] != rhs.m_Data[i,j]) return false;
+                    if (lhs.m_Data[i, j] != rhs.m_Data[i, j]) return false;
                 }
             }
             return true;
@@ -115,25 +115,63 @@ namespace NostalgiaEngine.Core
             float y = lhs.m_Data[1, 0] * rhs.X + lhs.m_Data[1, 1] * rhs.Y + lhs.m_Data[1, 2] * rhs.Z + lhs.m_Data[1, 3] * rhs.W;
             float z = lhs.m_Data[2, 0] * rhs.X + lhs.m_Data[2, 1] * rhs.Y + lhs.m_Data[2, 2] * rhs.Z + lhs.m_Data[2, 3] * rhs.W;
             float w = lhs.m_Data[3, 0] * rhs.X + lhs.m_Data[3, 1] * rhs.Y + lhs.m_Data[3, 2] * rhs.Z + lhs.m_Data[3, 3] * rhs.W;
-            return new NEVector4(x,y,z,w);
+            return new NEVector4(x, y, z, w);
         }
 
 
         static public NEMatrix4x4 CreatePerspectiveProjection(float aspectRatio, float fovRad, float near, float far)
         {
-            float invTanFov = 1.0f/(float)Math.Tan(fovRad * 0.5f);
+            float invTanFov = 1.0f / (float)Math.Tan(fovRad * 0.5f);
             float frustumZLength = far - near;
             float zScalingFactor = far / frustumZLength;
             float zCorrection = zScalingFactor * near;
             NEMatrix4x4 mat = new NEMatrix4x4();
             mat.m_Data = new float[,] { { aspectRatio*invTanFov, 0.0f, 0.0f, 0.0f },
                                         { 0.0f, invTanFov, 0.0f, 0.0f },
-                                       { 0.0f, 0.0f, zScalingFactor, -zCorrection},
-                                       { 0.0f, 0.0f, 1.0f, 0.0f }};
+                                        { 0.0f, 0.0f, zScalingFactor, -zCorrection},
+                                        { 0.0f, 0.0f, 1.0f, 0.0f }};
             return mat;
 
         }
 
+        static public NEMatrix4x4 CreateRotationX(float thetaRad)
+        {
+            float sinTheta = (float)Math.Sin(thetaRad);
+            float cosTheta = (float)Math.Cos(thetaRad);
+            NEMatrix4x4 mat = new NEMatrix4x4();
+            mat.m_Data = new float[,] { { 1.0f, 0.0f, 0.0f, 0.0f },
+                                        { 0.0f, cosTheta, sinTheta, 0.0f },
+                                        { 0.0f,-sinTheta, cosTheta, 0.0f},
+                                        { 0.0f, 0.0f, 0.0f, 1.0f }};
+            return mat;
+        }
+
+
+        static public NEMatrix4x4 CreateRotationY(float thetaRad)
+        {
+            float sinTheta = (float)Math.Sin(thetaRad);
+            float cosTheta = (float)Math.Cos(thetaRad);
+            NEMatrix4x4 mat = new NEMatrix4x4();
+            mat.m_Data = new float[,] { { cosTheta, 0.0f,-sinTheta, 0.0f },
+                                        { 0.0f, 1.0f, 0.0f, 0.0f },
+                                        { sinTheta, 0.0f, cosTheta, 0.0f},
+                                        { 0.0f, 0.0f, 0.0f, 1.0f }};
+
+
+            return mat;
+        }
+
+        static public NEMatrix4x4 CreateRotationZ(float thetaRad)
+        {
+            float sinTheta = (float)Math.Sin(thetaRad);
+            float cosTheta = (float)Math.Cos(thetaRad);
+            NEMatrix4x4 mat = new NEMatrix4x4();
+            mat.m_Data = new float[,] { { cosTheta,-sinTheta, 0.0f, 0.0f },
+                                        { sinTheta, cosTheta, 0.0f, 0.0f },
+                                        { 0.0f, 0.0f, 1.0f, 0.0f},
+                                        { 0.0f, 0.0f, 0.0f, 1.0f }};
+            return mat;
+        }
 
         static public bool UnitTest_MatMatMultiply()
         {
@@ -159,7 +197,7 @@ namespace NostalgiaEngine.Core
             NEVector4 inVec = new NEVector4(2.0f, 3.0f, 6.0f, 2.0f);
             NEVector4 correctAnswer = new NEVector4(68.0f, 58.0f, 42.0f, 57.0f);
 
-            bool pass = NEVector4.Compare(inMat*inVec, correctAnswer);
+            bool pass = NEVector4.Compare(inMat * inVec, correctAnswer);
             return pass;
 
         }

@@ -28,7 +28,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             //GenerateSquare(0.2f, 0.1f, 0.45f, 3);
             //GenerateSquare2(0.3f, 0.3f, 0.04f, 9);
 
-            GenerateCube(0.0f, 0.2f, 2.23f,2);
+            GenerateCube(0.0f, 0.0f, 0f,2);
             return base.OnLoad();
         }
 
@@ -52,14 +52,17 @@ namespace NostalgiaEngine.RasterizerPipeline
         public override void OnUpdate(float deltaTime)
         {
             base.OnUpdate(deltaTime);
-            
+            NEMatrix4x4 rotation = NEMatrix4x4.CreateRotationY(Engine.Instance.TotalTime)
+                * NEMatrix4x4.CreateRotationZ(Engine.Instance.TotalTime);
             for(int i=0; i < m_VBO.Vertices.Count;++i)
             {
-                m_VBO.Vertices[i].Position = m_ProjectionMat * m_VBO.ModelVertices[i].Position;
+                m_VBO.Vertices[i].Position = ( rotation)  * m_VBO.ModelVertices[i].Position;
+                m_VBO.Vertices[i].Position += new NEVector4(0,0,2.0f,0.0f);
+                m_VBO.Vertices[i].Position = (m_ProjectionMat) * m_VBO.Vertices[i].Position;
                 m_VBO.Vertices[i].WDivide();
             }
             NEScreenBuffer.ClearColor(0);
-
+            m_DepthBuffer.Clear();
             m_VBO.CalculateTriangleEdges();
         }
 
@@ -234,18 +237,18 @@ namespace NostalgiaEngine.RasterizerPipeline
         }
 
 
-        private void GenerateCube(float x, float y, float depth, int col)
+        private void GenerateCube(float x, float y, float z, int col)
         {
             float size = 0.25f;
-            m_VBO.AddVertex(new Vertex(-size + x, -size + y, depth));
-            m_VBO.AddVertex(new Vertex(-size + x, size + y, depth));
-            m_VBO.AddVertex(new Vertex(size + x, size + y, depth));
-            m_VBO.AddVertex(new Vertex(size + x, -size + y, depth));
+            m_VBO.AddVertex(new Vertex(-size + x, -size + y, z - size));
+            m_VBO.AddVertex(new Vertex(-size + x, size + y, z - size));
+            m_VBO.AddVertex(new Vertex(size + x, size + y, z - size));
+            m_VBO.AddVertex(new Vertex(size + x, -size + y, z - size));
 
-            m_VBO.AddVertex(new Vertex(-size + x, -size + y, depth + size));
-            m_VBO.AddVertex(new Vertex(-size + x, size + y, depth + size));
-            m_VBO.AddVertex(new Vertex(size + x, size + y, depth + size));
-            m_VBO.AddVertex(new Vertex(size + x, -size + y, depth + size));
+            m_VBO.AddVertex(new Vertex(-size + x, -size + y, z + size));
+            m_VBO.AddVertex(new Vertex(-size + x, size + y, z + size));
+            m_VBO.AddVertex(new Vertex(size + x, size + y, z + size));
+            m_VBO.AddVertex(new Vertex(size + x, -size + y, z + size));
 
 
             m_VBO.AddTriangle(0, 1 , 2 );

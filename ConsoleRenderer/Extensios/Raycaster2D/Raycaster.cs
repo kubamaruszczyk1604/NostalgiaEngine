@@ -166,7 +166,7 @@ namespace NostalgiaEngine.Raycaster
             {
                 //Engine.Instance.PushScene(new TextureEditor.Test_MemTex16());
             }
-            m_DepthBuffer.ResetBuffer();
+            m_DepthBuffer.Clear();
 
         }
 
