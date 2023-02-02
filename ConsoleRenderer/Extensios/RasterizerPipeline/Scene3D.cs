@@ -33,15 +33,15 @@ namespace NostalgiaEngine.RasterizerPipeline
             //PixelHeight = 5;
 
             m_LumaBuffer = NEFloatBuffer.FromFile("C:/test/nowa_textura12/luma.buf");
-
+            m_LumaBuffer.SampleMode = NESampleMode.Repeat;
             m_DepthBuffer = new NEDepthBuffer(ScreenWidth, ScreenHeight);
             m_VBO = new VertexBuffer();
             m_ProjectionMat = NEMatrix4x4.CreatePerspectiveProjection((float)ScreenHeight / (float)ScreenWidth, 1.05f, 0.1f, 100.0f);
 
-            GenerateSquare(0.0f, 0.0f, 0.0f, 1);
+           // GenerateSquare(0.0f, 0.0f, 0.0f, 1);
 
 
-           // GenerateCube(0.0f, 0.0f, 0f,2);
+            GenerateCube(0.0f, 0.0f, 0f,2);
 
            // m_VBO = NEObjLoader.LoadObj("C:/Users/Kuba/Desktop/tst/teapot.obj");
 
@@ -72,11 +72,11 @@ namespace NostalgiaEngine.RasterizerPipeline
             //NEMatrix4x4 rotation = NEMatrix4x4.CreateRotationY(Engine.Instance.TotalTime)
             //    * NEMatrix4x4.CreateRotationZ(Engine.Instance.TotalTime);
             float yDisp = (float)Math.Sin(Engine.Instance.TotalTime);
-            //NEMatrix4x4 rotation = NEMatrix4x4.CreateRotationX(0.5f + yDisp) *
-            //NEMatrix4x4.CreateRotationY(Engine.Instance.TotalTime);
+            NEMatrix4x4 rotation = NEMatrix4x4.CreateRotationX(0.5f + yDisp) *
+            NEMatrix4x4.CreateRotationY(Engine.Instance.TotalTime);
 
 
-            NEMatrix4x4 rotation = NEMatrix4x4.CreateRotationY(Engine.Instance.TotalTime);
+            //NEMatrix4x4 rotation = NEMatrix4x4.CreateRotationY(Engine.Instance.TotalTime);
 
 
             for (int i = 0; i < m_VBO.Triangles.Count; ++i)
@@ -89,7 +89,7 @@ namespace NostalgiaEngine.RasterizerPipeline
                 m_VBO.Vertices[i].Position = (rotation) * m_VBO.ModelVertices[i].Position;
                 m_VBO.Vertices[i].UV= m_VBO.ModelVertices[i].UV;
                 //m_VBO.Vertices[i].Position += new NEVector4(0,0.0f,10.6f,0.0f);
-                m_VBO.Vertices[i].Position += new NEVector4(0.0f, 0.0f,1.5f/*+ yDisp*/, 0.0f);
+                m_VBO.Vertices[i].Position += new NEVector4(0.0f, 0.0f,1.2f/*+ yDisp*/, 0.0f);
                 m_VBO.Vertices[i].Position = (m_ProjectionMat) * m_VBO.Vertices[i].Position;
                 m_VBO.Vertices[i].WDivide();
             }
@@ -244,7 +244,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             m_VBO.AddTriangle(0, 2, 3);
 
             m_VBO.Triangles[0].ColorAttrib = 2;
-            m_VBO.Triangles[1].ColorAttrib = 7;
+            m_VBO.Triangles[1].ColorAttrib = 2;
 
         }
 
@@ -254,15 +254,17 @@ namespace NostalgiaEngine.RasterizerPipeline
         private void GenerateCube(float x, float y, float z, int col)
         {
             float size = 0.25f;
-            m_VBO.AddVertex(new Vertex(-size + x, -size + y, z - size));
-            m_VBO.AddVertex(new Vertex(-size + x, size + y, z - size));
-            m_VBO.AddVertex(new Vertex(size + x, size + y, z - size));
-            m_VBO.AddVertex(new Vertex(size + x, -size + y, z - size));
+            m_VBO.AddVertex(new Vertex(-size + x, -size + y, z - size, 0.0f, 0.0f));
+            m_VBO.AddVertex(new Vertex(-size + x, size + y, z - size, 0.0f, 1.0f));
+            m_VBO.AddVertex(new Vertex(size + x, size + y, z - size, 1.0f, 1.0f));
+            m_VBO.AddVertex(new Vertex(size + x, -size + y, z - size, 1.0f, 0.0f));
 
-            m_VBO.AddVertex(new Vertex(-size + x, -size + y, z + size));
-            m_VBO.AddVertex(new Vertex(-size + x, size + y, z + size));
-            m_VBO.AddVertex(new Vertex(size + x, size + y, z + size));
-            m_VBO.AddVertex(new Vertex(size + x, -size + y, z + size));
+
+
+            m_VBO.AddVertex(new Vertex(-size + x, -size + y, z + size, 1.0f, 0.0f));
+            m_VBO.AddVertex(new Vertex(-size + x, size + y, z + size, 1.0f, 1.0f));
+            m_VBO.AddVertex(new Vertex(size + x, size + y, z + size, 0.0f, 1.0f));
+            m_VBO.AddVertex(new Vertex(size + x, -size + y, z + size, 0.0f, 0.0f));
 
 
             m_VBO.AddTriangle(0, 1 , 2 );
