@@ -24,6 +24,11 @@ namespace NostalgiaEngine.Core
             val = (val < low) ? low : val;
             val = (val > high) ? high : val;
             return val;
+
+            //if (val < low) return low;
+            //if (val > high) return high;
+            //return val;
+
         }
 
         static public float Abs(float a)

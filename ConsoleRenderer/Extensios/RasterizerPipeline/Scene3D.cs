@@ -100,11 +100,8 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         public override void OnDrawPerColumn(int x)
         {
-
             float u = ((float)x) / ((float)ScreenWidth);
             u = 2.0f * u - 1.0f;
-           // float oneOverScr = 1.0f / ScreenHeight;
-
 
             for (int i = 0; i < m_VBO.Triangles.Count; ++i)
             {
@@ -115,40 +112,31 @@ namespace NostalgiaEngine.RasterizerPipeline
                 ScanlineIntersectionManifest manifest;
                 tr.CreateIntersectionManifest(u, out manifest);
 
-                float y0ss = (-manifest.Y0 + 1.0f) * 0.5f;
-                float y1ss = (-manifest.Y1 + 1.0f) * 0.5f;
-                if (y0ss > y1ss) NEMathHelper.Swap(ref y0ss, ref y1ss);
-                bool wasYlow = y0ss < 0.0f ? true : false;
-                float fullSpan = y1ss - y0ss;
-                float oldY0ss = y0ss;
-                float oldY1ss = y1ss;
-                y0ss = NEMathHelper.Clamp(y0ss, 0, 1.0f);
-                y1ss = NEMathHelper.Clamp(y1ss, 0, 1.0f);
+                float y0 = (-manifest.Y0 + 1.0f) * 0.5f;
+                float y1 = (-manifest.Y1 + 1.0f) * 0.5f;
+                if (y0 > y1) NEMathHelper.Swap(ref y0, ref y1);
+                float distance = y1 - y0;
 
-                float yssSpan = y1ss - y0ss;
+                float y0clamped = NEMathHelper.Clamp(y0, 0, 1.0f);
+                float y1clamped = NEMathHelper.Clamp(y1, 0, 1.0f);
+                float distanceClamped = y1clamped - y0clamped;
 
-                int fillStart = (int) (y0ss * (float)ScreenHeight);
-                int fillEnd = (int)(y1ss * (float)ScreenHeight);
+                float coeff = distanceClamped / distance;
+
+                float tOffset = 0.0f;
+                if (y0 < 0.0f)
+                {
+                   tOffset = -y0 / distance;
+                }
+                int fillStart = (int) (y0clamped * (float)ScreenHeight);
+                int fillEnd = (int)(y1clamped * (float)ScreenHeight);
 
                 float span = fillEnd - fillStart;
-                float itCnt = 0;
-                for (int y = fillStart; y < fillEnd ; ++y)
+     
+                for (int y = 0; y < span ; ++y)
                 {
-                    //if (y >= ScreenHeight) continue;
-                    //if (y < 0) continue;
-                    //float v = ((float)y) * oneOverScr;
-                    //v = -((2.0f * v) - 1.0f);
-                    //NEVector2 frag = new NEVector2(u, v);
 
-                    float t = itCnt / span;
-                    
-                    if(wasYlow)
-                    {
-
-                        float y0T = -oldY0ss / fullSpan;
-                        float coeff = yssSpan / fullSpan;
-                        t = y0T + t * coeff;
-                    }
+                    float t = ((float)y / span)*coeff + tOffset;
                     float depthBottom = (1.0f - manifest.bottom_t) * manifest.bottom_P0.Z + manifest.bottom_t * manifest.bottom_P1.Z;
                     float depthTop= (1.0f - manifest.top_t) * manifest.top_P0.Z + manifest.top_t * manifest.top_P1.Z;
                     float fragmentDepth = (1.0f - t) * depthTop + t * depthBottom;
@@ -183,9 +171,9 @@ namespace NostalgiaEngine.RasterizerPipeline
 
                         float luma = m_LumaBuffer.FastSample(teX, teY);
                         var col = NEColorSample.MakeCol10(ConsoleColor.Black, (ConsoleColor)tr.ColorAttrib, luma+ 0.1f);
-                        NEScreenBuffer.PutChar(col.Character, col.BitMask, x, y);
+                        NEScreenBuffer.PutChar(col.Character, col.BitMask, x, fillStart+y);
                     }
-                    itCnt++;
+                    
                 }
 
 
