@@ -19,6 +19,7 @@ namespace NostalgiaEngine.RasterizerPipeline
         public float X { get { return m_Position.X; } }
         public float Y { get { return m_Position.Y; } }
         public float Z { get { return m_Position.Z; } }
+        public float W { get { return m_Position.W; } }
 
         public float U { get { return m_UVs.X; } }
         public float V { get { return m_UVs.Y; } }
@@ -68,9 +69,9 @@ namespace NostalgiaEngine.RasterizerPipeline
             m_Position.X /= m_Position.W;
             m_Position.Y /= m_Position.W;
             m_Position.Z /= m_Position.W;
-
-            //m_UVs.X /= m_Position.W;
-            //m_UVs.Y /= m_Position.W;
+            m_UVs.X /= m_Position.W;
+            m_UVs.Y /= m_Position.W;
+            m_Position.W = 1.0f/m_Position.W;
         }
 
         public Vertex Duplicate()

@@ -15,6 +15,8 @@ namespace NostalgiaEngine.Core
         public static string LastErrorMessage { get; private set; }
         public NESampleMode SampleMode { get; set; }
 
+        List<float[]> m_ColArrangedData;
+
         public static NEFloatBuffer FromFile(string path)
         {
             int h = 0;
@@ -88,6 +90,17 @@ namespace NostalgiaEngine.Core
             Height = h;
             Data = data;
             SampleMode = NESampleMode.Clamp;
+
+            m_ColArrangedData = new List<float[]>(Width);
+            for(int i = 0; i < Width; ++i)
+            {
+                float[] col = new float[h];
+                for(int j = 0; j < Height; ++j)
+                {
+                    col[j] =  Data[XY2I(i, j)];
+                }
+                m_ColArrangedData.Add(col);
+            }
         }
 
         public void SetField(int x, int y, float val)
@@ -152,11 +165,11 @@ namespace NostalgiaEngine.Core
             u = NEMathHelper.Clamp(u, 0.0f, 1.0f);
             v = NEMathHelper.Clamp(v, 0.0f, 1.0f);
 
-            int x = (int)/*Math.Round*/(u * (float)Width);
-           // if (x >= (Width - 1)) x = Width - 1;
+            int x = (int)Math.Floor(u * (float)Width);
+            if (x >= (Width - 1)) x = Width - 1;
 
-            int y = (int)/*Math.Round*/(v * (float)Height);
-            //if (y >= (Height - 1)) y = Height - 1;
+            int y = (int)Math.Floor(v * (float)Height);
+            if (y >= (Height - 1)) y = Height - 1;
             int index = y * Width + x;
             float col = data[index];
 

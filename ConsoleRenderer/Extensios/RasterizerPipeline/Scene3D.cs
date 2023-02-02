@@ -72,11 +72,11 @@ namespace NostalgiaEngine.RasterizerPipeline
             //NEMatrix4x4 rotation = NEMatrix4x4.CreateRotationY(Engine.Instance.TotalTime)
             //    * NEMatrix4x4.CreateRotationZ(Engine.Instance.TotalTime);
             float yDisp = (float)Math.Sin(Engine.Instance.TotalTime);
-            NEMatrix4x4 rotation = NEMatrix4x4.CreateRotationX(0.5f + yDisp) *
-            NEMatrix4x4.CreateRotationY(Engine.Instance.TotalTime);
+            //NEMatrix4x4 rotation = NEMatrix4x4.CreateRotationX(0.5f + yDisp) *
+            //NEMatrix4x4.CreateRotationY(Engine.Instance.TotalTime);
 
 
-            // NEMatrix4x4 rotation = NEMatrix4x4.CreateRotationY(yDisp);
+             NEMatrix4x4 rotation = NEMatrix4x4.CreateRotationY(yDisp);
 
 
             for (int i = 0; i < m_VBO.Triangles.Count; ++i)
@@ -86,10 +86,10 @@ namespace NostalgiaEngine.RasterizerPipeline
 
             for (int i=0; i < m_VBO.Vertices.Count;++i)
             {
-                m_VBO.Vertices[i].Position = /*(rotation) **/ m_VBO.ModelVertices[i].Position;
+                m_VBO.Vertices[i].Position = (rotation) * m_VBO.ModelVertices[i].Position;
                 m_VBO.Vertices[i].UV= m_VBO.ModelVertices[i].UV;
                 //m_VBO.Vertices[i].Position += new NEVector4(0,0.0f,10.6f,0.0f);
-                m_VBO.Vertices[i].Position += new NEVector4(0, 0.0f, 1.2f, 0.0f);
+                m_VBO.Vertices[i].Position += new NEVector4(0.0f, 0.5f,1.5f/*+ yDisp*/, 0.0f);
                 m_VBO.Vertices[i].Position = (m_ProjectionMat) * m_VBO.Vertices[i].Position;
                 m_VBO.Vertices[i].WDivide();
             }
@@ -102,9 +102,8 @@ namespace NostalgiaEngine.RasterizerPipeline
         {
 
             float u = ((float)x) / ((float)ScreenWidth);
-
             u = 2.0f * u - 1.0f;
-            float oneOverScr = 1.0f / ScreenHeight;
+           // float oneOverScr = 1.0f / ScreenHeight;
 
 
             for (int i = 0; i < m_VBO.Triangles.Count; ++i)
@@ -112,61 +111,81 @@ namespace NostalgiaEngine.RasterizerPipeline
                 Triangle tr = m_VBO.Triangles[i];
                 if (!tr.IsColScanlineInTriangle(u)) continue;
                 //if (tr.TransformedNormal.Z > 0) continue;
-
+               // if (tr.A.Position.W < 0.0f) continue;
                 ScanlineIntersectionManifest manifest;
                 tr.CreateIntersectionManifest(u, out manifest);
-                float y0 = manifest.Y0;
-                float y1 = manifest.Y1;
 
-
-                float y0ss = (-y0 + 1.0f) * 0.5f;
-                float y1ss = (-y1 + 1.0f) * 0.5f;
+                float y0ss = (-manifest.Y0 + 1.0f) * 0.5f;
+                float y1ss = (-manifest.Y1 + 1.0f) * 0.5f;
                 if (y0ss > y1ss) NEMathHelper.Swap(ref y0ss, ref y1ss);
+                bool wasYlow = y0ss < 0.0f ? true : false;
+                float fullSpan = y1ss - y0ss;
+                float oldY0ss = y0ss;
+                float oldY1ss = y1ss;
                 y0ss = NEMathHelper.Clamp(y0ss, 0, 1.0f);
                 y1ss = NEMathHelper.Clamp(y1ss, 0, 1.0f);
-                
 
-                int fillStart = (int)(y0ss * ScreenHeight);
-                int fillEnd = (int)(y1ss * ScreenHeight);
+                float yssSpan = y1ss - y0ss;
+
+                int fillStart = (int) (y0ss * (float)ScreenHeight);
+                int fillEnd = (int)(y1ss * (float)ScreenHeight);
 
                 float span = fillEnd - fillStart;
                 float itCnt = 0;
                 for (int y = fillStart; y < fillEnd ; ++y)
                 {
-                    float v = ((float)y) * oneOverScr;
-                    v = -((2.0f * v) - 1.0f);
-                    NEVector2 frag = new NEVector2(u, v);
+                    //if (y >= ScreenHeight) continue;
+                    //if (y < 0) continue;
+                    //float v = ((float)y) * oneOverScr;
+                    //v = -((2.0f * v) - 1.0f);
+                    //NEVector2 frag = new NEVector2(u, v);
 
                     float t = itCnt / span;
+                    
+                    if(wasYlow)
+                    {
 
+                        float y0T = -oldY0ss / fullSpan;
+                        float coeff = yssSpan / fullSpan;
+                        t = y0T + t * coeff;
+                    }
                     float depthBottom = (1.0f - manifest.bottom_t) * manifest.bottom_P0.Z + manifest.bottom_t * manifest.bottom_P1.Z;
                     float depthTop= (1.0f - manifest.top_t) * manifest.top_P0.Z + manifest.top_t * manifest.top_P1.Z;
                     float fragmentDepth = (1.0f - t) * depthTop + t * depthBottom;
 
+                   
+
+                    float fragWBottom = (1.0f - manifest.bottom_t) * manifest.bottom_P0.W + manifest.bottom_t * manifest.bottom_P1.W;
+                    float fragWTop = (1.0f - manifest.top_t) * manifest.top_P0.W + manifest.top_t * manifest.top_P1.W;
+                    float fragW = (1.0f - t) * fragWTop + t * fragWBottom;
 
 
-
-                    NEVector2 textCoordUpper = manifest.bottom_P0.UV * (1.0f - manifest.bottom_t)
-                        + manifest.bottom_P1.UV * manifest.bottom_t;
-
-                    NEVector2 textCoordLower = manifest.top_P0.UV * (1.0f - manifest.top_t)
-                         + manifest.top_P1.UV * manifest.top_t;
-
-                    NEVector2 texCoord = textCoordLower * (1.0f - t) + textCoordUpper * t;
+                    
 
 
-
-
-                    itCnt++;
                     if (m_DepthBuffer.TryUpdate(x, y, fragmentDepth))
                     {
                         //float dot = NEVector4.Dot(tr.TransformedNormal, new NEVector4(0.0f, 0.0f, -1.0f, 0.0f));
 
                         //dot = NEMathHelper.Clamp(dot, 0.0f, 1.0f);
-                        float luma = m_LumaBuffer.FastSample(texCoord.X, texCoord.Y);
-                        var col = NEColorSample.MakeCol10(ConsoleColor.Black, (ConsoleColor)tr.ColorAttrib, luma);
+
+                        NEVector2 textCoordUpper = manifest.bottom_P0.UV * (1.0f - manifest.bottom_t)
+                                                    + manifest.bottom_P1.UV * manifest.bottom_t;
+
+                        NEVector2 textCoordLower = manifest.top_P0.UV * (1.0f - manifest.top_t)
+                                                    + manifest.top_P1.UV * manifest.top_t;
+
+                        NEVector2 texCoord = textCoordLower * (1.0f - t) + textCoordUpper * t;
+
+
+                        float teX =  texCoord.X / fragW;
+                        float teY =  texCoord.Y / fragW;
+
+                        float luma = m_LumaBuffer.FastSample(teX, teY);
+                        var col = NEColorSample.MakeCol10(ConsoleColor.Black, (ConsoleColor)tr.ColorAttrib, luma+ 0.1f);
                         NEScreenBuffer.PutChar(col.Character, col.BitMask, x, y);
                     }
+                    itCnt++;
                 }
 
 
@@ -218,7 +237,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             }
         }
 
-        int squareCount = 0;
+ 
         private void GenerateSquare(float x, float y, float depth, int col)
         {
             float size = 0.55f;
