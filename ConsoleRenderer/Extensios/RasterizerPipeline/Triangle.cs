@@ -115,27 +115,27 @@ namespace NostalgiaEngine.RasterizerPipeline
             if (yAC > B.Y) //ac is upper
             {
 
-                manifest.u_t = t_AC;
-                manifest.l_t = t_Other;
+                manifest.top_t = t_AC;
+                manifest.bottom_t = t_Other;
 
-                manifest.u_P0 = A;
-                manifest.u_P1 = C;
+                manifest.top_P0 = A;
+                manifest.top_P1 = C;
 
-                manifest.l_P0 = otherP0;
-                manifest.l_P1 = otherP1;
+                manifest.bottom_P0 = otherP0;
+                manifest.bottom_P1 = otherP1;
 
 
             }
             else
             {
-                manifest.u_t = t_Other;
-                manifest.l_t = t_AC;
+                manifest.top_t = t_Other;
+                manifest.bottom_t = t_AC;
 
-                manifest.u_P0 = otherP0;
-                manifest.u_P1 = otherP1;
+                manifest.top_P0 = otherP0;
+                manifest.top_P1 = otherP1;
 
-                manifest.l_P0 = A;
-                manifest.l_P1 = C;
+                manifest.bottom_P0 = A;
+                manifest.bottom_P1 = C;
             }
 
         }
@@ -200,13 +200,13 @@ namespace NostalgiaEngine.RasterizerPipeline
         public float Y0;
         public float Y1;
 
-        public float l_t;
-        public float u_t;
+        public float bottom_t;
+        public float top_t;
 
-        public Vertex l_P0;
-        public Vertex l_P1;
+        public Vertex bottom_P0;
+        public Vertex bottom_P1;
 
-        public Vertex u_P0;
-        public Vertex u_P1;
+        public Vertex top_P0;
+        public Vertex top_P1;
     }
 }

@@ -68,6 +68,9 @@ namespace NostalgiaEngine.RasterizerPipeline
             m_Position.X /= m_Position.W;
             m_Position.Y /= m_Position.W;
             m_Position.Z /= m_Position.W;
+
+            //m_UVs.X /= m_Position.W;
+            //m_UVs.Y /= m_Position.W;
         }
 
         public Vertex Duplicate()

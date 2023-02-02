@@ -145,6 +145,26 @@ namespace NostalgiaEngine.Core
             return col;
         }
 
+        public float FastSample(float u, float v)
+        {
+            var data = Data;
+
+            u = NEMathHelper.Clamp(u, 0.0f, 1.0f);
+            v = NEMathHelper.Clamp(v, 0.0f, 1.0f);
+
+            int x = (int)/*Math.Round*/(u * (float)Width);
+           // if (x >= (Width - 1)) x = Width - 1;
+
+            int y = (int)/*Math.Round*/(v * (float)Height);
+            //if (y >= (Height - 1)) y = Height - 1;
+            int index = y * Width + x;
+            float col = data[index];
+
+
+            return col;
+        }
+
+
 
         private int XY2I(int x, int y)
         {
