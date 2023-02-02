@@ -76,7 +76,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             //NEMatrix4x4.CreateRotationY(Engine.Instance.TotalTime);
 
 
-             NEMatrix4x4 rotation = NEMatrix4x4.CreateRotationY(yDisp);
+            NEMatrix4x4 rotation = NEMatrix4x4.CreateRotationY(Engine.Instance.TotalTime);
 
 
             for (int i = 0; i < m_VBO.Triangles.Count; ++i)
@@ -89,7 +89,7 @@ namespace NostalgiaEngine.RasterizerPipeline
                 m_VBO.Vertices[i].Position = (rotation) * m_VBO.ModelVertices[i].Position;
                 m_VBO.Vertices[i].UV= m_VBO.ModelVertices[i].UV;
                 //m_VBO.Vertices[i].Position += new NEVector4(0,0.0f,10.6f,0.0f);
-                m_VBO.Vertices[i].Position += new NEVector4(0.0f, 0.5f,1.5f/*+ yDisp*/, 0.0f);
+                m_VBO.Vertices[i].Position += new NEVector4(0.0f, 0.0f,1.5f/*+ yDisp*/, 0.0f);
                 m_VBO.Vertices[i].Position = (m_ProjectionMat) * m_VBO.Vertices[i].Position;
                 m_VBO.Vertices[i].WDivide();
             }
@@ -135,8 +135,10 @@ namespace NostalgiaEngine.RasterizerPipeline
      
                 for (int y = 0; y < span ; ++y)
                 {
+                    //manifest.top_t = NEMathHelper.Clamp(manifest.top_t, 0.0f, 1.0f);
+                    //manifest.bottom_t = NEMathHelper.Clamp(manifest.bottom_t, 0.0f, 1.0f);
 
-                    float t = ((float)y / span)*coeff + tOffset;
+                    float t = ((float)y / span) * coeff + tOffset;
                     float depthBottom = (1.0f - manifest.bottom_t) * manifest.bottom_P0.Z + manifest.bottom_t * manifest.bottom_P1.Z;
                     float depthTop= (1.0f - manifest.top_t) * manifest.top_P0.Z + manifest.top_t * manifest.top_P1.Z;
                     float fragmentDepth = (1.0f - t) * depthTop + t * depthBottom;
@@ -151,26 +153,26 @@ namespace NostalgiaEngine.RasterizerPipeline
                     
 
 
-                    if (m_DepthBuffer.TryUpdate(x, y, fragmentDepth))
+                    if (m_DepthBuffer.TryUpdate(x, fillStart + y, fragmentDepth))
                     {
-                        //float dot = NEVector4.Dot(tr.TransformedNormal, new NEVector4(0.0f, 0.0f, -1.0f, 0.0f));
+                        float dot = NEVector4.Dot(tr.TransformedNormal, new NEVector4(0.0f, 0.0f, -1.0f, 0.0f));
 
-                        //dot = NEMathHelper.Clamp(dot, 0.0f, 1.0f);
+                        dot = NEMathHelper.Clamp(dot, 0.0f, 1.0f);
 
-                        NEVector2 textCoordUpper = manifest.bottom_P0.UV * (1.0f - manifest.bottom_t)
+                        NEVector2 textCoordBottom= manifest.bottom_P0.UV * (1.0f - manifest.bottom_t)
                                                     + manifest.bottom_P1.UV * manifest.bottom_t;
 
-                        NEVector2 textCoordLower = manifest.top_P0.UV * (1.0f - manifest.top_t)
+                        NEVector2 textCoordTop = manifest.top_P0.UV * (1.0f - manifest.top_t)
                                                     + manifest.top_P1.UV * manifest.top_t;
 
-                        NEVector2 texCoord = textCoordLower * (1.0f - t) + textCoordUpper * t;
+                        NEVector2 texCoord = textCoordTop* (1.0f - t) + textCoordBottom* t;
 
 
                         float teX =  texCoord.X / fragW;
                         float teY =  texCoord.Y / fragW;
 
-                        float luma = m_LumaBuffer.FastSample(teX, teY);
-                        var col = NEColorSample.MakeCol10(ConsoleColor.Black, (ConsoleColor)tr.ColorAttrib, luma+ 0.1f);
+                        float luma = m_LumaBuffer.FastSample(teX, 1.0f-teY);
+                        var col = NEColorSample.MakeCol10(ConsoleColor.Black, (ConsoleColor)tr.ColorAttrib, luma + 0.1f);
                         NEScreenBuffer.PutChar(col.Character, col.BitMask, x, fillStart+y);
                     }
                     
@@ -229,16 +231,19 @@ namespace NostalgiaEngine.RasterizerPipeline
         private void GenerateSquare(float x, float y, float depth, int col)
         {
             float size = 0.55f;
-            m_VBO.AddVertex(new Vertex(-size+x,-size+y, depth,0.0f,1.0f));
-            m_VBO.AddVertex(new Vertex(-size+x, size+ y, depth, 0.0f, 0.0f));
-            m_VBO.AddVertex(new Vertex(size + x, size + y, depth,1.0f,0.0f));
-            m_VBO.AddVertex(new Vertex(size + x, -size +y, depth,1.0f,1.0f));
-
+            //m_VBO.AddVertex(new Vertex(-size+x,-size+y, depth,0.0f,1.0f));
+            //m_VBO.AddVertex(new Vertex(-size+x, size+ y, depth, 0.0f, 0.0f));
+            //m_VBO.AddVertex(new Vertex(size + x, size + y, depth,1.0f,0.0f));
+            //m_VBO.AddVertex(new Vertex(size + x, -size +y, depth,1.0f,1.0f));
+            m_VBO.AddVertex(new Vertex(-size + x, -size + y, depth, 0.0f, 0.0f));
+            m_VBO.AddVertex(new Vertex(-size + x, size + y, depth, 0.0f, 1.0f));
+            m_VBO.AddVertex(new Vertex(size + x, size + y, depth, 1.0f, 1.0f));
+            m_VBO.AddVertex(new Vertex(size + x, -size + y, depth, 1.0f, 0.0f));
 
             m_VBO.AddTriangle(0, 1, 2);
             m_VBO.AddTriangle(0, 2, 3);
 
-            m_VBO.Triangles[0].ColorAttrib = 7;
+            m_VBO.Triangles[0].ColorAttrib = 2;
             m_VBO.Triangles[1].ColorAttrib = 7;
 
         }

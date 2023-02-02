@@ -112,7 +112,7 @@ namespace NostalgiaEngine.RasterizerPipeline
                 otherP1 = C;
             }
 
-            if (yAC > B.Y) //ac is upper
+            if (yAC > manifest.Y0) //ac is upper
             {
 
                 manifest.top_t = t_AC;
