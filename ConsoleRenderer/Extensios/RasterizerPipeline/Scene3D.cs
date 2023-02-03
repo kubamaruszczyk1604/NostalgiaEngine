@@ -14,6 +14,8 @@ namespace NostalgiaEngine.RasterizerPipeline
         NEMatrix4x4 m_ProjectionMat;
 
         NEFloatBuffer m_LumaBuffer;
+        NETexture m_Texture;
+        NEColorPalette m_Palette;
 
         public override bool OnLoad()
         {
@@ -22,6 +24,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             PixelWidth = 4;
             PixelHeight = 4;
 
+            //ParallelScreenDraw = true;
             //ScreenWidth = 120;
             //ScreenHeight = 110;
             //PixelWidth = 8;
@@ -33,17 +36,19 @@ namespace NostalgiaEngine.RasterizerPipeline
             //PixelHeight = 5;
 
             m_LumaBuffer = NEFloatBuffer.FromFile("C:/test/nowa_textura12/luma.buf");
+            m_Texture = NEColorTexture16.LoadFromFile("C:/test/nowa_textura12/color.tex");
+            m_Palette = NEColorPalette.FromFile("C:/test/nowa_textura12/palette.txt");
             m_LumaBuffer.SampleMode = NESampleMode.Repeat;
             m_DepthBuffer = new NEDepthBuffer(ScreenWidth, ScreenHeight);
             m_VBO = new VertexBuffer();
             m_ProjectionMat = NEMatrix4x4.CreatePerspectiveProjection((float)ScreenHeight / (float)ScreenWidth, 1.05f, 0.1f, 100.0f);
 
-           // GenerateSquare(0.0f, 0.0f, 0.0f, 1);
+            //GenerateSquare(0.0f, 0.0f, 0.0f, 1);
 
-
+            //NEColorManagement.SetPalette(m_Palette);
             GenerateCube(0.0f, 0.0f, 0f,2);
 
-           // m_VBO = NEObjLoader.LoadObj("C:/Users/Kuba/Desktop/tst/teapot.obj");
+            //m_VBO = NEObjLoader.LoadObj("C:/Users/Kuba/Desktop/tst/teapot.obj");
 
             //GenerateTestTriangles();
             return base.OnLoad();
@@ -72,7 +77,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             //NEMatrix4x4 rotation = NEMatrix4x4.CreateRotationY(Engine.Instance.TotalTime)
             //    * NEMatrix4x4.CreateRotationZ(Engine.Instance.TotalTime);
             float yDisp = (float)Math.Sin(Engine.Instance.TotalTime);
-            NEMatrix4x4 rotation = NEMatrix4x4.CreateRotationX(0.5f + yDisp) *
+            NEMatrix4x4 rotation = NEMatrix4x4.CreateRotationX(yDisp * 0.3f) *
             NEMatrix4x4.CreateRotationY(Engine.Instance.TotalTime);
 
 
@@ -81,7 +86,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 
             for (int i = 0; i < m_VBO.Triangles.Count; ++i)
             {
-                m_VBO.Triangles[i].TransformedNormal = /*rotation **/ m_VBO.Triangles[i].ModelNormal;
+                m_VBO.Triangles[i].TransformedNormal = rotation * m_VBO.Triangles[i].ModelNormal;
             }
 
             for (int i=0; i < m_VBO.Vertices.Count;++i)
@@ -89,7 +94,7 @@ namespace NostalgiaEngine.RasterizerPipeline
                 m_VBO.Vertices[i].Position = (rotation) * m_VBO.ModelVertices[i].Position;
                 m_VBO.Vertices[i].UV= m_VBO.ModelVertices[i].UV;
                 //m_VBO.Vertices[i].Position += new NEVector4(0,0.0f,10.6f,0.0f);
-                m_VBO.Vertices[i].Position += new NEVector4(0.0f, 0.0f,1.2f/*+ yDisp*/, 0.0f);
+                m_VBO.Vertices[i].Position += new NEVector4(0.0f, 0.0f,1.0f /*+ yDisp*/, 0.0f);
                 m_VBO.Vertices[i].Position = (m_ProjectionMat) * m_VBO.Vertices[i].Position;
                 m_VBO.Vertices[i].WDivide();
             }
@@ -107,8 +112,9 @@ namespace NostalgiaEngine.RasterizerPipeline
             {
                 Triangle tr = m_VBO.Triangles[i];
                 if (!tr.IsColScanlineInTriangle(u)) continue;
+                float dot = NEVector4.Dot(tr.TransformedNormal, new NEVector4(0.0f, 0.0f, -1.0f, 0.0f));
                 //if (tr.TransformedNormal.Z > 0) continue;
-               // if (tr.A.Position.W < 0.0f) continue;
+                // if (tr.A.Position.W < 0.0f) continue;
                 ScanlineIntersectionManifest manifest;
                 tr.CreateIntersectionManifest(u, out manifest);
 
@@ -135,27 +141,21 @@ namespace NostalgiaEngine.RasterizerPipeline
      
                 for (int y = 0; y < span ; ++y)
                 {
-                    //manifest.top_t = NEMathHelper.Clamp(manifest.top_t, 0.0f, 1.0f);
-                    //manifest.bottom_t = NEMathHelper.Clamp(manifest.bottom_t, 0.0f, 1.0f);
 
                     float t = ((float)y / span) * coeff + tOffset;
                     float depthBottom = (1.0f - manifest.bottom_t) * manifest.bottom_P0.Z + manifest.bottom_t * manifest.bottom_P1.Z;
                     float depthTop= (1.0f - manifest.top_t) * manifest.top_P0.Z + manifest.top_t * manifest.top_P1.Z;
                     float fragmentDepth = (1.0f - t) * depthTop + t * depthBottom;
 
-                   
-
                     float fragWBottom = (1.0f - manifest.bottom_t) * manifest.bottom_P0.W + manifest.bottom_t * manifest.bottom_P1.W;
                     float fragWTop = (1.0f - manifest.top_t) * manifest.top_P0.W + manifest.top_t * manifest.top_P1.W;
                     float fragW = (1.0f - t) * fragWTop + t * fragWBottom;
 
 
-                    
-
 
                     if (m_DepthBuffer.TryUpdate(x, fillStart + y, fragmentDepth))
                     {
-                        float dot = NEVector4.Dot(tr.TransformedNormal, new NEVector4(0.0f, 0.0f, -1.0f, 0.0f));
+                      
 
                         dot = NEMathHelper.Clamp(dot, 0.0f, 1.0f);
 
@@ -171,8 +171,9 @@ namespace NostalgiaEngine.RasterizerPipeline
                         float teX =  texCoord.X / fragW;
                         float teY =  texCoord.Y / fragW;
 
-                        float luma = m_LumaBuffer.FastSample(teX, 1.0f-teY);
-                        var col = NEColorSample.MakeCol10(ConsoleColor.Black, (ConsoleColor)tr.ColorAttrib, luma + 0.1f);
+                        float luma = m_LumaBuffer.FastSample(teX, 1.0f - teY);
+                        var col = NEColorSample.MakeCol10(ConsoleColor.Black, (ConsoleColor)tr.ColorAttrib, luma /*+ 0.1f*/);
+                        //var col = m_Texture.Sample(teX, 1.0f-teY, dot);
                         NEScreenBuffer.PutChar(col.Character, col.BitMask, x, fillStart+y);
                     }
                     
@@ -243,8 +244,8 @@ namespace NostalgiaEngine.RasterizerPipeline
             m_VBO.AddTriangle(0, 1, 2);
             m_VBO.AddTriangle(0, 2, 3);
 
-            m_VBO.Triangles[0].ColorAttrib = 2;
-            m_VBO.Triangles[1].ColorAttrib = 2;
+            m_VBO.Triangles[0].ColorAttrib = 9;
+            m_VBO.Triangles[1].ColorAttrib = 9;
 
         }
 
@@ -270,44 +271,44 @@ namespace NostalgiaEngine.RasterizerPipeline
             m_VBO.AddTriangle(0, 1 , 2 );
             m_VBO.AddTriangle(0 , 2 , 3 );
 
-            m_VBO.Triangles[0].ColorAttrib = 1;
-            m_VBO.Triangles[1].ColorAttrib = 1;
+            m_VBO.Triangles[0].ColorAttrib = 9;
+            m_VBO.Triangles[1].ColorAttrib = 9;
 
 
             m_VBO.AddTriangle(4, 6, 5);
             m_VBO.AddTriangle(4, 7, 6);
 
-            m_VBO.Triangles[2].ColorAttrib = 2;
-            m_VBO.Triangles[3].ColorAttrib = 2;
+            m_VBO.Triangles[2].ColorAttrib = 9;
+            m_VBO.Triangles[3].ColorAttrib = 9;
 
 
             m_VBO.AddTriangle(4, 5, 1);
             m_VBO.AddTriangle(4, 1, 0);
 
-            m_VBO.Triangles[4].ColorAttrib = 3;
-            m_VBO.Triangles[5].ColorAttrib = 3;
+            m_VBO.Triangles[4].ColorAttrib = 9;
+            m_VBO.Triangles[5].ColorAttrib = 9;
 
 
             m_VBO.AddTriangle(3, 2, 6);
             m_VBO.AddTriangle(3, 6, 7);
 
-            m_VBO.Triangles[6].ColorAttrib = 5;
-            m_VBO.Triangles[7].ColorAttrib = 5;
+            m_VBO.Triangles[6].ColorAttrib = 9;
+            m_VBO.Triangles[7].ColorAttrib = 9;
 
 
 
             m_VBO.AddTriangle(1, 5, 6);
             m_VBO.AddTriangle(1, 6, 2);
 
-            m_VBO.Triangles[8].ColorAttrib = 6;
-            m_VBO.Triangles[9].ColorAttrib = 6;
+            m_VBO.Triangles[8].ColorAttrib = 9;
+            m_VBO.Triangles[9].ColorAttrib = 9;
 
 
             m_VBO.AddTriangle(0, 3, 7);
             m_VBO.AddTriangle(0, 7, 4);
 
-            m_VBO.Triangles[10].ColorAttrib = 7;
-            m_VBO.Triangles[11].ColorAttrib = 7;
+            m_VBO.Triangles[10].ColorAttrib = 9;
+            m_VBO.Triangles[11].ColorAttrib = 9;
 
         }
 
