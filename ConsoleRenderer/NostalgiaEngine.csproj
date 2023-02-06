@@ -68,8 +68,10 @@
     <Compile Include="Demos\BandLevelsDemo\BandLevelDemo.cs" />
     <Compile Include="Demos\BandLevelsDemo\TextDemo.cs" />
     <Compile Include="Demos\TextureDisplay\PhotoViewer.cs" />
+    <Compile Include="Extensios\RasterizerPipeline\Model.cs" />
     <Compile Include="Extensios\RasterizerPipeline\NEObjLoader.cs" />
     <Compile Include="Extensios\RasterizerPipeline\Scene3D.cs" />
+    <Compile Include="Extensios\RasterizerPipeline\Transform.cs" />
     <Compile Include="Extensios\RasterizerPipeline\Triangle.cs" />
     <Compile Include="Extensios\RasterizerPipeline\Vertex.cs" />
     <Compile Include="Extensios\RasterizerPipeline\VertexBuffer.cs" />

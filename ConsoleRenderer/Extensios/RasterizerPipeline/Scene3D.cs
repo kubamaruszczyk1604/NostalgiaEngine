@@ -35,7 +35,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             //PixelWidth = 5;
             //PixelHeight = 5;
 
-            m_LumaBuffer = NEFloatBuffer.FromFile("C:/test/nowa_textura12/luma.buf");
+            m_LumaBuffer = NEFloatBuffer.FromFile("C:/test/ntex/luma.buf");
             m_Texture = NEColorTexture16.LoadFromFile("C:/test/nowa_textura12/color.tex");
             m_Palette = NEColorPalette.FromFile("C:/test/nowa_textura12/palette.txt");
             m_LumaBuffer.SampleMode = NESampleMode.Repeat;
@@ -45,7 +45,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 
             //GenerateSquare(0.0f, 0.0f, 0.0f, 1);
 
-            //NEColorManagement.SetPalette(m_Palette);
+            NEColorManagement.SetPalette(m_Palette);
             GenerateCube(0.0f, 0.0f, 0f,2);
 
             //m_VBO = NEObjLoader.LoadObj("C:/Users/Kuba/Desktop/tst/teapot.obj");
@@ -98,7 +98,7 @@ namespace NostalgiaEngine.RasterizerPipeline
                 m_VBO.Vertices[i].Position = (m_ProjectionMat) * m_VBO.Vertices[i].Position;
                 m_VBO.Vertices[i].WDivide();
             }
-            NEScreenBuffer.ClearColor(0);
+            NEScreenBuffer.ClearColor(2);
             m_DepthBuffer.Clear();
             m_VBO.CalculateTriangleEdges();
         }
@@ -171,9 +171,9 @@ namespace NostalgiaEngine.RasterizerPipeline
                         float teX =  texCoord.X / fragW;
                         float teY =  texCoord.Y / fragW;
 
-                        float luma = m_LumaBuffer.FastSample(teX, 1.0f - teY);
-                        var col = NEColorSample.MakeCol10(ConsoleColor.Black, (ConsoleColor)tr.ColorAttrib, luma /*+ 0.1f*/);
-                        //var col = m_Texture.Sample(teX, 1.0f-teY, dot);
+                        //float luma = m_LumaBuffer.FastSample(teX, 1.0f - teY);
+                        //var col = NEColorSample.MakeCol10(ConsoleColor.Black, (ConsoleColor)15/*tr.ColorAttrib*/,luma *dot);
+                        var col = m_Texture.Sample(teX, 1.0f - teY, dot);
                         NEScreenBuffer.PutChar(col.Character, col.BitMask, x, fillStart+y);
                     }
                     
