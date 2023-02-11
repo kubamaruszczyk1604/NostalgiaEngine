@@ -57,7 +57,7 @@ namespace NostalgiaEngine.Core
             {
                 if (m_SuspendTaskbarFlag)
                 {
-                    Thread.Sleep(100);
+                    Thread.Sleep(1000);
                     continue;
                 }
                 Console.Title = Title +

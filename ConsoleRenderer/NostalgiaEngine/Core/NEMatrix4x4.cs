@@ -35,6 +35,7 @@ namespace NostalgiaEngine.Core
         }
 
 
+
         static public bool Compare(NEMatrix4x4 lhs, NEMatrix4x4 rhs)
         {
             for (int i = 0; i < 4; ++i)
@@ -46,6 +47,7 @@ namespace NostalgiaEngine.Core
             }
             return true;
         }
+
 
         static public NEMatrix4x4 operator *(NEMatrix4x4 lhs, NEMatrix4x4 rhs)
         {
@@ -172,6 +174,66 @@ namespace NostalgiaEngine.Core
                                         { 0.0f, 0.0f, 0.0f, 1.0f }};
             return mat;
         }
+
+
+        static public NEMatrix4x4 CreateTranslation(NEVector4 xyz)
+        {
+            NEMatrix4x4 mat = new NEMatrix4x4();
+            mat.m_Data = new float[,] { { 1.0f, 0.0f, 0.0f, xyz.X },
+                                        { 0.0f, 1.0f, 0.0f, xyz.Y },
+                                        { 0.0f, 0.0f, 1.0f, xyz.Z },
+                                        { 0.0f, 0.0f, 0.0f, 1.0f }};
+            return mat;
+        }
+
+        static public NEMatrix4x4 CreateTranslation(float x, float y, float z)
+        {
+            NEMatrix4x4 mat = new NEMatrix4x4();
+            mat.m_Data = new float[,] { { 1.0f, 0.0f, 0.0f, x },
+                                        { 0.0f, 1.0f, 0.0f, y },
+                                        { 0.0f, 0.0f, 1.0f, z },
+                                        { 0.0f, 0.0f, 0.0f, 1.0f }};
+            return mat;
+        }
+
+        public static NEMatrix4x4 CreateScale(NEVector4 xyz)
+        {
+            NEMatrix4x4 mat = new NEMatrix4x4();
+            mat.m_Data = new float[,] { { xyz.X, 0.0f, 0.0f, 0 },
+                                        { 0.0f, xyz.Y, 0.0f, 0},
+                                        { 0.0f, 0.0f, xyz.Z, 0 },
+                                        { 0.0f, 0.0f, 0.0f, 1.0f }};
+            return mat;
+        }
+
+        public static NEMatrix4x4 CreateScale(float x, float y, float z)
+        {
+            NEMatrix4x4 mat = new NEMatrix4x4();
+            mat.m_Data = new float[,] { { x, 0.0f, 0.0f, 0 },
+                                        { 0.0f, y, 0.0f, 0},
+                                        { 0.0f, 0.0f, z, 0 },
+                                        { 0.0f, 0.0f, 0.0f, 1.0f }};
+            return mat;
+        }
+
+
+        public static NEMatrix4x4 CreatePointAt(NEVector4 forward, NEVector4 up )
+        {
+            forward = forward.Normalized;
+            up -=  (forward * NEVector4.Dot(up, forward));
+            
+            NEVector4 right = NEVector4.Cross3(forward, up).Normalized;
+
+            NEMatrix4x4 mat = new NEMatrix4x4();
+            mat.m_Data = new float[,] { { forward.X, right.X, up.X, 0 },
+                                        { forward.Y, right.Y, up.Y, 0},
+                                        { forward.Z, right.Z, up.Z, 0 },
+                                        { 0.0f, 0.0f, 0.0f, 1.0f }};
+            return mat;
+        }
+
+
+
 
         static public bool UnitTest_MatMatMultiply()
         {

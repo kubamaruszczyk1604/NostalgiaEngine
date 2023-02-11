@@ -54,10 +54,10 @@ namespace NostalgiaEngine.RasterizerPipeline
         { }
 
 
-        public void LookAt(NEVector4 position)
+        public void PointAt(NEVector4 target)
         {
-            NEVector4 dir = position - m_Position;
-            dir.W = 0;
+            NEVector4 forward = target - m_Position;
+            forward.W = 0;
         }
     }
 }

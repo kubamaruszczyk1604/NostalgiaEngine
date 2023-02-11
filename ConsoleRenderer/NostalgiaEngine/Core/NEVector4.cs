@@ -60,7 +60,13 @@ namespace NostalgiaEngine.Core
             return v1.X * v2.X + v1.Y * v2.Y + v1.Z * v2.Z + v1.W * v2.W;
         }
 
-
+        public static NEVector4 Cross3(NEVector4 a, NEVector4 b)
+        {
+            float x = a.Y * b.Z - a.Z * b.Y;
+            float y = a.Z * b.X - a.X * b.Z;
+            float z = a.X * b.Y - a.Y * b.X;
+            return new NEVector4(x, y, z, 0.0f);
+        }
 
         static public NEVector4 operator +(NEVector4 lhs, NEVector4 rhs)
         {

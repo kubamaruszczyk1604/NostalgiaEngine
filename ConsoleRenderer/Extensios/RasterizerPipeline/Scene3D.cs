@@ -41,7 +41,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             m_LumaBuffer.SampleMode = NESampleMode.Repeat;
             m_DepthBuffer = new NEDepthBuffer(ScreenWidth, ScreenHeight);
             m_VBO = new VertexBuffer();
-            m_ProjectionMat = NEMatrix4x4.CreatePerspectiveProjection((float)ScreenHeight / (float)ScreenWidth, 1.05f, 0.1f, 100.0f);
+            m_ProjectionMat = NEMatrix4x4.CreatePerspectiveProjection((float)ScreenHeight / (float)ScreenWidth, 1.05f, 1.1f, 100.0f);
 
             //GenerateSquare(0.0f, 0.0f, 0.0f, 1);
 
@@ -89,12 +89,13 @@ namespace NostalgiaEngine.RasterizerPipeline
                 m_VBO.Triangles[i].TransformedNormal = rotation * m_VBO.Triangles[i].ModelNormal;
             }
 
+            NEMatrix4x4 translation = NEMatrix4x4.CreateTranslation(0.0f, 0.0f, 1.0f);
             for (int i=0; i < m_VBO.Vertices.Count;++i)
             {
-                m_VBO.Vertices[i].Position = (rotation) * m_VBO.ModelVertices[i].Position;
-                m_VBO.Vertices[i].UV= m_VBO.ModelVertices[i].UV;
+                m_VBO.Vertices[i].Position =  (translation * rotation) * m_VBO.ModelVertices[i].Position;
+                m_VBO.Vertices[i].UV = m_VBO.ModelVertices[i].UV;
                 //m_VBO.Vertices[i].Position += new NEVector4(0,0.0f,10.6f,0.0f);
-                m_VBO.Vertices[i].Position += new NEVector4(0.0f, 0.0f,1.0f /*+ yDisp*/, 0.0f);
+               // m_VBO.Vertices[i].Position += new NEVector4(0.0f, 0.0f,1.0f /*+ yDisp*/, 0.0f);
                 m_VBO.Vertices[i].Position = (m_ProjectionMat) * m_VBO.Vertices[i].Position;
                 m_VBO.Vertices[i].WDivide();
             }
@@ -114,7 +115,7 @@ namespace NostalgiaEngine.RasterizerPipeline
                 if (!tr.IsColScanlineInTriangle(u)) continue;
                 float dot = NEVector4.Dot(tr.TransformedNormal, new NEVector4(0.0f, 0.0f, -1.0f, 0.0f));
                 //if (tr.TransformedNormal.Z > 0) continue;
-                // if (tr.A.Position.W < 0.0f) continue;
+                 //if (tr.A.Position.W < 0.0f) continue;
                 ScanlineIntersectionManifest manifest;
                 tr.CreateIntersectionManifest(u, out manifest);
 
@@ -152,7 +153,7 @@ namespace NostalgiaEngine.RasterizerPipeline
                     float fragW = (1.0f - t) * fragWTop + t * fragWBottom;
 
 
-
+                    //if (fragmentDepth < 0.0f) continue;
                     if (m_DepthBuffer.TryUpdate(x, fillStart + y, fragmentDepth))
                     {
                       
@@ -170,7 +171,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 
                         float teX =  texCoord.X / fragW;
                         float teY =  texCoord.Y / fragW;
-
+                        dot = 1.0f;
                         //float luma = m_LumaBuffer.FastSample(teX, 1.0f - teY);
                         //var col = NEColorSample.MakeCol10(ConsoleColor.Black, (ConsoleColor)15/*tr.ColorAttrib*/,luma *dot);
                         var col = m_Texture.Sample(teX, 1.0f - teY, dot);
