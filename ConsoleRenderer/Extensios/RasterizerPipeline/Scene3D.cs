@@ -35,7 +35,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             //ScreenHeight = 180;
             //PixelWidth = 5;
             //PixelHeight = 5;
-
+           // ResourceManager.Instance.Test();
             m_LumaBuffer = NEFloatBuffer.FromFile("C:/test/ruler/luma.buf");
             m_Texture = NEColorTexture16.LoadFromFile("C:/test/nowa_textura12/color.tex");
             m_Palette = NEColorPalette.FromFile("C:/test/nowa_textura12/palette.txt");
