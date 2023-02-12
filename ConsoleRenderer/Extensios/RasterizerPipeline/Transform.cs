@@ -12,7 +12,7 @@ namespace NostalgiaEngine.RasterizerPipeline
         private NEVector4 m_Position;
         private NEVector4 m_Rotation;
         private NEVector4 m_Scale;
-        private NEMatrix4x4 m_RotationMat;
+        public NEMatrix4x4 RotationMat { get; private set; }
 
         public NEMatrix4x4 World { get; private set; }
        
@@ -20,9 +20,9 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         public NEVector4 LocalPosition { get { return m_Position; } set { m_Position = value; m_Position.W = 1.0f; } }
         public NEVector4 Rotation { get { return m_Rotation; } /*set { m_Rotation = value; m_Rotation.W = 0.0f; }*/ }
-        public NEVector4 Forward { get { return m_RotationMat * NEVector4.Forward; } }
-        public NEVector4 Up { get { return m_RotationMat * NEVector4.Up; } }
-        public NEVector4 Right { get { return m_RotationMat * NEVector4.Right; } }
+        public NEVector4 Forward { get { return RotationMat * NEVector4.Forward; } }
+        public NEVector4 Up { get { return RotationMat * NEVector4.Up; } }
+        public NEVector4 Right { get { return RotationMat * NEVector4.Right; } }
 
         public float PositionX { get { return m_Position.X; } set { m_Position.X = value; } }
         public float PositionY { get { return m_Position.Y; } set { m_Position.Y = value; } }
@@ -46,9 +46,9 @@ namespace NostalgiaEngine.RasterizerPipeline
         {
             m_Position = new NEVector4(posX, posY, posZ, 1.0f);
             m_Rotation = new NEVector4(rotationX, rotationY, rotationZ, 0.0f);
-            m_Scale = new NEVector4(m_Scale.X, m_Scale.Y, m_Scale.Z, 0.0f);
+            m_Scale = new NEVector4(scaleX, scaleY, scaleZ, 0.0f);
             World = new NEMatrix4x4();
-            m_RotationMat = new NEMatrix4x4(); 
+            RotationMat = new NEMatrix4x4(); 
         }
 
         public Transform(float posX, float posY, float posZ,
@@ -65,32 +65,32 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         public void PointAt(NEVector4 direction, NEVector4 up)
         {
-            m_RotationMat = NEMatrix4x4.CreatePointAt(direction, up);
+            RotationMat = NEMatrix4x4.CreatePointAt(direction, up);
         }
 
         public void PointAt(NEVector4 direction)
         {
-            m_RotationMat = NEMatrix4x4.CreatePointAt(direction, NEVector4.Up);
+            RotationMat = NEMatrix4x4.CreatePointAt(direction, NEVector4.Up);
         }
 
         public void RotateX(float thetaRad)
         {
             m_Rotation.X += thetaRad;
-            m_RotationMat = NEMatrix4x4.CreateRotationX(m_Rotation.X) *
+            RotationMat = NEMatrix4x4.CreateRotationX(m_Rotation.X) *
     NEMatrix4x4.CreateRotationY(m_Rotation.Y) * NEMatrix4x4.CreateRotationZ(m_Rotation.Z);
         }
 
         public void RotateY(float thetaRad)
         {
             m_Rotation.Y += thetaRad;
-            m_RotationMat = NEMatrix4x4.CreateRotationX(m_Rotation.X) *
+            RotationMat = NEMatrix4x4.CreateRotationX(m_Rotation.X) *
     NEMatrix4x4.CreateRotationY(m_Rotation.Y) * NEMatrix4x4.CreateRotationZ(m_Rotation.Z);
         }
 
         public void RotateZ(float thetaRad)
         {
             m_Rotation.Z += thetaRad;
-            m_RotationMat = NEMatrix4x4.CreateRotationX(m_Rotation.X) *
+            RotationMat = NEMatrix4x4.CreateRotationX(m_Rotation.X) *
     NEMatrix4x4.CreateRotationY(m_Rotation.Y) * NEMatrix4x4.CreateRotationZ(m_Rotation.Z);
         }
 
@@ -99,7 +99,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             m_Rotation.X += x;
             m_Rotation.Y += y;
             m_Rotation.Z += z;
-            m_RotationMat = NEMatrix4x4.CreateRotationX(m_Rotation.X) *
+            RotationMat = NEMatrix4x4.CreateRotationX(m_Rotation.X) *
                 NEMatrix4x4.CreateRotationY(m_Rotation.Y) * NEMatrix4x4.CreateRotationZ(m_Rotation.Z);
         }
 
@@ -108,7 +108,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             m_Rotation.X = x;
             m_Rotation.Y = y;
             m_Rotation.Z = z;
-            m_RotationMat = NEMatrix4x4.CreateRotationX(m_Rotation.X) * 
+            RotationMat = NEMatrix4x4.CreateRotationX(m_Rotation.X) * 
                 NEMatrix4x4.CreateRotationY(m_Rotation.Y) * NEMatrix4x4.CreateRotationZ(m_Rotation.Z);
         }
 
@@ -118,8 +118,8 @@ namespace NostalgiaEngine.RasterizerPipeline
             //    NEMatrix4x4.CreateRotationY(m_Rotation.Y) * NEMatrix4x4.CreateRotationZ(m_Rotation.Z);
 
 
-            World = NEMatrix4x4.CreateTranslation(m_Position) * m_RotationMat
-                * NEMatrix4x4.CreateScale(m_Scale);
+            World = NEMatrix4x4.CreateTranslation(m_Position)
+            *RotationMat * NEMatrix4x4.CreateScale(m_Scale);
         }
 
 

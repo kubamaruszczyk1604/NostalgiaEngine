@@ -18,6 +18,14 @@ namespace NostalgiaEngine.Core
                                     { 0.0f, 0.0f, 0.0f, 1.0f }};
         }
 
+        public NEMatrix4x4(NEMatrix4x4 mat)
+        {
+            m_Data = new float[,] { { mat.m_Data[0,0],  mat.m_Data[0,1], mat.m_Data[0,2], mat.m_Data[0,3]},
+                                    { mat.m_Data[1,0],  mat.m_Data[1,1], mat.m_Data[1,2], mat.m_Data[1,3]},
+                                    { mat.m_Data[2,0],  mat.m_Data[2,1], mat.m_Data[2,2], mat.m_Data[2,3]},
+                                    { mat.m_Data[3,0],  mat.m_Data[3,1], mat.m_Data[3,2], mat.m_Data[3,3]}};
+        }
+
 
 
 
@@ -230,6 +238,16 @@ namespace NostalgiaEngine.Core
                                         { right.Z, up.Z, forward.Z, 0},
                                         { 0.0f, 0.0f, 0.0f, 1.0f }};
             return mat;
+        }
+
+        public static NEMatrix4x4 RemoveTranslation(NEMatrix4x4 mat)
+        {
+            NEMatrix4x4 matRet = new NEMatrix4x4(mat);
+            matRet.m_Data[0, 3] = 0;
+            matRet.m_Data[1, 3] = 0;
+            matRet.m_Data[2, 3] = 0;
+            matRet.m_Data[3, 3] = 1;
+            return matRet;
         }
 
         //public static NEMatrix4x4 CreateView(NEVector4 pos, NEVector4 forward, NEVector4 up)
