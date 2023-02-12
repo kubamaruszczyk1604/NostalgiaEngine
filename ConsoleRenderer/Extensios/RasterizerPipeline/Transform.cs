@@ -18,7 +18,7 @@ namespace NostalgiaEngine.RasterizerPipeline
        
 
 
-        public NEVector4 Position { get { return m_Position; } set { m_Position = value; m_Position.W = 1.0f; } }
+        public NEVector4 LocalPosition { get { return m_Position; } set { m_Position = value; m_Position.W = 1.0f; } }
         public NEVector4 Rotation { get { return m_Rotation; } /*set { m_Rotation = value; m_Rotation.W = 0.0f; }*/ }
         public NEVector4 Forward { get { return m_RotationMat * NEVector4.Forward; } }
         public NEVector4 Up { get { return m_RotationMat * NEVector4.Up; } }

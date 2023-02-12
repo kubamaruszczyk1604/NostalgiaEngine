@@ -9,7 +9,7 @@ namespace NostalgiaEngine.RasterizerPipeline
     public class Triangle
     {
 
-        public VertexBuffer VBO { get; private set; }
+        public Mesh VBO { get; private set; }
         public int[] Indices { get; private set; }
         public int[] LeftSortedIndices { get; private set; }
 
@@ -25,7 +25,7 @@ namespace NostalgiaEngine.RasterizerPipeline
         public NEVector4 ModelNormal { get; private set; }
         public NEVector4 TransformedNormal { get; set; }
 
-        public Triangle(int i0, int i1, int i2, VertexBuffer vbo)
+        public Triangle(int i0, int i1, int i2, Mesh vbo)
         {
             VBO = vbo;
             Indices = new int[] { i0, i1, i2 };

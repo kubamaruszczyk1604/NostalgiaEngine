@@ -9,9 +9,9 @@ namespace NostalgiaEngine.RasterizerPipeline
     public class NEObjLoader
     {
         static int index = 1;
-        static public VertexBuffer LoadObj(string path)
+        static public Mesh LoadObj(string path)
         {
-            VertexBuffer vbo = new VertexBuffer();
+            Mesh vbo = new Mesh();
             try
             {
                 using (StreamReader reader = new StreamReader(path))

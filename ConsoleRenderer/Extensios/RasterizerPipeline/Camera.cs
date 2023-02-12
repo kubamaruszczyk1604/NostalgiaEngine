@@ -13,7 +13,7 @@ namespace NostalgiaEngine.RasterizerPipeline
         {
             get
             {
-                return NEMatrix4x4.CreateView(Transform.Position, Transform.Forward, Transform.Up);
+                return NEMatrix4x4.CreateView(Transform.LocalPosition, Transform.Forward, Transform.Up);
             }
         }
 

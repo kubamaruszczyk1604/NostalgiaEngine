@@ -254,7 +254,7 @@ namespace NostalgiaEngine.Core
             up -= (forward * NEVector4.Dot(up, forward));
             up = up.Normalized;
 
-            NEVector4 right = NEVector4.Cross3(-forward, up).Normalized;
+            NEVector4 right = NEVector4.Cross3(up, forward).Normalized;
             NEMatrix4x4 mat = new NEMatrix4x4();
             mat.m_Data = new float[,] {
                                         { right.X, right.Y, right.Z, -NEVector4.Dot(pos,right)},

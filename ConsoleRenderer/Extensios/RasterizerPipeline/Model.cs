@@ -9,7 +9,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 {
     public class Model
     {
-        public VertexBuffer Geometry { get; set; }
+        public Mesh Geometry { get; set; }
         public NETexture ColorTexture { get; set; }
         public NEFloatBuffer LumaTexture { get; set; }
     }

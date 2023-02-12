@@ -8,7 +8,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 {
     public class Scene3D : NEScene
     {
-        VertexBuffer m_VBO;
+        Mesh m_VBO;
         NEDepthBuffer m_DepthBuffer;
 
         NEMatrix4x4 m_ProjectionMat;
@@ -36,15 +36,15 @@ namespace NostalgiaEngine.RasterizerPipeline
             //PixelWidth = 5;
             //PixelHeight = 5;
 
-            m_LumaBuffer = NEFloatBuffer.FromFile("C:/test/ntex/luma.buf");
+            m_LumaBuffer = NEFloatBuffer.FromFile("C:/test/ruler/luma.buf");
             m_Texture = NEColorTexture16.LoadFromFile("C:/test/nowa_textura12/color.tex");
             m_Palette = NEColorPalette.FromFile("C:/test/nowa_textura12/palette.txt");
             m_LumaBuffer.SampleMode = NESampleMode.Repeat;
             m_DepthBuffer = new NEDepthBuffer(ScreenWidth, ScreenHeight);
-            m_VBO = new VertexBuffer();
+            m_VBO = new Mesh();
             // m_ProjectionMat = NEMatrix4x4.CreatePerspectiveProjection((float)ScreenHeight / (float)ScreenWidth, 1.05f, 0.1f, 100.0f);
             m_Camera = new Camera(ScreenWidth, ScreenHeight, 1.05f, 0.1f, 10.0f);
-            m_Camera.Transform.Position = new NEVector4(0.0f, 0.0f, -2.0f);
+            m_Camera.Transform.LocalPosition = new NEVector4(0.0f, 0.0f, -2.0f);
             
             //GenerateSquare(0.0f, 0.0f, 0.0f, 1);
 
@@ -82,13 +82,13 @@ namespace NostalgiaEngine.RasterizerPipeline
 
                 if (NEInput.CheckKeyDown(NEKey.Alt))
                 {
-                    m_Camera.Transform.Position = m_Camera.Transform.Position - m_Camera.Transform.Right * dt;
+                    m_Camera.Transform.LocalPosition = m_Camera.Transform.LocalPosition - m_Camera.Transform.Right * dt;
 
                 }
                 else
                 {
-                    m_Camera.Transform.RotateY(dt);
-                   //viewDir = NEMatrix4x4.CreateRotationY(-dt) * viewDir;
+                    //m_Camera.Transform.RotateY(dt);
+                   viewDir = NEMatrix4x4.CreateRotationY(dt) * viewDir;
                 }
 
 
@@ -98,13 +98,13 @@ namespace NostalgiaEngine.RasterizerPipeline
 
                 if (NEInput.CheckKeyDown(NEKey.Alt))
                 {
-                    m_Camera.Transform.Position = m_Camera.Transform.Position + m_Camera.Transform.Right * dt;
+                    m_Camera.Transform.LocalPosition = m_Camera.Transform.LocalPosition + m_Camera.Transform.Right * dt;
 
                 }
                 else
                 {
-                    m_Camera.Transform.RotateY(-dt);
-                    //viewDir = NEMatrix4x4.CreateRotationY(dt) * viewDir;
+                    //m_Camera.Transform.RotateY(-dt);
+                    viewDir = NEMatrix4x4.CreateRotationY(-dt) * viewDir;
                 }
 
 
@@ -113,13 +113,13 @@ namespace NostalgiaEngine.RasterizerPipeline
             if (NEInput.CheckKeyDown(ConsoleKey.UpArrow))
             {
 
-               m_Camera.Transform.Position = m_Camera.Transform.Position + m_Camera.Transform.Forward * dt;
+               m_Camera.Transform.LocalPosition = m_Camera.Transform.LocalPosition + viewDir * dt;
 
             }
             if (NEInput.CheckKeyDown(ConsoleKey.DownArrow))
             {
 
-                m_Camera.Transform.Position = m_Camera.Transform.Position - m_Camera.Transform.Forward * dt;
+                m_Camera.Transform.LocalPosition = m_Camera.Transform.LocalPosition - viewDir* dt;
 
             }
         }
@@ -148,10 +148,10 @@ namespace NostalgiaEngine.RasterizerPipeline
             // m_Camera.Transform.PointAt(cameraDir);
             //m_Camera.Transform.RotateY(0.01f);
 
-           // NEMatrix4x4 view = NEMatrix4x4.CreateView(m_Camera.Transform.Position, viewDir.Normalized, NEVector4.Up);
+            NEMatrix4x4 view = NEMatrix4x4.CreateView(m_Camera.Transform.LocalPosition, viewDir.Normalized, NEVector4.Up);
             for (int i=0; i < m_VBO.Vertices.Count;++i)
             {
-                m_VBO.Vertices[i].Position =  (m_Camera.View * translation/* * rotation*/) * m_VBO.ModelVertices[i].Position;
+                m_VBO.Vertices[i].Position =  (view * translation/* * rotation*/) * m_VBO.ModelVertices[i].Position;
                 m_VBO.Vertices[i].UV = m_VBO.ModelVertices[i].UV;
                 //m_VBO.Vertices[i].Position += new NEVector4(0,0.0f,10.6f,0.0f);
                // m_VBO.Vertices[i].Position += new NEVector4(0.0f, 0.0f,1.0f /*+ yDisp*/, 0.0f);
@@ -244,7 +244,7 @@ namespace NostalgiaEngine.RasterizerPipeline
                         float teY =  texCoord.Y / fragW;
                        // dot = 1.0f;
                         float luma = m_LumaBuffer.FastSample(teX, 1.0f - teY);
-                        var col = NEColorSample.MakeCol5(ConsoleColor.Black, (ConsoleColor)15/*tr.ColorAttrib*/, teY);
+                        var col = NEColorSample.MakeCol5(ConsoleColor.Black, (ConsoleColor)15/*tr.ColorAttrib*/, luma);
                         //var col = m_Texture.Sample(teX, 1.0f - teY, dot);
                         NEScreenBuffer.PutChar(col.Character, col.BitMask, x, fillStart+y);
                     }

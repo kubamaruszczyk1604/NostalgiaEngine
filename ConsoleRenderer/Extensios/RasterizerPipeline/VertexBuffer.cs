@@ -7,14 +7,14 @@ using NostalgiaEngine.Core;
 
 namespace NostalgiaEngine.RasterizerPipeline
 {
-    public class VertexBuffer
+    public class Mesh
     {
 
         public List<Vertex> ModelVertices { get; private set; }
         public List<Vertex> Vertices { get; private set; }
         public List<Triangle> Triangles { get; private set; }
 
-        public VertexBuffer()
+        public Mesh()
         {
             ModelVertices = new List<Vertex>(100);
             Vertices = new List<Vertex>(100);
