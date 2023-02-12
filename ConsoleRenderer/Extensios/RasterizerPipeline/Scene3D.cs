@@ -17,6 +17,7 @@ namespace NostalgiaEngine.RasterizerPipeline
         NETexture m_Texture;
         NEColorPalette m_Palette;
 
+        Camera m_Camera;
         public override bool OnLoad()
         {
             ScreenWidth = 320;
@@ -41,8 +42,10 @@ namespace NostalgiaEngine.RasterizerPipeline
             m_LumaBuffer.SampleMode = NESampleMode.Repeat;
             m_DepthBuffer = new NEDepthBuffer(ScreenWidth, ScreenHeight);
             m_VBO = new VertexBuffer();
-            m_ProjectionMat = NEMatrix4x4.CreatePerspectiveProjection((float)ScreenHeight / (float)ScreenWidth, 1.05f, 1.1f, 100.0f);
-
+            // m_ProjectionMat = NEMatrix4x4.CreatePerspectiveProjection((float)ScreenHeight / (float)ScreenWidth, 1.05f, 0.1f, 100.0f);
+            m_Camera = new Camera(ScreenWidth, ScreenHeight, 1.05f, 0.1f, 10.0f);
+            m_Camera.Transform.Position = new NEVector4(0.0f, 0.0f, -2.0f);
+            
             //GenerateSquare(0.0f, 0.0f, 0.0f, 1);
 
             NEColorManagement.SetPalette(m_Palette);
@@ -71,39 +74,95 @@ namespace NostalgiaEngine.RasterizerPipeline
             base.OnResume();
         }
 
+        NEVector4 viewDir = NEVector4.Forward;
+        private void Movement(float dt)
+        {
+            if (NEInput.CheckKeyDown(ConsoleKey.LeftArrow))
+            {
+
+                if (NEInput.CheckKeyDown(NEKey.Alt))
+                {
+                    m_Camera.Transform.Position = m_Camera.Transform.Position - m_Camera.Transform.Right * dt;
+
+                }
+                else
+                {
+                    m_Camera.Transform.RotateY(dt);
+                   //viewDir = NEMatrix4x4.CreateRotationY(-dt) * viewDir;
+                }
+
+
+            }
+            if (NEInput.CheckKeyDown(ConsoleKey.RightArrow))
+            {
+
+                if (NEInput.CheckKeyDown(NEKey.Alt))
+                {
+                    m_Camera.Transform.Position = m_Camera.Transform.Position + m_Camera.Transform.Right * dt;
+
+                }
+                else
+                {
+                    m_Camera.Transform.RotateY(-dt);
+                    //viewDir = NEMatrix4x4.CreateRotationY(dt) * viewDir;
+                }
+
+
+            }
+
+            if (NEInput.CheckKeyDown(ConsoleKey.UpArrow))
+            {
+
+               m_Camera.Transform.Position = m_Camera.Transform.Position + m_Camera.Transform.Forward * dt;
+
+            }
+            if (NEInput.CheckKeyDown(ConsoleKey.DownArrow))
+            {
+
+                m_Camera.Transform.Position = m_Camera.Transform.Position - m_Camera.Transform.Forward * dt;
+
+            }
+        }
+
         public override void OnUpdate(float deltaTime)
         {
             base.OnUpdate(deltaTime);
-            //NEMatrix4x4 rotation = NEMatrix4x4.CreateRotationY(Engine.Instance.TotalTime)
-            //    * NEMatrix4x4.CreateRotationZ(Engine.Instance.TotalTime);
+
+
+            Movement(deltaTime);
+            m_Camera.Transform.CalculateWorld();
+
             float yDisp = (float)Math.Sin(Engine.Instance.TotalTime);
-            NEMatrix4x4 rotation = NEMatrix4x4.CreateRotationX(yDisp * 0.3f) *
+            NEMatrix4x4 rotation = /*NEMatrix4x4.CreateRotationX(yDisp * 0.3f) **/
             NEMatrix4x4.CreateRotationY(Engine.Instance.TotalTime);
+            NEVector4 cameraDir = NEMatrix4x4.CreateRotationY(Engine.Instance.TotalTime * 0.3f)* new NEVector4(0.0f, 0.0f, 1.0f);
 
-
-            //NEMatrix4x4 rotation = NEMatrix4x4.CreateRotationY(Engine.Instance.TotalTime);
 
 
             for (int i = 0; i < m_VBO.Triangles.Count; ++i)
             {
-                m_VBO.Triangles[i].TransformedNormal = rotation * m_VBO.Triangles[i].ModelNormal;
+                m_VBO.Triangles[i].TransformedNormal =  m_Camera.View/** rotation*/ * m_VBO.Triangles[i].ModelNormal;
             }
 
-            NEMatrix4x4 translation = NEMatrix4x4.CreateTranslation(0.0f, 0.0f, 1.0f);
+            NEMatrix4x4 translation = NEMatrix4x4.CreateTranslation(0.0f, 0.0f, 4.1f);
+            // m_Camera.Transform.PointAt(cameraDir);
+            //m_Camera.Transform.RotateY(0.01f);
+
+           // NEMatrix4x4 view = NEMatrix4x4.CreateView(m_Camera.Transform.Position, viewDir.Normalized, NEVector4.Up);
             for (int i=0; i < m_VBO.Vertices.Count;++i)
             {
-                m_VBO.Vertices[i].Position =  (translation * rotation) * m_VBO.ModelVertices[i].Position;
+                m_VBO.Vertices[i].Position =  (m_Camera.View * translation/* * rotation*/) * m_VBO.ModelVertices[i].Position;
                 m_VBO.Vertices[i].UV = m_VBO.ModelVertices[i].UV;
                 //m_VBO.Vertices[i].Position += new NEVector4(0,0.0f,10.6f,0.0f);
                // m_VBO.Vertices[i].Position += new NEVector4(0.0f, 0.0f,1.0f /*+ yDisp*/, 0.0f);
-                m_VBO.Vertices[i].Position = (m_ProjectionMat) * m_VBO.Vertices[i].Position;
+                m_VBO.Vertices[i].Position = (m_Camera.Projection) * m_VBO.Vertices[i].Position;
                 m_VBO.Vertices[i].WDivide();
             }
-            NEScreenBuffer.ClearColor(2);
+            NEScreenBuffer.ClearColor(4);
             m_DepthBuffer.Clear();
             m_VBO.CalculateTriangleEdges();
+       
         }
-
         public override void OnDrawPerColumn(int x)
         {
             float u = ((float)x) / ((float)ScreenWidth);
@@ -113,16 +172,23 @@ namespace NostalgiaEngine.RasterizerPipeline
             {
                 Triangle tr = m_VBO.Triangles[i];
                 if (!tr.IsColScanlineInTriangle(u)) continue;
+                if (tr.A.Temp <= 0.0f) continue;
+                if (tr.B.Temp <= 0.0f) continue;
+                if (tr.C.Temp <= 0.0f) continue;
                 float dot = NEVector4.Dot(tr.TransformedNormal, new NEVector4(0.0f, 0.0f, -1.0f, 0.0f));
-                //if (tr.TransformedNormal.Z > 0) continue;
-                 //if (tr.A.Position.W < 0.0f) continue;
                 ScanlineIntersectionManifest manifest;
                 tr.CreateIntersectionManifest(u, out manifest);
 
+                //go from normailzed device coordinates to screen space
                 float y0 = (-manifest.Y0 + 1.0f) * 0.5f;
                 float y1 = (-manifest.Y1 + 1.0f) * 0.5f;
+
+                //y0 is first from the top of the viewport 
                 if (y0 > y1) NEMathHelper.Swap(ref y0, ref y1);
+
+                //normalised span of rendered line segment
                 float distance = y1 - y0;
+
 
                 float y0clamped = NEMathHelper.Clamp(y0, 0, 1.0f);
                 float y1clamped = NEMathHelper.Clamp(y1, 0, 1.0f);
@@ -135,32 +201,37 @@ namespace NostalgiaEngine.RasterizerPipeline
                 {
                    tOffset = -y0 / distance;
                 }
-                int fillStart = (int) (y0clamped * (float)ScreenHeight);
-                int fillEnd = (int)(y1clamped * (float)ScreenHeight);
+                int fillStart = (int)(y0clamped * ScreenHeight);
+                int fillEnd = (int)(y1clamped * ScreenHeight);
 
                 float span = fillEnd - fillStart;
      
                 for (int y = 0; y < span ; ++y)
                 {
+                    
 
                     float t = ((float)y / span) * coeff + tOffset;
                     float depthBottom = (1.0f - manifest.bottom_t) * manifest.bottom_P0.Z + manifest.bottom_t * manifest.bottom_P1.Z;
                     float depthTop= (1.0f - manifest.top_t) * manifest.top_P0.Z + manifest.top_t * manifest.top_P1.Z;
                     float fragmentDepth = (1.0f - t) * depthTop + t * depthBottom;
-
-                    float fragWBottom = (1.0f - manifest.bottom_t) * manifest.bottom_P0.W + manifest.bottom_t * manifest.bottom_P1.W;
-                    float fragWTop = (1.0f - manifest.top_t) * manifest.top_P0.W + manifest.top_t * manifest.top_P1.W;
-                    float fragW = (1.0f - t) * fragWTop + t * fragWBottom;
+                    
 
 
-                    //if (fragmentDepth < 0.0f) continue;
+
+
+                    
                     if (m_DepthBuffer.TryUpdate(x, fillStart + y, fragmentDepth))
                     {
                       
 
                         dot = NEMathHelper.Clamp(dot, 0.0f, 1.0f);
 
-                        NEVector2 textCoordBottom= manifest.bottom_P0.UV * (1.0f - manifest.bottom_t)
+
+                        float fragWBottom = (1.0f - manifest.bottom_t) * manifest.bottom_P0.W + manifest.bottom_t * manifest.bottom_P1.W;
+                        float fragWTop = (1.0f - manifest.top_t) * manifest.top_P0.W + manifest.top_t * manifest.top_P1.W;
+                        float fragW = (1.0f - t) * fragWTop + t * fragWBottom;
+
+                        NEVector2 textCoordBottom = manifest.bottom_P0.UV * (1.0f - manifest.bottom_t)
                                                     + manifest.bottom_P1.UV * manifest.bottom_t;
 
                         NEVector2 textCoordTop = manifest.top_P0.UV * (1.0f - manifest.top_t)
@@ -171,10 +242,10 @@ namespace NostalgiaEngine.RasterizerPipeline
 
                         float teX =  texCoord.X / fragW;
                         float teY =  texCoord.Y / fragW;
-                        dot = 1.0f;
-                        //float luma = m_LumaBuffer.FastSample(teX, 1.0f - teY);
-                        //var col = NEColorSample.MakeCol10(ConsoleColor.Black, (ConsoleColor)15/*tr.ColorAttrib*/,luma *dot);
-                        var col = m_Texture.Sample(teX, 1.0f - teY, dot);
+                       // dot = 1.0f;
+                        float luma = m_LumaBuffer.FastSample(teX, 1.0f - teY);
+                        var col = NEColorSample.MakeCol5(ConsoleColor.Black, (ConsoleColor)15/*tr.ColorAttrib*/, teY);
+                        //var col = m_Texture.Sample(teX, 1.0f - teY, dot);
                         NEScreenBuffer.PutChar(col.Character, col.BitMask, x, fillStart+y);
                     }
                     
@@ -255,7 +326,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         private void GenerateCube(float x, float y, float z, int col)
         {
-            float size = 0.25f;
+            float size = 1.25f;
             m_VBO.AddVertex(new Vertex(-size + x, -size + y, z - size, 0.0f, 0.0f));
             m_VBO.AddVertex(new Vertex(-size + x, size + y, z - size, 0.0f, 1.0f));
             m_VBO.AddVertex(new Vertex(size + x, size + y, z - size, 1.0f, 1.0f));

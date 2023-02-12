@@ -24,7 +24,7 @@ namespace NostalgiaEngine.RasterizerPipeline
         public float U { get { return m_UVs.X; } }
         public float V { get { return m_UVs.Y; } }
 
-        
+        public float Temp { get; private set; }
 
         public Vertex(float x, float y, float z)
         {
@@ -66,6 +66,8 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         public void WDivide()
         {
+            if (m_Position.W == 0) return;
+            Temp = m_Position.Z;
             m_Position.X /= m_Position.W;
             m_Position.Y /= m_Position.W;
             m_Position.Z /= m_Position.W;

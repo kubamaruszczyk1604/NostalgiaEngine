@@ -225,14 +225,45 @@ namespace NostalgiaEngine.Core
             NEVector4 right = NEVector4.Cross3(forward, up).Normalized;
 
             NEMatrix4x4 mat = new NEMatrix4x4();
-            mat.m_Data = new float[,] { { forward.X, right.X, up.X, 0 },
-                                        { forward.Y, right.Y, up.Y, 0},
-                                        { forward.Z, right.Z, up.Z, 0 },
+            mat.m_Data = new float[,] { { right.X, up.X, forward.X, 0},
+                                        { right.Y, up.Y, forward.Y, 0},
+                                        { right.Z, up.Z, forward.Z, 0},
                                         { 0.0f, 0.0f, 0.0f, 1.0f }};
             return mat;
         }
 
+        //public static NEMatrix4x4 CreateView(NEVector4 pos, NEVector4 forward, NEVector4 up)
+        //{
+        //    forward = forward.Normalized;
+        //    up -= (forward * NEVector4.Dot(up, forward));
 
+        //    NEVector4 right = NEVector4.Cross3(forward, up).Normalized;
+
+        //    NEMatrix4x4 mat = new NEMatrix4x4();
+        //    mat.m_Data = new float[,] { 
+        //                                { right.X, right.Y, right.Z, NEVector4.Dot(pos,right)},
+        //                                { up.X, up.Y, up.Z, -NEVector4.Dot(pos, up)},
+        //                                { forward.X, forward.Y, forward.Z, -NEVector4.Dot(pos,forward) },
+        //                                { 0.0f, 0.0f, 0.0f, 1.0f }};
+        //    return mat;
+        //}
+
+        public static NEMatrix4x4 CreateView(NEVector4 pos, NEVector4 forward, NEVector4 up)
+        {
+            forward = forward.Normalized;
+            up -= (forward * NEVector4.Dot(up, forward));
+            up = up.Normalized;
+
+            NEVector4 right = NEVector4.Cross3(-forward, up).Normalized;
+            NEMatrix4x4 mat = new NEMatrix4x4();
+            mat.m_Data = new float[,] {
+                                        { right.X, right.Y, right.Z, -NEVector4.Dot(pos,right)},
+                                        { up.X, up.Y, up.Z, -NEVector4.Dot(pos, up)},
+                                        { forward.X, forward.Y, forward.Z, -NEVector4.Dot(pos,forward) },
+                                        { 0.0f, 0.0f, 0.0f, 1.0f }};
+
+            return mat;
+        }
 
 
         static public bool UnitTest_MatMatMultiply()

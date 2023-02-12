@@ -18,6 +18,15 @@ namespace NostalgiaEngine.Core
         public float Length { get { return CalculateLength(this); } }
         public NEVector4 Normalized { get { return Normalize(this); } }
 
+
+        static public readonly NEVector4 Up =  new NEVector4(0.0f, 1.0f, 0.0f);
+        static public readonly NEVector4 Down = new NEVector4(0.0f, -1.0f, 0.0f);
+        static public readonly NEVector4 Left = new NEVector4(-1.0f, 0.0f, 0.0f);
+        static public readonly NEVector4 Right = new NEVector4(1.0f, 0.0f, 0.0f);
+        static public readonly NEVector4 Forward = new NEVector4(0.0f, 0.0f, 1.0f);
+        static public readonly NEVector4 Back = new NEVector4(0.0f, 0.0f, -1.0f);
+
+
         public override string ToString()
         {
             return X.ToString() + "\n" + Y.ToString();
@@ -79,7 +88,10 @@ namespace NostalgiaEngine.Core
             return new NEVector4(lhs.X - rhs.X, lhs.Y - rhs.Y, lhs.Z - rhs.Z, lhs.W - rhs.W);
         }
 
-
+        static public NEVector4 operator -(NEVector4 lhs)
+        {
+            return new NEVector4(-lhs.X , -lhs.Y , -lhs.Z , -lhs.W);
+        }
 
         static public NEVector4 operator *(NEVector4 lhs, float rhs)
         {

@@ -41,6 +41,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             B = VBO.Vertices[LeftSortedIndices[1]];
             C = VBO.Vertices[LeftSortedIndices[2]];
 
+
             AB = new NEEdge();
             NEMathHelper.FindLineEquation(A.Position.XY, B.Position.XY, out AB.a, out AB.c);
 
