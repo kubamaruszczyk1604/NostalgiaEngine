@@ -31,10 +31,10 @@ namespace NostalgiaEngine.RasterizerPipeline
             //PixelWidth = 8;
             //PixelHeight = 8;
 
-            ScreenWidth = 220;
-            ScreenHeight = 180;
-            PixelWidth = 5;
-            PixelHeight = 5;
+            //ScreenWidth = 220;
+            //ScreenHeight = 180;
+            //PixelWidth = 5;
+            //PixelHeight = 5;
             // ResourceManager.Instance.Test();
             //m_LumaBuffer = NEFloatBuffer.FromFile("C:/test/ruler/luma.buf");
             //m_Texture = NEColorTexture16.LoadFromFile("C:/test/nowa_textura12/color.tex");
@@ -139,25 +139,39 @@ namespace NostalgiaEngine.RasterizerPipeline
         {
             model.Transform.CalculateWorld();
             Mesh mesh = model.Mesh;
+            mesh.TempTriangleContainer = new List<Triangle>(mesh.Triangles.Count);
 
-            for (int i = 0; i < mesh.Triangles.Count; ++i)
-            {
-                mesh.Triangles[i].TransformedNormal = NEMatrix4x4.RemoveTranslation(m_Camera.View) * model.Transform.RotationMat * mesh.Triangles[i].ModelNormal;
-            }
-            NEMatrix4x4 translation = model.Transform.World;
+            NEMatrix4x4 world = model.Transform.World;
 
             // NEMatrix4x4 view = NEMatrix4x4.CreateView(m_Camera.Transform.LocalPosition, viewDir.Normalized, NEVector4.Up);
             NEMatrix4x4 view = m_Camera.View;
             for (int i = 0; i < mesh.Vertices.Count; ++i)
             {
-                mesh.Vertices[i].Position = (view * translation ) * mesh.ModelVertices[i].Position;
+                mesh.Vertices[i].Position = (view * world ) * mesh.ModelVertices[i].Position;
                 mesh.Vertices[i].UV = mesh.ModelVertices[i].UV;
                 mesh.Vertices[i].Position = (m_Camera.Projection) * mesh.Vertices[i].Position;
                 mesh.Vertices[i].WDivide();
             }
+
+            mesh.CalculateTriangleEdges();
+            for (int i = 0; i < mesh.Triangles.Count; ++i)
+            {
+                //mesh.Triangles[i].TransformedNormal = NEMatrix4x4.RemoveTranslation(m_Camera.View) * model.Transform.RotationMat * mesh.Triangles[i].ModelNormal;
+                Triangle triangle = mesh.Triangles[i];
+                //if (triangle.A.Temp <= 0.0f) continue;
+                //if (triangle.B.Temp <= 0.0f) continue;
+                //if (triangle.C.Temp <= 0.0f) continue;
+                if (triangle.A.Temp <= 0.0f || triangle.B.Temp <= 0.0f || triangle.C.Temp <= 0.0f) continue;
+                //if (triangle.A.Temp <= 0.0f && triangle.B.Temp <= 0.0f && triangle.C.Temp <= 0.0f) continue;
+                mesh.TempTriangleContainer.Add(triangle);
+                triangle.TransformedNormal = NEMatrix4x4.RemoveTranslation(m_Camera.View) * model.Transform.RotationMat * mesh.Triangles[i].ModelNormal;
+            }
+
+
+            
             NEScreenBuffer.ClearColor(0);
             m_DepthBuffer.Clear();
-            mesh.CalculateTriangleEdges();
+            
         }
 
         public override void OnUpdate(float deltaTime)
@@ -178,13 +192,13 @@ namespace NostalgiaEngine.RasterizerPipeline
         void RenderModel(int x, float u, Model model)
         {
             Mesh m_VBO = model.Mesh;
-            for (int i = 0; i < m_VBO.Triangles.Count; ++i)
+            for (int i = 0; i < m_VBO.TempTriangleContainer.Count; ++i)
             {
-                Triangle tr = m_VBO.Triangles[i];
+                Triangle tr = m_VBO.TempTriangleContainer[i];
                 if (!tr.IsColScanlineInTriangle(u)) continue;
-                if (tr.A.Temp <= 0.0f) continue;
-                if (tr.B.Temp <= 0.0f) continue;
-                if (tr.C.Temp <= 0.0f) continue;
+                //if (tr.A.Temp <= 0.0f) continue;
+                //if (tr.B.Temp <= 0.0f) continue;
+                //if (tr.C.Temp <= 0.0f) continue;
                 float dot = NEVector4.Dot(tr.TransformedNormal, new NEVector4(0.0f, 0.0f, -1.0f, 0.0f));
                 ScanlineIntersectionManifest manifest;
                 tr.CreateIntersectionManifest(u, out manifest);
@@ -252,7 +266,7 @@ namespace NostalgiaEngine.RasterizerPipeline
                             luma *= model.LumaTexture.FastSample(teX, 1.0f - teY);
                         }
 
-                        var col = NEColorSample.MakeCol5(ConsoleColor.Black, (ConsoleColor)tr.ColorAttrib, luma);
+                        var col = NEColorSample.MakeCol5(ConsoleColor.Black, (ConsoleColor)tr.ColorAttrib, luma+0.2f);
                         //var col = m_Texture.Sample(teX, 1.0f - teY, dot);
                         NEScreenBuffer.PutChar(col.Character, col.BitMask, x, fillStart + y);
                     }

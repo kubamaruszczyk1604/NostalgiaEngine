@@ -14,11 +14,14 @@ namespace NostalgiaEngine.RasterizerPipeline
         public List<Vertex> Vertices { get; private set; }
         public List<Triangle> Triangles { get; private set; }
 
+        public List<Triangle> TempTriangleContainer { get; set; }
+
         public Mesh()
         {
             ModelVertices = new List<Vertex>(100);
             Vertices = new List<Vertex>(100);
             Triangles = new List<Triangle>(100);
+            TempTriangleContainer = new List<Triangle>(100);
         }
 
 

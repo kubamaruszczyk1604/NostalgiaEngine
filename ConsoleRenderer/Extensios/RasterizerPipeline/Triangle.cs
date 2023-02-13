@@ -25,12 +25,15 @@ namespace NostalgiaEngine.RasterizerPipeline
         public NEVector4 ModelNormal { get; private set; }
         public NEVector4 TransformedNormal { get; set; }
 
+        public bool Discard;
+
         public Triangle(int i0, int i1, int i2, Mesh vbo)
         {
             VBO = vbo;
             Indices = new int[] { i0, i1, i2 };
             LeftSortedIndices = new int[3];
             CalculateNormal();
+           
         }
 
 
