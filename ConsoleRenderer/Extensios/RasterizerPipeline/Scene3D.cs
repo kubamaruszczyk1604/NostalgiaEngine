@@ -85,53 +85,40 @@ namespace NostalgiaEngine.RasterizerPipeline
             base.OnResume();
         }
 
-       // NEVector4 viewDir = NEVector4.Forward;
         private void Movement(float dt)
         {
             if (NEInput.CheckKeyDown(ConsoleKey.LeftArrow))
             {
-
                 if (NEInput.CheckKeyDown(NEKey.Alt))
                 {
                     m_Camera.Transform.LocalPosition = m_Camera.Transform.LocalPosition - m_Camera.Transform.Right * dt;
-
                 }
                 else
                 {
                     m_Camera.Transform.RotateY(dt);
-                  // viewDir = NEMatrix4x4.CreateRotationY(dt) * viewDir;
                 }
-
-
             }
+
             if (NEInput.CheckKeyDown(ConsoleKey.RightArrow))
             {
 
                 if (NEInput.CheckKeyDown(NEKey.Alt))
                 {
                     m_Camera.Transform.LocalPosition = m_Camera.Transform.LocalPosition + m_Camera.Transform.Right * dt;
-
                 }
                 else
                 {
                     m_Camera.Transform.RotateY(-dt);
-                   // viewDir = NEMatrix4x4.CreateRotationY(-dt) * viewDir;
                 }
-
-
             }
 
             if (NEInput.CheckKeyDown(ConsoleKey.UpArrow))
             {
-
                m_Camera.Transform.LocalPosition = m_Camera.Transform.LocalPosition + m_Camera.Transform.Forward * dt;
-
             }
             if (NEInput.CheckKeyDown(ConsoleKey.DownArrow))
             {
-
                 m_Camera.Transform.LocalPosition = m_Camera.Transform.LocalPosition - m_Camera.Transform.Forward* dt;
-
             }
         }
 
@@ -158,10 +145,11 @@ namespace NostalgiaEngine.RasterizerPipeline
             {
                 //mesh.Triangles[i].TransformedNormal = NEMatrix4x4.RemoveTranslation(m_Camera.View) * model.Transform.RotationMat * mesh.Triangles[i].ModelNormal;
                 Triangle triangle = mesh.Triangles[i];
-                //if (triangle.A.Temp <= 0.0f) continue;
-                //if (triangle.B.Temp <= 0.0f) continue;
-                //if (triangle.C.Temp <= 0.0f) continue;
                 if (triangle.A.Temp <= 0.0f || triangle.B.Temp <= 0.0f || triangle.C.Temp <= 0.0f) continue;
+                if (triangle.A.X > 1.0f && triangle.B.X > 1.0f && triangle.C.X > 1.0f) continue;
+                if (triangle.A.X < -1.0f && triangle.B.X < -1.0f && triangle.C.X < -1.0f) continue;
+                if (triangle.A.Y > 1.0f && triangle.B.Y > 1.0f && triangle.C.Y > 1.0f) continue;
+                if (triangle.A.Y < -1.0f && triangle.B.Y < -1.0f && triangle.C.Y < -1.0f) continue;
                 //if (triangle.A.Temp <= 0.0f && triangle.B.Temp <= 0.0f && triangle.C.Temp <= 0.0f) continue;
                 mesh.TempTriangleContainer.Add(triangle);
                 triangle.TransformedNormal = NEMatrix4x4.RemoveTranslation(m_Camera.View) * model.Transform.RotationMat * mesh.Triangles[i].ModelNormal;
@@ -181,7 +169,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             m_Camera.Transform.CalculateWorld();
            
             float yDisp = (float)Math.Sin(Engine.Instance.TotalTime);
-            NEVector4 cameraDir = NEMatrix4x4.CreateRotationY(Engine.Instance.TotalTime * 0.3f)* new NEVector4(0.0f, 0.0f, 1.0f);
+           // NEVector4 cameraDir = NEMatrix4x4.CreateRotationY(Engine.Instance.TotalTime * 0.3f)* new NEVector4(0.0f, 0.0f, 1.0f);
 
             for (int i = 0; i < m_Models.Count; ++i)
             {
