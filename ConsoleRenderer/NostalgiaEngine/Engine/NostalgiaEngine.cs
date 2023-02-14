@@ -32,7 +32,7 @@ namespace NostalgiaEngine.Core
         public int PixelHeight { get; private set; }
         public float TotalTime { get; private set; }
         public string PostMessage { get; set; }
-
+        public string TitleBarAppend { get; set; }
 
         public Engine()
         {
@@ -46,6 +46,7 @@ namespace NostalgiaEngine.Core
             Instance = this;
             PostMessage = "Thank you for using Nostalgia Engine!";
             Title = "NOSTALGIA ENGINE";
+            TitleBarAppend = "";
             //m_TaskbarUpdateWorker = new Thread(new ThreadStart(UpdateTaskbar));
             m_SuspendTaskbarFlag = false;
             
@@ -62,7 +63,7 @@ namespace NostalgiaEngine.Core
                 }
                 Console.Title = Title +
                     "             Resolution: " + ScreenWidth.ToString() + "x" + ScreenHeight.ToString() +
-                    "             FPS: " + NEFrameTimer.GetFPS();
+                    "             FPS: " + NEFrameTimer.GetFPS() + "  " + TitleBarAppend;
                 Thread.Sleep(500);
 
             }

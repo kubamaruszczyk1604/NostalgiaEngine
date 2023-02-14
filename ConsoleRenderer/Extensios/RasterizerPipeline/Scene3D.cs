@@ -18,6 +18,8 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         Camera m_Camera;
         List<Model> m_Models;
+
+        int m_RenderedTriangleCount = 0;
         public override bool OnLoad()
         {
             ScreenWidth = 320;
@@ -148,10 +150,10 @@ namespace NostalgiaEngine.RasterizerPipeline
                 //float nDot = NEVector4.Dot(triangle.TransformedNormal, NEVector4.Back);
                 //Debug.Print(" A = " + triangle.A.ToString() + " C = " + triangle.C.ToString());
                 if (triangle.A.UnidividedW <= 0.0f && triangle.B.UnidividedW <= 0.0f && triangle.C.UnidividedW <= 0.0f) continue;
-                //if ( IsOutside(triangle.A) && IsOutside(triangle.B) && IsOutside(triangle.C)) continue;
+               //if ( IsOutside(triangle.A) && IsOutside(triangle.B) && IsOutside(triangle.C)) continue;
                 triangle.TransformedNormal = NEMatrix4x4.RemoveTranslation(m_Camera.View) * model.Transform.RotationMat * mesh.Triangles[i].ModelNormal;
                 //if (NEVector4.Dot(triangle.TransformedNormal, NEVector4.Back) <= 0.0f) continue;
-
+                m_RenderedTriangleCount++;
 
                 mesh.TempTriangleContainer.Add(triangle);
             }
@@ -169,6 +171,11 @@ namespace NostalgiaEngine.RasterizerPipeline
             return !inside;
         }
 
+        //bool IsInsideFrustum(Triangle triangle)
+        //{
+        //    // bool inZ = (triangle.A.UnidividedW <= 0.0f && triangle.B.UnidividedW <= 0.0f && triangle.C.UnidividedW <= 0.0f)
+        //}
+
         public override void OnUpdate(float deltaTime)
         {
             base.OnUpdate(deltaTime);
@@ -176,7 +183,8 @@ namespace NostalgiaEngine.RasterizerPipeline
             m_Camera.Transform.CalculateWorld();
            
             float yDisp = (float)Math.Sin(Engine.Instance.TotalTime);
-
+            Engine.Instance.TitleBarAppend = "Rendered Triangles: " + m_RenderedTriangleCount.ToString();
+            m_RenderedTriangleCount = 0;
             for (int i = 0; i < m_Models.Count; ++i)
             {
                 ProcessModel(deltaTime, m_Models[i]);
@@ -228,20 +236,22 @@ namespace NostalgiaEngine.RasterizerPipeline
                 for (int y = 0; y < span; ++y)
                 {
 
+                    //float t = ((float)y / span) * coeff + tOffset;
+                    //float depthBottom = (1.0f - manifest.bottom_t) * manifest.bottom_P0.Z + manifest.bottom_t * manifest.bottom_P1.Z;
+                    //float depthTop = (1.0f - manifest.top_t) * manifest.top_P0.Z + manifest.top_t * manifest.top_P1.Z;
+                    //float fragmentDepth = (1.0f - t) * depthTop + t * depthBottom;
+
+
                     float t = ((float)y / span) * coeff + tOffset;
-                    float depthBottom = (1.0f - manifest.bottom_t) * manifest.bottom_P0.Z + manifest.bottom_t * manifest.bottom_P1.Z;
-                    float depthTop = (1.0f - manifest.top_t) * manifest.top_P0.Z + manifest.top_t * manifest.top_P1.Z;
+                    float depthBottom = (1.0f - manifest.bottom_t) * manifest.bottom_P0.UnidividedW + manifest.bottom_t * manifest.bottom_P1.UnidividedW ;
+                    float depthTop = (1.0f - manifest.top_t) * manifest.top_P0.UnidividedW  + manifest.top_t * manifest.top_P1.UnidividedW ;
                     float fragmentDepth = (1.0f - t) * depthTop + t * depthBottom;
+                    fragmentDepth *= m_Camera.OneOverFar;
 
-                    //float ZBottom = (1.0f - manifest.bottom_t) * manifest.bottom_P0.UnidividedW + manifest.bottom_t * manifest.bottom_P1.UnidividedW;
-                    //float ZTop = (1.0f - manifest.top_t) * manifest.top_P0.UnidividedW + manifest.top_t * manifest.top_P1.UnidividedW;
-                    //float Z = (1.0f - t) * ZTop + t * ZBottom;
-                    //if (Z <= 0.0f)
-                    //{
-                    //    //throw new Exception("jest z nizej");
-                    //   // return;
-                    //}
-
+                     if(fragmentDepth > 1.0f || fragmentDepth <= 0)
+                    {
+                        continue;
+                    }
 
                     if (m_DepthBuffer.TryUpdate(x, fillStart + y, fragmentDepth))
                     {
@@ -270,7 +280,7 @@ namespace NostalgiaEngine.RasterizerPipeline
                             luma *= model.LumaTexture.FastSample(teX, 1.0f - teY);
                         }
 
-                        var col = NEColorSample.MakeCol5(ConsoleColor.Black, (ConsoleColor)tr.ColorAttrib, luma+0.2f);
+                        var col = NEColorSample.MakeCol5(ConsoleColor.Black, (ConsoleColor)tr.ColorAttrib, luma+0.1f);
                         //var col = m_Texture.Sample(teX, 1.0f - teY, dot);
                         NEScreenBuffer.PutChar(col.Character, col.BitMask, x, fillStart + y);
                     }
