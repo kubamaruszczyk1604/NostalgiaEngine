@@ -25,6 +25,7 @@ namespace NostalgiaEngine.RasterizerPipeline
         public float V { get { return m_UVs.Y; } }
 
         public float UnidividedW { get; private set; }
+        public float Depth { get; private set; }
 
         public Vertex(float x, float y, float z)
         {
@@ -55,16 +56,15 @@ namespace NostalgiaEngine.RasterizerPipeline
         float oldX = 0.0f;
         public void WDivide()
         {
-            //if (m_Position.W == 0.0f) m_Position.W = 0.01f;
             oldX= m_Position.X;
-            float xyDiv = m_Position.W <= 0.0f ? 0.001f : m_Position.W;
-            m_Position.X /= xyDiv;
-            m_Position.Y /= xyDiv;
-            m_Position.Z /= xyDiv;
-            m_UVs.X /= xyDiv;
-            m_UVs.Y /= xyDiv;
+            float posDiv = m_Position.W <= 0.0f ? 0.001f : m_Position.W;
+            m_Position.X /= posDiv;
+            m_Position.Y /= posDiv;
+            m_Position.Z /= posDiv;
+            m_UVs.X /= posDiv;
+            m_UVs.Y /= posDiv;
             UnidividedW = m_Position.W;
-            m_Position.W = 1.0f/xyDiv;
+            m_Position.W = 1.0f/posDiv;
         }
 
         public Vertex Duplicate()

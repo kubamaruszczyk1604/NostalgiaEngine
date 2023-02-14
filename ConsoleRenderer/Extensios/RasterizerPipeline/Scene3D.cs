@@ -121,7 +121,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             }
             if (NEInput.CheckKeyDown(ConsoleKey.DownArrow))
             {
-                m_Camera.Transform.LocalPosition = m_Camera.Transform.LocalPosition - m_Camera.Transform.Forward* dt;
+                m_Camera.Transform.LocalPosition = m_Camera.Transform.LocalPosition - m_Camera.Transform.Forward* dt; 
             }
         }
 
@@ -149,8 +149,9 @@ namespace NostalgiaEngine.RasterizerPipeline
                 Triangle triangle = mesh.Triangles[i];
                 //float nDot = NEVector4.Dot(triangle.TransformedNormal, NEVector4.Back);
                 //Debug.Print(" A = " + triangle.A.ToString() + " C = " + triangle.C.ToString());
-                if (triangle.A.UnidividedW <= 0.0f && triangle.B.UnidividedW <= 0.0f && triangle.C.UnidividedW <= 0.0f) continue;
-               //if ( IsOutside(triangle.A) && IsOutside(triangle.B) && IsOutside(triangle.C)) continue;
+                //if (triangle.A.UnidividedW <= 0.0f && triangle.B.UnidividedW <= 0.0f && triangle.C.UnidividedW <= 0.0f) continue;
+              //  if ( IsOutside(triangle.A) && IsOutside(triangle.B) && IsOutside(triangle.C)) continue;
+                if (IsOutsideFrustum(triangle)) continue;
                 triangle.TransformedNormal = NEMatrix4x4.RemoveTranslation(m_Camera.View) * model.Transform.RotationMat * mesh.Triangles[i].ModelNormal;
                 //if (NEVector4.Dot(triangle.TransformedNormal, NEVector4.Back) <= 0.0f) continue;
                 m_RenderedTriangleCount++;
@@ -171,10 +172,35 @@ namespace NostalgiaEngine.RasterizerPipeline
             return !inside;
         }
 
-        //bool IsInsideFrustum(Triangle triangle)
-        //{
-        //    // bool inZ = (triangle.A.UnidividedW <= 0.0f && triangle.B.UnidividedW <= 0.0f && triangle.C.UnidividedW <= 0.0f)
-        //}
+        bool IsOutsideFrustum(Triangle triangle)
+        {
+            float depthA = triangle.A.UnidividedW * m_Camera.OneOverFar;
+            float depthB = triangle.B.UnidividedW * m_Camera.OneOverFar;
+            float depthC = triangle.C.UnidividedW * m_Camera.OneOverFar;
+
+            if (depthA < 0.0f && depthB < 0.0f && depthC < 0.0f) return true;
+            if (depthA > 1.0f && depthB > 1.0f && depthC > 1.0f) return true;
+
+            float xA = triangle.A.X;
+            float xB = triangle.B.X;
+            float xC = triangle.C.X;
+
+            float yA = triangle.A.Y;
+            float yB = triangle.B.Y;
+            float yC = triangle.C.Y;
+
+            //bool sameX = (Math.Abs(Math.Sign(xA) + Math.Sign(xB) + Math.Sign(xC)) == 3);
+            //bool sameY = (Math.Abs(Math.Sign(yA) + Math.Sign(yB) + Math.Sign(yC)) == 3);
+
+            if (xA < -1.0f && xB < -1.0f && xC < -1.0f) return true;
+            if (xA > 1.0f && xB > 1.0f && xC > 1.0f) return true;
+
+            if (yA < -1.0f && yB < -1.0f && yC < -1.0f) return true;
+            if (yA > 1.0f && yB > 1.0f && yC > 1.0f) return true;
+
+
+            return false;
+        }
 
         public override void OnUpdate(float deltaTime)
         {
@@ -274,13 +300,13 @@ namespace NostalgiaEngine.RasterizerPipeline
                         float teX = texCoord.X / fragW;
                         float teY = texCoord.Y / fragW;
                         // dot = 1.0f;
-                        float luma = 1.0f*dot;
+                        float luma = 1.0f;
                         if (model.LumaTexture != null)
                         {
                             luma *= model.LumaTexture.FastSample(teX, 1.0f - teY);
                         }
 
-                        var col = NEColorSample.MakeCol5(ConsoleColor.Black, (ConsoleColor)tr.ColorAttrib, luma+0.1f);
+                        var col = NEColorSample.MakeCol5(ConsoleColor.Black, (ConsoleColor)tr.ColorAttrib, luma+0.2f);
                         //var col = m_Texture.Sample(teX, 1.0f - teY, dot);
                         NEScreenBuffer.PutChar(col.Character, col.BitMask, x, fillStart + y);
                     }
