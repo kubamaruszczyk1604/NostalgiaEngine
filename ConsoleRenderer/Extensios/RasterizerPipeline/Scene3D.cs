@@ -143,13 +143,14 @@ namespace NostalgiaEngine.RasterizerPipeline
             }
 
             //Projection space
-            mesh.CalculateTriangleEdges();
+            //mesh.CalculateTriangleEdges();
             for (int i = 0; i < mesh.Triangles.Count; ++i)
             {
                 Triangle triangle = mesh.Triangles[i];
+                triangle.CalculateEdges();
                 if (IsOutsideFrustum(triangle)) continue;
                 triangle.TransformedNormal = NEMatrix4x4.RemoveTranslation(m_Camera.View) * model.Transform.RotationMat * mesh.Triangles[i].ModelNormal;
-                //if (NEVector4.Dot(triangle.TransformedNormal, NEVector4.Back) <= 0.0f) continue;
+                if (FacingAway(triangle)) continue;
                 m_RenderedTriangleCount++;
 
                 mesh.TempTriangleContainer.Add(triangle);
@@ -193,6 +194,19 @@ namespace NostalgiaEngine.RasterizerPipeline
             return false;
         }
 
+        bool FacingAway(Triangle triangle)
+        {
+            NEVector4 vA = -triangle.A.Position.Normalized;
+            NEVector4 vB= -triangle.B.Position.Normalized;
+            NEVector4 vC = -triangle.C.Position.Normalized;
+
+            float dotA = NEVector4.Dot(vA, triangle.TransformedNormal);
+            float dotB = NEVector4.Dot(vB, triangle.TransformedNormal);
+            float dotC = NEVector4.Dot(vC, triangle.TransformedNormal);
+
+            return (dotA < -0.4f && dotB < -0.4f && dotC < -0.4f);
+        }
+
         public override void OnUpdate(float deltaTime)
         {
             base.OnUpdate(deltaTime);
@@ -210,6 +224,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         void RenderModel(int x, float u, Model model)
         {
+
             Mesh m_VBO = model.Mesh;
             for (int i = 0; i < m_VBO.TempTriangleContainer.Count; ++i)
             {
@@ -291,13 +306,13 @@ namespace NostalgiaEngine.RasterizerPipeline
                         float teX = texCoord.X / fragW;
                         float teY = texCoord.Y / fragW;
                         // dot = 1.0f;
-                        float luma = 1.0f;// * dot;
+                        float luma = 0.2f + dot;
                         if (model.LumaTexture != null)
                         {
                             luma *= model.LumaTexture.FastSample(teX, 1.0f - teY);
                         }
 
-                        var col = NEColorSample.MakeCol5(ConsoleColor.Black, (ConsoleColor)tr.ColorAttrib, luma+0.1f);
+                        var col = NEColorSample.MakeCol5(ConsoleColor.Black, (ConsoleColor)tr.ColorAttrib, luma);
                         //var col = m_Texture.Sample(teX, 1.0f - teY, dot);
                         NEScreenBuffer.PutChar(col.Character, col.BitMask, x, fillStart + y);
                     }
