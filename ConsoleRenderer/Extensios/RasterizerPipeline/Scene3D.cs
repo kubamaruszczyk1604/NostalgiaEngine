@@ -147,10 +147,6 @@ namespace NostalgiaEngine.RasterizerPipeline
             for (int i = 0; i < mesh.Triangles.Count; ++i)
             {
                 Triangle triangle = mesh.Triangles[i];
-                //float nDot = NEVector4.Dot(triangle.TransformedNormal, NEVector4.Back);
-                //Debug.Print(" A = " + triangle.A.ToString() + " C = " + triangle.C.ToString());
-                //if (triangle.A.UnidividedW <= 0.0f && triangle.B.UnidividedW <= 0.0f && triangle.C.UnidividedW <= 0.0f) continue;
-              //  if ( IsOutside(triangle.A) && IsOutside(triangle.B) && IsOutside(triangle.C)) continue;
                 if (IsOutsideFrustum(triangle)) continue;
                 triangle.TransformedNormal = NEMatrix4x4.RemoveTranslation(m_Camera.View) * model.Transform.RotationMat * mesh.Triangles[i].ModelNormal;
                 //if (NEVector4.Dot(triangle.TransformedNormal, NEVector4.Back) <= 0.0f) continue;
@@ -166,11 +162,6 @@ namespace NostalgiaEngine.RasterizerPipeline
             
         }
 
-        bool IsOutside(Vertex v)
-        {
-            bool inside = (v.X > -1.0f && v.X < 1.0f && v.Y > -1.0f && v.Y < 1.0f && v.UnidividedW >= 0.0f);
-            return !inside;
-        }
 
         bool IsOutsideFrustum(Triangle triangle)
         {
@@ -300,13 +291,13 @@ namespace NostalgiaEngine.RasterizerPipeline
                         float teX = texCoord.X / fragW;
                         float teY = texCoord.Y / fragW;
                         // dot = 1.0f;
-                        float luma = 1.0f;
+                        float luma = 1.0f;// * dot;
                         if (model.LumaTexture != null)
                         {
                             luma *= model.LumaTexture.FastSample(teX, 1.0f - teY);
                         }
 
-                        var col = NEColorSample.MakeCol5(ConsoleColor.Black, (ConsoleColor)tr.ColorAttrib, luma+0.2f);
+                        var col = NEColorSample.MakeCol5(ConsoleColor.Black, (ConsoleColor)tr.ColorAttrib, luma+0.1f);
                         //var col = m_Texture.Sample(teX, 1.0f - teY, dot);
                         NEScreenBuffer.PutChar(col.Character, col.BitMask, x, fillStart + y);
                     }
