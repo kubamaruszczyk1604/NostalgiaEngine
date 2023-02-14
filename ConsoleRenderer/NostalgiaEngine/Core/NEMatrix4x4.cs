@@ -131,9 +131,10 @@ namespace NostalgiaEngine.Core
 
         static public NEMatrix4x4 CreatePerspectiveProjection(float aspectRatio, float fovRad, float near, float far)
         {
-            float invTanFov = 1.0f / (float)Math.Tan(fovRad * 0.5f);
+            float invTanFov = 1.0f / ((float)Math.Tan(fovRad * 0.5f));
             float frustumZLength = far - near;
-            float zScalingFactor = far / frustumZLength;
+            if (frustumZLength == 0.0f) frustumZLength = 0.01f;
+            float zScalingFactor = far / (frustumZLength + 0.001f);
             float zCorrection = zScalingFactor * near;
             NEMatrix4x4 mat = new NEMatrix4x4();
             mat.m_Data = new float[,] { { aspectRatio*invTanFov, 0.0f, 0.0f, 0.0f },
@@ -250,21 +251,6 @@ namespace NostalgiaEngine.Core
             return matRet;
         }
 
-        //public static NEMatrix4x4 CreateView(NEVector4 pos, NEVector4 forward, NEVector4 up)
-        //{
-        //    forward = forward.Normalized;
-        //    up -= (forward * NEVector4.Dot(up, forward));
-
-        //    NEVector4 right = NEVector4.Cross3(forward, up).Normalized;
-
-        //    NEMatrix4x4 mat = new NEMatrix4x4();
-        //    mat.m_Data = new float[,] { 
-        //                                { right.X, right.Y, right.Z, NEVector4.Dot(pos,right)},
-        //                                { up.X, up.Y, up.Z, -NEVector4.Dot(pos, up)},
-        //                                { forward.X, forward.Y, forward.Z, -NEVector4.Dot(pos,forward) },
-        //                                { 0.0f, 0.0f, 0.0f, 1.0f }};
-        //    return mat;
-        //}
 
         public static NEMatrix4x4 CreateView(NEVector4 pos, NEVector4 forward, NEVector4 up)
         {

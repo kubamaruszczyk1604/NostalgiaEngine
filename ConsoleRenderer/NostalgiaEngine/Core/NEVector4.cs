@@ -29,7 +29,7 @@ namespace NostalgiaEngine.Core
 
         public override string ToString()
         {
-            return X.ToString() + "\n" + Y.ToString();
+            return X.ToString() + ", " + Y.ToString() + ", " + Z.ToString() ;
         }
 
         public NEVector4(float x, float y, float z, float w)

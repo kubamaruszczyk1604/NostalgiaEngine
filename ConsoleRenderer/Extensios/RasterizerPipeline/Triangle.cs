@@ -61,6 +61,8 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         public bool IsColScanlineInTriangle(float x)
         {
+            //if (Math.Abs(A.X - C.X)  < 0.15f)
+            //    return false;
             return ((x >= A.X) && (x <= C.X));
         }
 

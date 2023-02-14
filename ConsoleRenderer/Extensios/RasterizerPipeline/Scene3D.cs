@@ -48,6 +48,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             Mesh teapotMesh = NEObjLoader.LoadObj("C:/Users/Kuba/Desktop/tst/teapot.obj");
             var luma = ResourceManager.Instance.GetLumaTexture("C:/test/ruler/luma.buf");
             Model cubeModel = new Model(cubeMesh,luma);
+            //Model cubeModel = new Model(GenerateSquare(0.0f, 0.0f, 0.0f), luma);
             cubeModel.Transform.LocalPosition = new NEVector4(0.0f, 0.0f, 4.1f);
 
             Model teapotModel = new Model(teapotMesh);
@@ -129,9 +130,8 @@ namespace NostalgiaEngine.RasterizerPipeline
             mesh.TempTriangleContainer = new List<Triangle>(mesh.Triangles.Count);
 
             NEMatrix4x4 world = model.Transform.World;
-
-            // NEMatrix4x4 view = NEMatrix4x4.CreateView(m_Camera.Transform.LocalPosition, viewDir.Normalized, NEVector4.Up);
             NEMatrix4x4 view = m_Camera.View;
+
             for (int i = 0; i < mesh.Vertices.Count; ++i)
             {
                 mesh.Vertices[i].Position = (view * world ) * mesh.ModelVertices[i].Position;
@@ -140,19 +140,20 @@ namespace NostalgiaEngine.RasterizerPipeline
                 mesh.Vertices[i].WDivide();
             }
 
+            //Projection space
             mesh.CalculateTriangleEdges();
             for (int i = 0; i < mesh.Triangles.Count; ++i)
             {
-                //mesh.Triangles[i].TransformedNormal = NEMatrix4x4.RemoveTranslation(m_Camera.View) * model.Transform.RotationMat * mesh.Triangles[i].ModelNormal;
                 Triangle triangle = mesh.Triangles[i];
-                if (triangle.A.Temp <= 0.0f || triangle.B.Temp <= 0.0f || triangle.C.Temp <= 0.0f) continue;
-                if (triangle.A.X > 1.0f && triangle.B.X > 1.0f && triangle.C.X > 1.0f) continue;
-                if (triangle.A.X < -1.0f && triangle.B.X < -1.0f && triangle.C.X < -1.0f) continue;
-                if (triangle.A.Y > 1.0f && triangle.B.Y > 1.0f && triangle.C.Y > 1.0f) continue;
-                if (triangle.A.Y < -1.0f && triangle.B.Y < -1.0f && triangle.C.Y < -1.0f) continue;
-                //if (triangle.A.Temp <= 0.0f && triangle.B.Temp <= 0.0f && triangle.C.Temp <= 0.0f) continue;
-                mesh.TempTriangleContainer.Add(triangle);
+                //float nDot = NEVector4.Dot(triangle.TransformedNormal, NEVector4.Back);
+                //Debug.Print(" A = " + triangle.A.ToString() + " C = " + triangle.C.ToString());
+                if (triangle.A.UnidividedW <= 0.0f && triangle.B.UnidividedW <= 0.0f && triangle.C.UnidividedW <= 0.0f) continue;
+                //if ( IsOutside(triangle.A) && IsOutside(triangle.B) && IsOutside(triangle.C)) continue;
                 triangle.TransformedNormal = NEMatrix4x4.RemoveTranslation(m_Camera.View) * model.Transform.RotationMat * mesh.Triangles[i].ModelNormal;
+                //if (NEVector4.Dot(triangle.TransformedNormal, NEVector4.Back) <= 0.0f) continue;
+
+
+                mesh.TempTriangleContainer.Add(triangle);
             }
 
 
@@ -162,6 +163,12 @@ namespace NostalgiaEngine.RasterizerPipeline
             
         }
 
+        bool IsOutside(Vertex v)
+        {
+            bool inside = (v.X > -1.0f && v.X < 1.0f && v.Y > -1.0f && v.Y < 1.0f && v.UnidividedW >= 0.0f);
+            return !inside;
+        }
+
         public override void OnUpdate(float deltaTime)
         {
             base.OnUpdate(deltaTime);
@@ -169,7 +176,6 @@ namespace NostalgiaEngine.RasterizerPipeline
             m_Camera.Transform.CalculateWorld();
            
             float yDisp = (float)Math.Sin(Engine.Instance.TotalTime);
-           // NEVector4 cameraDir = NEMatrix4x4.CreateRotationY(Engine.Instance.TotalTime * 0.3f)* new NEVector4(0.0f, 0.0f, 1.0f);
 
             for (int i = 0; i < m_Models.Count; ++i)
             {
@@ -184,9 +190,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             {
                 Triangle tr = m_VBO.TempTriangleContainer[i];
                 if (!tr.IsColScanlineInTriangle(u)) continue;
-                //if (tr.A.Temp <= 0.0f) continue;
-                //if (tr.B.Temp <= 0.0f) continue;
-                //if (tr.C.Temp <= 0.0f) continue;
+
                 float dot = NEVector4.Dot(tr.TransformedNormal, new NEVector4(0.0f, 0.0f, -1.0f, 0.0f));
                 ScanlineIntersectionManifest manifest;
                 tr.CreateIntersectionManifest(u, out manifest);
@@ -218,6 +222,9 @@ namespace NostalgiaEngine.RasterizerPipeline
 
                 float span = fillEnd - fillStart;
 
+
+
+
                 for (int y = 0; y < span; ++y)
                 {
 
@@ -225,6 +232,15 @@ namespace NostalgiaEngine.RasterizerPipeline
                     float depthBottom = (1.0f - manifest.bottom_t) * manifest.bottom_P0.Z + manifest.bottom_t * manifest.bottom_P1.Z;
                     float depthTop = (1.0f - manifest.top_t) * manifest.top_P0.Z + manifest.top_t * manifest.top_P1.Z;
                     float fragmentDepth = (1.0f - t) * depthTop + t * depthBottom;
+
+                    //float ZBottom = (1.0f - manifest.bottom_t) * manifest.bottom_P0.UnidividedW + manifest.bottom_t * manifest.bottom_P1.UnidividedW;
+                    //float ZTop = (1.0f - manifest.top_t) * manifest.top_P0.UnidividedW + manifest.top_t * manifest.top_P1.UnidividedW;
+                    //float Z = (1.0f - t) * ZTop + t * ZBottom;
+                    //if (Z <= 0.0f)
+                    //{
+                    //    //throw new Exception("jest z nizej");
+                    //   // return;
+                    //}
 
 
                     if (m_DepthBuffer.TryUpdate(x, fillStart + y, fragmentDepth))
@@ -300,48 +316,28 @@ namespace NostalgiaEngine.RasterizerPipeline
         private Mesh GenerateTestTriangles()
         {
             Mesh mesh = new Mesh();
-            float deltaX = 0.5f;
-            float deltaY = -0.5f;
-            float deltaZ = 0.01f;
-            float orginX = 0.0f;
-            float orginY = 0.0f;
-            float orginZ = 0.0f;
-            for (int i = 0; i < 2000; ++i)
-            {
-                float normI = (float)i / (float)2000;
-                float xDisp = deltaX * (float)Math.Cos(normI * 6.28f*3.0f);
-                float yDisp = deltaY * (float)Math.Sin(normI * 6.28f * 3.0f);
-                float zDisp = deltaZ * i * 0.6f;
-
-                mesh.AddVertex(new Vertex(orginX - 0.2f + xDisp, orginY + yDisp, orginZ + zDisp));
-                mesh.AddVertex(new Vertex(orginX + 0.0f + xDisp, orginY + 0.2f + yDisp, orginZ + zDisp));
-                mesh.AddVertex(new Vertex(orginX + 0.2f + xDisp, orginY + yDisp, orginZ + zDisp));
-                mesh.AddTriangle(i * 3, i * 3 + 1, i * 3 + 2);
-                mesh.Triangles[i].ColorAttrib = 1 + i;
-
-            }
             return mesh;
         }
 
  
-        private Mesh GenerateSquare(float x, float y, float depth, int col)
+        private Mesh GenerateSquare(float x, float y, float z)
         {
             Mesh mesh = new Mesh();
-            float size = 0.55f;
+            float size = 1.55f;
             //m_VBO.AddVertex(new Vertex(-size+x,-size+y, depth,0.0f,1.0f));
             //m_VBO.AddVertex(new Vertex(-size+x, size+ y, depth, 0.0f, 0.0f));
             //m_VBO.AddVertex(new Vertex(size + x, size + y, depth,1.0f,0.0f));
             //m_VBO.AddVertex(new Vertex(size + x, -size +y, depth,1.0f,1.0f));
-            mesh.AddVertex(new Vertex(-size + x, -size + y, depth, 0.0f, 0.0f));
-            mesh.AddVertex(new Vertex(-size + x, size + y, depth, 0.0f, 1.0f));
-            mesh.AddVertex(new Vertex(size + x, size + y, depth, 1.0f, 1.0f));
-            mesh.AddVertex(new Vertex(size + x, -size + y, depth, 1.0f, 0.0f));
+            mesh.AddVertex(new Vertex(-size + x, -size + y, z, 0.0f, 0.0f));
+            mesh.AddVertex(new Vertex(-size + x, size + y, z, 0.0f, 1.0f));
+            mesh.AddVertex(new Vertex(size + x, size + y, z, 1.0f, 1.0f));
+           // mesh.AddVertex(new Vertex(size + x, -size + y, z, 1.0f, 0.0f));
 
             mesh.AddTriangle(0, 1, 2);
-            mesh.AddTriangle(0, 2, 3);
+           // mesh.AddTriangle(0, 2, 3);
 
             mesh.Triangles[0].ColorAttrib = 7;
-            mesh.Triangles[1].ColorAttrib = 7;
+           // mesh.Triangles[1].ColorAttrib = 7;
             return mesh;
 
         }

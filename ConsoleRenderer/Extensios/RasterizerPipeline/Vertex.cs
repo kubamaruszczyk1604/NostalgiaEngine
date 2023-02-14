@@ -24,7 +24,7 @@ namespace NostalgiaEngine.RasterizerPipeline
         public float U { get { return m_UVs.X; } }
         public float V { get { return m_UVs.Y; } }
 
-        public float Temp { get; private set; }
+        public float UnidividedW { get; private set; }
 
         public Vertex(float x, float y, float z)
         {
@@ -46,41 +46,42 @@ namespace NostalgiaEngine.RasterizerPipeline
             return;
         }
 
-        public void Translate(float x, float y, float z)
-        {
-            m_Position.X += x;
-            m_Position.Y += y;
-            m_Position.Z += z;
-        }
-
-        public void Translate(NEVector4 delta)
-        {
-            m_Position += delta;
-        }
 
         public void SetValue(Vertex v)
         {
             m_Position = v.Position;
             m_UVs = v.UV;
         }
-
+        float oldX = 0.0f;
         public void WDivide()
         {
-            if (m_Position.W == 0) return;
-            Temp = m_Position.Z;
-            m_Position.X /= m_Position.W;
-            m_Position.Y /= m_Position.W;
-            m_Position.Z /= m_Position.W;
-            m_UVs.X /= m_Position.W;
-            m_UVs.Y /= m_Position.W;
-            m_Position.W = 1.0f/m_Position.W;
+            //if (m_Position.W == 0.0f) m_Position.W = 0.01f;
+            oldX= m_Position.X;
+            float xyDiv = m_Position.W <= 0.0f ? 0.001f : m_Position.W;
+            m_Position.X /= xyDiv;
+            m_Position.Y /= xyDiv;
+            m_Position.Z /= xyDiv;
+            m_UVs.X /= xyDiv;
+            m_UVs.Y /= xyDiv;
+            UnidividedW = m_Position.W;
+            m_Position.W = 1.0f/xyDiv;
         }
 
         public Vertex Duplicate()
         {
             return new Vertex(X, Y, Z, U, V);
         }
-        
+        override public string ToString()
+        {
+            return m_Position.X.ToString() + ", " + m_Position.Y.ToString() + ", " + UnidividedW.ToString() + ",   " + oldX.ToString();
+
+        }
+
+        public string ToString2()
+        {
+            return m_Position.X.ToString() + ", " + m_Position.W.ToString() + ", " + UnidividedW.ToString();
+
+        }
 
     }
 }
