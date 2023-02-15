@@ -11,10 +11,12 @@ namespace NostalgiaEngine.RasterizerPipeline
        // Mesh m_VBO;
         NEDepthBuffer m_DepthBuffer;
 
-
-        //NEFloatBuffer m_LumaBuffer;
+        Skybox m_TestSkybox;
+        //NEFloatBuffer m_Skybox;
         //NETexture m_Texture;
         NEColorPalette m_Palette;
+
+
 
         Camera m_Camera;
         List<Model> m_Models;
@@ -45,7 +47,11 @@ namespace NostalgiaEngine.RasterizerPipeline
             m_DepthBuffer = new NEDepthBuffer(ScreenWidth, ScreenHeight);
             m_Models = new List<Model>();
 
-            
+            //m_Skybox = ResourceManager.Instance.GetLumaTexture("C:/test/skybox/right.buf");
+            //m_Skybox.SampleMode = NESampleMode.Repeat;
+
+            m_TestSkybox = new Skybox("c:/test/skybox");
+
             Mesh cubeMesh = GenerateCube(0.0f, 0.0f, 0f, 2);
             Mesh teapotMesh = NEObjLoader.LoadObj("C:/Users/Kuba/Desktop/tst/teapot.obj");
             var luma = ResourceManager.Instance.GetLumaTexture("C:/test/ruler/luma.buf");
@@ -118,10 +124,12 @@ namespace NostalgiaEngine.RasterizerPipeline
             if (NEInput.CheckKeyDown(ConsoleKey.UpArrow))
             {
                m_Camera.Transform.LocalPosition = m_Camera.Transform.LocalPosition + m_Camera.Transform.Forward * dt;
+               // m_Camera.Transform.RotateX(dt);
             }
             if (NEInput.CheckKeyDown(ConsoleKey.DownArrow))
             {
-                m_Camera.Transform.LocalPosition = m_Camera.Transform.LocalPosition - m_Camera.Transform.Forward* dt; 
+                m_Camera.Transform.LocalPosition = m_Camera.Transform.LocalPosition - m_Camera.Transform.Forward* dt;
+               // m_Camera.Transform.RotateX(-dt);
             }
         }
 
@@ -137,8 +145,10 @@ namespace NostalgiaEngine.RasterizerPipeline
             for (int i = 0; i < mesh.Vertices.Count; ++i)
             {
                 mesh.Vertices[i].Position = (view * world ) * mesh.ModelVertices[i].Position;
+                mesh.Vertices[i].Vert2Camera =-mesh.Vertices[i].Position.Normalized;
                 mesh.Vertices[i].UV = mesh.ModelVertices[i].UV;
                 mesh.Vertices[i].Position = (m_Camera.Projection) * mesh.Vertices[i].Position;
+                
                 mesh.Vertices[i].WDivide();
             }
 
@@ -231,7 +241,7 @@ namespace NostalgiaEngine.RasterizerPipeline
                 Triangle tr = m_VBO.TempTriangleContainer[i];
                 if (!tr.IsColScanlineInTriangle(u)) continue;
 
-                float dot = NEVector4.Dot(tr.TransformedNormal, new NEVector4(0.0f, 0.0f, -1.0f, 0.0f));
+                //float dot = NEVector4.Dot(tr.TransformedNormal, new NEVector4(0.0f, 0.0f, -1.0f, 0.0f));
                 ScanlineIntersectionManifest manifest;
                 tr.CreateIntersectionManifest(u, out manifest);
 
@@ -262,19 +272,19 @@ namespace NostalgiaEngine.RasterizerPipeline
 
                 float span = fillEnd - fillStart;
 
-
-
-
                 for (int y = 0; y < span; ++y)
                 {
+                    
 
                     //float t = ((float)y / span) * coeff + tOffset;
                     //float depthBottom = (1.0f - manifest.bottom_t) * manifest.bottom_P0.Z + manifest.bottom_t * manifest.bottom_P1.Z;
                     //float depthTop = (1.0f - manifest.top_t) * manifest.top_P0.Z + manifest.top_t * manifest.top_P1.Z;
                     //float fragmentDepth = (1.0f - t) * depthTop + t * depthBottom;
 
-
                     float t = ((float)y / span) * coeff + tOffset;
+
+
+
                     float depthBottom = (1.0f - manifest.bottom_t) * manifest.bottom_P0.UnidividedW + manifest.bottom_t * manifest.bottom_P1.UnidividedW ;
                     float depthTop = (1.0f - manifest.top_t) * manifest.top_P0.UnidividedW  + manifest.top_t * manifest.top_P1.UnidividedW ;
                     float fragmentDepth = (1.0f - t) * depthTop + t * depthBottom;
@@ -287,7 +297,11 @@ namespace NostalgiaEngine.RasterizerPipeline
 
                     if (m_DepthBuffer.TryUpdate(x, fillStart + y, fragmentDepth))
                     {
+                        NEVector4 vDirBottom = manifest.bottom_P0.Vert2Camera * (1.0f - manifest.bottom_t) + manifest.bottom_P1.Vert2Camera * manifest.bottom_t;
+                        NEVector4 vDirTop = manifest.top_P0.Vert2Camera * (1.0f - manifest.top_t) + manifest.top_P1.Vert2Camera * manifest.top_t;
+                        NEVector4 vDir = vDirTop * (1.0f - t) + vDirBottom * t;
 
+                        float dot = NEVector4.Dot(tr.TransformedNormal, vDir);
                         dot = NEMathHelper.Clamp(dot, 0.0f, 1.0f);
 
                         float fragWBottom = (1.0f - manifest.bottom_t) * manifest.bottom_P0.W + manifest.bottom_t * manifest.bottom_P1.W;
@@ -306,7 +320,7 @@ namespace NostalgiaEngine.RasterizerPipeline
                         float teX = texCoord.X / fragW;
                         float teY = texCoord.Y / fragW;
                         // dot = 1.0f;
-                        float luma = 0.2f + dot;
+                        float luma = 0.2f + dot*dot;
                         if (model.LumaTexture != null)
                         {
                             luma *= model.LumaTexture.FastSample(teX, 1.0f - teY);
@@ -325,8 +339,21 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         public override void OnDrawPerColumn(int x)
         {
-            float u = ((float)x) / ((float)ScreenWidth);
-            u = 2.0f * u - 1.0f;
+            float xNorm = ((float)x) / ((float)ScreenWidth);
+            float u = 2.0f * xNorm - 1.0f;
+            for (int y = 0; y < ScreenHeight; ++y)
+            {
+                float v = (float)y / (float)ScreenHeight;
+                v = -((2.0f * v) - 1.0f);
+                NEVector4 sampleDir = NEMatrix4x4.RemoveTranslation(m_Camera.Projection) * NEMatrix4x4.RemoveTranslation(m_Camera.PointAt) * new NEVector4(u, v, 1.0f, 1.0f).Normalized ;
+                //sampleDir.X *= -1.0f;
+                float luma = m_TestSkybox.Sample(sampleDir.Normalized);
+                
+                // m_Skybox.Sample(xNorm/m_Camera.AspectRatio, v);
+                var col = NEColorSample.MakeCol5(ConsoleColor.Black, (ConsoleColor)7, luma);
+                NEScreenBuffer.PutChar(col.Character, col.BitMask, x, y);
+            }
+
             for (int i = 0; i < m_Models.Count; ++i)
             {
                 RenderModel(x, u, m_Models[i]);

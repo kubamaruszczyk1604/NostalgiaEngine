@@ -77,6 +77,11 @@ namespace NostalgiaEngine.Core
             return new NEVector4(x, y, z, 0.0f);
         }
 
+        public static NEVector4 Abs(NEVector4 a)
+        {
+            return new NEVector4(Math.Abs(a.X), Math.Abs(a.Y), Math.Abs(a.Z), Math.Abs(a.W));
+        }
+
         static public NEVector4 operator +(NEVector4 lhs, NEVector4 rhs)
         {
             return new NEVector4(lhs.X + rhs.X, lhs.Y + rhs.Y, lhs.Z + rhs.Z, lhs.W + rhs.W);
@@ -96,6 +101,11 @@ namespace NostalgiaEngine.Core
         static public NEVector4 operator *(NEVector4 lhs, float rhs)
         {
             return new NEVector4(lhs.X * rhs, lhs.Y * rhs, lhs.Z * rhs, lhs.W * rhs);
+        }
+
+        static public NEVector4 operator *(NEVector4 lhs, NEVector4 rhs)
+        {
+            return new NEVector4(lhs.X * rhs.X, lhs.Y * rhs.Y, lhs.Z * rhs.Z, lhs.W * rhs.W);
         }
 
         static public NEVector4 operator /(NEVector4 lhs, float rhs)

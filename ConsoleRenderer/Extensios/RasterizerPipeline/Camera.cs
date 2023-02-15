@@ -17,10 +17,19 @@ namespace NostalgiaEngine.RasterizerPipeline
             }
         }
 
+        public NEMatrix4x4 PointAt
+        {
+            get
+            {
+                return NEMatrix4x4.CreatePointAt(Transform.Forward, Transform.Up);
+            }
+        }
+
 
         public NEMatrix4x4 Projection { get; private set; }
         public float Far { get; private set; }
         public float OneOverFar { get; private set; }
+        public float AspectRatio { get; private set; }
 
         public Camera(int width, int height, float fovRad, float near, float far)
         {
@@ -28,6 +37,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             float dimHigh = height;
             if (dimLow > dimHigh) NEMathHelper.Swap(ref dimLow, ref dimHigh);
             float aspectRatio = dimLow / dimHigh;
+            AspectRatio = aspectRatio;
             Transform = new Transform();
             Projection = NEMatrix4x4.CreatePerspectiveProjection(aspectRatio, fovRad, near, far);
             Far = far;

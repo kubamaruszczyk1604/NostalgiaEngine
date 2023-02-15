@@ -25,7 +25,8 @@ namespace NostalgiaEngine.RasterizerPipeline
         public float V { get { return m_UVs.Y; } }
 
         public float UnidividedW { get; private set; }
-        public float Depth { get; private set; }
+        public NEVector4 Vert2Camera { get; set; }
+
 
         public Vertex(float x, float y, float z)
         {

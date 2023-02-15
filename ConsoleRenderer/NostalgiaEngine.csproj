@@ -73,6 +73,7 @@
     <Compile Include="Extensios\RasterizerPipeline\NEObjLoader.cs" />
     <Compile Include="Extensios\RasterizerPipeline\ResourceManager.cs" />
     <Compile Include="Extensios\RasterizerPipeline\Scene3D.cs" />
+    <Compile Include="Extensios\RasterizerPipeline\Skybox.cs" />
     <Compile Include="Extensios\RasterizerPipeline\Transform.cs" />
     <Compile Include="Extensios\RasterizerPipeline\Triangle.cs" />
     <Compile Include="Extensios\RasterizerPipeline\Vertex.cs" />
