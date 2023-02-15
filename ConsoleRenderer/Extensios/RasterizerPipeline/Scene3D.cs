@@ -42,7 +42,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             // ResourceManager.Instance.Test();
             //m_LumaBuffer = NEFloatBuffer.FromFile("C:/test/ruler/luma.buf");
             //m_Texture = NEColorTexture16.LoadFromFile("C:/test/nowa_textura12/color.tex");
-            //m_Palette = NEColorPalette.FromFile("C:/test/nowa_textura12/palette.txt");
+            m_Palette = NEColorPalette.FromFile("C:/test/nowa_textura12/palette.txt");
             //m_LumaBuffer.SampleMode = NESampleMode.Repeat;
             m_DepthBuffer = new NEDepthBuffer(ScreenWidth, ScreenHeight);
             m_Models = new List<Model>();
@@ -52,7 +52,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 
             m_TestSkybox = new Skybox("c:/test/skybox");
 
-            Mesh cubeMesh = GenerateCube(0.0f, 0.0f, 0f, 2);
+            Mesh cubeMesh = GenerateCube(0.0f, 0.0f, 0f, 15);
             Mesh teapotMesh = NEObjLoader.LoadObj("C:/Users/Kuba/Desktop/tst/teapot.obj");
             var luma = ResourceManager.Instance.GetLumaTexture("C:/test/ruler/luma.buf");
             Model cubeModel = new Model(cubeMesh,luma);
@@ -70,9 +70,10 @@ namespace NostalgiaEngine.RasterizerPipeline
 
             m_Camera = new Camera(ScreenWidth, ScreenHeight, 1.05f, 0.1f, 10.0f);
             m_Camera.Transform.LocalPosition = new NEVector4(0.0f, 0.0f, -2.0f);
-            
 
-           // NEColorManagement.SetPalette(m_Palette);
+
+            //NEColorManagement.SetPalette(m_Palette);
+            NEColorManagement.SetSpectralPalette1();
 
             return base.OnLoad();
         }
@@ -221,7 +222,7 @@ namespace NostalgiaEngine.RasterizerPipeline
         {
             base.OnUpdate(deltaTime);
             Movement(deltaTime);
-            m_Camera.Transform.CalculateWorld();
+            m_Camera.UpdateTransform();
            
             float yDisp = (float)Math.Sin(Engine.Instance.TotalTime);
             Engine.Instance.TitleBarAppend = "Rendered Triangles: " + m_RenderedTriangleCount.ToString();
@@ -326,7 +327,7 @@ namespace NostalgiaEngine.RasterizerPipeline
                             luma *= model.LumaTexture.FastSample(teX, 1.0f - teY);
                         }
 
-                        var col = NEColorSample.MakeCol5(ConsoleColor.Black, (ConsoleColor)tr.ColorAttrib, luma);
+                        var col = NEColorSample.MakeCol5(ConsoleColor.DarkBlue, (ConsoleColor)tr.ColorAttrib, luma);
                         //var col = m_Texture.Sample(teX, 1.0f - teY, dot);
                         NEScreenBuffer.PutChar(col.Character, col.BitMask, x, fillStart + y);
                     }
@@ -341,18 +342,7 @@ namespace NostalgiaEngine.RasterizerPipeline
         {
             float xNorm = ((float)x) / ((float)ScreenWidth);
             float u = 2.0f * xNorm - 1.0f;
-            for (int y = 0; y < ScreenHeight; ++y)
-            {
-                float v = (float)y / (float)ScreenHeight;
-                v = -((2.0f * v) - 1.0f);
-                NEVector4 sampleDir = NEMatrix4x4.RemoveTranslation(m_Camera.Projection) * NEMatrix4x4.RemoveTranslation(m_Camera.PointAt) * new NEVector4(u, v, 1.0f, 1.0f).Normalized ;
-                //sampleDir.X *= -1.0f;
-                float luma = m_TestSkybox.Sample(sampleDir.Normalized);
-                
-                // m_Skybox.Sample(xNorm/m_Camera.AspectRatio, v);
-                var col = NEColorSample.MakeCol5(ConsoleColor.Black, (ConsoleColor)7, luma);
-                NEScreenBuffer.PutChar(col.Character, col.BitMask, x, y);
-            }
+
 
             for (int i = 0; i < m_Models.Count; ++i)
             {
@@ -361,7 +351,19 @@ namespace NostalgiaEngine.RasterizerPipeline
 
             }
 
+            for (int y = 0; y < ScreenHeight; ++y)
+            {
+                float v = (float)y / (float)ScreenHeight;
+                v = -((2.0f * v) - 1.0f);
 
+                if (m_DepthBuffer.TryUpdate(x, y, 1.0f))
+                {
+                    NEVector4 sampleDir =  m_Camera.PointAt * new NEVector4(u, v, 1.0f, 1.0f);
+                    float luma = m_TestSkybox.Sample(sampleDir.Normalized);
+                    var col = NEColorSample.MakeCol5(ConsoleColor.DarkBlue, (ConsoleColor)14, luma);
+                    NEScreenBuffer.PutChar(col.Character, col.BitMask, x, y);
+                }
+            }
             base.OnDrawPerColumn(x);
         }
 
@@ -434,44 +436,44 @@ namespace NostalgiaEngine.RasterizerPipeline
             mesh.AddTriangle(0, 1 , 2 );
             mesh.AddTriangle(0 , 2 , 3 );
 
-            mesh.Triangles[0].ColorAttrib = 7;
-            mesh.Triangles[1].ColorAttrib = 7;
+            mesh.Triangles[0].ColorAttrib = col;
+            mesh.Triangles[1].ColorAttrib = col;
 
 
             mesh.AddTriangle(4, 6, 5);
             mesh.AddTriangle(4, 7, 6);
 
-            mesh.Triangles[2].ColorAttrib = 7;
-            mesh.Triangles[3].ColorAttrib = 7;
+            mesh.Triangles[2].ColorAttrib = col;
+            mesh.Triangles[3].ColorAttrib = col;
 
 
             mesh.AddTriangle(4, 5, 1);
             mesh.AddTriangle(4, 1, 0);
 
-            mesh.Triangles[4].ColorAttrib = 7;
-            mesh.Triangles[5].ColorAttrib = 7;
+            mesh.Triangles[4].ColorAttrib = col;
+            mesh.Triangles[5].ColorAttrib = col;
 
 
             mesh.AddTriangle(3, 2, 6);
             mesh.AddTriangle(3, 6, 7);
 
-            mesh.Triangles[6].ColorAttrib = 7;
-            mesh.Triangles[7].ColorAttrib = 7;
+            mesh.Triangles[6].ColorAttrib = col;
+            mesh.Triangles[7].ColorAttrib = col;
 
 
 
             mesh.AddTriangle(1, 5, 6);
             mesh.AddTriangle(1, 6, 2);
 
-            mesh.Triangles[8].ColorAttrib = 7;
-            mesh.Triangles[9].ColorAttrib = 7;
+            mesh.Triangles[8].ColorAttrib = col;
+            mesh.Triangles[9].ColorAttrib = col;
 
 
             mesh.AddTriangle(0, 3, 7);
             mesh.AddTriangle(0, 7, 4);
 
-            mesh.Triangles[10].ColorAttrib = 7;
-            mesh.Triangles[11].ColorAttrib = 7;
+            mesh.Triangles[10].ColorAttrib = col;
+            mesh.Triangles[11].ColorAttrib = col;
             return mesh;
         }
 

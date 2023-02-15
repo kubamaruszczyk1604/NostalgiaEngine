@@ -9,21 +9,9 @@ namespace NostalgiaEngine.RasterizerPipeline
     public class Camera
     {
         public Transform Transform { get; private set; }
-        public NEMatrix4x4 View
-        {
-            get
-            {
-                return NEMatrix4x4.CreateView(Transform.LocalPosition, Transform.Forward, Transform.Up);
-            }
-        }
+        public NEMatrix4x4 View { get; private set;}
 
-        public NEMatrix4x4 PointAt
-        {
-            get
-            {
-                return NEMatrix4x4.CreatePointAt(Transform.Forward, Transform.Up);
-            }
-        }
+        public NEMatrix4x4 PointAt { get; private set;}
 
 
         public NEMatrix4x4 Projection { get; private set; }
@@ -42,6 +30,13 @@ namespace NostalgiaEngine.RasterizerPipeline
             Projection = NEMatrix4x4.CreatePerspectiveProjection(aspectRatio, fovRad, near, far);
             Far = far;
             OneOverFar = 1.0f / Far;
+        }
+
+        public void UpdateTransform()
+        {
+            Transform.CalculateWorld();
+            View = NEMatrix4x4.CreateView(Transform.LocalPosition, Transform.Forward, Transform.Up);
+            PointAt = NEMatrix4x4.CreatePointAt(Transform.Forward, Transform.Up);
         }
     }
 }
