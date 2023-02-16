@@ -15,9 +15,12 @@ namespace NostalgiaEngine.RasterizerPipeline
 
 
         public NEMatrix4x4 Projection { get; private set; }
+        public float Near { get; private set; }
         public float Far { get; private set; }
-        public float OneOverFar { get; private set; }
+        public float InverseFar { get; private set; }
         public float AspectRatio { get; private set; }
+        public float InverseAspectRatio { get; private set; }
+        public float FovRad { get; private set; }
 
         public Camera(int width, int height, float fovRad, float near, float far)
         {
@@ -28,8 +31,11 @@ namespace NostalgiaEngine.RasterizerPipeline
             AspectRatio = aspectRatio;
             Transform = new Transform();
             Projection = NEMatrix4x4.CreatePerspectiveProjection(aspectRatio, fovRad, near, far);
+            Near = near;
             Far = far;
-            OneOverFar = 1.0f / Far;
+            FovRad = fovRad;
+            InverseFar = 1.0f / Far;
+            InverseAspectRatio = 1.0f / AspectRatio;
         }
 
         public void UpdateTransform()

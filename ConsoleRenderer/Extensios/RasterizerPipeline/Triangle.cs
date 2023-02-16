@@ -85,6 +85,68 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         }
 
+        //public void CreateIntersectionManifest(float x, out ScanlineIntersectionManifest manifest)
+        //{
+        //    manifest = new ScanlineIntersectionManifest();
+        //    float yAC = AC.a * x + AC.c;
+
+        //    manifest.Y1 = yAC;
+
+         
+        //    float t_AC = (x - A.X) / (C.X - A.X);
+
+        //    float t_Other = 0.0f;
+
+        //    Vertex otherP0 = A;
+        //    Vertex otherP1 = B;
+
+        //    if (x <= B.X)
+        //    {
+        //        //AB is other 
+        //        manifest.Y0 = AB.a * x + AB.c;
+        //        t_Other = (x - A.X) / (B.X - A.X); 
+
+
+        //    }
+        //    else 
+        //    {
+        //        //BC is other
+        //        manifest.Y0 = BC.a * x + BC.c;
+        //        t_Other = (x - B.X) / (C.X - B.X);
+
+        //        otherP0 = B;
+        //        otherP1 = C;
+        //    }
+
+        //    if (yAC > manifest.Y0) //ac is upper
+        //    {
+
+        //        manifest.top_t = t_AC;
+        //        manifest.bottom_t = t_Other;
+
+        //        manifest.top_P0 = A;
+        //        manifest.top_P1 = C;
+
+        //        manifest.bottom_P0 = otherP0;
+        //        manifest.bottom_P1 = otherP1;
+
+
+        //    }
+        //    else
+        //    {
+        //        manifest.top_t = t_Other;
+        //        manifest.bottom_t = t_AC;
+
+        //        manifest.top_P0 = otherP0;
+        //        manifest.top_P1 = otherP1;
+
+        //        manifest.bottom_P0 = A;
+        //        manifest.bottom_P1 = C;
+        //    }
+
+        //}
+
+
         public void CreateIntersectionManifest(float x, out ScanlineIntersectionManifest manifest)
         {
             manifest = new ScanlineIntersectionManifest();
@@ -92,7 +154,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 
             manifest.Y1 = yAC;
 
-         
+
             float t_AC = (x - A.X) / (C.X - A.X);
 
             float t_Other = 0.0f;
@@ -104,11 +166,11 @@ namespace NostalgiaEngine.RasterizerPipeline
             {
                 //AB is other 
                 manifest.Y0 = AB.a * x + AB.c;
-                t_Other = (x - A.X) / (B.X - A.X); 
+                t_Other = (x - A.X) / (B.X - A.X);
 
 
             }
-            else 
+            else
             {
                 //BC is other
                 manifest.Y0 = BC.a * x + BC.c;
