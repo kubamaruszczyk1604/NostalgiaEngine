@@ -54,7 +54,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             m_TestSkybox = new Skybox("c:/test/skybox3");
 
             Mesh cubeMesh = GenerateCube(0.0f, 0.0f, 0f, 15);
-            Mesh floorMesh = GenerateSquareFloor(0.0f, -1.1f,1.0f);
+            Mesh floorMesh = GenerateSquare(0.0f, -0.3f,1.0f);
             Mesh teapotMesh = NEObjLoader.LoadObj("C:/Users/Kuba/Desktop/tst/teapot.obj");
             var luma = ResourceManager.Instance.GetLumaTexture("C:/test/ntex/luma.buf");
             Model cubeModel = new Model(cubeMesh, luma);
@@ -72,9 +72,9 @@ namespace NostalgiaEngine.RasterizerPipeline
 
             m_Models.Add(cubeModel);
             m_Models.Add(teapotModel);
-            m_Models.Add(floorModel);
+            //m_Models.Add(floorModel);
 
-            m_Camera = new Camera(ScreenWidth, ScreenHeight, 1.05f, 0.1f, 10.0f);
+            m_Camera = new Camera(ScreenWidth, ScreenHeight, 1.05f, 0.1f, 100.0f);
             m_Camera.Transform.LocalPosition = new NEVector4(0.0f, 0.0f, -2.0f);
 
 
@@ -321,7 +321,7 @@ namespace NostalgiaEngine.RasterizerPipeline
                         float teX = texCoord.X / fragW;
                         float teY = texCoord.Y / fragW;
                         // dot = 1.0f;
-                        float luma = 0.2f + dot;// * dot;
+                        float luma = 0.9f + dot;// * dot;
                         if (model.LumaTexture != null)
                         {
                             luma *= model.LumaTexture.FastSample(teX, 1.0f - teY);
@@ -422,16 +422,16 @@ namespace NostalgiaEngine.RasterizerPipeline
             //m_VBO.AddVertex(new Vertex(-size+x, size+ y, depth, 0.0f, 0.0f));
             //m_VBO.AddVertex(new Vertex(size + x, size + y, depth,1.0f,0.0f));
             //m_VBO.AddVertex(new Vertex(size + x, -size +y, depth,1.0f,1.0f));
-            mesh.AddVertex(new Vertex(-size + x, -size + y, z, 0.0f, 0.0f));
-            mesh.AddVertex(new Vertex(-size + x, size + y, z, 0.0f, 1.0f));
-            mesh.AddVertex(new Vertex(size + x, size + y, z, 1.0f, 1.0f));
-            // mesh.AddVertex(new Vertex(size + x, -size + y, z, 1.0f, 0.0f));
+            mesh.AddVertex(new Vertex(-size * 100 + x, -size * 10 + y, z, 0.0f, 0.0f));
+            mesh.AddVertex(new Vertex(-size * 100 + x, size * 10 + y, z, 0.0f, 1.0f));
+            mesh.AddVertex(new Vertex(size * 100 + x, size * 10 + y, z, 1.0f, 1.0f));
+             mesh.AddVertex(new Vertex(size * 100 + x, -size * 10 + y, z, 1.0f, 0.0f));
 
             mesh.AddTriangle(0, 1, 2);
-            // mesh.AddTriangle(0, 2, 3);
+            mesh.AddTriangle(0, 2, 3);
 
-            mesh.Triangles[0].ColorAttrib = 7;
-            // mesh.Triangles[1].ColorAttrib = 7;
+            mesh.Triangles[0].ColorAttrib = 10;
+            mesh.Triangles[1].ColorAttrib = 10;
             return mesh;
 
         }
@@ -440,11 +440,11 @@ namespace NostalgiaEngine.RasterizerPipeline
         private Mesh GenerateSquareFloor(float x, float y, float z)
         {
             Mesh mesh = new Mesh();
-            float size = 1.55f;
+            float size = 0.55f;
             mesh.AddVertex(new Vertex(-size + x, y, -size + z, 0.0f, 0.0f));
             mesh.AddVertex(new Vertex(-size + x, y, size + z, 0.0f, 1.0f));
-            mesh.AddVertex(new Vertex(size + x, y, size + z, 1.0f, 1.0f));
-            mesh.AddVertex(new Vertex(size + x, y, -size + z, 1.0f, 0.0f));
+            mesh.AddVertex(new Vertex(size + x, y, size  + z, 1.0f, 1.0f));
+            mesh.AddVertex(new Vertex(size + x, y, -size  + z, 1.0f, 0.0f));
 
             //mesh.AddVertex(new Vertex(-size + x, -size + y, z, 0.0f, 0.0f));
             //mesh.AddVertex(new Vertex(-size + x, size + y, z, 0.0f, 1.0f));

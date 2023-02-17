@@ -61,8 +61,6 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         public bool IsColScanlineInTriangle(float x)
         {
-            //if (Math.Abs(A.X - C.X)  < 0.15f)
-            //    return false;
             return ((x >= A.X) && (x <= C.X));
         }
 
@@ -157,6 +155,11 @@ namespace NostalgiaEngine.RasterizerPipeline
 
             float t_AC = (x - A.X) / (C.X - A.X);
 
+            //NEVector2 vc = new NEVector2(x, 0.0f);
+            //NEVector2 Avc = new NEVector2(A.X, A.Z);
+            //NEVector2 Bvc = new NEVector2(C.X, C.Z);
+            //t_AC = (vc - Avc).Length / (Bvc - Avc).Length;
+
             float t_Other = 0.0f;
 
             Vertex otherP0 = A;
@@ -168,6 +171,11 @@ namespace NostalgiaEngine.RasterizerPipeline
                 manifest.Y0 = AB.a * x + AB.c;
                 t_Other = (x - A.X) / (B.X - A.X);
 
+                //NEVector2 v = new NEVector2(x, 0.0f);
+                //NEVector2 Av = new NEVector2(A.X, A.Z);
+                //NEVector2 Bv = new NEVector2(B.X, B.Z);
+
+                //t_Other = (v - Av).Length / (Bv - Av).Length;
 
             }
             else
@@ -176,6 +184,10 @@ namespace NostalgiaEngine.RasterizerPipeline
                 manifest.Y0 = BC.a * x + BC.c;
                 t_Other = (x - B.X) / (C.X - B.X);
 
+                //NEVector2 v = new NEVector2(x, 0);
+                //NEVector2 Av = new NEVector2(B.X, B.Z);
+                //NEVector2 Bv = new NEVector2(C.X, C.Z);
+                //t_Other = (v - Av).Length / (Bv - Av).Length;
                 otherP0 = B;
                 otherP1 = C;
             }
