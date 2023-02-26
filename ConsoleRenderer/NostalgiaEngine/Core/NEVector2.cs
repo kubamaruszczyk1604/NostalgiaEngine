@@ -66,6 +66,11 @@ namespace NostalgiaEngine.Core
             v.Y = ty;
         }
 
+        public static NEVector2 Lerp(NEVector2 a, NEVector2 b, float t)
+        {
+            return a + (b - a) * t;
+        }
+
         static public NEVector2 operator +(NEVector2 lhs, NEVector2 rhs)
         {
             return new NEVector2(lhs.X + rhs.X, lhs.Y + rhs.Y);

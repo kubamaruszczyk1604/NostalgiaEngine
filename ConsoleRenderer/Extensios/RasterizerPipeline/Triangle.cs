@@ -36,25 +36,34 @@ namespace NostalgiaEngine.RasterizerPipeline
            
         }
 
+        public Triangle(int i0, int i1, int i2, Mesh vbo, NEVector4 normal, NEVector4 transformedNormal)
+        {
+            VBO = vbo;
+            Indices = new int[] { i0, i1, i2 };
+            LeftSortedIndices = new int[3];
+            ModelNormal = normal;
+            TransformedNormal = transformedNormal;
+        }
+
 
         public void CalculateEdges()
         {
             GetXSortedVertices(out LeftSortedIndices[0], out LeftSortedIndices[1], out LeftSortedIndices[2]);
-            A = VBO.Vertices[LeftSortedIndices[0]];
-            B = VBO.Vertices[LeftSortedIndices[1]];
-            C = VBO.Vertices[LeftSortedIndices[2]];
+            A = VBO.TempVertices[LeftSortedIndices[0]];
+            B = VBO.TempVertices[LeftSortedIndices[1]];
+            C = VBO.TempVertices[LeftSortedIndices[2]];
 
 
             AB = new NEEdge();
-            NEMathHelper.FindLineEquation(A.Position.XY, B.Position.XY, out AB.a, out AB.c);
+            NEMathHelper.Find2DLineEquation(A.Position.XY, B.Position.XY, out AB.a, out AB.c);
 
 
             AC = new NEEdge();
-            NEMathHelper.FindLineEquation(A.Position.XY, C.Position.XY, out AC.a, out AC.c);
+            NEMathHelper.Find2DLineEquation(A.Position.XY, C.Position.XY, out AC.a, out AC.c);
 
 
             BC = new NEEdge();
-            NEMathHelper.FindLineEquation(B.Position.XY, C.Position.XY, out BC.a, out BC.c);
+            NEMathHelper.Find2DLineEquation(B.Position.XY, C.Position.XY, out BC.a, out BC.c);
 
         }
 
@@ -227,17 +236,17 @@ namespace NostalgiaEngine.RasterizerPipeline
             right = Indices[2];
 
 
-            if(VBO.Vertices[left].X > VBO.Vertices[middle].X)
+            if(VBO.TempVertices[left].X > VBO.TempVertices[middle].X)
             {
                 SwapInt(ref left, ref middle);
             }
 
-            if (VBO.Vertices[middle].X > VBO.Vertices[right].X)
+            if (VBO.TempVertices[middle].X > VBO.TempVertices[right].X)
             {
                 SwapInt(ref middle, ref right);
             }
 
-            if (VBO.Vertices[left].X > VBO.Vertices[middle].X)
+            if (VBO.TempVertices[left].X > VBO.TempVertices[middle].X)
             {
                 SwapInt(ref left, ref middle);
             }

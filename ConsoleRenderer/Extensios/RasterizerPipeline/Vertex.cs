@@ -24,7 +24,7 @@ namespace NostalgiaEngine.RasterizerPipeline
         public float U { get { return m_UVs.X; } }
         public float V { get { return m_UVs.Y; } }
 
-        public float UnidividedW { get; private set; }
+        public float ZInViewSpace { get; private set; }
         public NEVector4 Vert2Camera { get; set; }
 
 
@@ -54,18 +54,37 @@ namespace NostalgiaEngine.RasterizerPipeline
             m_Position = v.Position;
             m_UVs = v.UV;
         }
-        float oldX = 0.0f;
+       // float oldX = 0.0f;
         public void WDivide()
         {
-            oldX= m_Position.X;
-            float posDiv = m_Position.W <= 0.0f ? 0.001f : m_Position.W;
+            //oldX= m_Position.X;
+            
+            float posDiv = m_Position.W /*<= 0.0f ? 0.001f : m_Position.W*/;
+            float signZ = Math.Sign(m_Position.W);
             m_Position.X /= posDiv;
             m_Position.Y /= posDiv;
             m_Position.Z /= posDiv;
+            m_Position.Z *= signZ;
             m_UVs.X /= posDiv;
             m_UVs.Y /= posDiv;
-            UnidividedW = m_Position.W;
+            ZInViewSpace = m_Position.W;
             m_Position.W = 1.0f/posDiv;
+        }
+
+        static public Vertex Lerp(Vertex v0, Vertex v1, float t)
+        {
+            NEVector4 pos = NEVector4.Lerp(v0.Position, v1.Position, t);
+            NEVector2 uvs = NEVector2.Lerp(v0.m_UVs, v1.m_UVs,t);
+            float zViewSpace = v0.ZInViewSpace + (v1.ZInViewSpace - v0.ZInViewSpace) * t;
+            NEVector4 vertToCam = NEVector4.Lerp(v0.Vert2Camera, v1.Vert2Camera, t);
+
+
+            Vertex ret = new Vertex(0, 0, 0);
+            ret.m_Position = pos;
+            ret.m_UVs = uvs;
+            ret.ZInViewSpace = zViewSpace;
+            ret.Vert2Camera = vertToCam;
+            return ret;
         }
 
         public Vertex Duplicate()
@@ -74,13 +93,13 @@ namespace NostalgiaEngine.RasterizerPipeline
         }
         override public string ToString()
         {
-            return m_Position.X.ToString() + ", " + m_Position.Y.ToString() + ", " + UnidividedW.ToString() + ",   " + oldX.ToString();
+            return m_Position.X.ToString() + ", " + m_Position.Y.ToString() + ", " + ZInViewSpace.ToString()/* + ",   " + oldX.ToString()*/;
 
         }
 
         public string ToString2()
         {
-            return m_Position.X.ToString() + ", " + m_Position.W.ToString() + ", " + UnidividedW.ToString();
+            return m_Position.X.ToString() + ", " + m_Position.W.ToString() + ", " + ZInViewSpace.ToString();
 
         }
 

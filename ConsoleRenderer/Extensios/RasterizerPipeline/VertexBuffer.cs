@@ -11,41 +11,41 @@ namespace NostalgiaEngine.RasterizerPipeline
     {
 
         public List<Vertex> ModelVertices { get; private set; }
-        public List<Vertex> Vertices { get; private set; }
-        public List<Triangle> Triangles { get; private set; }
+        public List<Triangle> ModelTriangles { get; private set; }
 
-        public List<Triangle> TempTriangleContainer { get; set; }
+        public List<Vertex> TempVertices;
+        public List<Triangle> TempTriangles;
 
         public Mesh()
         {
             ModelVertices = new List<Vertex>(100);
-            Vertices = new List<Vertex>(100);
-            Triangles = new List<Triangle>(100);
-            TempTriangleContainer = new List<Triangle>(100);
+            TempVertices = new List<Vertex>(100);
+            ModelTriangles = new List<Triangle>(100);
+            TempTriangles = new List<Triangle>(100);
         }
 
 
         public void AddVertex(Vertex v)
         {
             ModelVertices.Add(v);
-            Vertices.Add(v.Duplicate());
+          //  TempVertices.Add(v.Duplicate());
         }
 
         public void AddVertex(float x, float y, float z)
         {
             ModelVertices.Add(new Vertex(x, y, z));
-            Vertices.Add(new Vertex(x, y, z));
+            //TempVertices.Add(new Vertex(x, y, z));
         }
 
         public void AddVertex(float x, float y, float z, float u, float v)
         {
             ModelVertices.Add(new Vertex(x, y, z, u, v));
-            Vertices.Add(new Vertex(x, y, z, u, v));
+          //  TempVertices.Add(new Vertex(x, y, z, u, v));
         }
 
         public void AddTriangle(int i0, int i1, int i2)
         {
-            Triangles.Add(new Triangle(i0, i1, i2, this));
+            ModelTriangles.Add(new Triangle(i0, i1, i2, this));
         }
 
 

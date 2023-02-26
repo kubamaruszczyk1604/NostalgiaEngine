@@ -111,7 +111,7 @@ namespace NostalgiaEngine.Core
         /// <param name="p2">point 2</param>
         /// <param name="a">gradient</param>
         /// <param name="c">intersection height with y axis </param>
-        static public void FindLineEquation(NEVector2 p1, NEVector2 p2, out float a, out float c)
+        static public void Find2DLineEquation(NEVector2 p1, NEVector2 p2, out float a, out float c)
         {
             //gradient
             a = (p2.Y - p1.Y) / ((p2.X - p1.X)+0.01f);
@@ -119,6 +119,51 @@ namespace NostalgiaEngine.Core
             c = p1.Y - p1.X * a; // p2.Y - p2.X*a would also be valid
            
         }
+
+        static public bool Find3DLineEquation(NEVector4 p0, NEVector4 p1, out NEVector4 dir, out float length)
+        {
+            length = 0.0f;
+            dir = NEVector4.Zero;
+            if(NEVector4.Compare(p0,p1))
+            {
+                return false;
+            }
+            NEVector4 diff = p1 - p0;
+            length = diff.Length;
+            dir = diff.Normalized;
+            
+            return true;
+
+        }
+
+        static public bool FindPlaneLineIntersection(NEVector4 l0, NEVector4 l1, NEVector4 p0, NEVector4 n, out PlaneLineIntersectionManifest m)
+        {
+            l0.W = 0;
+            l1.W = 0;
+            p0.W = 0;
+            //l0.Z = l0.W;
+            //l1.Z = l1.W;
+            //p0.Z = p0.W;
+            m = new PlaneLineIntersectionManifest();
+            if (!Find3DLineEquation(l0,l1, out m.LineNormal, out m.LineLength))
+            {
+                return false;
+            }
+            float numerator = NEVector4.Dot(p0 - l0, n);
+            float denominator = NEVector4.Dot(m.LineNormal, n);
+
+            if(denominator == 0)
+            {
+                return false;
+            }
+
+            m.IntersectionScalar = numerator / denominator;
+            m.t = m.IntersectionScalar / m.LineLength;
+            if (m.t > 1.0f || m.t < 0.0f) return false;
+            return true;
+            
+        }
+
 
         public static bool InTriangle(NEVector2 p, NEVector2 A, NEVector2 B, NEVector2 C)
         {
@@ -160,7 +205,7 @@ namespace NostalgiaEngine.Core
 
         public static float DistToLine(NEVector2 p , NEVector2 A, NEVector2 B)
         {
-            FindLineEquation(A, B, out float a, out float c);
+            Find2DLineEquation(A, B, out float a, out float c);
             return DistToLine(p, a, c);
         }
 
@@ -221,5 +266,13 @@ namespace NostalgiaEngine.Core
             b = a;
         }
 
+    }
+
+    public struct PlaneLineIntersectionManifest
+    {
+       public NEVector4 LineNormal;
+       public float LineLength;
+       public float IntersectionScalar;
+       public float t;
     }
 }

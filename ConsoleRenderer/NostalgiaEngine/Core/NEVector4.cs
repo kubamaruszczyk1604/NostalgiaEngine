@@ -26,10 +26,13 @@ namespace NostalgiaEngine.Core
         static public readonly NEVector4 Forward = new NEVector4(0.0f, 0.0f, 1.0f);
         static public readonly NEVector4 Back = new NEVector4(0.0f, 0.0f, -1.0f);
 
+        static public readonly NEVector4 Zero = new NEVector4(0.0f, 0.0f, 0.0f);
+        static public readonly NEVector4 One = new NEVector4(1.0f, 1.0f, 1.0f, 1.0f);
+
 
         public override string ToString()
         {
-            return X.ToString() + ", " + Y.ToString() + ", " + Z.ToString() ;
+            return X.ToString() + ", " + Y.ToString() + ", " + Z.ToString()  + ", " + W.ToString();
         }
 
         public NEVector4(float x, float y, float z, float w)
@@ -80,6 +83,11 @@ namespace NostalgiaEngine.Core
         public static NEVector4 Abs(NEVector4 a)
         {
             return new NEVector4(Math.Abs(a.X), Math.Abs(a.Y), Math.Abs(a.Z), Math.Abs(a.W));
+        }
+
+        public static NEVector4 Lerp(NEVector4 a, NEVector4 b, float t)
+        {
+            return a + (b - a) * t;
         }
 
         static public NEVector4 operator +(NEVector4 lhs, NEVector4 rhs)

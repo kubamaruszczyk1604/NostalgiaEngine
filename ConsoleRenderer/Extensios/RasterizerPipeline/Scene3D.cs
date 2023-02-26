@@ -8,6 +8,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 {
     public class Scene3D : NEScene
     {
+        enum Intersection { None = 0, OneTriangle = 1, TwoTrianges = 2, Undefined = 3}
         // Mesh m_VBO;
         NEDepthBuffer m_DepthBuffer;
 
@@ -57,8 +58,8 @@ namespace NostalgiaEngine.RasterizerPipeline
             Mesh floorMesh = GenerateSquare(0.0f, -0.3f,1.0f);
             Mesh teapotMesh = NEObjLoader.LoadObj("C:/Users/Kuba/Desktop/tst/teapot.obj");
             var luma = ResourceManager.Instance.GetLumaTexture("C:/test/ntex/luma.buf");
-            Model cubeModel = new Model(cubeMesh, luma);
-            //Model cubeModel = new Model(GenerateSquare(0.0f, 0.0f, 0.0f), luma);
+            //Model cubeModel = new Model(cubeMesh, luma);
+            Model cubeModel = new Model(GenerateSquare(0.0f, 0.0f, 0.0f), luma);
             cubeModel.Transform.LocalPosition = new NEVector4(0.9f, 0.0f, 4.1f);
 
 
@@ -71,7 +72,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             teapotModel.Transform.LocalPosition = new NEVector4(-1.0f, -1.05f, 1.0f, 1.0f);
 
             m_Models.Add(cubeModel);
-            m_Models.Add(teapotModel);
+           // m_Models.Add(teapotModel);
             //m_Models.Add(floorModel);
 
             m_Camera = new Camera(ScreenWidth, ScreenHeight, 1.05f, 0.1f, 100.0f);
@@ -144,33 +145,36 @@ namespace NostalgiaEngine.RasterizerPipeline
         {
             model.Transform.CalculateWorld();
             Mesh mesh = model.Mesh;
-            mesh.TempTriangleContainer = new List<Triangle>(mesh.Triangles.Count);
+            mesh.TempTriangles = new List<Triangle>(mesh.ModelTriangles.Count);
 
             NEMatrix4x4 world = model.Transform.World;
             NEMatrix4x4 view = m_Camera.View;
-
-            for (int i = 0; i < mesh.Vertices.Count; ++i)
+            
+            for (int i = 0; i < mesh.ModelVertices.Count; ++i)
             {
-                mesh.Vertices[i].Position = (view * world) * mesh.ModelVertices[i].Position;
-                mesh.Vertices[i].Vert2Camera = -mesh.Vertices[i].Position.Normalized;
-                mesh.Vertices[i].UV = mesh.ModelVertices[i].UV;
-                mesh.Vertices[i].Position = (m_Camera.Projection) * mesh.Vertices[i].Position;
+                mesh.TempVertices.Add(mesh.ModelVertices[i].Duplicate());
+                mesh.TempVertices[i].Position = (view * world) * mesh.ModelVertices[i].Position;
+                mesh.TempVertices[i].Vert2Camera = -mesh.TempVertices[i].Position.Normalized;
+                mesh.TempVertices[i].UV = mesh.ModelVertices[i].UV;
+                mesh.TempVertices[i].Position = (m_Camera.Projection) * mesh.TempVertices[i].Position;
 
-                mesh.Vertices[i].WDivide();
+                mesh.TempVertices[i].WDivide();
             }
 
             //Projection space
-            //mesh.CalculateTriangleEdges();
-            for (int i = 0; i < mesh.Triangles.Count; ++i)
+            for (int i = 0; i < mesh.ModelTriangles.Count; ++i)
             {
-                Triangle triangle = mesh.Triangles[i];
+                Triangle triangle = mesh.ModelTriangles[i];
                 triangle.CalculateEdges();
                 if (IsOutsideFrustum(triangle)) continue;
-                triangle.TransformedNormal = NEMatrix4x4.RemoveTranslation(m_Camera.View) * model.Transform.RotationMat * mesh.Triangles[i].ModelNormal;
-                if (FacingAway(triangle)) continue;
+                triangle.TransformedNormal = NEMatrix4x4.RemoveTranslation(m_Camera.View) * model.Transform.RotationMat * mesh.ModelTriangles[i].ModelNormal;
+                //if (FacingAway(triangle)) continue;
+
+                LeftSide(triangle, ref mesh.TempTriangles, ref mesh.TempVertices, mesh);
+
                 m_RenderedTriangleCount++;
 
-                mesh.TempTriangleContainer.Add(triangle);
+                //mesh.TempTriangles.Add(triangle);
             }
 
 
@@ -180,12 +184,112 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         }
 
+        void LeftSide(Triangle inTriangle, ref List<Triangle> newTriangles, ref List<Vertex> vertices, Mesh mesh)
+        {
+
+            PlaneLineIntersectionManifest mAC;
+            //check the longest edge (AC)
+            if(!NEMathHelper.FindPlaneLineIntersection(inTriangle.A.Position, inTriangle.C.Position, NEVector4.Left, NEVector4.Right, out mAC))
+            {
+                //if there is no intersection with AC, there is no intersection occuring at all
+                newTriangles.Add(inTriangle);
+                return; 
+            }
+
+
+            //new vertex onAC
+
+            Vertex newAC = Vertex.Lerp(inTriangle.A, inTriangle.C, mAC.t);
+            vertices.Add(newAC);
+
+            PlaneLineIntersectionManifest mBC;
+            if(NEMathHelper.FindPlaneLineIntersection(inTriangle.B.Position, inTriangle.C.Position, NEVector4.Left, NEVector4.Right, out mBC))
+            {
+                //Vertex newBC = inTriangle.B.Duplicate();
+
+                Vertex newBC = Vertex.Lerp(inTriangle.B, inTriangle.C, mBC.t);
+                vertices.Add(newBC);
+                if (newBC.Y > newAC.Y)
+                {
+                    Triangle newTriangle = new Triangle(vertices.Count - 2, vertices.Count - 1, inTriangle.LeftSortedIndices[2], mesh, inTriangle.ModelNormal, inTriangle.TransformedNormal);
+                    newTriangle.CalculateEdges();
+                    newTriangle.ColorAttrib = 9;
+                    newTriangles.Add(newTriangle);
+                }
+                else
+                {
+                    Triangle newTriangle = new Triangle(vertices.Count - 1, vertices.Count - 2, inTriangle.LeftSortedIndices[2], mesh, inTriangle.ModelNormal, inTriangle.TransformedNormal);
+                    newTriangle.CalculateEdges();
+                    newTriangle.ColorAttrib = 9;
+                    newTriangles.Add(newTriangle);
+                }
+                return;
+            }
+
+           //Debug.Print("f");
+        }
+
+
+
+
+        Intersection FindIntersections(Triangle inTriangle, out Vertex A, out Vertex B, NEVector4 p, NEVector4 d)
+        {
+            A = null;
+            B = null;
+            PlaneLineIntersectionManifest mAC;
+            //check the longest edge (AC)
+            if (!NEMathHelper.FindPlaneLineIntersection(inTriangle.A.Position, inTriangle.C.Position, p, d, out mAC))
+            {
+                //if there is no intersection with AC, there is no intersection occuring at all
+                return Intersection.None;
+            }
+
+
+
+            A = Vertex.Lerp(inTriangle.A, inTriangle.C, mAC.t);
+
+            PlaneLineIntersectionManifest mBC;
+            if (NEMathHelper.FindPlaneLineIntersection(inTriangle.B.Position, inTriangle.C.Position, p, d, out mBC))
+            {
+
+                B = Vertex.Lerp(inTriangle.B, inTriangle.C, mBC.t);
+                if (A.Y > B.Y)
+                {
+                    Vertex temp = A.Duplicate();
+                    B = A;
+                    A = temp;
+                }
+
+                return Intersection.OneTriangle;
+            }
+
+
+
+            PlaneLineIntersectionManifest mAB;
+            if (NEMathHelper.FindPlaneLineIntersection(inTriangle.A.Position, inTriangle.B.Position, p, d, out mAB))
+            {
+
+                B = Vertex.Lerp(inTriangle.A, inTriangle.B, mAB.t);
+                if (A.Y > B.Y)
+                {
+                    Vertex temp = A.Duplicate();
+                    B = A;
+                    A = temp;
+                }
+
+                return Intersection.TwoTrianges;
+            }
+
+            //Debug.Print("f");
+            return Intersection.Undefined;
+            
+        }
 
         bool IsOutsideFrustum(Triangle triangle)
         {
-            float depthA = triangle.A.UnidividedW * m_Camera.InverseFar;
-            float depthB = triangle.B.UnidividedW * m_Camera.InverseFar;
-            float depthC = triangle.C.UnidividedW * m_Camera.InverseFar;
+            float depthA = triangle.A.ZInViewSpace * m_Camera.InverseFar;
+            float depthB = triangle.B.ZInViewSpace * m_Camera.InverseFar;
+            float depthC = triangle.C.ZInViewSpace * m_Camera.InverseFar;
 
             if (depthA < 0.0f && depthB < 0.0f && depthC < 0.0f) return true;
             if (depthA > 1.0f && depthB > 1.0f && depthC > 1.0f) return true;
@@ -228,8 +332,8 @@ namespace NostalgiaEngine.RasterizerPipeline
         {
             base.OnUpdate(deltaTime);
             Movement(deltaTime);
-            m_Models[1].Transform.RotateY(deltaTime*0.5f);
-            m_Models[1].Transform.PositionY = -0.7f + (float)(Math.Sin(Engine.Instance.TotalTime) * 0.3);
+            m_Models[0].Transform.RotateY(deltaTime*0.5f);
+            //m_Models[1].Transform.PositionY = -0.7f + (float)(Math.Sin(Engine.Instance.TotalTime) * 0.3);
             m_Camera.UpdateTransform();
 
             float yDisp = (float)Math.Sin(Engine.Instance.TotalTime);
@@ -245,9 +349,9 @@ namespace NostalgiaEngine.RasterizerPipeline
         {
 
             Mesh m_VBO = model.Mesh;
-            for (int i = 0; i < m_VBO.TempTriangleContainer.Count; ++i)
+            for (int i = 0; i < m_VBO.TempTriangles.Count; ++i)
             {
-                Triangle tr = m_VBO.TempTriangleContainer[i];
+                Triangle tr = m_VBO.TempTriangles[i];
                 if (!tr.IsColScanlineInTriangle(u)) continue;
 
                 //float dot = NEVector4.Dot(tr.TransformedNormal, new NEVector4(0.0f, 0.0f, -1.0f, 0.0f));
@@ -286,8 +390,8 @@ namespace NostalgiaEngine.RasterizerPipeline
 
                     float t = ((float)y / span) * coeff + tOffset;
 
-                    float depthBottom = (1.0f - manifest.bottom_t) * manifest.bottom_P0.UnidividedW + manifest.bottom_t * manifest.bottom_P1.UnidividedW;
-                    float depthTop = (1.0f - manifest.top_t) * manifest.top_P0.UnidividedW + manifest.top_t * manifest.top_P1.UnidividedW;
+                    float depthBottom = (1.0f - manifest.bottom_t) * manifest.bottom_P0.ZInViewSpace + manifest.bottom_t * manifest.bottom_P1.ZInViewSpace;
+                    float depthTop = (1.0f - manifest.top_t) * manifest.top_P0.ZInViewSpace + manifest.top_t * manifest.top_P1.ZInViewSpace;
                     float fragmentDepth = (1.0f - t) * depthTop + t * depthBottom;
                     fragmentDepth *= m_Camera.InverseFar;
 
@@ -327,7 +431,7 @@ namespace NostalgiaEngine.RasterizerPipeline
                             luma *= model.LumaTexture.FastSample(teX, 1.0f - teY);
                         }
 
-                        var col = NEColorSample.MakeCol5(ConsoleColor.Black, (ConsoleColor)tr.ColorAttrib, luma);
+                        var col = NEColorSample.MakeCol5(ConsoleColor.Black, (ConsoleColor)tr.ColorAttrib, 1.0f*luma);
                         //var col = m_Texture.Sample(teX, 1.0f - teY, dot);
                         NEScreenBuffer.PutChar(col.Character, col.BitMask, x, fillStart + y);
                     }
@@ -417,21 +521,21 @@ namespace NostalgiaEngine.RasterizerPipeline
         private Mesh GenerateSquare(float x, float y, float z)
         {
             Mesh mesh = new Mesh();
-            float size = 1.55f;
+            float size = 0.55f;
             //m_VBO.AddVertex(new Vertex(-size+x,-size+y, depth,0.0f,1.0f));
             //m_VBO.AddVertex(new Vertex(-size+x, size+ y, depth, 0.0f, 0.0f));
             //m_VBO.AddVertex(new Vertex(size + x, size + y, depth,1.0f,0.0f));
             //m_VBO.AddVertex(new Vertex(size + x, -size +y, depth,1.0f,1.0f));
-            mesh.AddVertex(new Vertex(-size * 100 + x, -size * 10 + y, z, 0.0f, 0.0f));
-            mesh.AddVertex(new Vertex(-size * 100 + x, size * 10 + y, z, 0.0f, 1.0f));
-            mesh.AddVertex(new Vertex(size * 100 + x, size * 10 + y, z, 1.0f, 1.0f));
-             mesh.AddVertex(new Vertex(size * 100 + x, -size * 10 + y, z, 1.0f, 0.0f));
+            mesh.AddVertex(new Vertex(-size * 1 + x, -size * 1+ y, z, 0.0f, 0.0f));
+            mesh.AddVertex(new Vertex(-size * 1 + x, size * 1 + y, z, 0.0f, 1.0f));
+            mesh.AddVertex(new Vertex(size * 1 + x, size * 1 + y, z, 1.0f, 1.0f));
+             ////mesh.AddVertex(new Vertex(size * 100 + x, -size * 10 + y, z, 1.0f, 0.0f));
 
             mesh.AddTriangle(0, 1, 2);
-            mesh.AddTriangle(0, 2, 3);
+            //mesh.AddTriangle(0, 2, 3);
 
-            mesh.Triangles[0].ColorAttrib = 10;
-            mesh.Triangles[1].ColorAttrib = 10;
+            mesh.ModelTriangles[0].ColorAttrib = 10;
+            //mesh.ModelTriangles[1].ColorAttrib = 10;
             return mesh;
 
         }
@@ -454,8 +558,8 @@ namespace NostalgiaEngine.RasterizerPipeline
             mesh.AddTriangle(0, 1, 2);
              mesh.AddTriangle(0, 2, 3);
 
-            mesh.Triangles[0].ColorAttrib = 12;
-            mesh.Triangles[1].ColorAttrib = 12;
+            mesh.ModelTriangles[0].ColorAttrib = 12;
+            mesh.ModelTriangles[1].ColorAttrib = 12;
             return mesh;
 
         }
@@ -483,44 +587,44 @@ namespace NostalgiaEngine.RasterizerPipeline
             mesh.AddTriangle(0, 1, 2);
             mesh.AddTriangle(0, 2, 3);
 
-            mesh.Triangles[0].ColorAttrib = col;
-            mesh.Triangles[1].ColorAttrib = col;
+            mesh.ModelTriangles[0].ColorAttrib = col;
+            mesh.ModelTriangles[1].ColorAttrib = col;
 
 
             mesh.AddTriangle(4, 6, 5);
             mesh.AddTriangle(4, 7, 6);
 
-            mesh.Triangles[2].ColorAttrib = col;
-            mesh.Triangles[3].ColorAttrib = col;
+            mesh.ModelTriangles[2].ColorAttrib = col;
+            mesh.ModelTriangles[3].ColorAttrib = col;
 
 
             mesh.AddTriangle(4, 5, 1);
             mesh.AddTriangle(4, 1, 0);
 
-            mesh.Triangles[4].ColorAttrib = col;
-            mesh.Triangles[5].ColorAttrib = col;
+            mesh.ModelTriangles[4].ColorAttrib = col;
+            mesh.ModelTriangles[5].ColorAttrib = col;
 
 
             mesh.AddTriangle(3, 2, 6);
             mesh.AddTriangle(3, 6, 7);
 
-            mesh.Triangles[6].ColorAttrib = col;
-            mesh.Triangles[7].ColorAttrib = col;
+            mesh.ModelTriangles[6].ColorAttrib = col;
+            mesh.ModelTriangles[7].ColorAttrib = col;
 
 
 
             mesh.AddTriangle(1, 5, 6);
             mesh.AddTriangle(1, 6, 2);
 
-            mesh.Triangles[8].ColorAttrib = col;
-            mesh.Triangles[9].ColorAttrib = col;
+            mesh.ModelTriangles[8].ColorAttrib = col;
+            mesh.ModelTriangles[9].ColorAttrib = col;
 
 
             mesh.AddTriangle(0, 3, 7);
             mesh.AddTriangle(0, 7, 4);
 
-            mesh.Triangles[10].ColorAttrib = col;
-            mesh.Triangles[11].ColorAttrib = col;
+            mesh.ModelTriangles[10].ColorAttrib = col;
+            mesh.ModelTriangles[11].ColorAttrib = col;
             return mesh;
         }
 

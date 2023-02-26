@@ -35,7 +35,7 @@ namespace NostalgiaEngineApplication
             //         new Note(Note.GetNoteFrequency(23), 110),
             //          new Note(Note.GetNoteFrequency(24), 110),
             //};
-            //NESoundSynth.Play(notes);
+           // NESoundSynth.Play(notes);
 
 
             Engine engine = new Engine();
