@@ -57,7 +57,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             Mesh cubeMesh = GenerateCube(0.0f, 0.0f, 0f, 15);
             Mesh floorMesh = GenerateSquare(0.0f, -0.3f,1.0f);
             Mesh teapotMesh = NEObjLoader.LoadObj("C:/Users/Kuba/Desktop/tst/teapot.obj");
-            var luma = ResourceManager.Instance.GetLumaTexture("C:/test/ntex/luma.buf");
+            var luma = ResourceManager.Instance.GetLumaTexture("C:/test/ruler/luma.buf");
             //Model cubeModel = new Model(cubeMesh, luma);
             Model cubeModel = new Model(GenerateSquare(0.0f, 0.0f, 0.0f), luma);
             cubeModel.Transform.LocalPosition = new NEVector4(0.9f, 0.0f, 4.1f);
@@ -170,8 +170,8 @@ namespace NostalgiaEngine.RasterizerPipeline
                 triangle.TransformedNormal = NEMatrix4x4.RemoveTranslation(m_Camera.View) * model.Transform.RotationMat * mesh.ModelTriangles[i].ModelNormal;
                 //if (FacingAway(triangle)) continue;
 
-                LeftSide(triangle, ref mesh.TempTriangles, ref mesh.TempVertices, mesh);
-
+                // LeftSide(triangle, ref mesh.TempTriangles, ref mesh.TempVertices, mesh);
+                Clipping(triangle, ref mesh.TempTriangles, ref mesh.TempVertices, mesh);
                 m_RenderedTriangleCount++;
 
                 //mesh.TempTriangles.Add(triangle);
@@ -230,7 +230,58 @@ namespace NostalgiaEngine.RasterizerPipeline
         }
 
 
+        void Clipping(Triangle inTriangle, ref List<Triangle> newTriangles, ref List<Vertex> vertices, Mesh mesh)
+        {
+            //Left Plane
+            Vertex A;
+            Vertex B;
+            Intersection lp = FindIntersections(inTriangle, out A, out B, NEVector4.Left, NEVector4.Right);
+            if (lp == Intersection.Undefined) throw new Exception("Clipping Error Left Plane");
+            else if (lp == Intersection.None)
+            {
+                newTriangles.Add(inTriangle);
+            }
+            else if (lp == Intersection.OneTriangle)
+            {
+                //Vertex.OrderByY(ref A, ref B);
 
+                vertices.Add(A);
+                vertices.Add(B);
+                Triangle tr = new Triangle(vertices.Count - 2, vertices.Count - 1, inTriangle.LeftSortedIndices[2], mesh, inTriangle.ModelNormal, inTriangle.TransformedNormal);
+                tr.ColorAttrib = 9;
+                tr.CalculateEdges();
+                newTriangles.Add(tr);
+            }
+            else if (lp == Intersection.TwoTrianges)
+            {
+               Vertex.OrderByY(ref A, ref B);
+
+                vertices.Add(A);
+                vertices.Add(B);
+
+                Triangle tr1 = new Triangle(vertices.Count - 2, vertices.Count - 1, inTriangle.LeftSortedIndices[2], mesh, inTriangle.ModelNormal, inTriangle.TransformedNormal);
+                tr1.ColorAttrib = 6;
+                tr1.CalculateEdges();
+                newTriangles.Add(tr1);
+
+
+                int ref0 = inTriangle.LeftSortedIndices[1];
+                int ref1 = inTriangle.LeftSortedIndices[2];
+
+                if(inTriangle.B.Y < inTriangle.C.Y)// b needs to be last
+                {
+                    int tmp = ref0;
+                    ref0 = ref1;
+                    ref1 = tmp;
+                }
+
+                Triangle tr2 = new Triangle(vertices.Count - 2, ref0, ref1, mesh, inTriangle.ModelNormal, inTriangle.TransformedNormal);
+                tr2.ColorAttrib = 1;
+                tr2.CalculateEdges();
+                newTriangles.Add(tr2);
+            }
+            
+        }
 
         Intersection FindIntersections(Triangle inTriangle, out Vertex A, out Vertex B, NEVector4 p, NEVector4 d)
         {
@@ -243,40 +294,19 @@ namespace NostalgiaEngine.RasterizerPipeline
                 //if there is no intersection with AC, there is no intersection occuring at all
                 return Intersection.None;
             }
-
-
-
             A = Vertex.Lerp(inTriangle.A, inTriangle.C, mAC.t);
 
             PlaneLineIntersectionManifest mBC;
             if (NEMathHelper.FindPlaneLineIntersection(inTriangle.B.Position, inTriangle.C.Position, p, d, out mBC))
             {
-
                 B = Vertex.Lerp(inTriangle.B, inTriangle.C, mBC.t);
-                if (A.Y > B.Y)
-                {
-                    Vertex temp = A.Duplicate();
-                    B = A;
-                    A = temp;
-                }
-
                 return Intersection.OneTriangle;
             }
-
-
 
             PlaneLineIntersectionManifest mAB;
             if (NEMathHelper.FindPlaneLineIntersection(inTriangle.A.Position, inTriangle.B.Position, p, d, out mAB))
             {
-
                 B = Vertex.Lerp(inTriangle.A, inTriangle.B, mAB.t);
-                if (A.Y > B.Y)
-                {
-                    Vertex temp = A.Duplicate();
-                    B = A;
-                    A = temp;
-                }
-
                 return Intersection.TwoTrianges;
             }
 
@@ -332,7 +362,7 @@ namespace NostalgiaEngine.RasterizerPipeline
         {
             base.OnUpdate(deltaTime);
             Movement(deltaTime);
-            m_Models[0].Transform.RotateY(deltaTime*0.5f);
+           // m_Models[0].Transform.RotateY(deltaTime*0.5f);
             //m_Models[1].Transform.PositionY = -0.7f + (float)(Math.Sin(Engine.Instance.TotalTime) * 0.3);
             m_Camera.UpdateTransform();
 

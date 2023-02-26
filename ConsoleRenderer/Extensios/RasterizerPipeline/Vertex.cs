@@ -103,5 +103,25 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         }
 
+        static public void OrderByY(ref Vertex A, ref Vertex B)
+        {
+            if (A.Y > B.Y)
+            {
+                Vertex temp = A;
+                A = B;
+                B = temp;
+            }
+        }
+
+        static public void OrderByX(ref Vertex A, ref Vertex B)
+        {
+            if (A.X > B.X)
+            {
+                Vertex temp = A;
+                A = B;
+                B = temp;
+            }
+        }
+
     }
 }
