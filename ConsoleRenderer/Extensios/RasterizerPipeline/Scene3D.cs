@@ -8,7 +8,16 @@ namespace NostalgiaEngine.RasterizerPipeline
 {
     public class Scene3D : NEScene
     {
-        enum Intersection { None = 0, OneTriangle = 1, TwoTrianges = 2, Undefined = 3}
+        struct Intersection
+        {
+            public bool AB;
+            public bool AC;
+            public bool BC;
+            
+            public bool None { get { return !AB && !AC && !BC; } }
+
+           
+        }
         // Mesh m_VBO;
         NEDepthBuffer m_DepthBuffer;
 
@@ -184,98 +193,54 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         }
 
-        void LeftSide(Triangle inTriangle, ref List<Triangle> newTriangles, ref List<Vertex> vertices, Mesh mesh)
-        {
-
-            PlaneLineIntersectionManifest mAC;
-            //check the longest edge (AC)
-            if(!NEMathHelper.FindPlaneLineIntersection(inTriangle.A.Position, inTriangle.C.Position, NEVector4.Left, NEVector4.Right, out mAC))
-            {
-                //if there is no intersection with AC, there is no intersection occuring at all
-                newTriangles.Add(inTriangle);
-                return; 
-            }
-
-
-            //new vertex onAC
-
-            Vertex newAC = Vertex.Lerp(inTriangle.A, inTriangle.C, mAC.t);
-            vertices.Add(newAC);
-
-            PlaneLineIntersectionManifest mBC;
-            if(NEMathHelper.FindPlaneLineIntersection(inTriangle.B.Position, inTriangle.C.Position, NEVector4.Left, NEVector4.Right, out mBC))
-            {
-                //Vertex newBC = inTriangle.B.Duplicate();
-
-                Vertex newBC = Vertex.Lerp(inTriangle.B, inTriangle.C, mBC.t);
-                vertices.Add(newBC);
-                if (newBC.Y > newAC.Y)
-                {
-                    Triangle newTriangle = new Triangle(vertices.Count - 2, vertices.Count - 1, inTriangle.LeftSortedIndices[2], mesh, inTriangle.ModelNormal, inTriangle.TransformedNormal);
-                    newTriangle.CalculateEdges();
-                    newTriangle.ColorAttrib = 9;
-                    newTriangles.Add(newTriangle);
-                }
-                else
-                {
-                    Triangle newTriangle = new Triangle(vertices.Count - 1, vertices.Count - 2, inTriangle.LeftSortedIndices[2], mesh, inTriangle.ModelNormal, inTriangle.TransformedNormal);
-                    newTriangle.CalculateEdges();
-                    newTriangle.ColorAttrib = 9;
-                    newTriangles.Add(newTriangle);
-                }
-                return;
-            }
-
-           //Debug.Print("f");
-        }
+       
 
 
         void Clipping(Triangle inTriangle, ref List<Triangle> newTriangles, ref List<Vertex> vertices, Mesh mesh)
         {
             //Left Plane
-            Vertex A;
-            Vertex B;
-            Intersection lp = FindIntersections(inTriangle, out A, out B, NEVector4.Left, NEVector4.Right);
-            if (lp == Intersection.Undefined) throw new Exception("Clipping Error Left Plane");
-            else if (lp == Intersection.None)
+            Vertex AC;
+            Vertex BC;
+            Vertex AB;
+            Intersection lp = FindIntersections(inTriangle, out AB, out AC, out BC, NEVector4.Left, NEVector4.Right);
+
+            if (!lp.AC)
             {
                 newTriangles.Add(inTriangle);
             }
-            else if (lp == Intersection.OneTriangle)
+            else if (lp.AC && lp.BC)
             {
-                //Vertex.OrderByY(ref A, ref B);
-
-                vertices.Add(A);
-                vertices.Add(B);
+                Vertex.OrderByY(ref AC, ref BC);
+                vertices.Add(AC);
+                vertices.Add(BC);
                 Triangle tr = new Triangle(vertices.Count - 2, vertices.Count - 1, inTriangle.LeftSortedIndices[2], mesh, inTriangle.ModelNormal, inTriangle.TransformedNormal);
                 tr.ColorAttrib = 9;
                 tr.CalculateEdges();
                 newTriangles.Add(tr);
             }
-            else if (lp == Intersection.TwoTrianges)
+            else if (lp.AC && lp.AB)
             {
-               Vertex.OrderByY(ref A, ref B);
+               Vertex.OrderByY(ref AC, ref AB);
 
-                vertices.Add(A);
-                vertices.Add(B);
+                vertices.Add(AC);
+                vertices.Add(AB);
 
-                Triangle tr1 = new Triangle(vertices.Count - 2, vertices.Count - 1, inTriangle.LeftSortedIndices[2], mesh, inTriangle.ModelNormal, inTriangle.TransformedNormal);
-                tr1.ColorAttrib = 6;
+                int n = inTriangle.LeftSortedIndices[1];
+                int w = inTriangle.LeftSortedIndices[2];
+
+                if (inTriangle.B.Y > inTriangle.C.Y)
+                {
+                    int tmp = n;
+                    n = w;
+                    w = tmp;
+                }
+
+                Triangle tr1 = new Triangle(vertices.Count - 2, vertices.Count - 1, n, mesh, inTriangle.ModelNormal, inTriangle.TransformedNormal);
+                tr1.ColorAttrib = 2;
                 tr1.CalculateEdges();
                 newTriangles.Add(tr1);
 
-
-                int ref0 = inTriangle.LeftSortedIndices[1];
-                int ref1 = inTriangle.LeftSortedIndices[2];
-
-                if(inTriangle.B.Y < inTriangle.C.Y)// b needs to be last
-                {
-                    int tmp = ref0;
-                    ref0 = ref1;
-                    ref1 = tmp;
-                }
-
-                Triangle tr2 = new Triangle(vertices.Count - 2, ref0, ref1, mesh, inTriangle.ModelNormal, inTriangle.TransformedNormal);
+                Triangle tr2 = new Triangle(vertices.Count - 1, w, n, mesh, inTriangle.ModelNormal, inTriangle.TransformedNormal);
                 tr2.ColorAttrib = 1;
                 tr2.CalculateEdges();
                 newTriangles.Add(tr2);
@@ -283,35 +248,31 @@ namespace NostalgiaEngine.RasterizerPipeline
             
         }
 
-        Intersection FindIntersections(Triangle inTriangle, out Vertex A, out Vertex B, NEVector4 p, NEVector4 d)
+        Intersection FindIntersections(Triangle inTriangle, out Vertex AB, out Vertex AC, out Vertex BC,  NEVector4 p, NEVector4 d)
         {
-            A = null;
-            B = null;
+            Intersection ret = new Intersection();
+            AB = null; AC = null; BC = null;
             PlaneLineIntersectionManifest mAC;
-            //check the longest edge (AC)
-            if (!NEMathHelper.FindPlaneLineIntersection(inTriangle.A.Position, inTriangle.C.Position, p, d, out mAC))
+            if (NEMathHelper.FindPlaneLineIntersection(inTriangle.A.Position, inTriangle.C.Position, p, d, out mAC))
             {
-                //if there is no intersection with AC, there is no intersection occuring at all
-                return Intersection.None;
+                ret.AC = true;
+                AC = Vertex.Lerp(inTriangle.A, inTriangle.C, mAC.t);
             }
-            A = Vertex.Lerp(inTriangle.A, inTriangle.C, mAC.t);
 
             PlaneLineIntersectionManifest mBC;
             if (NEMathHelper.FindPlaneLineIntersection(inTriangle.B.Position, inTriangle.C.Position, p, d, out mBC))
             {
-                B = Vertex.Lerp(inTriangle.B, inTriangle.C, mBC.t);
-                return Intersection.OneTriangle;
+                BC = Vertex.Lerp(inTriangle.B, inTriangle.C, mBC.t);
+                ret.BC = true;
             }
 
             PlaneLineIntersectionManifest mAB;
             if (NEMathHelper.FindPlaneLineIntersection(inTriangle.A.Position, inTriangle.B.Position, p, d, out mAB))
             {
-                B = Vertex.Lerp(inTriangle.A, inTriangle.B, mAB.t);
-                return Intersection.TwoTrianges;
+                AB = Vertex.Lerp(inTriangle.A, inTriangle.B, mAB.t);
+                ret.AB = true;
             }
-
-            //Debug.Print("f");
-            return Intersection.Undefined;
+            return ret;
             
         }
 
@@ -559,13 +520,13 @@ namespace NostalgiaEngine.RasterizerPipeline
             mesh.AddVertex(new Vertex(-size * 1 + x, -size * 1+ y, z, 0.0f, 0.0f));
             mesh.AddVertex(new Vertex(-size * 1 + x, size * 1 + y, z, 0.0f, 1.0f));
             mesh.AddVertex(new Vertex(size * 1 + x, size * 1 + y, z, 1.0f, 1.0f));
-             ////mesh.AddVertex(new Vertex(size * 100 + x, -size * 10 + y, z, 1.0f, 0.0f));
+            mesh.AddVertex(new Vertex(size * 1+ x, -size * 1 + y, z, 1.0f, 0.0f));
 
             mesh.AddTriangle(0, 1, 2);
-            //mesh.AddTriangle(0, 2, 3);
+            mesh.AddTriangle(0, 2, 3);
 
             mesh.ModelTriangles[0].ColorAttrib = 10;
-            //mesh.ModelTriangles[1].ColorAttrib = 10;
+            mesh.ModelTriangles[1].ColorAttrib = 10;
             return mesh;
 
         }
