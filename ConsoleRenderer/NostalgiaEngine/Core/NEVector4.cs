@@ -67,6 +67,22 @@ namespace NostalgiaEngine.Core
             return new NEVector4(v.X / l, v.Y / l, v.Z / l, v.W / l);
         }
 
+        /// <summary>
+        /// Checks if both coplanar vectors left and right are pointing left and right on the plane with the normal "up" 
+        /// </summary>
+        /// <param name="left">V</param>
+        /// <param name="right"></param>
+        /// <param name="up"></param>
+        /// <returns>True if left vector is pointing left and right vector is pointing right, otherwise false </returns>
+        public static bool CompareLeft(NEVector4 left, NEVector4 right, NEVector4 up)
+        {
+            up.W = 0;
+            NEVector4 dir = NEVector4.Cross3(left, right);
+            float projected = NEVector4.Dot(dir, up);
+            return (projected > 0.0f);
+
+        }
+
         public static float Dot(NEVector4 v1, NEVector4 v2)
         {
             return v1.X * v2.X + v1.Y * v2.Y + v1.Z * v2.Z + v1.W * v2.W;

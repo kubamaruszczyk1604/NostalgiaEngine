@@ -64,7 +64,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             m_TestSkybox = new Skybox("c:/test/skybox3");
 
             Mesh cubeMesh = GenerateCube(0.0f, 0.0f, 0f, 15);
-            Mesh floorMesh = GenerateSquare(0.0f, -0.3f,1.0f);
+            Mesh floorMesh = GenerateSquareFloor(0.0f, -0.3f,1.0f);
             Mesh teapotMesh = NEObjLoader.LoadObj("C:/Users/Kuba/Desktop/tst/teapot.obj");
             var luma = ResourceManager.Instance.GetLumaTexture("C:/test/ruler/luma.buf");
             //Model cubeModel = new Model(cubeMesh, luma);
@@ -82,7 +82,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 
             m_Models.Add(cubeModel);
            // m_Models.Add(teapotModel);
-            //m_Models.Add(floorModel);
+            m_Models.Add(floorModel);
 
             m_Camera = new Camera(ScreenWidth, ScreenHeight, 1.05f, 0.1f, 100.0f);
             m_Camera.Transform.LocalPosition = new NEVector4(0.0f, 0.0f, -2.0f);
@@ -179,29 +179,41 @@ namespace NostalgiaEngine.RasterizerPipeline
                 triangle.TransformedNormal = NEMatrix4x4.RemoveTranslation(m_Camera.View) * model.Transform.RotationMat * mesh.ModelTriangles[i].ModelNormal;
                 //if (FacingAway(triangle)) continue;
 
-                // LeftSide(triangle, ref mesh.TempTriangles, ref mesh.TempVertices, mesh);
-                Clipping(triangle, ref mesh.TempTriangles, ref mesh.TempVertices, mesh);
-                m_RenderedTriangleCount++;
+
+                
+                DoClipping(triangle, mesh);
+                //m_RenderedTriangleCount++;
 
                 //mesh.TempTriangles.Add(triangle);
             }
 
 
-
+            m_RenderedTriangleCount = mesh.TempTriangles.Count;
             NEScreenBuffer.ClearColor(0);
             m_DepthBuffer.Clear();
 
         }
 
+        void DoClipping(Triangle inTriangle,  Mesh mesh)
+        {
+            List<Triangle> trl = ClipLeft(inTriangle, mesh);
+            for (int iL = 0; iL < trl.Count; ++iL)
+            {
+                List<Triangle> trr = ClipRight(trl[iL], mesh.TempVertices, mesh);
+                mesh.TempTriangles.AddRange(trr);
+            }
+
+           // outTriangles.AddRange(trl);
+
+        }
        
 
 
-        void Clipping(Triangle inTriangle, ref List<Triangle> newTriangles, ref List<Vertex> vertices, Mesh mesh)
+        List<Triangle> ClipLeft(Triangle inTriangle,  Mesh mesh)
         {
-            //Left Plane
-            Vertex AC;
-            Vertex BC;
-            Vertex AB;
+            List<Vertex> vertices = mesh.TempVertices;
+            List<Triangle> newTriangles = new List<Triangle>();
+            Vertex AC; Vertex BC; Vertex AB;
             Intersection lp = FindIntersections(inTriangle, out AB, out AC, out BC, NEVector4.Left, NEVector4.Right);
 
             if (!lp.AC)
@@ -210,42 +222,97 @@ namespace NostalgiaEngine.RasterizerPipeline
             }
             else if (lp.AC && lp.BC)
             {
-                Vertex.OrderByY(ref AC, ref BC);
-                vertices.Add(AC);
-                vertices.Add(BC);
-                Triangle tr = new Triangle(vertices.Count - 2, vertices.Count - 1, inTriangle.LeftSortedIndices[2], mesh, inTriangle.ModelNormal, inTriangle.TransformedNormal);
-                tr.ColorAttrib = 9;
-                tr.CalculateEdges();
-                newTriangles.Add(tr);
+                vertices.Add(AC); vertices.Add(BC);
+                int new1 = vertices.Count - 2;
+                int new2 = vertices.Count - 1;
+                int old = inTriangle.LeftSortedIndices[2];
+                VertsToTris(mesh, inTriangle, new1, new2, old,  newTriangles);
             }
             else if (lp.AC && lp.AB)
             {
-               Vertex.OrderByY(ref AC, ref AB);
+
+                vertices.Add(AC);  vertices.Add(AB);
+
+                int new1 = vertices.Count - 2;
+                int new2 = vertices.Count - 1;
+                int old2 = inTriangle.LeftSortedIndices[1];
+                int old3 = inTriangle.LeftSortedIndices[2];
+
+                VertsToTris(mesh, inTriangle, new1, new2, old2, old3, newTriangles);
+
+            }
+            return newTriangles;
+            
+        }
+
+        void VertsToTris(Mesh mesh,Triangle triangle, int va, int vb, int vc, int vd, List<Triangle> triangleStream)
+        {
+            List<Vertex> vertices = mesh.TempVertices;
+            List<int> vrt = new List<int>(3);
+            vrt.AddRange(new int[] { vb, vc, vd});
+
+            int v1 = Mesh.GetLeftmost(vertices, triangle.TransformedNormal, va, vb, vc, vd);
+            vrt.Remove(v1);
+            int v2 = Mesh.GetLeftmost(vertices, triangle.TransformedNormal, v1, vrt[0], vrt[1]);
+            vrt.Remove(v2);
+
+
+            Triangle tr1 = new Triangle(va, v1, v2, mesh, triangle.ModelNormal, triangle.TransformedNormal);
+            tr1.ColorAttrib = 2;
+            tr1.CalculateEdges();
+            triangleStream.Add(tr1);
+
+            Triangle tr2 = new Triangle(va, v2, vrt[0], mesh, triangle.ModelNormal, triangle.TransformedNormal);
+            tr2.ColorAttrib = 1;
+            tr2.CalculateEdges();
+            triangleStream.Add(tr2);
+        }
+
+        void VertsToTris(Mesh mesh, Triangle triangle, int va, int vb, int vc,  List<Triangle> triangleStream)
+        {
+            int v1 = Mesh.GetLeftmost(mesh.TempVertices, triangle.TransformedNormal, va, vb, vc);
+            int v2 = 0;
+            if(vb == v1) v2 = vc;
+            else v2 = vb;
+
+            Triangle tr = new Triangle(va, v1, v2, mesh, triangle.ModelNormal, triangle.TransformedNormal);
+            tr.ColorAttrib = 9;
+            tr.CalculateEdges();
+            triangleStream.Add(tr);
+        }
+
+        List<Triangle> ClipRight(Triangle inTriangle,  List<Vertex> vertices, Mesh mesh)
+        {
+            List<Triangle> newTriangles = new List<Triangle>();
+            Vertex AC; Vertex BC; Vertex AB;
+            Intersection lp = FindIntersections(inTriangle, out AB, out AC, out BC, NEVector4.Right, NEVector4.Left);
+
+            if (!lp.AC)
+            {
+                newTriangles.Add(inTriangle);
+            }
+            else if (lp.AC && lp.AB)
+            {
+                vertices.Add(AC); vertices.Add(AB);
+                int new1 = vertices.Count - 2;
+                int new2 = vertices.Count - 1;
+                int old = inTriangle.LeftSortedIndices[0];
+                VertsToTris(mesh, inTriangle, new1, new2, old, newTriangles);
+            }
+            else if (lp.AC && lp.BC)
+            {
+                Vertex.OrderByY(ref AC, ref BC);
 
                 vertices.Add(AC);
-                vertices.Add(AB);
+                vertices.Add(BC);
+                int new1 = vertices.Count - 2;
+                int new2 = vertices.Count - 1;
+                int old2 = inTriangle.LeftSortedIndices[0];
+                int old3 = inTriangle.LeftSortedIndices[1];
 
-                int n = inTriangle.LeftSortedIndices[1];
-                int w = inTriangle.LeftSortedIndices[2];
-
-                if (inTriangle.B.Y > inTriangle.C.Y)
-                {
-                    int tmp = n;
-                    n = w;
-                    w = tmp;
-                }
-
-                Triangle tr1 = new Triangle(vertices.Count - 2, vertices.Count - 1, n, mesh, inTriangle.ModelNormal, inTriangle.TransformedNormal);
-                tr1.ColorAttrib = 2;
-                tr1.CalculateEdges();
-                newTriangles.Add(tr1);
-
-                Triangle tr2 = new Triangle(vertices.Count - 1, w, n, mesh, inTriangle.ModelNormal, inTriangle.TransformedNormal);
-                tr2.ColorAttrib = 1;
-                tr2.CalculateEdges();
-                newTriangles.Add(tr2);
+                VertsToTris(mesh, inTriangle, new1, new2, old2, old3, newTriangles);
             }
-            
+            return newTriangles;
         }
 
         Intersection FindIntersections(Triangle inTriangle, out Vertex AB, out Vertex AC, out Vertex BC,  NEVector4 p, NEVector4 d)

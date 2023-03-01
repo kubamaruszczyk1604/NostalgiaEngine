@@ -57,8 +57,12 @@ namespace NostalgiaEngineApplication
             //env.SampleEnvelope(44000, 300);
 
 
+            //NEVector4 left = new NEVector4(-1.0f, 1.0f, 1.0f);
+            //NEVector4 right = new NEVector4(1.0f, 1.0f, 1.0f);
 
-
+            //bool res = NEVector4.CompareLeft(left, right, NEVector4.Up);
+            //Console.WriteLine(res);
+            //Console.ReadLine();
 
 
             //Console.WriteLine("Matrix-Vector multiply test: " + (NEMatrix4x4.UnitTest_MatVecMultiply()?"pass":"fail"));

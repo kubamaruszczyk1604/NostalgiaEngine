@@ -57,5 +57,52 @@ namespace NostalgiaEngine.RasterizerPipeline
         //    }
         //}
 
-    }
+
+        static public int GetLeftmost(List<Vertex> vertices, NEVector4 n, int iPt, int iA, int iB, int iC)
+        {
+            NEVector4 vA = vertices[iA].Position - vertices[iPt].Position;
+            NEVector4 vB = vertices[iB].Position - vertices[iPt].Position;
+            NEVector4 vC = vertices[iC].Position - vertices[iPt].Position;
+
+            int winnerIndex = -1;
+            NEVector4 winnerVec = vA;
+            //first round
+            if(NEVector4.CompareLeft(vA,vB,n))
+            {
+                winnerIndex = iA;
+                winnerVec = vA;
+            }
+            else
+            {
+                winnerIndex = iB;
+                winnerVec = vB;
+            }
+
+            //second round
+            if (NEVector4.CompareLeft(winnerVec, vC, n))
+            {
+                //winnerIndex = iA;
+                //winnerVec = vA;
+            }
+            else
+            {
+                winnerIndex = iC;
+                winnerVec = vC;
+            }
+
+            return winnerIndex;
+        }
+
+        static public int GetLeftmost(List<Vertex> vertices, NEVector4 n, int iPt, int iA, int iB)
+        {
+            NEVector4 vA = vertices[iA].Position - vertices[iPt].Position;
+            NEVector4 vB = vertices[iB].Position - vertices[iPt].Position;
+            if (NEVector4.CompareLeft(vA, vB, n))
+            {
+                return iA;
+            }
+
+            return iB;
+        }
+     }
 }
