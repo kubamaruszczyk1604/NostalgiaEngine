@@ -48,7 +48,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         public void CalculateEdges()
         {
-            GetXSortedVertices(out LeftSortedIndices[0], out LeftSortedIndices[1], out LeftSortedIndices[2]);
+            SortX(out LeftSortedIndices[0], out LeftSortedIndices[1], out LeftSortedIndices[2]);
             A = VBO.TempVertices[LeftSortedIndices[0]];
             B = VBO.TempVertices[LeftSortedIndices[1]];
             C = VBO.TempVertices[LeftSortedIndices[2]];
@@ -229,7 +229,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         }
 
-        private void GetXSortedVertices(out int left, out int middle, out int right)
+        private void SortX(out int left, out int middle, out int right)
         {
             left = Indices[0];
             middle = Indices[1];
@@ -253,7 +253,31 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         }
 
-       
+        public int[] SortedZ()
+        {
+           int a = Indices[0];
+           int b = Indices[1];
+           int c = Indices[2];
+
+
+            if (VBO.TempVertices[a].Z > VBO.TempVertices[b].Z)
+            {
+                SwapInt(ref a, ref b);
+            }
+
+            if (VBO.TempVertices[b].Z > VBO.TempVertices[c].Z)
+            {
+                SwapInt(ref b, ref c);
+            }
+
+            if (VBO.TempVertices[a].Z > VBO.TempVertices[b].Z)
+            {
+                SwapInt(ref a, ref b);
+            }
+            return new int[] { a, b, c };
+        }
+
+
         private void SwapInt(ref int a, ref int b)
         {
            int tmp = a;

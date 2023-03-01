@@ -177,7 +177,7 @@ namespace NostalgiaEngine.RasterizerPipeline
                 triangle.CalculateEdges();
                 if (IsOutsideFrustum(triangle)) continue;
                 triangle.TransformedNormal = NEMatrix4x4.RemoveTranslation(m_Camera.View) * model.Transform.RotationMat * mesh.ModelTriangles[i].ModelNormal;
-                //if (FacingAway(triangle)) continue;
+               // if (FacingAway(triangle)) continue;
 
 
                 
@@ -188,7 +188,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             }
 
 
-            m_RenderedTriangleCount = mesh.TempTriangles.Count;
+            m_RenderedTriangleCount += mesh.TempTriangles.Count;
             NEScreenBuffer.ClearColor(0);
             m_DepthBuffer.Clear();
 
@@ -196,14 +196,23 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         void DoClipping(Triangle inTriangle,  Mesh mesh)
         {
-            List<Triangle> trl = ClipLeft(inTriangle, mesh);
-            for (int iL = 0; iL < trl.Count; ++iL)
+            List<Triangle> trianglesLeft = ClipLeft(inTriangle, mesh);
+            List<Triangle> trianglesRight = new List<Triangle>(3);
+            for (int i = 0; i < trianglesLeft.Count; ++i)
             {
-                List<Triangle> trr = ClipRight(trl[iL], mesh.TempVertices, mesh);
-                mesh.TempTriangles.AddRange(trr);
+               trianglesRight.AddRange(ClipRight(trianglesLeft[i], mesh));
             }
 
-           // outTriangles.AddRange(trl);
+            List<Triangle> trianglesNear = new List<Triangle>(9);
+            for (int i = 0; i < trianglesRight.Count; ++i)
+            {
+                trianglesRight.AddRange(ClipNear(trianglesRight[i], mesh.TempVertices, mesh));
+            }
+
+            mesh.TempTriangles.AddRange(trianglesRight);
+
+
+            // outTriangles.AddRange(trl);
 
         }
        
@@ -281,8 +290,9 @@ namespace NostalgiaEngine.RasterizerPipeline
             triangleStream.Add(tr);
         }
 
-        List<Triangle> ClipRight(Triangle inTriangle,  List<Vertex> vertices, Mesh mesh)
+        List<Triangle> ClipRight(Triangle inTriangle,  Mesh mesh)
         {
+            List<Vertex> vertices = mesh.TempVertices;
             List<Triangle> newTriangles = new List<Triangle>();
             Vertex AC; Vertex BC; Vertex AB;
             Intersection lp = FindIntersections(inTriangle, out AB, out AC, out BC, NEVector4.Right, NEVector4.Left);
@@ -315,6 +325,22 @@ namespace NostalgiaEngine.RasterizerPipeline
             return newTriangles;
         }
 
+
+        List<Triangle> ClipNear(Triangle inTriangle, List<Vertex> vertices, Mesh mesh)
+        {
+
+
+            List<Triangle> newTriangles = new List<Triangle>();
+            Vertex AC; Vertex BC; Vertex AB;
+            Intersection lp = FindIntersections(inTriangle, out AB, out AC, out BC, NEVector4.Zero, NEVector4.Forward);
+
+
+            return newTriangles;
+        }
+
+
+
+
         Intersection FindIntersections(Triangle inTriangle, out Vertex AB, out Vertex AC, out Vertex BC,  NEVector4 p, NEVector4 d)
         {
             Intersection ret = new Intersection();
@@ -342,6 +368,8 @@ namespace NostalgiaEngine.RasterizerPipeline
             return ret;
             
         }
+
+       
 
         bool IsOutsideFrustum(Triangle triangle)
         {
