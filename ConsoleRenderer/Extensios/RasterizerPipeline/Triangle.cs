@@ -25,7 +25,7 @@ namespace NostalgiaEngine.RasterizerPipeline
         public NEVector4 ModelNormal { get; private set; }
         public NEVector4 TransformedNormal { get; set; }
 
-        public bool Discard;
+       
 
         public Triangle(int i0, int i1, int i2, Mesh vbo)
         {
@@ -46,12 +46,36 @@ namespace NostalgiaEngine.RasterizerPipeline
         }
 
 
+        public void WDivide()
+        {
+            VBO.FrameProcessedVertices[Indices[0]].WDivide();
+            VBO.FrameProcessedVertices[Indices[1]].WDivide();
+            VBO.FrameProcessedVertices[Indices[2]].WDivide();
+        }
+
+
+        public void WDivide(NEMatrix4x4 proj)
+        {
+            if (!VBO.FrameProcessedVertices[Indices[0]].m_WDividedFlag)
+                VBO.FrameProcessedVertices[Indices[0]].Position = proj * VBO.FrameProcessedVertices[Indices[0]].Position;
+
+            if (!VBO.FrameProcessedVertices[Indices[1]].m_WDividedFlag)
+                VBO.FrameProcessedVertices[Indices[1]].Position = proj * VBO.FrameProcessedVertices[Indices[1]].Position;
+
+            if (!VBO.FrameProcessedVertices[Indices[2]].m_WDividedFlag)
+                VBO.FrameProcessedVertices[Indices[2]].Position = proj * VBO.FrameProcessedVertices[Indices[2]].Position;
+
+            VBO.FrameProcessedVertices[Indices[0]].WDivide();
+            VBO.FrameProcessedVertices[Indices[1]].WDivide();
+            VBO.FrameProcessedVertices[Indices[2]].WDivide();
+        }
+
         public void CalculateEdges()
         {
             SortX(out LeftSortedIndices[0], out LeftSortedIndices[1], out LeftSortedIndices[2]);
-            A = VBO.TempVertices[LeftSortedIndices[0]];
-            B = VBO.TempVertices[LeftSortedIndices[1]];
-            C = VBO.TempVertices[LeftSortedIndices[2]];
+            A = VBO.FrameProcessedVertices[LeftSortedIndices[0]];
+            B = VBO.FrameProcessedVertices[LeftSortedIndices[1]];
+            C = VBO.FrameProcessedVertices[LeftSortedIndices[2]];
 
 
             AB = new NEEdge();
@@ -236,46 +260,24 @@ namespace NostalgiaEngine.RasterizerPipeline
             right = Indices[2];
 
 
-            if(VBO.TempVertices[left].X > VBO.TempVertices[middle].X)
+            if(VBO.FrameProcessedVertices[left].X > VBO.FrameProcessedVertices[middle].X)
             {
                 SwapInt(ref left, ref middle);
             }
 
-            if (VBO.TempVertices[middle].X > VBO.TempVertices[right].X)
+            if (VBO.FrameProcessedVertices[middle].X > VBO.FrameProcessedVertices[right].X)
             {
                 SwapInt(ref middle, ref right);
             }
 
-            if (VBO.TempVertices[left].X > VBO.TempVertices[middle].X)
+            if (VBO.FrameProcessedVertices[left].X > VBO.FrameProcessedVertices[middle].X)
             {
                 SwapInt(ref left, ref middle);
             }
 
         }
 
-        public int[] SortedZ()
-        {
-           int a = Indices[0];
-           int b = Indices[1];
-           int c = Indices[2];
 
-
-            if (VBO.TempVertices[a].Z > VBO.TempVertices[b].Z)
-            {
-                SwapInt(ref a, ref b);
-            }
-
-            if (VBO.TempVertices[b].Z > VBO.TempVertices[c].Z)
-            {
-                SwapInt(ref b, ref c);
-            }
-
-            if (VBO.TempVertices[a].Z > VBO.TempVertices[b].Z)
-            {
-                SwapInt(ref a, ref b);
-            }
-            return new int[] { a, b, c };
-        }
 
 
         private void SwapInt(ref int a, ref int b)

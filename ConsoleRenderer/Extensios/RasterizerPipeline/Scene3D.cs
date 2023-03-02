@@ -80,11 +80,11 @@ namespace NostalgiaEngine.RasterizerPipeline
             teapotModel.Transform.ScaleZ = 0.4f;
             teapotModel.Transform.LocalPosition = new NEVector4(-1.0f, -1.05f, 1.0f, 1.0f);
 
-            m_Models.Add(cubeModel);
-           // m_Models.Add(teapotModel);
+           m_Models.Add(cubeModel);
+            //m_Models.Add(teapotModel);
             m_Models.Add(floorModel);
 
-            m_Camera = new Camera(ScreenWidth, ScreenHeight, 1.05f, 0.1f, 100.0f);
+            m_Camera = new Camera(ScreenWidth, ScreenHeight, 1.05f, 0.8f, 100.0f);
             m_Camera.Transform.LocalPosition = new NEVector4(0.0f, 0.0f, -2.0f);
 
 
@@ -154,45 +154,63 @@ namespace NostalgiaEngine.RasterizerPipeline
         {
             model.Transform.CalculateWorld();
             Mesh mesh = model.Mesh;
-            mesh.TempTriangles = new List<Triangle>(mesh.ModelTriangles.Count);
+            mesh.TempTriangles.Clear();
 
             NEMatrix4x4 world = model.Transform.World;
             NEMatrix4x4 view = m_Camera.View;
-            
+            mesh.FrameProcessedVertices.Clear();
             for (int i = 0; i < mesh.ModelVertices.Count; ++i)
             {
-                mesh.TempVertices.Add(mesh.ModelVertices[i].Duplicate());
-                mesh.TempVertices[i].Position = (view * world) * mesh.ModelVertices[i].Position;
-                mesh.TempVertices[i].Vert2Camera = -mesh.TempVertices[i].Position.Normalized;
-                mesh.TempVertices[i].UV = mesh.ModelVertices[i].UV;
-                mesh.TempVertices[i].Position = (m_Camera.Projection) * mesh.TempVertices[i].Position;
+                mesh.FrameProcessedVertices.Add(mesh.ModelVertices[i].Duplicate());
+                mesh.FrameProcessedVertices[i].Position = (view * world) * mesh.FrameProcessedVertices[i].Position;
+                mesh.FrameProcessedVertices[i].Vert2Camera = -mesh.FrameProcessedVertices[i].Position.Normalized;
+                mesh.FrameProcessedVertices[i].UV = mesh.ModelVertices[i].UV;
+                mesh.FrameProcessedVertices[i].Position = (m_Camera.Projection) * mesh.FrameProcessedVertices[i].Position;
 
-                mesh.TempVertices[i].WDivide();
+                //mesh.FrameProcessedVertices[i].WDivide();
             }
 
             //Projection space
             for (int i = 0; i < mesh.ModelTriangles.Count; ++i)
             {
-                Triangle triangle = mesh.ModelTriangles[i];
-                triangle.CalculateEdges();
-                if (IsOutsideFrustum(triangle)) continue;
-                triangle.TransformedNormal = NEMatrix4x4.RemoveTranslation(m_Camera.View) * model.Transform.RotationMat * mesh.ModelTriangles[i].ModelNormal;
-               // if (FacingAway(triangle)) continue;
+                Triangle tri = mesh.ModelTriangles[i];
+                tri.TransformedNormal = NEMatrix4x4.RemoveTranslation(m_Camera.View) * model.Transform.RotationMat * mesh.ModelTriangles[i].ModelNormal;
+                List<Triangle> nearClipped = ClipNear(tri, mesh);
+                foreach (Triangle triangle in nearClipped)
+                {
+                    //triangle.WDivide();
 
 
-                
-                DoClipping(triangle, mesh);
+                    //triangle.CalculateEdges();
+                    //if (IsOutsideFrustum(triangle)) continue;
+                   // triangle.TransformedNormal = NEMatrix4x4.RemoveTranslation(m_Camera.View) * model.Transform.RotationMat * mesh.ModelTriangles[i].ModelNormal;
+                    // if (FacingAway(triangle)) continue;
+                    mesh.TempTriangles.Add(triangle);
+
+
+                   // DoClipping(triangle, mesh);
+                }
                 //m_RenderedTriangleCount++;
 
                 //mesh.TempTriangles.Add(triangle);
             }
+            for (int i = 0; i < mesh.TempTriangles.Count; ++i)
+            {
+                Triangle triangle = mesh.TempTriangles[i];
+                triangle.WDivide();
 
 
-            m_RenderedTriangleCount += mesh.TempTriangles.Count;
+                triangle.CalculateEdges();
+            }
+
+                m_RenderedTriangleCount += mesh.TempTriangles.Count;
             NEScreenBuffer.ClearColor(0);
             m_DepthBuffer.Clear();
 
         }
+
+
+
 
         void DoClipping(Triangle inTriangle,  Mesh mesh)
         {
@@ -203,11 +221,11 @@ namespace NostalgiaEngine.RasterizerPipeline
                trianglesRight.AddRange(ClipRight(trianglesLeft[i], mesh));
             }
 
-            List<Triangle> trianglesNear = new List<Triangle>(9);
-            for (int i = 0; i < trianglesRight.Count; ++i)
-            {
-                trianglesRight.AddRange(ClipNear(trianglesRight[i], mesh.TempVertices, mesh));
-            }
+            //List<Triangle> trianglesNear = new List<Triangle>(9);
+            //for (int i = 0; i < trianglesRight.Count; ++i)
+            //{
+            //    trianglesNear.AddRange(ClipNear(trianglesRight[i], mesh));
+            //}
 
             mesh.TempTriangles.AddRange(trianglesRight);
 
@@ -220,7 +238,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         List<Triangle> ClipLeft(Triangle inTriangle,  Mesh mesh)
         {
-            List<Vertex> vertices = mesh.TempVertices;
+            List<Vertex> vertices = mesh.FrameProcessedVertices;
             List<Triangle> newTriangles = new List<Triangle>();
             Vertex AC; Vertex BC; Vertex AB;
             Intersection lp = FindIntersections(inTriangle, out AB, out AC, out BC, NEVector4.Left, NEVector4.Right);
@@ -256,7 +274,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         void VertsToTris(Mesh mesh,Triangle triangle, int va, int vb, int vc, int vd, List<Triangle> triangleStream)
         {
-            List<Vertex> vertices = mesh.TempVertices;
+            List<Vertex> vertices = mesh.FrameProcessedVertices;
             List<int> vrt = new List<int>(3);
             vrt.AddRange(new int[] { vb, vc, vd});
 
@@ -279,7 +297,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         void VertsToTris(Mesh mesh, Triangle triangle, int va, int vb, int vc,  List<Triangle> triangleStream)
         {
-            int v1 = Mesh.GetLeftmost(mesh.TempVertices, triangle.TransformedNormal, va, vb, vc);
+            int v1 = Mesh.GetLeftmost(mesh.FrameProcessedVertices, triangle.TransformedNormal, va, vb, vc);
             int v2 = 0;
             if(vb == v1) v2 = vc;
             else v2 = vb;
@@ -292,7 +310,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         List<Triangle> ClipRight(Triangle inTriangle,  Mesh mesh)
         {
-            List<Vertex> vertices = mesh.TempVertices;
+            List<Vertex> vertices = mesh.FrameProcessedVertices;
             List<Triangle> newTriangles = new List<Triangle>();
             Vertex AC; Vertex BC; Vertex AB;
             Intersection lp = FindIntersections(inTriangle, out AB, out AC, out BC, NEVector4.Right, NEVector4.Left);
@@ -326,20 +344,139 @@ namespace NostalgiaEngine.RasterizerPipeline
         }
 
 
-        List<Triangle> ClipNear(Triangle inTriangle, List<Vertex> vertices, Mesh mesh)
+        List<Triangle> ClipNear(Triangle inTriangle,  Mesh mesh)
         {
+            List<Vertex> vertices = mesh.FrameProcessedVertices;
+            List<Triangle> newTriangles = new List<Triangle>(4);
 
 
-            List<Triangle> newTriangles = new List<Triangle>();
-            Vertex AC; Vertex BC; Vertex AB;
-            Intersection lp = FindIntersections(inTriangle, out AB, out AC, out BC, NEVector4.Zero, NEVector4.Forward);
 
+            int outCount = CheckNear(inTriangle, mesh);
+            if(outCount == 0)
+            {
+                newTriangles.Add(inTriangle);
+                return newTriangles;
+            }
+            if (outCount == 3)
+            {
+                return newTriangles;
+            }
+
+            if (outCount == 1)
+            {
+                int vOutI = OUTS[0];
+                int vIn0I = INS[0];
+                int vIn1I = INS[1];
+
+
+                PlaneLineIntersectionManifest m1;
+                bool p1 = NEMathHelper.FindPlaneLineIntersection(vertices[vOutI].Position, vertices[vIn0I].Position,
+                    new NEVector4(0.0f, 0.0f, 0.1f), NEVector4.Forward, out m1);
+
+                Vertex new0 = Vertex.Lerp(vertices[vOutI], vertices[vIn0I], m1.t);
+
+
+                bool p2 = NEMathHelper.FindPlaneLineIntersection(vertices[vOutI].Position, vertices[vIn1I].Position,
+                      new NEVector4(0.0f, 0.0f, 0.1f), NEVector4.Forward, out m1);
+
+                Vertex new1 = Vertex.Lerp(vertices[vOutI], vertices[vIn1I], m1.t);
+
+                vertices.Add(new0);
+                vertices.Add(new1);
+                int v0 = vertices.Count - 2;
+                int v1 = vertices.Count - 1;
+
+
+
+                VertsToTris(mesh, inTriangle, v0, v1, vIn0I, vIn1I, newTriangles);
+
+                return newTriangles;
+
+            }
+
+            if(outCount == 2)
+            {
+                int vOut0I = OUTS[0];
+                int vOut1I = OUTS[1];
+                int vInI = INS[0];
+
+                PlaneLineIntersectionManifest m1;
+                NEMathHelper.FindPlaneLineIntersection(vertices[vOut0I].Position, vertices[vInI].Position,
+                    new NEVector4(0.0f, 0.0f, 0.1f), NEVector4.Forward, out m1);
+
+                Vertex new0 = Vertex.Lerp(vertices[vOut0I], vertices[vInI], m1.t);
+
+
+                NEMathHelper.FindPlaneLineIntersection(vertices[vOut1I].Position, vertices[vInI].Position,
+                    new NEVector4(0.0f, 0.0f, 0.1f), NEVector4.Forward, out m1);
+
+                Vertex new1 = Vertex.Lerp(vertices[vOut1I], vertices[vInI], m1.t);
+                vertices.Add(new0);
+                vertices.Add(new1);
+                int v0 = vertices.Count - 2;
+                int v1 = vertices.Count - 1;
+                VertsToTris(mesh, inTriangle, v0, v1, vInI, newTriangles);
+
+                return newTriangles;
+            }
 
             return newTriangles;
         }
 
 
+        int[] INS = new int[3];
+        int[] OUTS = new int[3];
+        int CheckNear(Triangle triangle, Mesh mesh)
+        {
+            int inI = 0;
+            int outI = 0;
+            int iA = triangle.Indices[0];
+            int iB = triangle.Indices[1];
+            int iC = triangle.Indices[2];
+            Vertex A = mesh.FrameProcessedVertices[iA];
+            Vertex B = mesh.FrameProcessedVertices[iB];
+            Vertex C = mesh.FrameProcessedVertices[iC];
 
+            if (A.Position.Z < 0.1f)
+            {
+                OUTS[outI] = triangle.Indices[0];
+                outI++;
+
+            }
+            else
+            {
+               
+                INS[inI] = triangle.Indices[0];
+                inI++;
+            }
+
+            if (B.Position.Z < 0.1f)
+            {
+                OUTS[outI] = triangle.Indices[1];
+                outI++;
+                
+            }
+            else
+            {
+                INS[inI] = triangle.Indices[1];
+                inI++;
+                
+            }
+
+            if (C.Position.Z < 0.1f)
+            {
+                OUTS[outI] = triangle.Indices[2];
+                outI++;
+                
+            }
+            else
+            {
+                INS[inI] = triangle.Indices[2];
+                inI++;
+                
+            }
+            return outI;
+        }
 
         Intersection FindIntersections(Triangle inTriangle, out Vertex AB, out Vertex AC, out Vertex BC,  NEVector4 p, NEVector4 d)
         {
@@ -642,7 +779,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             //mesh.AddVertex(new Vertex(size + x, -size + y, z, 1.0f, 0.0f));
 
             mesh.AddTriangle(0, 1, 2);
-             mesh.AddTriangle(0, 2, 3);
+            mesh.AddTriangle(0, 2, 3);
 
             mesh.ModelTriangles[0].ColorAttrib = 12;
             mesh.ModelTriangles[1].ColorAttrib = 12;

@@ -88,6 +88,11 @@ namespace NostalgiaEngine.Core
             return v1.X * v2.X + v1.Y * v2.Y + v1.Z * v2.Z + v1.W * v2.W;
         }
 
+        public static float Dot3(NEVector4 v1, NEVector4 v2)
+        {
+            return v1.X * v2.X + v1.Y * v2.Y + v1.Z * v2.Z;
+        }
+
         public static NEVector4 Cross3(NEVector4 a, NEVector4 b)
         {
             float x = a.Y * b.Z - a.Z * b.Y;
@@ -137,5 +142,8 @@ namespace NostalgiaEngine.Core
             return new NEVector4(lhs.X / rhs, lhs.Y / rhs, lhs.Z / rhs, lhs.W / rhs);
         }
 
+        static public NEVector4[] Axes = new NEVector4[] { Left, Right, Up, Down, Forward, Back };
     }
+
+     public enum Axis { Left = 0, Right = 1, Up = 2, Down = 3, Forward = 4, Back = 5  }
 }

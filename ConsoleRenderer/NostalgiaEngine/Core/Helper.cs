@@ -138,12 +138,16 @@ namespace NostalgiaEngine.Core
 
         static public bool FindPlaneLineIntersection(NEVector4 l0, NEVector4 l1, NEVector4 p0, NEVector4 n, out PlaneLineIntersectionManifest m)
         {
+            //l0.W = 0;
+            //l1.W = 0;
+            //p0.W = 0;
+            //n.W = 0;
+            //l0.Z = l0.W;
+            //l1.Z = l1.W;
             l0.W = 0;
             l1.W = 0;
             p0.W = 0;
-            //l0.Z = l0.W;
-            //l1.Z = l1.W;
-            //p0.Z = p0.W;
+            n.W = 0;
             m = new PlaneLineIntersectionManifest();
             if (!Find3DLineEquation(l0,l1, out m.LineNormal, out m.LineLength))
             {
@@ -159,7 +163,7 @@ namespace NostalgiaEngine.Core
 
             m.IntersectionScalar = numerator / denominator;
             m.t = m.IntersectionScalar / m.LineLength;
-            if (m.t > 1.0f || m.t < 0.0f) return false;
+            if (m.t >= 1.0f || m.t <= 0.0f) return false;
             return true;
             
         }
