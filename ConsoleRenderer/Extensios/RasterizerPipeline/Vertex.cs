@@ -60,11 +60,11 @@ namespace NostalgiaEngine.RasterizerPipeline
             m_Position = v.Position;
             m_UVs = v.UV;
         }
-       // float oldX = 0.0f;
+
         public void WDivide()
         {
             if (m_WDividedFlag) return;
-            //oldX= m_Position.X;
+
             m_WDividedFlag = true; 
             float posDiv = m_Position.W /*<= 0.0f ? 0.001f : m_Position.W*/;
             float signZ = Math.Sign(m_Position.W);

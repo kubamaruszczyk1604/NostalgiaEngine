@@ -13,17 +13,26 @@ namespace NostalgiaEngine.RasterizerPipeline
         public List<Vertex> ModelVertices { get; private set; }
         public List<Triangle> ModelTriangles { get; private set; }
 
-        public List<Vertex> FrameProcessedVertices;
-        public List<Triangle> TempTriangles;
+        public List<Vertex> ProcessedVertices;
+        public List<Triangle> ProcessedTriangles;
+
+        public List<Triangle> TempTriangleContainer;
 
         public Mesh()
         {
             ModelVertices = new List<Vertex>(100);
-            FrameProcessedVertices = new List<Vertex>(100);
+            ProcessedVertices = new List<Vertex>(100);
             ModelTriangles = new List<Triangle>(100);
-            TempTriangles = new List<Triangle>(100);
+            ProcessedTriangles = new List<Triangle>(100);
+            TempTriangleContainer = new List<Triangle>(100);
         }
 
+        public void ClearProcessedData()
+        {
+            ProcessedTriangles.Clear();
+            ProcessedVertices.Clear();
+            TempTriangleContainer.Clear();
+        }
 
         public void AddVertex(Vertex v)
         {

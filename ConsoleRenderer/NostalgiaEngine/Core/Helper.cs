@@ -120,7 +120,7 @@ namespace NostalgiaEngine.Core
            
         }
 
-        static public bool Find3DLineEquation(NEVector4 p0, NEVector4 p1, out NEVector4 dir, out float length)
+        static public bool FindRayEquation(NEVector4 p0, NEVector4 p1, out NEVector4 dir, out float length)
         {
             length = 0.0f;
             dir = NEVector4.Zero;
@@ -136,34 +136,7 @@ namespace NostalgiaEngine.Core
 
         }
 
-        static public PlaneLineIntersectionManifest FindPlaneLineIntersection(NEVector4 l0, NEVector4 l1, NEVector4 p0, NEVector4 n)
-        {
-            l0.W = 0; l1.W = 0; p0.W = 0; n.W = 0;
-            PlaneLineIntersectionManifest m = new PlaneLineIntersectionManifest();
-            if (!Find3DLineEquation(l0,l1, out m.LineNormal, out m.LineLength))
-            {
-                m.Intersected = false;
-                return m;
-            }
-            float numerator = NEVector4.Dot(p0 - l0, n);
-            float denominator = NEVector4.Dot(m.LineNormal, n);
 
-            if(denominator == 0)
-            {
-                m.Intersected = false;
-                return m;
-            }
-
-            m.IntersectionScalar = numerator / denominator;
-            m.t = m.IntersectionScalar / m.LineLength;
-            if (m.t >= 1.0f || m.t <= 0.0f)
-            {
-                m.Intersected = false;
-                return m;
-            }
-            m.Intersected = true;
-            return m;
-        }
 
 
         public static bool InTriangle(NEVector2 p, NEVector2 A, NEVector2 B, NEVector2 C)
@@ -269,14 +242,14 @@ namespace NostalgiaEngine.Core
 
     }
 
-    public enum CompFun { Less = 0, Greater = 1}
+   
 
-    public struct PlaneLineIntersectionManifest
+    public struct PlaneIntersectionManifest
     {
-       public NEVector4 LineNormal;
-       public float LineLength;
-       public float IntersectionScalar;
-       public float t;
-        public bool Intersected; 
+       public NEVector4 RayDirection;
+       public float RayLength;
+       public float Magnitude;
+       public float MagnitudeNormalized;
+       public bool Intersected; 
     }
 }

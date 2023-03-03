@@ -48,34 +48,42 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         public void WDivide()
         {
-            VBO.FrameProcessedVertices[Indices[0]].WDivide();
-            VBO.FrameProcessedVertices[Indices[1]].WDivide();
-            VBO.FrameProcessedVertices[Indices[2]].WDivide();
+            VBO.ProcessedVertices[Indices[0]].WDivide();
+            VBO.ProcessedVertices[Indices[1]].WDivide();
+            VBO.ProcessedVertices[Indices[2]].WDivide();
         }
 
 
         public void WDivide(NEMatrix4x4 proj)
         {
-            if (!VBO.FrameProcessedVertices[Indices[0]].m_WDividedFlag)
-                VBO.FrameProcessedVertices[Indices[0]].Position = proj * VBO.FrameProcessedVertices[Indices[0]].Position;
+            if (!VBO.ProcessedVertices[Indices[0]].m_WDividedFlag)
+                VBO.ProcessedVertices[Indices[0]].Position = proj * VBO.ProcessedVertices[Indices[0]].Position;
 
-            if (!VBO.FrameProcessedVertices[Indices[1]].m_WDividedFlag)
-                VBO.FrameProcessedVertices[Indices[1]].Position = proj * VBO.FrameProcessedVertices[Indices[1]].Position;
+            if (!VBO.ProcessedVertices[Indices[1]].m_WDividedFlag)
+                VBO.ProcessedVertices[Indices[1]].Position = proj * VBO.ProcessedVertices[Indices[1]].Position;
 
-            if (!VBO.FrameProcessedVertices[Indices[2]].m_WDividedFlag)
-                VBO.FrameProcessedVertices[Indices[2]].Position = proj * VBO.FrameProcessedVertices[Indices[2]].Position;
+            if (!VBO.ProcessedVertices[Indices[2]].m_WDividedFlag)
+                VBO.ProcessedVertices[Indices[2]].Position = proj * VBO.ProcessedVertices[Indices[2]].Position;
 
-            VBO.FrameProcessedVertices[Indices[0]].WDivide();
-            VBO.FrameProcessedVertices[Indices[1]].WDivide();
-            VBO.FrameProcessedVertices[Indices[2]].WDivide();
+            VBO.ProcessedVertices[Indices[0]].WDivide();
+            VBO.ProcessedVertices[Indices[1]].WDivide();
+            VBO.ProcessedVertices[Indices[2]].WDivide();
+        }
+
+        public void DoLeftSort()
+        {
+            SortX(out LeftSortedIndices[0], out LeftSortedIndices[1], out LeftSortedIndices[2]);
+            A = VBO.ProcessedVertices[LeftSortedIndices[0]];
+            B = VBO.ProcessedVertices[LeftSortedIndices[1]];
+            C = VBO.ProcessedVertices[LeftSortedIndices[2]];
         }
 
         public void CalculateEdges()
         {
             SortX(out LeftSortedIndices[0], out LeftSortedIndices[1], out LeftSortedIndices[2]);
-            A = VBO.FrameProcessedVertices[LeftSortedIndices[0]];
-            B = VBO.FrameProcessedVertices[LeftSortedIndices[1]];
-            C = VBO.FrameProcessedVertices[LeftSortedIndices[2]];
+            A = VBO.ProcessedVertices[LeftSortedIndices[0]];
+            B = VBO.ProcessedVertices[LeftSortedIndices[1]];
+            C = VBO.ProcessedVertices[LeftSortedIndices[2]];
 
 
             AB = new NEEdge();
@@ -260,17 +268,17 @@ namespace NostalgiaEngine.RasterizerPipeline
             right = Indices[2];
 
 
-            if(VBO.FrameProcessedVertices[left].X > VBO.FrameProcessedVertices[middle].X)
+            if(VBO.ProcessedVertices[left].X > VBO.ProcessedVertices[middle].X)
             {
                 SwapInt(ref left, ref middle);
             }
 
-            if (VBO.FrameProcessedVertices[middle].X > VBO.FrameProcessedVertices[right].X)
+            if (VBO.ProcessedVertices[middle].X > VBO.ProcessedVertices[right].X)
             {
                 SwapInt(ref middle, ref right);
             }
 
-            if (VBO.FrameProcessedVertices[left].X > VBO.FrameProcessedVertices[middle].X)
+            if (VBO.ProcessedVertices[left].X > VBO.ProcessedVertices[middle].X)
             {
                 SwapInt(ref left, ref middle);
             }
