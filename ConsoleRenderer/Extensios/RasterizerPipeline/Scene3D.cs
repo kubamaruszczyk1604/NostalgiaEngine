@@ -166,8 +166,6 @@ namespace NostalgiaEngine.RasterizerPipeline
                 mesh.FrameProcessedVertices[i].Vert2Camera = -mesh.FrameProcessedVertices[i].Position.Normalized;
                 mesh.FrameProcessedVertices[i].UV = mesh.ModelVertices[i].UV;
                 mesh.FrameProcessedVertices[i].Position = (m_Camera.Projection) * mesh.FrameProcessedVertices[i].Position;
-
-                //mesh.FrameProcessedVertices[i].WDivide();
             }
 
             //Projection space
@@ -175,35 +173,25 @@ namespace NostalgiaEngine.RasterizerPipeline
             {
                 Triangle tri = mesh.ModelTriangles[i];
                 tri.TransformedNormal = NEMatrix4x4.RemoveTranslation(m_Camera.View) * model.Transform.RotationMat * mesh.ModelTriangles[i].ModelNormal;
+                //if (FacingAway(tri)) continue;
                 List<Triangle> nearClipped = ClipNear(tri, mesh);
                 foreach (Triangle triangle in nearClipped)
-                {
-                    //triangle.WDivide();
-
-
-                    //triangle.CalculateEdges();
-                    //if (IsOutsideFrustum(triangle)) continue;
-                   // triangle.TransformedNormal = NEMatrix4x4.RemoveTranslation(m_Camera.View) * model.Transform.RotationMat * mesh.ModelTriangles[i].ModelNormal;
-                    // if (FacingAway(triangle)) continue;
+                {    
                     mesh.TempTriangles.Add(triangle);
-
-
-                   // DoClipping(triangle, mesh);
                 }
-                //m_RenderedTriangleCount++;
 
-                //mesh.TempTriangles.Add(triangle);
             }
             for (int i = 0; i < mesh.TempTriangles.Count; ++i)
             {
                 Triangle triangle = mesh.TempTriangles[i];
+                
                 triangle.WDivide();
 
 
                 triangle.CalculateEdges();
             }
 
-                m_RenderedTriangleCount += mesh.TempTriangles.Count;
+            m_RenderedTriangleCount += mesh.TempTriangles.Count;
             NEScreenBuffer.ClearColor(0);
             m_DepthBuffer.Clear();
 
@@ -348,10 +336,7 @@ namespace NostalgiaEngine.RasterizerPipeline
         {
             List<Vertex> vertices = mesh.FrameProcessedVertices;
             List<Triangle> newTriangles = new List<Triangle>(4);
-
-
-
-            int outCount = CheckNear(inTriangle, mesh);
+            int outCount = CheckBoundry(inTriangle, mesh, Axis.Z , 0.01f, CompFun.Less);
             if(outCount == 0)
             {
                 newTriangles.Add(inTriangle);
@@ -369,15 +354,14 @@ namespace NostalgiaEngine.RasterizerPipeline
                 int vIn1I = INS[1];
 
 
-                PlaneLineIntersectionManifest m1;
-                bool p1 = NEMathHelper.FindPlaneLineIntersection(vertices[vOutI].Position, vertices[vIn0I].Position,
-                    new NEVector4(0.0f, 0.0f, 0.1f), NEVector4.Forward, out m1);
+                PlaneLineIntersectionManifest m1 = NEMathHelper.FindPlaneLineIntersection(vertices[vOutI].Position, vertices[vIn0I].Position,
+                    new NEVector4(0.0f, 0.0f, 0.01f), NEVector4.Forward);
 
                 Vertex new0 = Vertex.Lerp(vertices[vOutI], vertices[vIn0I], m1.t);
 
 
-                bool p2 = NEMathHelper.FindPlaneLineIntersection(vertices[vOutI].Position, vertices[vIn1I].Position,
-                      new NEVector4(0.0f, 0.0f, 0.1f), NEVector4.Forward, out m1);
+                m1 = NEMathHelper.FindPlaneLineIntersection(vertices[vOutI].Position, vertices[vIn1I].Position,
+                      new NEVector4(0.0f, 0.0f, 0.01f), NEVector4.Forward);
 
                 Vertex new1 = Vertex.Lerp(vertices[vOutI], vertices[vIn1I], m1.t);
 
@@ -400,15 +384,14 @@ namespace NostalgiaEngine.RasterizerPipeline
                 int vOut1I = OUTS[1];
                 int vInI = INS[0];
 
-                PlaneLineIntersectionManifest m1;
-                NEMathHelper.FindPlaneLineIntersection(vertices[vOut0I].Position, vertices[vInI].Position,
-                    new NEVector4(0.0f, 0.0f, 0.1f), NEVector4.Forward, out m1);
+                PlaneLineIntersectionManifest m1 = NEMathHelper.FindPlaneLineIntersection(vertices[vOut0I].Position, vertices[vInI].Position,
+                    new NEVector4(0.0f, 0.0f, 0.01f), NEVector4.Forward);
 
                 Vertex new0 = Vertex.Lerp(vertices[vOut0I], vertices[vInI], m1.t);
 
 
-                NEMathHelper.FindPlaneLineIntersection(vertices[vOut1I].Position, vertices[vInI].Position,
-                    new NEVector4(0.0f, 0.0f, 0.1f), NEVector4.Forward, out m1);
+                m1 = NEMathHelper.FindPlaneLineIntersection(vertices[vOut1I].Position, vertices[vInI].Position,
+                    new NEVector4(0.0f, 0.0f, 0.01f), NEVector4.Forward);
 
                 Vertex new1 = Vertex.Lerp(vertices[vOut1I], vertices[vInI], m1.t);
                 vertices.Add(new0);
@@ -426,54 +409,45 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         int[] INS = new int[3];
         int[] OUTS = new int[3];
-        int CheckNear(Triangle triangle, Mesh mesh)
+        int CheckBoundry(Triangle triangle, Mesh mesh, Axis axis, float treshold, CompFun compFun)
         {
-            int inI = 0;
-            int outI = 0;
-            int iA = triangle.Indices[0];
-            int iB = triangle.Indices[1];
-            int iC = triangle.Indices[2];
-            Vertex A = mesh.FrameProcessedVertices[iA];
-            Vertex B = mesh.FrameProcessedVertices[iB];
-            Vertex C = mesh.FrameProcessedVertices[iC];
+            bool checkGreater = compFun == CompFun.Greater;
+            int inI = 0; int outI = 0;
+            Vertex A = mesh.FrameProcessedVertices[triangle.Indices[0]];
+            Vertex B = mesh.FrameProcessedVertices[triangle.Indices[1]];
+            Vertex C = mesh.FrameProcessedVertices[triangle.Indices[2]];
 
-            if (A.Position.Z < 0.1f)
+            if ((A.Position.Data[(int)axis] < treshold) ^ checkGreater)
             {
                 OUTS[outI] = triangle.Indices[0];
                 outI++;
-
             }
             else
             {
-               
                 INS[inI] = triangle.Indices[0];
                 inI++;
             }
 
-            if (B.Position.Z < 0.1f)
+            if ((B.Position.Data[(int)axis] < treshold) ^ checkGreater)
             {
                 OUTS[outI] = triangle.Indices[1];
                 outI++;
-                
             }
             else
             {
                 INS[inI] = triangle.Indices[1];
-                inI++;
-                
+                inI++; 
             }
 
-            if (C.Position.Z < 0.1f)
+            if ((C.Position.Data[(int)axis] < treshold) ^ checkGreater)
             {
                 OUTS[outI] = triangle.Indices[2];
                 outI++;
-                
             }
             else
             {
                 INS[inI] = triangle.Indices[2];
                 inI++;
-                
             }
             return outI;
         }
@@ -482,22 +456,22 @@ namespace NostalgiaEngine.RasterizerPipeline
         {
             Intersection ret = new Intersection();
             AB = null; AC = null; BC = null;
-            PlaneLineIntersectionManifest mAC;
-            if (NEMathHelper.FindPlaneLineIntersection(inTriangle.A.Position, inTriangle.C.Position, p, d, out mAC))
+            PlaneLineIntersectionManifest mAC = NEMathHelper.FindPlaneLineIntersection(inTriangle.A.Position, inTriangle.C.Position, p, d);
+            if (mAC.Intersected)
             {
                 ret.AC = true;
                 AC = Vertex.Lerp(inTriangle.A, inTriangle.C, mAC.t);
             }
 
-            PlaneLineIntersectionManifest mBC;
-            if (NEMathHelper.FindPlaneLineIntersection(inTriangle.B.Position, inTriangle.C.Position, p, d, out mBC))
+            PlaneLineIntersectionManifest mBC = NEMathHelper.FindPlaneLineIntersection(inTriangle.B.Position, inTriangle.C.Position, p, d);
+            if (mBC.Intersected)
             {
                 BC = Vertex.Lerp(inTriangle.B, inTriangle.C, mBC.t);
                 ret.BC = true;
             }
 
-            PlaneLineIntersectionManifest mAB;
-            if (NEMathHelper.FindPlaneLineIntersection(inTriangle.A.Position, inTriangle.B.Position, p, d, out mAB))
+            PlaneLineIntersectionManifest mAB = NEMathHelper.FindPlaneLineIntersection(inTriangle.A.Position, inTriangle.B.Position, p, d);
+            if (mAB.Intersected)
             {
                 AB = Vertex.Lerp(inTriangle.A, inTriangle.B, mAB.t);
                 ret.AB = true;

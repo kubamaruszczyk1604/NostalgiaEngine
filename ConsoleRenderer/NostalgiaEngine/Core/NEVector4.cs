@@ -8,6 +8,7 @@ namespace NostalgiaEngine.Core
 {
     public struct NEVector4
     {
+        public float[] Data { get { return new float[] { X, Y, Z, W }; } }
         public float X { get; set; }
         public float Y { get; set; }
         public float Z { get; set; }
@@ -145,5 +146,5 @@ namespace NostalgiaEngine.Core
         static public NEVector4[] Axes = new NEVector4[] { Left, Right, Up, Down, Forward, Back };
     }
 
-     public enum Axis { Left = 0, Right = 1, Up = 2, Down = 3, Forward = 4, Back = 5  }
+     public enum Axis { X = 0, Y = 1, Z = 2 }
 }

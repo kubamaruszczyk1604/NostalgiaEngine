@@ -136,36 +136,33 @@ namespace NostalgiaEngine.Core
 
         }
 
-        static public bool FindPlaneLineIntersection(NEVector4 l0, NEVector4 l1, NEVector4 p0, NEVector4 n, out PlaneLineIntersectionManifest m)
+        static public PlaneLineIntersectionManifest FindPlaneLineIntersection(NEVector4 l0, NEVector4 l1, NEVector4 p0, NEVector4 n)
         {
-            //l0.W = 0;
-            //l1.W = 0;
-            //p0.W = 0;
-            //n.W = 0;
-            //l0.Z = l0.W;
-            //l1.Z = l1.W;
-            l0.W = 0;
-            l1.W = 0;
-            p0.W = 0;
-            n.W = 0;
-            m = new PlaneLineIntersectionManifest();
+            l0.W = 0; l1.W = 0; p0.W = 0; n.W = 0;
+            PlaneLineIntersectionManifest m = new PlaneLineIntersectionManifest();
             if (!Find3DLineEquation(l0,l1, out m.LineNormal, out m.LineLength))
             {
-                return false;
+                m.Intersected = false;
+                return m;
             }
             float numerator = NEVector4.Dot(p0 - l0, n);
             float denominator = NEVector4.Dot(m.LineNormal, n);
 
             if(denominator == 0)
             {
-                return false;
+                m.Intersected = false;
+                return m;
             }
 
             m.IntersectionScalar = numerator / denominator;
             m.t = m.IntersectionScalar / m.LineLength;
-            if (m.t >= 1.0f || m.t <= 0.0f) return false;
-            return true;
-            
+            if (m.t >= 1.0f || m.t <= 0.0f)
+            {
+                m.Intersected = false;
+                return m;
+            }
+            m.Intersected = true;
+            return m;
         }
 
 
@@ -272,11 +269,14 @@ namespace NostalgiaEngine.Core
 
     }
 
+    public enum CompFun { Less = 0, Greater = 1}
+
     public struct PlaneLineIntersectionManifest
     {
        public NEVector4 LineNormal;
        public float LineLength;
        public float IntersectionScalar;
        public float t;
+        public bool Intersected; 
     }
 }

@@ -71,7 +71,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             m_Position.X /= posDiv;
             m_Position.Y /= posDiv;
             m_Position.Z /= posDiv;
-            m_Position.Z *= signZ;
+            //m_Position.Z *= signZ;
             m_UVs.X /= posDiv;
             m_UVs.Y /= posDiv;
             ZInViewSpace = m_Position.W;
