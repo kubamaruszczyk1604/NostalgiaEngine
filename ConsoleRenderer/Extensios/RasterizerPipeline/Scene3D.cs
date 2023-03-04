@@ -63,13 +63,13 @@ namespace NostalgiaEngine.RasterizerPipeline
 
             m_TestSkybox = new Skybox("c:/test/skybox3");
 
-            Mesh cubeMesh = GenerateCube(0.0f, 0.0f, 0f, 15);
-            Mesh floorMesh = GenerateSquareFloor(0.0f, -0.3f,1.0f);
+            Mesh cubeMesh = GenerateCube(0.0f, 0.0f, 0f, 11);
+            Mesh floorMesh = GenerateSquareFloor(0.0f, -1.3f,1.0f);
             Mesh teapotMesh = NEObjLoader.LoadObj("C:/Users/Kuba/Desktop/tst/teapot.obj");
             var luma = ResourceManager.Instance.GetLumaTexture("C:/test/ruler/luma.buf");
             //Model cubeModel = new Model(cubeMesh, luma);
-            Model cubeModel = new Model(GenerateSquare(0.0f, 0.0f, 0.0f), luma);
-            cubeModel.Transform.LocalPosition = new NEVector4(0.9f, 0.0f, 4.1f);
+            Model cubeModel = new Model(/*GenerateSquare(0.0f, 0.0f, 0.0f)*/ cubeMesh, luma);
+            cubeModel.Transform.LocalPosition = new NEVector4(0.9f, 0.0f, 1.0f);
 
 
             Model floorModel = new Model(floorMesh, luma);
@@ -317,10 +317,10 @@ namespace NostalgiaEngine.RasterizerPipeline
 
                     float t = ((float)y / span) * coeff + tOffset;
 
-                    float depthBottom = (1.0f - manifest.bottom_t) * manifest.bottom_P0.ZInViewSpace + manifest.bottom_t * manifest.bottom_P1.ZInViewSpace;
-                    float depthTop = (1.0f - manifest.top_t) * manifest.top_P0.ZInViewSpace + manifest.top_t * manifest.top_P1.ZInViewSpace;
+                    float depthBottom = (1.0f - manifest.bottom_t) * manifest.bottom_P0.Z+ manifest.bottom_t * manifest.bottom_P1.Z;
+                    float depthTop = (1.0f - manifest.top_t) * manifest.top_P0.Z + manifest.top_t * manifest.top_P1.Z;
                     float fragmentDepth = (1.0f - t) * depthTop + t * depthBottom;
-                    fragmentDepth *= m_Camera.InverseFar;
+                    //fragmentDepth *= m_Camera.InverseFar;
 
                     if (fragmentDepth > 1.0f || fragmentDepth <= 0)
                     {
@@ -471,7 +471,7 @@ namespace NostalgiaEngine.RasterizerPipeline
         private Mesh GenerateSquareFloor(float x, float y, float z)
         {
             Mesh mesh = new Mesh();
-            float size = 0.55f;
+            float size = 1.55f;
             mesh.AddVertex(new Vertex(-size + x, y, -size + z, 0.0f, 0.0f));
             mesh.AddVertex(new Vertex(-size + x, y, size + z, 0.0f, 1.0f));
             mesh.AddVertex(new Vertex(size + x, y, size  + z, 1.0f, 1.0f));
