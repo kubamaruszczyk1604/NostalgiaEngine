@@ -8,7 +8,7 @@ using NostalgiaEngine.Core;
 namespace NostalgiaEngine.RasterizerPipeline
 {
     public enum RejectCriteria { LessThan = 0, GreaterThan = 1 }
-    class ClipPlane
+   public class ClipPlane
     {
         public NEPlane Plane { get; }
         public float Treshold { get; }
@@ -38,7 +38,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             }
             else if(Axis == Axis.Y)
             {
-                if(comparison == RejectCriteria.GreaterThan) // bottom plane
+                if(comparison == RejectCriteria.LessThan) // bottom plane
                 {
                     p = NEVector4.Down;
                     n = NEVector4.Up;
@@ -56,7 +56,7 @@ namespace NostalgiaEngine.RasterizerPipeline
                 {
                     p = NEVector4.Forward;
                     n = NEVector4.Back;
-                    Treshold = p.X;
+                    Treshold = p.Z;
                 }
                 else
                 {
