@@ -112,6 +112,16 @@ namespace NostalgiaEngine.Core
             return a + (b - a) * t;
         }
 
+
+        public static NEVector4 LerpInvW(NEVector4 a, NEVector4 b, float t)
+        {
+            a.W = 1.0f / a.W;
+            b.W = 1.0f / b.W;
+           NEVector4 output =  a + (b - a) * t;
+            output.W = 1.0f / output.W;
+            return output;
+        }
+
         static public NEVector4 operator +(NEVector4 lhs, NEVector4 rhs)
         {
             return new NEVector4(lhs.X + rhs.X, lhs.Y + rhs.Y, lhs.Z + rhs.Z, lhs.W + rhs.W);

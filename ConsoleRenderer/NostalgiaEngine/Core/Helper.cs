@@ -114,7 +114,9 @@ namespace NostalgiaEngine.Core
         static public void Find2DLineEquation(NEVector2 p1, NEVector2 p2, out float a, out float c)
         {
             //gradient
-            a = (p2.Y - p1.Y) / ((p2.X - p1.X)+0.01f);
+            float den = p2.X - p1.X;
+            //den = NEMathHelper.Abs(den) >= 0.001f ? den : 0.001f;
+            a = (p2.Y - p1.Y) / ((den));
             // y = ax + c, so c = y -ax
             c = p1.Y - p1.X * a; // p2.Y - p2.X*a would also be valid
            

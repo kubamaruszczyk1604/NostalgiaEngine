@@ -46,28 +46,28 @@ namespace NostalgiaEngine.RasterizerPipeline
         }
 
 
-        public void WDivide()
+        public void ZDivide()
         {
-            VBO.ProcessedVertices[Indices[0]].WDivide();
-            VBO.ProcessedVertices[Indices[1]].WDivide();
-            VBO.ProcessedVertices[Indices[2]].WDivide();
+            VBO.ProcessedVertices[Indices[0]].ZDivide();
+            VBO.ProcessedVertices[Indices[1]].ZDivide();
+            VBO.ProcessedVertices[Indices[2]].ZDivide();
         }
 
 
         public void WDivide(NEMatrix4x4 proj)
         {
-            if (!VBO.ProcessedVertices[Indices[0]].m_WDividedFlag)
+            if (!VBO.ProcessedVertices[Indices[0]].m_ZDividedFlag)
                 VBO.ProcessedVertices[Indices[0]].Position = proj * VBO.ProcessedVertices[Indices[0]].Position;
 
-            if (!VBO.ProcessedVertices[Indices[1]].m_WDividedFlag)
+            if (!VBO.ProcessedVertices[Indices[1]].m_ZDividedFlag)
                 VBO.ProcessedVertices[Indices[1]].Position = proj * VBO.ProcessedVertices[Indices[1]].Position;
 
-            if (!VBO.ProcessedVertices[Indices[2]].m_WDividedFlag)
+            if (!VBO.ProcessedVertices[Indices[2]].m_ZDividedFlag)
                 VBO.ProcessedVertices[Indices[2]].Position = proj * VBO.ProcessedVertices[Indices[2]].Position;
 
-            VBO.ProcessedVertices[Indices[0]].WDivide();
-            VBO.ProcessedVertices[Indices[1]].WDivide();
-            VBO.ProcessedVertices[Indices[2]].WDivide();
+            VBO.ProcessedVertices[Indices[0]].ZDivide();
+            VBO.ProcessedVertices[Indices[1]].ZDivide();
+            VBO.ProcessedVertices[Indices[2]].ZDivide();
         }
 
         public void DoLeftSort()
@@ -85,17 +85,15 @@ namespace NostalgiaEngine.RasterizerPipeline
             B = VBO.ProcessedVertices[LeftSortedIndices[1]];
             C = VBO.ProcessedVertices[LeftSortedIndices[2]];
 
-
             AB = new NEEdge();
             NEMathHelper.Find2DLineEquation(A.Position.XY, B.Position.XY, out AB.a, out AB.c);
-
 
             AC = new NEEdge();
             NEMathHelper.Find2DLineEquation(A.Position.XY, C.Position.XY, out AC.a, out AC.c);
 
-
             BC = new NEEdge();
             NEMathHelper.Find2DLineEquation(B.Position.XY, C.Position.XY, out BC.a, out BC.c);
+
 
         }
 
@@ -186,20 +184,17 @@ namespace NostalgiaEngine.RasterizerPipeline
         //}
 
 
-        public void CreateIntersectionManifest(float x, out ScanlineIntersectionManifest manifest)
+        public void ComputeScanlineIntersection(float x, out ScanlineIntersectionManifest manifest)
         {
             manifest = new ScanlineIntersectionManifest();
             float yAC = AC.a * x + AC.c;
 
             manifest.Y1 = yAC;
 
+            float denCA = (C.X - A.X);
+            denCA = NEMathHelper.Abs(denCA) >= 0.01f ? denCA : 0.01f;
+            float t_AC = (x - A.X) / denCA;
 
-            float t_AC = (x - A.X) / (C.X - A.X);
-
-            //NEVector2 vc = new NEVector2(x, 0.0f);
-            //NEVector2 Avc = new NEVector2(A.X, A.Z);
-            //NEVector2 Bvc = new NEVector2(C.X, C.Z);
-            //t_AC = (vc - Avc).Length / (Bvc - Avc).Length;
 
             float t_Other = 0.0f;
 
@@ -210,25 +205,19 @@ namespace NostalgiaEngine.RasterizerPipeline
             {
                 //AB is other 
                 manifest.Y0 = AB.a * x + AB.c;
-                t_Other = (x - A.X) / (B.X - A.X);
-
-                //NEVector2 v = new NEVector2(x, 0.0f);
-                //NEVector2 Av = new NEVector2(A.X, A.Z);
-                //NEVector2 Bv = new NEVector2(B.X, B.Z);
-
-                //t_Other = (v - Av).Length / (Bv - Av).Length;
+                float denBA = (B.X - A.X);
+                denBA = NEMathHelper.Abs(denBA) >= 0.01f ? denBA : 0.01f;
+                t_Other = (x - A.X) / denBA;
 
             }
             else
             {
                 //BC is other
                 manifest.Y0 = BC.a * x + BC.c;
-                t_Other = (x - B.X) / (C.X - B.X);
+                float denCB = (C.X - B.X);
+                denCB = NEMathHelper.Abs(denCB) >= 0.01f ? denCB : 0.01f;
+                t_Other = (x - B.X) / denCB;
 
-                //NEVector2 v = new NEVector2(x, 0);
-                //NEVector2 Av = new NEVector2(B.X, B.Z);
-                //NEVector2 Bv = new NEVector2(C.X, C.Z);
-                //t_Other = (v - Av).Length / (Bv - Av).Length;
                 otherP0 = B;
                 otherP1 = C;
             }

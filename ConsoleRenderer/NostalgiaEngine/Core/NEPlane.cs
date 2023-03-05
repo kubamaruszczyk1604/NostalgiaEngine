@@ -41,7 +41,7 @@ namespace NostalgiaEngine.Core
 
             m.Magnitude = numerator / denominator;
             m.MagnitudeNormalized = m.Magnitude / m.RayLength;
-            if (m.MagnitudeNormalized >= 1.0f || m.MagnitudeNormalized <= 0.0f)
+            if (m.MagnitudeNormalized >1.0f || m.MagnitudeNormalized < 0.0f)
             {
                 m.Intersected = false;
                 return m;

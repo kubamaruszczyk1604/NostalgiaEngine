@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NostalgiaEngine.Core;
+﻿using NostalgiaEngine.Core;
+using System;
 
 namespace NostalgiaEngine.RasterizerPipeline
 {
@@ -27,20 +23,20 @@ namespace NostalgiaEngine.RasterizerPipeline
         public float ZInViewSpace { get; private set; }
         public NEVector4 Vert2Camera { get; set; }
 
-        public  bool m_WDividedFlag;
+        public  bool m_ZDividedFlag;
 
         public Vertex(float x, float y, float z)
         {
             m_Position = new NEVector4(x, y, z, 1.0f);
             m_UVs = new NEVector2(0.0f, 0.0f);
-            m_WDividedFlag = false;
+            m_ZDividedFlag = false;
         }
 
         public Vertex(float x, float y, float z, float u, float v)
         {
             m_Position = new NEVector4(x, y, z, 1.0f);
             m_UVs = new NEVector2(u, v);
-            m_WDividedFlag = false;
+            m_ZDividedFlag = false;
         }
 
         public static void Swap(ref Vertex v1, ref Vertex v2)
@@ -61,11 +57,11 @@ namespace NostalgiaEngine.RasterizerPipeline
             m_UVs = v.UV;
         }
 
-        public void WDivide()
+        public void ZDivide()
         {
-            if (m_WDividedFlag) return;
+            if (m_ZDividedFlag) return;
 
-            m_WDividedFlag = true; 
+            m_ZDividedFlag = true; 
             float posDiv = m_Position.W /*<= 0.0f ? 0.001f : m_Position.W*/;
             float signZ = Math.Sign(m_Position.W);
             m_Position.X /= posDiv;
@@ -75,7 +71,16 @@ namespace NostalgiaEngine.RasterizerPipeline
             m_UVs.X /= posDiv;
             m_UVs.Y /= posDiv;
             ZInViewSpace = m_Position.W;
-            m_Position.W = 1.0f/posDiv;
+            m_Position.W = 1.0f / posDiv;
+        }
+
+        public void WDivide()
+        {
+            //ZInViewSpace = m_Position.W;
+
+            //m_UVs.X /= ZInViewSpace;
+            //m_UVs.Y /= ZInViewSpace;
+            //m_Position.W = 1.0f / ZInViewSpace;
         }
 
         static public Vertex Lerp(Vertex v0, Vertex v1, float t)
@@ -89,7 +94,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             Vertex ret = new Vertex(0, 0, 0);
             ret.m_Position = pos;
             ret.m_UVs = uvs;
-            ret.ZInViewSpace = zViewSpace;
+           // ret.ZInViewSpace = zViewSpace;
             ret.Vert2Camera = vertToCam;
             return ret;
         }

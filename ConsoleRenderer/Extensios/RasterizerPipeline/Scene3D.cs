@@ -84,7 +84,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             //m_Models.Add(teapotModel);
             m_Models.Add(floorModel);
 
-            m_Camera = new Camera(ScreenWidth, ScreenHeight, 1.05f, 0.1f, 10.0f);
+            m_Camera = new Camera(ScreenWidth, ScreenHeight, 1.05f, 0.1f, 100.0f);
             m_Camera.Transform.LocalPosition = new NEVector4(0.0f, 0.0f, -2.0f);
 
 
@@ -183,7 +183,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             for (int i = 0; i < mesh.TempTriangleContainer.Count; ++i)
             {
                 Triangle triangle = mesh.TempTriangleContainer[i];
-                triangle.WDivide();
+                triangle.ZDivide();
                 triangle.CalculateEdges();
                 
             }
@@ -195,12 +195,17 @@ namespace NostalgiaEngine.RasterizerPipeline
                 List<Triangle> RightClipped = Clipping.ClipTrianglesAgainstPlane(LeftClipped, mesh, ClipPlane.Right);
                 List<Triangle> BottomClipped = Clipping.ClipTrianglesAgainstPlane(RightClipped, mesh, ClipPlane.Bottom);
                 List<Triangle> TopClipped = Clipping.ClipTrianglesAgainstPlane(BottomClipped, mesh, ClipPlane.Top);
-                List<Triangle> FarClipped = Clipping.ClipTrianglesAgainstPlane(TopClipped, mesh, ClipPlane.Far);
+                List<Triangle> FarClipped = Clipping.ClipTrianglesAgainstPlane(BottomClipped, mesh, ClipPlane.Far);
 
                 mesh.ProcessedTriangles.AddRange(FarClipped);
             }
 
+            for (int i = 0; i < mesh.ModelVertices.Count; ++i)
+            {
 
+               // mesh.ProcessedVertices[i].ZDivide();
+
+            }
             m_RenderedTriangleCount += mesh.ProcessedTriangles.Count;
             NEScreenBuffer.ClearColor(0);
             m_DepthBuffer.Clear();
@@ -283,7 +288,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 
                 //float dot = NEVector4.Dot(tr.TransformedNormal, new NEVector4(0.0f, 0.0f, -1.0f, 0.0f));
                 ScanlineIntersectionManifest manifest;
-                tr.CreateIntersectionManifest(u, out manifest);
+                tr.ComputeScanlineIntersection(u, out manifest);
 
                 //go from normailzed device coordinates to screen space
                 float y0 = (-manifest.Y0 + 1.0f) * 0.5f;
@@ -315,7 +320,7 @@ namespace NostalgiaEngine.RasterizerPipeline
                 for (int y = 0; y < span; ++y)
                 {
 
-                    float t = ((float)y / span) * coeff + tOffset;
+                    float t = ((float)y / span)* coeff + tOffset;
 
                     float depthBottom = (1.0f - manifest.bottom_t) * manifest.bottom_P0.Z+ manifest.bottom_t * manifest.bottom_P1.Z;
                     float depthTop = (1.0f - manifest.top_t) * manifest.top_P0.Z + manifest.top_t * manifest.top_P1.Z;
@@ -471,7 +476,7 @@ namespace NostalgiaEngine.RasterizerPipeline
         private Mesh GenerateSquareFloor(float x, float y, float z)
         {
             Mesh mesh = new Mesh();
-            float size = 1.55f;
+            float size = 10.55f;
             mesh.AddVertex(new Vertex(-size + x, y, -size + z, 0.0f, 0.0f));
             mesh.AddVertex(new Vertex(-size + x, y, size + z, 0.0f, 1.0f));
             mesh.AddVertex(new Vertex(size + x, y, size  + z, 1.0f, 1.0f));
