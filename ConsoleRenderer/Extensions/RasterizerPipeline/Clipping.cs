@@ -9,7 +9,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 {
     public class Clipping
     {
-
+        static public bool DebugMode { get; set; }
         static public void VertsToTris(Mesh mesh, Triangle triangle, int va, int vb, int vc, int vd, List<Triangle> triangleStream)
         {
             List<Vertex> vertices = mesh.ProcessedVertices;
@@ -23,12 +23,12 @@ namespace NostalgiaEngine.RasterizerPipeline
 
 
             Triangle tr1 = new Triangle(va, v1, v2, mesh, triangle.ModelNormal, triangle.TransformedNormal);
-            tr1.ColorAttrib = 2;
+            tr1.ColorAttrib =  DebugMode ? 2 : triangle.ColorAttrib;
             tr1.CalculateEdges();
             triangleStream.Add(tr1);
 
             Triangle tr2 = new Triangle(va, v2, vrt[0], mesh, triangle.ModelNormal, triangle.TransformedNormal);
-            tr2.ColorAttrib = 1;
+            tr2.ColorAttrib = DebugMode ? 1 : triangle.ColorAttrib;
             tr2.CalculateEdges();
             triangleStream.Add(tr2);
         }
@@ -41,7 +41,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             else v2 = vb;
 
             Triangle tr = new Triangle(va, v1, v2, mesh, triangle.ModelNormal, triangle.TransformedNormal);
-            tr.ColorAttrib = 9;
+            tr.ColorAttrib = DebugMode ? 9 : triangle.ColorAttrib;
             tr.CalculateEdges();
             triangleStream.Add(tr);
         }

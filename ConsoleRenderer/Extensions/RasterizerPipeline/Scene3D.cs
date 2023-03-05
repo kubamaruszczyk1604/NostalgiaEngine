@@ -63,12 +63,11 @@ namespace NostalgiaEngine.RasterizerPipeline
 
             m_TestSkybox = new Skybox("c:/test/skybox3");
 
-            Mesh cubeMesh = GenerateCube(0.0f, 0.0f, 0f, 11);
-            Mesh floorMesh = GenerateSquareFloor(0.0f, -1.3f,1.0f);
+            Mesh cubeMesh = GeometryGenerator.GenerateCube(1.0f, 1.0f, 1.0f, NEVector4.Zero, 7);
+            Mesh floorMesh = GeometryGenerator.CreateHorizontalQuad(10.0f, 10.0f, new NEVector4(0.0f, -1.3f,0.0f));
             Mesh teapotMesh = NEObjLoader.LoadObj("C:/Users/Kuba/Desktop/tst/teapot.obj");
             var luma = ResourceManager.Instance.GetLumaTexture("C:/test/ruler/luma.buf");
-            //Model cubeModel = new Model(cubeMesh, luma);
-            Model cubeModel = new Model(/*GenerateSquare(0.0f, 0.0f, 0.0f)*/ cubeMesh, luma);
+            Model cubeModel = new Model(cubeMesh, luma);
             cubeModel.Transform.LocalPosition = new NEVector4(0.9f, 0.0f, 1.0f);
 
 
@@ -90,7 +89,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 
             NEColorManagement.SetPalette(m_Palette);
             //NEColorManagement.SetSpectralPalette1();
-
+            Clipping.DebugMode = true;
             return base.OnLoad();
         }
 
@@ -449,116 +448,6 @@ namespace NostalgiaEngine.RasterizerPipeline
             return mesh;
         }
 
-
-        private Mesh GenerateSquare(float x, float y, float z)
-        {
-            Mesh mesh = new Mesh();
-            float size = 0.55f;
-            //m_VBO.AddVertex(new Vertex(-size+x,-size+y, depth,0.0f,1.0f));
-            //m_VBO.AddVertex(new Vertex(-size+x, size+ y, depth, 0.0f, 0.0f));
-            //m_VBO.AddVertex(new Vertex(size + x, size + y, depth,1.0f,0.0f));
-            //m_VBO.AddVertex(new Vertex(size + x, -size +y, depth,1.0f,1.0f));
-            mesh.AddVertex(new Vertex(-size * 1 + x, -size * 1+ y, z, 0.0f, 0.0f));
-            mesh.AddVertex(new Vertex(-size * 1 + x, size * 1 + y, z, 0.0f, 1.0f));
-            mesh.AddVertex(new Vertex(size * 1 + x, size * 1 + y, z, 1.0f, 1.0f));
-            mesh.AddVertex(new Vertex(size * 1+ x, -size * 1 + y, z, 1.0f, 0.0f));
-
-            mesh.AddTriangle(0, 1, 2);
-            mesh.AddTriangle(0, 2, 3);
-
-            mesh.ModelTriangles[0].ColorAttrib = 10;
-            mesh.ModelTriangles[1].ColorAttrib = 10;
-            return mesh;
-
-        }
-
-
-        private Mesh GenerateSquareFloor(float x, float y, float z)
-        {
-            Mesh mesh = new Mesh();
-            float size = 10.55f;
-            mesh.AddVertex(new Vertex(-size + x, y, -size + z, 0.0f, 0.0f));
-            mesh.AddVertex(new Vertex(-size + x, y, size + z, 0.0f, 1.0f));
-            mesh.AddVertex(new Vertex(size + x, y, size  + z, 1.0f, 1.0f));
-            mesh.AddVertex(new Vertex(size + x, y, -size  + z, 1.0f, 0.0f));
-
-            //mesh.AddVertex(new Vertex(-size + x, -size + y, z, 0.0f, 0.0f));
-            //mesh.AddVertex(new Vertex(-size + x, size + y, z, 0.0f, 1.0f));
-            //mesh.AddVertex(new Vertex(size + x, size + y, z, 1.0f, 1.0f));
-            //mesh.AddVertex(new Vertex(size + x, -size + y, z, 1.0f, 0.0f));
-
-            mesh.AddTriangle(0, 1, 2);
-            mesh.AddTriangle(0, 2, 3);
-
-            mesh.ModelTriangles[0].ColorAttrib = 12;
-            mesh.ModelTriangles[1].ColorAttrib = 12;
-            return mesh;
-
-        }
-
-
-
-
-        private Mesh GenerateCube(float x, float y, float z, int col)
-        {
-            Mesh mesh = new Mesh();
-            float size = 1.25f;
-            mesh.AddVertex(new Vertex(-size + x, -size + y, z - size, 0.0f, 0.0f));
-            mesh.AddVertex(new Vertex(-size + x, size + y, z - size, 0.0f, 1.0f));
-            mesh.AddVertex(new Vertex(size + x, size + y, z - size, 1.0f, 1.0f));
-            mesh.AddVertex(new Vertex(size + x, -size + y, z - size, 1.0f, 0.0f));
-
-
-
-            mesh.AddVertex(new Vertex(-size + x, -size + y, z + size, 1.0f, 0.0f));
-            mesh.AddVertex(new Vertex(-size + x, size + y, z + size, 1.0f, 1.0f));
-            mesh.AddVertex(new Vertex(size + x, size + y, z + size, 0.0f, 1.0f));
-            mesh.AddVertex(new Vertex(size + x, -size + y, z + size, 0.0f, 0.0f));
-
-
-            mesh.AddTriangle(0, 1, 2);
-            mesh.AddTriangle(0, 2, 3);
-
-            mesh.ModelTriangles[0].ColorAttrib = col;
-            mesh.ModelTriangles[1].ColorAttrib = col;
-
-
-            mesh.AddTriangle(4, 6, 5);
-            mesh.AddTriangle(4, 7, 6);
-
-            mesh.ModelTriangles[2].ColorAttrib = col;
-            mesh.ModelTriangles[3].ColorAttrib = col;
-
-
-            mesh.AddTriangle(4, 5, 1);
-            mesh.AddTriangle(4, 1, 0);
-
-            mesh.ModelTriangles[4].ColorAttrib = col;
-            mesh.ModelTriangles[5].ColorAttrib = col;
-
-
-            mesh.AddTriangle(3, 2, 6);
-            mesh.AddTriangle(3, 6, 7);
-
-            mesh.ModelTriangles[6].ColorAttrib = col;
-            mesh.ModelTriangles[7].ColorAttrib = col;
-
-
-
-            mesh.AddTriangle(1, 5, 6);
-            mesh.AddTriangle(1, 6, 2);
-
-            mesh.ModelTriangles[8].ColorAttrib = col;
-            mesh.ModelTriangles[9].ColorAttrib = col;
-
-
-            mesh.AddTriangle(0, 3, 7);
-            mesh.AddTriangle(0, 7, 4);
-
-            mesh.ModelTriangles[10].ColorAttrib = col;
-            mesh.ModelTriangles[11].ColorAttrib = col;
-            return mesh;
-        }
 
     }
 }

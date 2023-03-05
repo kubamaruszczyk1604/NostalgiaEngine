@@ -68,19 +68,20 @@
     <Compile Include="Demos\BandLevelsDemo\BandLevelDemo.cs" />
     <Compile Include="Demos\BandLevelsDemo\TextDemo.cs" />
     <Compile Include="Demos\TextureDisplay\PhotoViewer.cs" />
-    <Compile Include="Extensios\RasterizerPipeline\Clipping.cs" />
-    <Compile Include="Extensios\RasterizerPipeline\Camera.cs" />
-    <Compile Include="Extensios\RasterizerPipeline\ClipPlane.cs" />
-    <Compile Include="Extensios\RasterizerPipeline\Model.cs" />
-    <Compile Include="Extensios\RasterizerPipeline\NEObjLoader.cs" />
+    <Compile Include="Extensions\RasterizerPipeline\Clipping.cs" />
+    <Compile Include="Extensions\RasterizerPipeline\Camera.cs" />
+    <Compile Include="Extensions\RasterizerPipeline\ClipPlane.cs" />
+    <Compile Include="Extensions\RasterizerPipeline\GeometryGenerator.cs" />
+    <Compile Include="Extensions\RasterizerPipeline\Model.cs" />
+    <Compile Include="Extensions\RasterizerPipeline\NEObjLoader.cs" />
     <Compile Include="NostalgiaEngine\Core\NEPlane.cs" />
-    <Compile Include="Extensios\RasterizerPipeline\ResourceManager.cs" />
-    <Compile Include="Extensios\RasterizerPipeline\Scene3D.cs" />
-    <Compile Include="Extensios\RasterizerPipeline\Skybox.cs" />
-    <Compile Include="Extensios\RasterizerPipeline\Transform.cs" />
-    <Compile Include="Extensios\RasterizerPipeline\Triangle.cs" />
-    <Compile Include="Extensios\RasterizerPipeline\Vertex.cs" />
-    <Compile Include="Extensios\RasterizerPipeline\VertexBuffer.cs" />
+    <Compile Include="Extensions\RasterizerPipeline\ResourceManager.cs" />
+    <Compile Include="Extensions\RasterizerPipeline\Scene3D.cs" />
+    <Compile Include="Extensions\RasterizerPipeline\Skybox.cs" />
+    <Compile Include="Extensions\RasterizerPipeline\Transform.cs" />
+    <Compile Include="Extensions\RasterizerPipeline\Triangle.cs" />
+    <Compile Include="Extensions\RasterizerPipeline\Vertex.cs" />
+    <Compile Include="Extensions\RasterizerPipeline\VertexBuffer.cs" />
     <Compile Include="NostalgiaEngine\Core\ColorManagement.cs" />
     <Compile Include="NostalgiaEngine\Core\ColorPalette.cs" />
     <Compile Include="NostalgiaEngine\Core\Fbuffer.cs" />
@@ -113,24 +114,24 @@
     <Compile Include="NostalgiaEngine\GUI\SaveDialog.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Extensios\Raycaster2D\Raycaster.cs" />
+    <Compile Include="Extensions\Raycaster2D\Raycaster.cs" />
     <Compile Include="NostalgiaEngine\Core\Texture16.cs" />
     <Compile Include="NostalgiaEngine\Core\WindowControl.cs" />
     <Compile Include="Demos\TextureDisplay\NETexturePreviewApp.cs" />
-    <Compile Include="Extensios\TextureEditor\TextureEditor.cs" />
+    <Compile Include="Extensions\TextureEditor\TextureEditor.cs" />
     <Compile Include="NostalgiaEngine\GUI\WindowRect.cs" />
-    <Compile Include="Extensios\TextureEditor\MemTex16.cs" />
-    <Compile Include="Extensios\TextureEditor\StepSeries.cs" />
+    <Compile Include="Extensions\TextureEditor\MemTex16.cs" />
+    <Compile Include="Extensions\TextureEditor\StepSeries.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="Demos\BandLevelsDemo\Textures\band\luma.buf" />
     <None Include="Demos\TextureDisplay\ScreenTextures\MainScreen\intro.dat" />
-    <None Include="Extensios\Raycaster2D\Textures\lantern1.tex" />
-    <None Include="Extensios\Raycaster2D\Textures\nt1\color.tex" />
-    <None Include="Extensios\Raycaster2D\Textures\nt1\luma.buf" />
-    <None Include="Extensios\Raycaster2D\Textures\sky\color.tex" />
-    <None Include="Extensios\Raycaster2D\Textures\sky\luma.buf" />
+    <None Include="Extensions\Raycaster2D\Textures\lantern1.tex" />
+    <None Include="Extensions\Raycaster2D\Textures\nt1\color.tex" />
+    <None Include="Extensions\Raycaster2D\Textures\nt1\luma.buf" />
+    <None Include="Extensions\Raycaster2D\Textures\sky\color.tex" />
+    <None Include="Extensions\Raycaster2D\Textures\sky\luma.buf" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
@@ -146,8 +147,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Demos\TextureDisplay\ScreenTextures\MainScreen\intro.res" />
-    <Content Include="Extensios\Raycaster2D\Textures\nt1\palette.txt" />
-    <Content Include="Extensios\Raycaster2D\Textures\sky\palette.txt" />
+    <Content Include="Extensions\Raycaster2D\Textures\nt1\palette.txt" />
+    <Content Include="Extensions\Raycaster2D\Textures\sky\palette.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
