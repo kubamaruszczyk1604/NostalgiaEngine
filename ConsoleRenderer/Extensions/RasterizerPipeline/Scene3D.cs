@@ -64,7 +64,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 
             Model floorModel = new Model(floorMesh, luma);
 
-            Model teapotModel = new Model(teapotMesh);
+            Model teapotModel = new Model(teapotMesh, CullMode.None);
             teapotModel.Transform.ScaleX = 0.4f;
             teapotModel.Transform.ScaleY = 0.4f;
             teapotModel.Transform.ScaleZ = 0.4f;
@@ -79,8 +79,8 @@ namespace NostalgiaEngine.RasterizerPipeline
 
 
             NEColorManagement.SetPalette(m_Palette);
-            //NEColorManagement.SetSpectralPalette1();
-            Clipping.DebugMode = true;
+           // NEColorManagement.SetSpectralPalette1();
+            //Clipping.DebugMode = true;
             return base.OnLoad();
         }
 
@@ -350,7 +350,8 @@ namespace NostalgiaEngine.RasterizerPipeline
                         NEVector4 vDir = vDirTop * (1.0f - t) + vDirBottom * t;
 
                         float dot = NEVector4.Dot3(tr.TransformedNormal, vDir);
-                        dot = NEMathHelper.Clamp(dot, 0.0f, 1.0f);
+                        dot = NEMathHelper.Abs(dot);
+                        //dot = NEMathHelper.Clamp(dot, 0.0f, 1.0f);
 
                         float fragWBottom = (1.0f - manifest.bottom_t) * manifest.bottom_P0.W + manifest.bottom_t * manifest.bottom_P1.W;
                         float fragWTop = (1.0f - manifest.top_t) * manifest.top_P0.W + manifest.top_t * manifest.top_P1.W;
