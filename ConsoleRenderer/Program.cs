@@ -49,7 +49,7 @@ namespace NostalgiaEngineApplication
             PhotoViewer demo = new PhotoViewer(paths);
             BandLevelDemo bld = new BandLevelDemo();
             TextDemo ted = new TextDemo();
-            Scene3D sc = new Scene3D();
+            Renderer3D sc = new Renderer3D();
             engine.Start(sc);
 
 

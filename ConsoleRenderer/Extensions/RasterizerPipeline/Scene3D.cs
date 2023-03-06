@@ -6,18 +6,9 @@ using System.Threading.Tasks;
 using NostalgiaEngine.Core;
 namespace NostalgiaEngine.RasterizerPipeline
 {
-    public class Scene3D : NEScene
+    public class Renderer3D : NEScene
     {
-        //struct Intersection
-        //{
-        //    public bool AB;
-        //    public bool AC;
-        //    public bool BC;
-            
-        //    public bool None { get { return !AB && !AC && !BC; } }
 
-           
-        //}
         // Mesh m_VBO;
         NEDepthBuffer m_DepthBuffer;
 
@@ -63,12 +54,12 @@ namespace NostalgiaEngine.RasterizerPipeline
 
             m_TestSkybox = new Skybox("c:/test/skybox3");
 
-            Mesh cubeMesh = GeometryGenerator.GenerateCube(1.0f, 1.0f, 1.0f, NEVector4.Zero, 7);
+            Mesh cubeMesh = GeometryGenerator.GenerateCube2(1.0f, 1.0f, 1.0f, NEVector4.Zero, 7);
             Mesh floorMesh = GeometryGenerator.CreateHorizontalQuad(10.0f, 10.0f, new NEVector4(0.0f, -1.3f,0.0f));
             Mesh teapotMesh = NEObjLoader.LoadObj("C:/Users/Kuba/Desktop/tst/teapot.obj");
             var luma = ResourceManager.Instance.GetLumaTexture("C:/test/ruler/luma.buf");
-            Model cubeModel = new Model(cubeMesh, luma);
-            cubeModel.Transform.LocalPosition = new NEVector4(0.9f, 0.0f, 1.0f);
+            Model cubeModel = new Model(cubeMesh,CullMode.Front, luma);
+            cubeModel.Transform.LocalPosition = new NEVector4(0.9f, 2.0f, 1.0f);
 
 
             Model floorModel = new Model(floorMesh, luma);
@@ -80,11 +71,11 @@ namespace NostalgiaEngine.RasterizerPipeline
             teapotModel.Transform.LocalPosition = new NEVector4(-1.0f, -1.05f, 1.0f, 1.0f);
 
             m_Models.Add(cubeModel);
-            //m_Models.Add(teapotModel);
+            m_Models.Add(teapotModel);
             m_Models.Add(floorModel);
 
             m_Camera = new Camera(ScreenWidth, ScreenHeight, 1.05f, 0.1f, 100.0f);
-            m_Camera.Transform.LocalPosition = new NEVector4(0.0f, 0.0f, -2.0f);
+            m_Camera.Transform.LocalPosition = new NEVector4(0.0f, 2.0f, -2.0f);
 
 
             NEColorManagement.SetPalette(m_Palette);
@@ -139,13 +130,37 @@ namespace NostalgiaEngine.RasterizerPipeline
 
             if (NEInput.CheckKeyDown(ConsoleKey.UpArrow))
             {
-                m_Camera.Transform.LocalPosition = m_Camera.Transform.LocalPosition + m_Camera.Transform.Forward * dt;
+
+
+
+                if (NEInput.CheckKeyDown(NEKey.Alt))
+                {
+                    m_Camera.Transform.LocalPosition = m_Camera.Transform.LocalPosition + m_Camera.Transform.Up * dt;
+                }
+                else
+                {
+                    m_Camera.Transform.LocalPosition = m_Camera.Transform.LocalPosition + m_Camera.Transform.Forward * dt;
+                }
+               
                 // m_Camera.Transform.RotateX(dt);
             }
             if (NEInput.CheckKeyDown(ConsoleKey.DownArrow))
             {
-                m_Camera.Transform.LocalPosition = m_Camera.Transform.LocalPosition - m_Camera.Transform.Forward * dt;
-               // m_Camera.Transform.RotateX(-dt);
+
+                if (NEInput.CheckKeyDown(NEKey.Alt))
+                {
+                    m_Camera.Transform.LocalPosition = m_Camera.Transform.LocalPosition - m_Camera.Transform.Up* dt;
+                }
+                else
+                {
+                    m_Camera.Transform.LocalPosition = m_Camera.Transform.LocalPosition - m_Camera.Transform.Forward * dt;
+                }
+      
+            }
+
+            if(NEInput.CheckKeyDown(ConsoleKey.W))
+            {
+                m_Camera.Transform.RotateX(-dt);
             }
         }
 
@@ -171,7 +186,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             {
                 Triangle tri = mesh.ModelTriangles[i];
                 tri.TransformedNormal = NEMatrix4x4.RemoveTranslation(m_Camera.View) * model.Transform.RotationMat * mesh.ModelTriangles[i].ModelNormal;
-                //if (FacingAway(tri)) continue;
+                if (CullTest(tri, model.FaceCull)) continue;
                 List<Triangle> nearClipped = Clipping.ClipTriangleAgainstPlane(tri, mesh, ClipPlane.Near);
                 foreach (Triangle triangle in nearClipped)
                 {    
@@ -190,36 +205,30 @@ namespace NostalgiaEngine.RasterizerPipeline
             for (int i = 0; i < mesh.TempTriangleContainer.Count; ++i)
             {
                 Triangle triangle = mesh.TempTriangleContainer[i];
+                if (IsOutsideFrustum(triangle)) continue;
+                //if (FacingAway(triangle)) continue;
                 List<Triangle> LeftClipped = Clipping.ClipTriangleAgainstPlane(triangle, mesh, ClipPlane.Left);
                 List<Triangle> RightClipped = Clipping.ClipTrianglesAgainstPlane(LeftClipped, mesh, ClipPlane.Right);
                 List<Triangle> BottomClipped = Clipping.ClipTrianglesAgainstPlane(RightClipped, mesh, ClipPlane.Bottom);
                 List<Triangle> TopClipped = Clipping.ClipTrianglesAgainstPlane(BottomClipped, mesh, ClipPlane.Top);
-                List<Triangle> FarClipped = Clipping.ClipTrianglesAgainstPlane(BottomClipped, mesh, ClipPlane.Far);
+                List<Triangle> FarClipped = Clipping.ClipTrianglesAgainstPlane(TopClipped, mesh, ClipPlane.Far);
 
                 mesh.ProcessedTriangles.AddRange(FarClipped);
             }
 
-            for (int i = 0; i < mesh.ModelVertices.Count; ++i)
-            {
-
-               // mesh.ProcessedVertices[i].ZDivide();
-
-            }
             m_RenderedTriangleCount += mesh.ProcessedTriangles.Count;
             NEScreenBuffer.ClearColor(0);
             m_DepthBuffer.Clear();
 
         }
 
-
-
-       
+   
 
         bool IsOutsideFrustum(Triangle triangle)
         {
-            float depthA = triangle.A.ZInViewSpace * m_Camera.InverseFar;
-            float depthB = triangle.B.ZInViewSpace * m_Camera.InverseFar;
-            float depthC = triangle.C.ZInViewSpace * m_Camera.InverseFar;
+            float depthA = triangle.A.Z;
+            float depthB = triangle.B.Z;
+            float depthC = triangle.C.Z;
 
             if (depthA < 0.0f && depthB < 0.0f && depthC < 0.0f) return true;
             if (depthA > 1.0f && depthB > 1.0f && depthC > 1.0f) return true;
@@ -245,18 +254,22 @@ namespace NostalgiaEngine.RasterizerPipeline
             return false;
         }
 
-        bool FacingAway(Triangle triangle)
+        bool CullTest(Triangle triangle, CullMode cullMode)
         {
-            triangle.DoLeftSort();
-            NEVector4 vA = -triangle.A.Position.Normalized;
-            NEVector4 vB = -triangle.B.Position.Normalized;
-            NEVector4 vC = -triangle.C.Position.Normalized;
+            if (cullMode == CullMode.None) return false;
+            //NEVector4 vA = -triangle.A.Position.Normalized;
+            //NEVector4 vB = -triangle.B.Position.Normalized;
+            //NEVector4 vC = -triangle.C.Position.Normalized;
 
-            float dotA = NEVector4.Dot(vA, triangle.TransformedNormal);
-            float dotB = NEVector4.Dot(vB, triangle.TransformedNormal);
-            float dotC = NEVector4.Dot(vC, triangle.TransformedNormal);
+            NEVector4 vA = -triangle.VBO.ProcessedVertices[triangle.Indices[0]].Position;
+            NEVector4 vB = -triangle.VBO.ProcessedVertices[triangle.Indices[1]].Position;
+            NEVector4 vC = -triangle.VBO.ProcessedVertices[triangle.Indices[2]].Position;
 
-            return (dotA < -0.1f && dotB < -0.1f && dotC < -0.1f);
+            float dotA = NEVector4.Dot3(vA, triangle.TransformedNormal);
+            float dotB = NEVector4.Dot3(vB, triangle.TransformedNormal);
+            float dotC = NEVector4.Dot3(vC, triangle.TransformedNormal);
+
+            return (dotA < 0.0f && dotB < 0.0f && dotC < 0.0f) ^ (cullMode == CullMode.Front);
         }
 
         public override void OnUpdate(float deltaTime)
@@ -324,7 +337,6 @@ namespace NostalgiaEngine.RasterizerPipeline
                     float depthBottom = (1.0f - manifest.bottom_t) * manifest.bottom_P0.Z+ manifest.bottom_t * manifest.bottom_P1.Z;
                     float depthTop = (1.0f - manifest.top_t) * manifest.top_P0.Z + manifest.top_t * manifest.top_P1.Z;
                     float fragmentDepth = (1.0f - t) * depthTop + t * depthBottom;
-                    //fragmentDepth *= m_Camera.InverseFar;
 
                     if (fragmentDepth > 1.0f || fragmentDepth <= 0)
                     {
@@ -337,7 +349,7 @@ namespace NostalgiaEngine.RasterizerPipeline
                         NEVector4 vDirTop = manifest.top_P0.Vert2Camera * (1.0f - manifest.top_t) + manifest.top_P1.Vert2Camera * manifest.top_t;
                         NEVector4 vDir = vDirTop * (1.0f - t) + vDirBottom * t;
 
-                        float dot = NEVector4.Dot(tr.TransformedNormal, vDir);
+                        float dot = NEVector4.Dot3(tr.TransformedNormal, vDir);
                         dot = NEMathHelper.Clamp(dot, 0.0f, 1.0f);
 
                         float fragWBottom = (1.0f - manifest.bottom_t) * manifest.bottom_P0.W + manifest.bottom_t * manifest.bottom_P1.W;
@@ -356,7 +368,7 @@ namespace NostalgiaEngine.RasterizerPipeline
                         float teX = texCoord.X / fragW;
                         float teY = texCoord.Y / fragW;
                         // dot = 1.0f;
-                        float luma = 0.9f + dot;// * dot;
+                        float luma = 0.2f+ dot;// * dot;
                         if (model.LumaTexture != null)
                         {
                             luma *= model.LumaTexture.FastSample(teX, 1.0f - teY);

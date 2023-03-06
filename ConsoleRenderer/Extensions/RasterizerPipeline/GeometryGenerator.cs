@@ -105,5 +105,90 @@ namespace NostalgiaEngine.RasterizerPipeline
             mesh.ModelTriangles[11].ColorAttrib = col;
             return mesh;
         }
+
+
+        public static Mesh GenerateCube2(float width, float height, float length, NEVector4 orgin, int col)
+        {
+            Mesh mesh = new Mesh();
+            float x = orgin.X;
+            float y = orgin.Y;
+            float z = orgin.Z;
+            //front
+            mesh.AddVertex(new Vertex(-width + x, -height + y, z - length, 0.0f, 0.0f));
+            mesh.AddVertex(new Vertex(-width + x, height + y, z - length, 0.0f, 1.0f));
+            mesh.AddVertex(new Vertex(width + x, height + y, z - length, 1.0f, 1.0f));
+            mesh.AddVertex(new Vertex(width + x, -height + y, z - length, 1.0f, 0.0f));
+
+
+            //back
+            mesh.AddVertex(new Vertex(-width + x, -height + y, z + length, 1.0f, 0.0f));
+            mesh.AddVertex(new Vertex(-width + x, height + y, z + length, 1.0f, 1.0f));
+            mesh.AddVertex(new Vertex(width + x, height + y, z + length, 0.0f, 1.0f));
+            mesh.AddVertex(new Vertex(width + x, -height + y, z + length, 0.0f, 0.0f));
+
+            //left
+            mesh.AddVertex(new Vertex(-width + x, -height + y, z + length, 0.0f, 0.0f));
+            mesh.AddVertex(new Vertex(-width + x, height + y, z + length, 0.0f, 1.0f));
+            mesh.AddVertex(new Vertex(-width + x, height + y, z - length, 1.0f, 1.0f));
+            mesh.AddVertex(new Vertex(-width + x, -height + y, z - length, 1.0f, 0.0f));
+
+            //right
+            mesh.AddVertex(new Vertex(width + x, -height + y, z - length, 0.0f, 0.0f));
+            mesh.AddVertex(new Vertex(width + x, height + y, z - length, 0.0f, 1.0f));
+            mesh.AddVertex(new Vertex(width + x, height + y, z + length, 1.0f, 1.0f));
+            mesh.AddVertex(new Vertex(width + x, -height + y, z + length, 1.0f, 0.0f));
+
+            //top
+            mesh.AddVertex(new Vertex(-width + x, height + y, z - length, 0.0f, 0.0f));
+            mesh.AddVertex(new Vertex(-width + x, height + y, z + length, 0.0f, 1.0f));
+            mesh.AddVertex(new Vertex(width + x, height + y, z + length, 1.0f, 1.0f));
+            mesh.AddVertex(new Vertex(width + x, height + y, z - length, 1.0f, 0.0f));
+
+
+            //bottom
+            mesh.AddVertex(new Vertex(-width + x, -height + y, z + length, 0.0f, 0.0f));
+            mesh.AddVertex(new Vertex(-width + x, -height + y, z - length, 0.0f, 1.0f));
+            mesh.AddVertex(new Vertex(width + x, -height + y, z -length, 1.0f, 1.0f));
+            mesh.AddVertex(new Vertex(width + x, -height + y, z + length, 1.0f, 0.0f));
+
+
+            mesh.AddTriangle(0, 1, 2);
+            mesh.AddTriangle(0, 2, 3);
+            mesh.ModelTriangles[0].ColorAttrib = col;
+            mesh.ModelTriangles[1].ColorAttrib = col;
+
+
+            mesh.AddTriangle(4, 6, 5);
+            mesh.AddTriangle(4, 7, 6);
+            mesh.ModelTriangles[2].ColorAttrib = col;
+            mesh.ModelTriangles[3].ColorAttrib = col;
+
+
+            mesh.AddTriangle(8, 9, 10);
+            mesh.AddTriangle(8, 10, 11);
+            mesh.ModelTriangles[4].ColorAttrib = col;
+            mesh.ModelTriangles[5].ColorAttrib = col;
+
+
+            mesh.AddTriangle(12, 13, 14);
+            mesh.AddTriangle(12, 14, 15);
+            mesh.ModelTriangles[6].ColorAttrib = col;
+            mesh.ModelTriangles[7].ColorAttrib = col;
+
+
+
+            mesh.AddTriangle(16, 17, 18);
+            mesh.AddTriangle(16, 18, 19);
+            mesh.ModelTriangles[8].ColorAttrib = col;
+            mesh.ModelTriangles[9].ColorAttrib = col;
+
+
+            mesh.AddTriangle(20, 21, 22);
+            mesh.AddTriangle(20, 22, 23);
+
+            mesh.ModelTriangles[10].ColorAttrib = col;
+            mesh.ModelTriangles[11].ColorAttrib = col;
+            return mesh;
+        }
     }
 }

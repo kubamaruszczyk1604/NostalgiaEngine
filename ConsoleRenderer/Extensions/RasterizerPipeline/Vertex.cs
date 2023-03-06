@@ -74,14 +74,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             m_Position.W = 1.0f / posDiv;
         }
 
-        public void WDivide()
-        {
-            //ZInViewSpace = m_Position.W;
 
-            //m_UVs.X /= ZInViewSpace;
-            //m_UVs.Y /= ZInViewSpace;
-            //m_Position.W = 1.0f / ZInViewSpace;
-        }
 
         static public Vertex Lerp(Vertex v0, Vertex v1, float t)
         {
