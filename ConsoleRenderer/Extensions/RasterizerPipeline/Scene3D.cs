@@ -298,7 +298,6 @@ namespace NostalgiaEngine.RasterizerPipeline
                 Triangle tr = m_VBO.ProcessedTriangles[i];
                 if (!tr.IsColScanlineInTriangle(u)) continue;
 
-                //float dot = NEVector4.Dot(tr.TransformedNormal, new NEVector4(0.0f, 0.0f, -1.0f, 0.0f));
                 ScanlineIntersectionManifest manifest;
                 tr.ComputeScanlineIntersection(u, out manifest);
 
