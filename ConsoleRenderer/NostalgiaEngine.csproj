@@ -67,7 +67,7 @@
   <ItemGroup>
     <Compile Include="Demos\BandLevelsDemo\BandLevelDemo.cs" />
     <Compile Include="Demos\BandLevelsDemo\TextDemo.cs" />
-    <Compile Include="Demos\RasterizerDemos\ExampleScene.cs" />
+    <Compile Include="Demos\RasterizerDemos\ExampleRasterizerScene.cs" />
     <Compile Include="Demos\TextureDisplay\PhotoViewer.cs" />
     <Compile Include="Extensions\RasterizerPipeline\Clipping.cs" />
     <Compile Include="Extensions\RasterizerPipeline\Camera.cs" />
@@ -75,6 +75,7 @@
     <Compile Include="Extensions\RasterizerPipeline\GeometryGenerator.cs" />
     <Compile Include="Extensions\RasterizerPipeline\Model.cs" />
     <Compile Include="Extensions\RasterizerPipeline\NEObjLoader.cs" />
+    <Compile Include="NostalgiaEngine\Core\StaticResources.cs" />
     <Compile Include="NostalgiaEngine\Core\NEPlane.cs" />
     <Compile Include="Extensions\RasterizerPipeline\ResourceManager.cs" />
     <Compile Include="Extensions\RasterizerPipeline\Scene3D.cs" />
@@ -127,6 +128,22 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="Demos\BandLevelsDemo\Textures\band\luma.buf" />
+    <None Include="Demos\RasterizerDemos\Resources\bunny.obj" />
+    <None Include="Demos\RasterizerDemos\Resources\uv_test_tex\color.tex" />
+    <None Include="Demos\RasterizerDemos\Resources\uv_test_tex\luma.buf" />
+    <None Include="Demos\RasterizerDemos\Resources\skybox1\nx\color.tex" />
+    <None Include="Demos\RasterizerDemos\Resources\skybox1\nx\luma.buf" />
+    <None Include="Demos\RasterizerDemos\Resources\skybox1\ny\color.tex" />
+    <None Include="Demos\RasterizerDemos\Resources\skybox1\ny\luma.buf" />
+    <None Include="Demos\RasterizerDemos\Resources\skybox1\nz\color.tex" />
+    <None Include="Demos\RasterizerDemos\Resources\skybox1\nz\luma.buf" />
+    <None Include="Demos\RasterizerDemos\Resources\skybox1\px\color.tex" />
+    <None Include="Demos\RasterizerDemos\Resources\skybox1\px\luma.buf" />
+    <None Include="Demos\RasterizerDemos\Resources\skybox1\py\color.tex" />
+    <None Include="Demos\RasterizerDemos\Resources\skybox1\py\luma.buf" />
+    <None Include="Demos\RasterizerDemos\Resources\skybox1\pz\color.tex" />
+    <None Include="Demos\RasterizerDemos\Resources\skybox1\pz\luma.buf" />
+    <None Include="Demos\RasterizerDemos\Resources\teapot.obj" />
     <None Include="Demos\TextureDisplay\ScreenTextures\MainScreen\intro.dat" />
     <None Include="Extensions\Raycaster2D\Textures\lantern1.tex" />
     <None Include="Extensions\Raycaster2D\Textures\nt1\color.tex" />
@@ -147,6 +164,13 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Demos\RasterizerDemos\Resources\uv_test_tex\palette.txt" />
+    <Content Include="Demos\RasterizerDemos\Resources\skybox1\nx\palette.txt" />
+    <Content Include="Demos\RasterizerDemos\Resources\skybox1\ny\palette.txt" />
+    <Content Include="Demos\RasterizerDemos\Resources\skybox1\nz\palette.txt" />
+    <Content Include="Demos\RasterizerDemos\Resources\skybox1\px\palette.txt" />
+    <Content Include="Demos\RasterizerDemos\Resources\skybox1\py\palette.txt" />
+    <Content Include="Demos\RasterizerDemos\Resources\skybox1\pz\palette.txt" />
     <Content Include="Demos\TextureDisplay\ScreenTextures\MainScreen\intro.res" />
     <Content Include="Extensions\Raycaster2D\Textures\nt1\palette.txt" />
     <Content Include="Extensions\Raycaster2D\Textures\sky\palette.txt" />
@@ -154,11 +178,22 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>xcopy $(ProjectDir)Extensios\Raycaster2D\Textures\  $(TargetDir)Textures /Y /I /E
-xcopy $(ProjectDir)Demos\BandLevelsDemo\Textures\  $(TargetDir)Textures /Y /I /E
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>xcopy $(ProjectDir)Demos\RasterizerDemos\Resources\ $(TargetDir)RasterizerDemoResources /Y /I /E
 
-xcopy $(ProjectDir)Demos\TextureDisplay\ScreenTextures\MainScreen\ $(TargetDir)Resources /Y /I /E
-</PreBuildEvent>
+
+xcopy $(ProjectDir)Extensions\Raycaster2D\Textures\  $(TargetDir)RaycasterDemoResources /Y /I /E
+
+xcopy $(ProjectDir)Demos\BandLevelsDemo\Textures\  $(TargetDir)BandLevelDemoResources /Y /I /E
+
+
+xcopy $(ProjectDir)Demos\TextureDisplay\ScreenTextures\MainScreen\ $(TargetDir)ImageViewerResources /Y /I /E
+
+
+</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

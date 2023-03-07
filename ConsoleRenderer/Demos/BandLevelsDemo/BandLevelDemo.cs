@@ -30,7 +30,7 @@ namespace NostalgiaEngine.Demos
             PixelWidth = 6;
             PixelHeight = 7;
 
-            m_LumaBuffer = NEFloatBuffer.FromFile(@"textures\band\luma.buf");
+            m_LumaBuffer = NEFloatBuffer.FromFile(@"BandLevelDemoResources\band\luma.buf");
             //m_LumaBuffer = NEFloatBuffer.FromFile(@"c:\test\text\luma.buf");
             if (m_LumaBuffer == null) return false;
             return true;

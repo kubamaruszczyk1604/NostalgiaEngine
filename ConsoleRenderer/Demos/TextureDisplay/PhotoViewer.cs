@@ -75,11 +75,11 @@ namespace TextureDisplay
             m_Col = 0;
            // ParallelScreenDraw = true;
 
-            m_MainTex = NEColorTexture16.LoadFromFile(@"resources\intro.dat");
+            m_MainTex = NEColorTexture16.LoadFromFile(@"ImageViewerResources\intro.dat");
             m_RefreshIntervalCounter = 0.0f;
             if (m_MainTex == null) return false;
 
-            m_MainTexPal = NEColorPalette.FromFile(@"resources\intro.res");
+            m_MainTexPal = NEColorPalette.FromFile(@"ImageViewerResources\intro.res");
             m_Col = 1.0f;
             if (m_MainTexPal == null) return false;
 

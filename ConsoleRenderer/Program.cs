@@ -11,8 +11,6 @@ using NostalgiaEngine.RasterizerPipeline;
 using TextureDisplay;
 using NostalgiaEngine.ConsoleGUI;
 using System.Diagnostics;
-using NostalgiaEngine.RasterizerPipeline;
-using NostalgiaEngine.Demos.RasterizerDemos;
 using NostalgiaEngine.Demos;
 namespace NostalgiaEngineApplication
 {

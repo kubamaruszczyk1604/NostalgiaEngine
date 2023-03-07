@@ -78,16 +78,16 @@ namespace NostalgiaEngine.Raycaster
             // NEColorPalette pal = NEColorPalette.FromFile($"C:/test/murek1/palette.txt");
             // NEColorManagement.SetPalette(pal);
 
-            m_Wall = NEFloatBuffer.FromFile(@"textures\nt1\luma.buf");
+            m_Wall = NEFloatBuffer.FromFile(@"RaycasterDemoResources\nt1\luma.buf");
             //m_Wall= NEFloatBuffer.FromFile(@"c:\test\text\luma.buf");
             if (m_Wall == null) return false;
             m_Wall.SampleMode = NESampleMode.Repeat;
 
-            m_Sky = NEFloatBuffer.FromFile(@"textures\sky\luma.buf");
+            m_Sky = NEFloatBuffer.FromFile(@"RaycasterDemoResources \sky\luma.buf");
             if (m_Sky == null) return false;
             m_Sky.SampleMode = NESampleMode.Repeat;
 
-            NEColorTexture16 lampTex = NEColorTexture16.LoadFromFile("textures/lantern1.tex");
+            NEColorTexture16 lampTex = NEColorTexture16.LoadFromFile("RaycasterDemoResources /lantern1.tex");
             if (lampTex == null) return false;
             m_Lamp1Sprite = new NEStaticSprite(lampTex);
             m_Lamp1Sprite.X = 7.8f;

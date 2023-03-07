@@ -21,6 +21,11 @@ namespace NostalgiaEngine.RasterizerPipeline
             m_Walls[4] = ResourceManager.Instance.GetLumaTexture(path + "/pz/luma.buf");
             m_Walls[5] = ResourceManager.Instance.GetLumaTexture(path + "/nz/luma.buf");
             Available = true;
+            for (int i = 0;  i < m_Walls.Length; ++i)
+            {
+                if (m_Walls[i] == null) Available = false;
+            }
+
         }
 
         public Skybox()

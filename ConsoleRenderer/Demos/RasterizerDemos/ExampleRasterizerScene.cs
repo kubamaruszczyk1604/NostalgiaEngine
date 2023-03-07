@@ -6,18 +6,18 @@ using System.Threading.Tasks;
 using NostalgiaEngine.Core;
 using NostalgiaEngine.RasterizerPipeline;
 
-namespace NostalgiaEngine.Demos.RasterizerDemos
+namespace NostalgiaEngine.Demos
 {
     class ExampleRasterizerScene: Scene3D
     {
         public override bool OnLoad()
         {
 
-            SceneSkybox = new Skybox("c:/test/skybox3");
+            SceneSkybox = new Skybox("RasterizerDemoResources/skybox1");
             Mesh cubeMesh = GeometryGenerator.GenerateCube2(1.0f, 1.0f, 1.0f, NEVector4.Zero, 7);
             Mesh floorMesh = GeometryGenerator.CreateHorizontalQuad(10.0f, 10.0f, new NEVector4(0.0f, -1.3f, 0.0f));
-            Mesh teapotMesh = NEObjLoader.LoadObj("C:/Users/Kuba/Desktop/tst/teapot.obj");
-            var luma = ResourceManager.Instance.GetLumaTexture("C:/test/ruler/luma.buf");
+            Mesh teapotMesh = NEObjLoader.LoadObj("RasterizerDemoResources/teapot.obj");
+            var luma = ResourceManager.Instance.GetLumaTexture("RasterizerDemoResources/uv_test_tex/luma.buf");
             Model cubeModel = new Model(cubeMesh, CullMode.Back, luma);
             cubeModel.Transform.LocalPosition = new NEVector4(0.9f, 2.0f, 1.0f);
 
@@ -34,7 +34,7 @@ namespace NostalgiaEngine.Demos.RasterizerDemos
             Models.Add(teapotModel);
             Models.Add(floorModel);
 
-            MainCamera = new Camera(ScreenWidth, ScreenHeight, 1.05f, 0.1f, 100.0f);
+            // = new Camera(ScreenWidth, ScreenHeight, 1.05f, 0.1f, 100.0f);
             MainCamera.Transform.LocalPosition = new NEVector4(0.0f, 1.0f, -5.0f);
 
 
@@ -45,10 +45,10 @@ namespace NostalgiaEngine.Demos.RasterizerDemos
 
         public override void OnUpdate(float deltaTime)
         {
-           Movement(deltaTime);
+            Movement(deltaTime);
             Models[1].Transform.RotateY(deltaTime * 0.5f);
             Models[1].Transform.PositionY = 0.1f + (float)(Math.Sin(Engine.Instance.TotalTime) * 0.3);
-            NEScreenBuffer.ClearColor(2);
+            NEScreenBuffer.Clear();
             base.OnUpdate(deltaTime);
         }
 
@@ -79,7 +79,6 @@ namespace NostalgiaEngine.Demos.RasterizerDemos
 
             if (NEInput.CheckKeyDown(ConsoleKey.RightArrow))
             {
-
                 if (NEInput.CheckKeyDown(NEKey.Alt))
                 {
                     MainCamera.Transform.LocalPosition = MainCamera.Transform.LocalPosition + MainCamera.Transform.Right * dt;
@@ -92,9 +91,6 @@ namespace NostalgiaEngine.Demos.RasterizerDemos
 
             if (NEInput.CheckKeyDown(ConsoleKey.UpArrow))
             {
-
-
-
                 if (NEInput.CheckKeyDown(NEKey.Alt))
                 {
                     MainCamera.Transform.LocalPosition = MainCamera.Transform.LocalPosition + MainCamera.Transform.Up * dt;
@@ -103,9 +99,8 @@ namespace NostalgiaEngine.Demos.RasterizerDemos
                 {
                     MainCamera.Transform.LocalPosition = MainCamera.Transform.LocalPosition + MainCamera.Transform.Forward * dt;
                 }
-
-                // m_Camera.Transform.RotateX(dt);
             }
+
             if (NEInput.CheckKeyDown(ConsoleKey.DownArrow))
             {
 

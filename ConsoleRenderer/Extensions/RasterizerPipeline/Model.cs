@@ -22,6 +22,14 @@ namespace NostalgiaEngine.RasterizerPipeline
             LumaTexture = lumaTexture;
             Transform = new Transform();
             FaceCull = faceCull;
+
+            if(Mesh == null)
+            {
+                Mesh = GeometryGenerator.CreateQuad(1.0f, 1.0f, NEVector4.Zero, 2);
+                FaceCull = CullMode.None;
+                LumaTexture = new NEFloatBuffer(20, 20, StaticResources.M_Excamation);
+                colorTexture = null;
+            }
         }
 
         public Model(Mesh mesh, NEFloatBuffer lumaTexture): this(mesh, CullMode.Back, null, lumaTexture)
