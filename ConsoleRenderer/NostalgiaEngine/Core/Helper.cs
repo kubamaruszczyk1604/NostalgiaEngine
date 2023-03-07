@@ -244,8 +244,6 @@ namespace NostalgiaEngine.Core
 
     }
 
-   
-
     public struct PlaneIntersectionManifest
     {
        public NEVector4 RayDirection;

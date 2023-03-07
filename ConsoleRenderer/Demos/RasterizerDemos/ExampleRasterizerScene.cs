@@ -22,7 +22,7 @@ namespace NostalgiaEngine.Demos
 
 
             Model cubeModel = new Model(cubeMesh, CullMode.Back, luma);
-            cubeModel.Transform.LocalPosition = new NEVector4(0.9f, 2.0f, 1.0f);
+            cubeModel.Transform.LocalPosition = new NEVector4(1.9f, 2.0f, 0.0f);
 
             Model floorModel = new Model(floorMesh, luma);
 
@@ -45,7 +45,7 @@ namespace NostalgiaEngine.Demos
 
             MainCamera.Transform.LocalPosition = new NEVector4(0.0f, 1.0f, -5.0f);
 
-
+            TogglePalette();
 
             return base.OnLoad();
         }
@@ -54,6 +54,16 @@ namespace NostalgiaEngine.Demos
         public override void OnUpdate(float deltaTime)
         {
             Movement(deltaTime);
+            if(NEInput.CheckKeyPress(ConsoleKey.P))
+            {
+                TogglePalette();
+            }
+
+            if(NEInput.CheckKeyPress(ConsoleKey.C))
+            {
+                ToggleShowClipping();
+            }
+
             Models[1].Transform.RotateY(deltaTime * 0.5f);
             Models[1].Transform.PositionY = 0.1f + (float)(Math.Sin(Engine.Instance.TotalTime) * 0.3);
             NEScreenBuffer.Clear();

@@ -9,7 +9,7 @@ namespace NostalgiaEngine.RasterizerPipeline
     public class Scene3D : NEScene
     {
 
-        // Mesh m_VBO;
+        
         NEDepthBuffer m_DepthBuffer;
         
         NEColorPalette m_Palette;
@@ -23,6 +23,8 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         int m_RenderedTriangleCount = 0;
 
+        bool m_DrawPaletteFlag;
+        bool m_ShowClippingFlag;
 
         public Scene3D():base()
         {
@@ -40,6 +42,8 @@ namespace NostalgiaEngine.RasterizerPipeline
             SceneSkybox = new Skybox();
             MainCamera = new Camera(ScreenWidth, ScreenHeight, 1.05f, 0.1f, 100.0f);
             MainCamera.Transform.LocalPosition = new NEVector4(0.0f, 0.0f, -2.0f);
+            m_DrawPaletteFlag = false;
+            m_ShowClippingFlag = false;
         }
 
         public override bool OnLoad()
@@ -48,6 +52,9 @@ namespace NostalgiaEngine.RasterizerPipeline
 
             m_Palette = NEColorPalette.FromFile("C:/test/skybox3/px/palette.txt");
             NEColorManagement.SetPalette(m_Palette);
+            m_PaletteCellWidth = (int)(ScreenWidth * 0.039f);
+            m_PaletteCellHeight = m_PaletteCellWidth;
+            m_PaletteStripPos = new NEVector2(m_PaletteCellWidth / 2, m_PaletteCellWidth / 2);
             //Clipping.DebugMode = true;
             return base.OnLoad();
         }
@@ -105,14 +112,17 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         public override bool OnDraw()
         {
-            for (int y = (int)c_ColorPanelPos.Y; y < ((int)c_ColorPanelPos.Y + c_ColorWindowHeight); ++y)
+
+            if (m_DrawPaletteFlag)
             {
-                for (int x = 0; x < ScreenWidth; ++x)
+                for (int y = (int)m_PaletteStripPos.Y; y < ((int)m_PaletteStripPos.Y + m_PaletteCellHeight); ++y)
                 {
-                    DrawPalette(x, y);
+                    for (int x = 0; x < ScreenWidth; ++x)
+                    {
+                        DrawPalette(x, y);
+                    }
                 }
             }
-
             return base.OnDraw();
         }
 
@@ -122,6 +132,21 @@ namespace NostalgiaEngine.RasterizerPipeline
         }
 
        
+        protected void TogglePalette()
+        {
+            m_DrawPaletteFlag = !m_DrawPaletteFlag;
+        }
+
+        protected void ShowPalette(bool show)
+        {
+            m_DrawPaletteFlag = show;
+        }
+
+
+        public void ToggleShowClipping()
+        {
+            Clipping.DebugMode = !Clipping.DebugMode;
+        }
 
         private void RenderSkybox(int x, float u)
         {
@@ -147,7 +172,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 
   
 
-        void ProcessModel(float dt, Model model)
+        private void ProcessModel(float dt, Model model)
         {
             model.Transform.CalculateWorld();
             Mesh mesh = model.Mesh;
@@ -189,7 +214,6 @@ namespace NostalgiaEngine.RasterizerPipeline
             {
                 Triangle triangle = mesh.TempTriangleContainer[i];
                 if (IsOutsideFrustum(triangle)) continue;
-                //if (FacingAway(triangle)) continue;
                 List<Triangle> LeftClipped = Clipping.ClipTriangleAgainstPlane(triangle, mesh, ClipPlane.Left);
                 List<Triangle> RightClipped = Clipping.ClipTrianglesAgainstPlane(LeftClipped, mesh, ClipPlane.Right);
                 List<Triangle> BottomClipped = Clipping.ClipTrianglesAgainstPlane(RightClipped, mesh, ClipPlane.Bottom);
@@ -205,7 +229,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         }
 
-        bool IsOutsideFrustum(Triangle triangle)
+        private bool IsOutsideFrustum(Triangle triangle)
         {
             float depthA = triangle.A.Z;
             float depthB = triangle.B.Z;
@@ -235,7 +259,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             return false;
         }
 
-        bool CullTest(Triangle triangle, CullMode cullMode)
+        private bool CullTest(Triangle triangle, CullMode cullMode)
         {
             if (cullMode == CullMode.None) return false;
             //NEVector4 vA = -triangle.A.Position.Normalized;
@@ -253,7 +277,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             return (dotA < 0.0f && dotB < 0.0f && dotC < 0.0f) ^ (cullMode == CullMode.Front);
         }
 
-        void RenderModel(int x, float u, Model model)
+        private void RenderModel(int x, float u, Model model)
         {
 
             Mesh m_VBO = model.Mesh;
@@ -347,17 +371,18 @@ namespace NostalgiaEngine.RasterizerPipeline
             }
 
         }
+        private int m_PaletteCellWidth = 10;
+        private int m_PaletteCellHeight = 10;
 
-        int c_ColorWindowWidth = 10;
-        int c_ColorWindowHeight = 10;
-        NEVector2 c_ColorPanelPos = new NEVector2(10, 10);
+        private NEVector2 m_PaletteStripPos = new NEVector2(10, 10);
         private void DrawPalette(int x, int y)
         {
-           
+        
+
             NEVector2 pixelPos = new NEVector2(x, y);
             for (int i = 0; i < 16; ++i)
             {
-                if (NEMathHelper.InRectangle(pixelPos, new NEVector2(c_ColorWindowWidth * (i), 0) + c_ColorPanelPos, c_ColorWindowWidth, c_ColorWindowHeight))
+                if (NEMathHelper.InRectangle(pixelPos, new NEVector2(m_PaletteCellWidth * (i), 0) + m_PaletteStripPos, m_PaletteCellWidth, m_PaletteCellHeight))
                 {
                     NEScreenBuffer.PutChar(' ', (short)((i) << 4), x, y);
                     if (i == 16) NEScreenBuffer.PutChar((char)NEBlock.Solid, (short)(8 << 4), x, y);
