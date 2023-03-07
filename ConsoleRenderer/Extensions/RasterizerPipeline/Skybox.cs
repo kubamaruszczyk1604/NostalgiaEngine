@@ -14,13 +14,6 @@ namespace NostalgiaEngine.RasterizerPipeline
         public Skybox(string path)
         {
             m_Walls = new NEFloatBuffer[6];
-            //m_Walls[0] = ResourceManager.Instance.GetLumaTexture(path + "/right.buf");
-            //m_Walls[1] = ResourceManager.Instance.GetLumaTexture(path + "/left.buf");
-            //m_Walls[2] = ResourceManager.Instance.GetLumaTexture(path + "/top.buf");
-            //m_Walls[3] = ResourceManager.Instance.GetLumaTexture(path + "/bottom.buf");
-            //m_Walls[4] = ResourceManager.Instance.GetLumaTexture(path + "/front.buf");
-            //m_Walls[5] = ResourceManager.Instance.GetLumaTexture(path + "/back.buf");
-
             m_Walls[0] = ResourceManager.Instance.GetLumaTexture(path + "/px/luma.buf");
             m_Walls[1] = ResourceManager.Instance.GetLumaTexture(path + "/nx/luma.buf");
             m_Walls[2] = ResourceManager.Instance.GetLumaTexture(path + "/py/luma.buf");
