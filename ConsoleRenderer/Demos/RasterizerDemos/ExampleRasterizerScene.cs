@@ -17,10 +17,12 @@ namespace NostalgiaEngine.Demos
             Mesh cubeMesh = GeometryGenerator.GenerateCube2(1.0f, 1.0f, 1.0f, NEVector4.Zero, 7);
             Mesh floorMesh = GeometryGenerator.CreateHorizontalQuad(10.0f, 10.0f, new NEVector4(0.0f, -1.3f, 0.0f));
             Mesh teapotMesh = NEObjLoader.LoadObj("RasterizerDemoResources/teapot.obj");
+            Mesh bunnyMesh = NEObjLoader.LoadObj("RasterizerDemoResources/bunny.obj",3);
             var luma = ResourceManager.Instance.GetLumaTexture("RasterizerDemoResources/uv_test_tex/luma.buf");
+
+
             Model cubeModel = new Model(cubeMesh, CullMode.Back, luma);
             cubeModel.Transform.LocalPosition = new NEVector4(0.9f, 2.0f, 1.0f);
-
 
             Model floorModel = new Model(floorMesh, luma);
 
@@ -28,13 +30,19 @@ namespace NostalgiaEngine.Demos
             teapotModel.Transform.ScaleX = 0.5f;
             teapotModel.Transform.ScaleY = 0.5f;
             teapotModel.Transform.ScaleZ = 0.5f;
-            teapotModel.Transform.LocalPosition = new NEVector4(-2.0f, 0.05f, 1.0f, 1.0f);
+            teapotModel.Transform.LocalPosition = new NEVector4(-1.5f, 0.05f, -1.0f, 1.0f);
+
+            Model bunnyModel = new Model(bunnyMesh, CullMode.None);
+            bunnyModel.Transform.ScaleX = 10.5f;
+            bunnyModel.Transform.ScaleY = 10.5f;
+            bunnyModel.Transform.ScaleZ = 10.5f;
+            bunnyModel.Transform.LocalPosition = new NEVector4(3.0f, 0.5f, -1.0f, 1.0f);
 
             Models.Add(cubeModel);
             Models.Add(teapotModel);
             Models.Add(floorModel);
+           // Models.Add(bunnyModel);
 
-            // = new Camera(ScreenWidth, ScreenHeight, 1.05f, 0.1f, 100.0f);
             MainCamera.Transform.LocalPosition = new NEVector4(0.0f, 1.0f, -5.0f);
 
 

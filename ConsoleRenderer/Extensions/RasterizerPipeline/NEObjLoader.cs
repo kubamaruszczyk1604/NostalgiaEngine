@@ -9,7 +9,7 @@ namespace NostalgiaEngine.RasterizerPipeline
     public class NEObjLoader
     {
         static int index = 1;
-        static public Mesh LoadObj(string path)
+        static public Mesh LoadObj(string path, int colAttrib = 1)
         {
             Mesh vbo = new Mesh();
             try
@@ -30,7 +30,7 @@ namespace NostalgiaEngine.RasterizerPipeline
                         {
                             string[] pieces = line.Split(' ');
                             vbo.AddTriangle(int.Parse(pieces[1])-1, int.Parse(pieces[2])-1, int.Parse(pieces[3])-1);
-                            vbo.ModelTriangles[vbo.ModelTriangles.Count - 1].ColorAttrib = 1;
+                            vbo.ModelTriangles[vbo.ModelTriangles.Count - 1].ColorAttrib = colAttrib;
                             //index++;
                             //index %= 15;
                         }

@@ -30,6 +30,11 @@ namespace NostalgiaEngine.RasterizerPipeline
             ScreenHeight = 200;
             PixelWidth = 4;
             PixelHeight = 4;
+
+            //ScreenWidth = 200;
+            //ScreenHeight = 100;
+            //PixelWidth = 6;
+            //PixelHeight = 6;
             m_DepthBuffer = new NEDepthBuffer(ScreenWidth, ScreenHeight);
             Models = new List<Model>();
             SceneSkybox = new Skybox();
@@ -43,7 +48,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 
             m_Palette = NEColorPalette.FromFile("C:/test/skybox3/px/palette.txt");
             NEColorManagement.SetPalette(m_Palette);
-           // Clipping.DebugMode = true;
+            //Clipping.DebugMode = true;
             return base.OnLoad();
         }
 
@@ -327,7 +332,7 @@ namespace NostalgiaEngine.RasterizerPipeline
                         float teX = texCoord.X / fragW;
                         float teY = texCoord.Y / fragW;
                         // dot = 1.0f;
-                        float luma = 0.2f+ dot;// * dot;
+                        float luma = 0.2f + dot * dot;
                         if (model.LumaTexture != null)
                         {
                             luma *= model.LumaTexture.FastSample(teX, 1.0f - teY);
@@ -343,11 +348,12 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         }
 
-        readonly int c_ColorWindowWidth = 10;
-        readonly int c_ColorWindowHeight = 10;
+        int c_ColorWindowWidth = 10;
+        int c_ColorWindowHeight = 10;
         NEVector2 c_ColorPanelPos = new NEVector2(10, 10);
         private void DrawPalette(int x, int y)
         {
+           
             NEVector2 pixelPos = new NEVector2(x, y);
             for (int i = 0; i < 16; ++i)
             {
