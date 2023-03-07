@@ -67,6 +67,7 @@
   <ItemGroup>
     <Compile Include="Demos\BandLevelsDemo\BandLevelDemo.cs" />
     <Compile Include="Demos\BandLevelsDemo\TextDemo.cs" />
+    <Compile Include="Demos\RasterizerDemos\ExampleScene.cs" />
     <Compile Include="Demos\TextureDisplay\PhotoViewer.cs" />
     <Compile Include="Extensions\RasterizerPipeline\Clipping.cs" />
     <Compile Include="Extensions\RasterizerPipeline\Camera.cs" />
@@ -150,6 +151,7 @@
     <Content Include="Extensions\Raycaster2D\Textures\nt1\palette.txt" />
     <Content Include="Extensions\Raycaster2D\Textures\sky\palette.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>xcopy $(ProjectDir)Extensios\Raycaster2D\Textures\  $(TargetDir)Textures /Y /I /E

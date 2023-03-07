@@ -7,10 +7,10 @@ using NostalgiaEngine.Core;
 
 namespace NostalgiaEngine.RasterizerPipeline
 {
-    class Skybox
+    public class Skybox
     {
         private NEFloatBuffer[] m_Walls;
-
+        public bool Available { get; set; }
         public Skybox(string path)
         {
             m_Walls = new NEFloatBuffer[6];
@@ -27,6 +27,18 @@ namespace NostalgiaEngine.RasterizerPipeline
             m_Walls[3] = ResourceManager.Instance.GetLumaTexture(path + "/ny/luma.buf");
             m_Walls[4] = ResourceManager.Instance.GetLumaTexture(path + "/pz/luma.buf");
             m_Walls[5] = ResourceManager.Instance.GetLumaTexture(path + "/nz/luma.buf");
+            Available = true;
+        }
+
+        public Skybox()
+        {
+            m_Walls = new NEFloatBuffer[6];
+            m_Walls[0] = new NEFloatBuffer(1, 1);
+            m_Walls[1] = new NEFloatBuffer(1, 1);
+            m_Walls[2] = new NEFloatBuffer(1, 1);
+            m_Walls[3] = new NEFloatBuffer(1, 1);
+            m_Walls[4] = new NEFloatBuffer(1, 1);
+            m_Walls[5] = new NEFloatBuffer(1, 1);
         }
 
 

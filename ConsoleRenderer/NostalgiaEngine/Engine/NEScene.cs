@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace NostalgiaEngine.Core
 {
     public delegate void OnSceneExit(NEScene scene);
-    public class NEScene
+    public abstract class NEScene
     {
         public string Title { get; protected set; }
         public int ScreenWidth { get; protected set; }
@@ -20,7 +20,7 @@ namespace NostalgiaEngine.Core
         public OnSceneExit onSceneExit { get; set; }
 
         
-        
+
 
         public void Exit(object returnData = null)
         {

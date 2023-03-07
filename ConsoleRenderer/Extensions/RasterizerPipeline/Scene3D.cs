@@ -6,81 +6,44 @@ using System.Threading.Tasks;
 using NostalgiaEngine.Core;
 namespace NostalgiaEngine.RasterizerPipeline
 {
-    public class Renderer3D : NEScene
+    public class Scene3D : NEScene
     {
 
         // Mesh m_VBO;
         NEDepthBuffer m_DepthBuffer;
-
-        Skybox m_TestSkybox;
-        //NEFloatBuffer m_Skybox;
-        //NETexture m_Texture;
+        
         NEColorPalette m_Palette;
 
 
+        protected Skybox SceneSkybox { get; set; }
+        protected Camera MainCamera { get;  set; }
+        protected List<Model> Models;
 
-        Camera m_Camera;
-        List<Model> m_Models;
+
 
         int m_RenderedTriangleCount = 0;
-        public override bool OnLoad()
+
+
+        public Scene3D():base()
         {
             ScreenWidth = 320;
             ScreenHeight = 200;
             PixelWidth = 4;
             PixelHeight = 4;
-
-            //ParallelScreenDraw = true;
-            //ScreenWidth = 120;
-            //ScreenHeight = 110;
-            //PixelWidth = 8;
-            //PixelHeight = 8;
-
-            //ScreenWidth = 220;
-            //ScreenHeight = 180;
-            //PixelWidth = 5;
-            //PixelHeight = 5;
-            // ResourceManager.Instance.Test();
-            //m_LumaBuffer = NEFloatBuffer.FromFile("C:/test/ruler/luma.buf");
-            //m_Texture = NEColorTexture16.LoadFromFile("C:/test/nowa_textura12/color.tex");
-            // m_Palette = NEColorPalette.FromFile("C:/test/nowa_textura12/palette.txt");
-            m_Palette = NEColorPalette.FromFile("C:/test/skybox3/px/palette.txt");
-            //m_LumaBuffer.SampleMode = NESampleMode.Repeat;
             m_DepthBuffer = new NEDepthBuffer(ScreenWidth, ScreenHeight);
-            m_Models = new List<Model>();
+            Models = new List<Model>();
+            SceneSkybox = new Skybox();
+            MainCamera = new Camera(ScreenWidth, ScreenHeight, 1.05f, 0.1f, 100.0f);
+            MainCamera.Transform.LocalPosition = new NEVector4(0.0f, 0.0f, -2.0f);
+        }
 
-            //m_Skybox = ResourceManager.Instance.GetLumaTexture("C:/test/skybox/right.buf");
-            //m_Skybox.SampleMode = NESampleMode.Repeat;
-
-            m_TestSkybox = new Skybox("c:/test/skybox3");
-
-            Mesh cubeMesh = GeometryGenerator.GenerateCube2(1.0f, 1.0f, 1.0f, NEVector4.Zero, 7);
-            Mesh floorMesh = GeometryGenerator.CreateHorizontalQuad(10.0f, 10.0f, new NEVector4(0.0f, -1.3f,0.0f));
-            Mesh teapotMesh = NEObjLoader.LoadObj("C:/Users/Kuba/Desktop/tst/teapot.obj");
-            var luma = ResourceManager.Instance.GetLumaTexture("C:/test/ruler/luma.buf");
-            Model cubeModel = new Model(cubeMesh,CullMode.Front, luma);
-            cubeModel.Transform.LocalPosition = new NEVector4(0.9f, 2.0f, 1.0f);
+        public override bool OnLoad()
+        {
 
 
-            Model floorModel = new Model(floorMesh, luma);
-
-            Model teapotModel = new Model(teapotMesh, CullMode.None);
-            teapotModel.Transform.ScaleX = 0.4f;
-            teapotModel.Transform.ScaleY = 0.4f;
-            teapotModel.Transform.ScaleZ = 0.4f;
-            teapotModel.Transform.LocalPosition = new NEVector4(-1.0f, -1.05f, 1.0f, 1.0f);
-
-            m_Models.Add(cubeModel);
-            m_Models.Add(teapotModel);
-            m_Models.Add(floorModel);
-
-            m_Camera = new Camera(ScreenWidth, ScreenHeight, 1.05f, 0.1f, 100.0f);
-            m_Camera.Transform.LocalPosition = new NEVector4(0.0f, 2.0f, -2.0f);
-
-
+            m_Palette = NEColorPalette.FromFile("C:/test/skybox3/px/palette.txt");
             NEColorManagement.SetPalette(m_Palette);
-           // NEColorManagement.SetSpectralPalette1();
-            //Clipping.DebugMode = true;
+           // Clipping.DebugMode = true;
             return base.OnLoad();
         }
 
@@ -101,91 +64,106 @@ namespace NostalgiaEngine.RasterizerPipeline
             base.OnResume();
         }
 
-        private void Movement(float dt)
+        public override void OnUpdate(float deltaTime)
         {
-            if (NEInput.CheckKeyDown(ConsoleKey.LeftArrow))
+            base.OnUpdate(deltaTime);
+
+            m_DepthBuffer.Clear();
+            MainCamera.UpdateTransform();
+
+            float yDisp = (float)Math.Sin(Engine.Instance.TotalTime);
+            Engine.Instance.TitleBarAppend = "Rendered Triangles: " + m_RenderedTriangleCount.ToString();
+            m_RenderedTriangleCount = 0;
+            for (int i = 0; i < Models.Count; ++i)
             {
-                if (NEInput.CheckKeyDown(NEKey.Alt))
+                ProcessModel(deltaTime, Models[i]);
+            }
+
+        }
+
+        public override void OnDrawPerColumn(int x)
+        {
+            float xNorm = ((float)x) / ((float)ScreenWidth);
+            float u = 2.0f * xNorm - 1.0f;
+
+
+            for (int i = 0; i < Models.Count; ++i)
+            {
+                RenderModel(x, u, Models[i]);
+            }
+
+           if(SceneSkybox.Available) RenderSkybox(x, u);
+            base.OnDrawPerColumn(x);
+        }
+
+
+
+        public override bool OnDraw()
+        {
+            for (int y = (int)c_ColorPanelPos.Y; y < ((int)c_ColorPanelPos.Y + c_ColorWindowHeight); ++y)
+            {
+                for (int x = 0; x < ScreenWidth; ++x)
                 {
-                    m_Camera.Transform.LocalPosition = m_Camera.Transform.LocalPosition - m_Camera.Transform.Right * dt;
-                }
-                else
-                {
-                    m_Camera.Transform.RotateY(dt);
+                    DrawPalette(x, y);
                 }
             }
 
-            if (NEInput.CheckKeyDown(ConsoleKey.RightArrow))
+            return base.OnDraw();
+        }
+
+        public override void OnExit()
+        {
+            base.OnExit();
+        }
+
+       
+
+        private void RenderSkybox(int x, float u)
+        {
+            float rayZ = 1.0f / (float)Math.Tan(MainCamera.FovRad * 0.5f);
+            for (int y = 0; y < ScreenHeight; ++y)
             {
-
-                if (NEInput.CheckKeyDown(NEKey.Alt))
+                if (m_DepthBuffer.TryUpdate(x, y, 1.0f))
                 {
-                    m_Camera.Transform.LocalPosition = m_Camera.Transform.LocalPosition + m_Camera.Transform.Right * dt;
+                    float v = (float)y / (float)ScreenHeight;
+                    v = -((2.0f * v) - 1.0f);
+                    NEVector4 sampleDir = (MainCamera.PointAt) * new NEVector4(u * MainCamera.InverseAspectRatio, v, rayZ, 0.0f).Normalized;
+                    float luma = SceneSkybox.Sample(sampleDir);
+                    int low = 0;
+                    int high = 15;
+                    if (luma > 0.1f) low = 6;
+                    if (luma > 0.8f) high = 12;
+                    var col = NEColorSample.MakeCol10((ConsoleColor)low, (ConsoleColor)high, luma);
+                    NEScreenBuffer.PutChar(col.Character, col.BitMask, x, y);
                 }
-                else
-                {
-                    m_Camera.Transform.RotateY(-dt);
-                }
-            }
 
-            if (NEInput.CheckKeyDown(ConsoleKey.UpArrow))
-            {
-
-
-
-                if (NEInput.CheckKeyDown(NEKey.Alt))
-                {
-                    m_Camera.Transform.LocalPosition = m_Camera.Transform.LocalPosition + m_Camera.Transform.Up * dt;
-                }
-                else
-                {
-                    m_Camera.Transform.LocalPosition = m_Camera.Transform.LocalPosition + m_Camera.Transform.Forward * dt;
-                }
-               
-                // m_Camera.Transform.RotateX(dt);
-            }
-            if (NEInput.CheckKeyDown(ConsoleKey.DownArrow))
-            {
-
-                if (NEInput.CheckKeyDown(NEKey.Alt))
-                {
-                    m_Camera.Transform.LocalPosition = m_Camera.Transform.LocalPosition - m_Camera.Transform.Up* dt;
-                }
-                else
-                {
-                    m_Camera.Transform.LocalPosition = m_Camera.Transform.LocalPosition - m_Camera.Transform.Forward * dt;
-                }
-      
-            }
-
-            if(NEInput.CheckKeyDown(ConsoleKey.W))
-            {
-                m_Camera.Transform.RotateX(-dt);
             }
         }
 
-        public void ProcessModel(float dt, Model model)
+  
+
+        void ProcessModel(float dt, Model model)
         {
             model.Transform.CalculateWorld();
             Mesh mesh = model.Mesh;
             mesh.ClearProcessedData();
 
             NEMatrix4x4 world = model.Transform.World;
-            NEMatrix4x4 view = m_Camera.View;
+            NEMatrix4x4 view = MainCamera.View;
             for (int i = 0; i < mesh.ModelVertices.Count; ++i)
             {
                 mesh.ProcessedVertices.Add(mesh.ModelVertices[i].Duplicate());
                 mesh.ProcessedVertices[i].Position = (view * world) * mesh.ProcessedVertices[i].Position;
                 mesh.ProcessedVertices[i].Vert2Camera = -mesh.ProcessedVertices[i].Position.Normalized;
                 mesh.ProcessedVertices[i].UV = mesh.ModelVertices[i].UV;
-                mesh.ProcessedVertices[i].Position = (m_Camera.Projection) * mesh.ProcessedVertices[i].Position;
+                mesh.ProcessedVertices[i].Position = (MainCamera.Projection) * mesh.ProcessedVertices[i].Position;
             }
 
             //Projection space
             for (int i = 0; i < mesh.ModelTriangles.Count; ++i)
             {
                 Triangle tri = mesh.ModelTriangles[i];
-                tri.TransformedNormal = NEMatrix4x4.RemoveTranslation(m_Camera.View) * model.Transform.RotationMat * mesh.ModelTriangles[i].ModelNormal;
+                tri.TransformedNormal = NEMatrix4x4.RemoveTranslation(MainCamera.View) * model.Transform.RotationMat * mesh.ModelTriangles[i].ModelNormal;
                 if (CullTest(tri, model.FaceCull)) continue;
                 List<Triangle> nearClipped = Clipping.ClipTriangleAgainstPlane(tri, mesh, ClipPlane.Near);
                 foreach (Triangle triangle in nearClipped)
@@ -217,12 +195,10 @@ namespace NostalgiaEngine.RasterizerPipeline
             }
 
             m_RenderedTriangleCount += mesh.ProcessedTriangles.Count;
-            NEScreenBuffer.ClearColor(0);
-            m_DepthBuffer.Clear();
+            //NEScreenBuffer.ClearColor(0);
+            //m_DepthBuffer.Clear();
 
         }
-
-   
 
         bool IsOutsideFrustum(Triangle triangle)
         {
@@ -270,23 +246,6 @@ namespace NostalgiaEngine.RasterizerPipeline
             float dotC = NEVector4.Dot3(vC, triangle.TransformedNormal);
 
             return (dotA < 0.0f && dotB < 0.0f && dotC < 0.0f) ^ (cullMode == CullMode.Front);
-        }
-
-        public override void OnUpdate(float deltaTime)
-        {
-            base.OnUpdate(deltaTime);
-            Movement(deltaTime);
-           // m_Models[0].Transform.RotateY(deltaTime*0.5f);
-            //m_Models[1].Transform.PositionY = -0.7f + (float)(Math.Sin(Engine.Instance.TotalTime) * 0.3);
-            m_Camera.UpdateTransform();
-
-            float yDisp = (float)Math.Sin(Engine.Instance.TotalTime);
-            Engine.Instance.TitleBarAppend = "Rendered Triangles: " + m_RenderedTriangleCount.ToString();
-            m_RenderedTriangleCount = 0;
-            for (int i = 0; i < m_Models.Count; ++i)
-            {
-                ProcessModel(deltaTime, m_Models[i]);
-            }
         }
 
         void RenderModel(int x, float u, Model model)
@@ -384,60 +343,6 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         }
 
-
-        public override void OnDrawPerColumn(int x)
-        {
-            float xNorm = ((float)x) / ((float)ScreenWidth);
-            float u = 2.0f * xNorm - 1.0f;
-
-
-            for (int i = 0; i < m_Models.Count; ++i)
-            {
-                RenderModel(x, u, m_Models[i]);
-            }
-            float rayZ = 1.0f / (float)Math.Tan(m_Camera.FovRad * 0.5f);
-            for (int y = 0; y < ScreenHeight; ++y)
-            {
-                if (m_DepthBuffer.TryUpdate(x, y, 1.0f))
-                {
-                    float v = (float)y / (float)ScreenHeight;
-                    v = -((2.0f * v) - 1.0f);
-                    NEVector4 sampleDir = (m_Camera.PointAt) * new NEVector4(u * m_Camera.InverseAspectRatio, v, rayZ, 0.0f).Normalized;
-                    float luma = m_TestSkybox.Sample(sampleDir);
-                    int low = 0;
-                    int high = 15;
-                    if (luma > 0.1f) low = 6;
-                    if (luma > 0.8f) high = 12;
-                    var col = NEColorSample.MakeCol10((ConsoleColor)low, (ConsoleColor)high, luma);
-                    NEScreenBuffer.PutChar(col.Character, col.BitMask, x, y);
-                }
-
-            }
-            base.OnDrawPerColumn(x);
-        }
-
-
-
-
-        public override bool OnDraw()
-        {
-            for (int y = (int)c_ColorPanelPos.Y; y < ((int)c_ColorPanelPos.Y + c_ColorWindowHeight); ++y)
-            {
-                for (int x = 0; x < ScreenWidth; ++x)
-                {
-
-                    DrawPalette(x, y);
-                }
-            }
-
-            return base.OnDraw();
-        }
-
-        public override void OnExit()
-        {
-            base.OnExit();
-        }
-
         readonly int c_ColorWindowWidth = 10;
         readonly int c_ColorWindowHeight = 10;
         NEVector2 c_ColorPanelPos = new NEVector2(10, 10);
@@ -452,12 +357,6 @@ namespace NostalgiaEngine.RasterizerPipeline
                     if (i == 16) NEScreenBuffer.PutChar((char)NEBlock.Solid, (short)(8 << 4), x, y);
                 }
             }
-        }
-
-        private Mesh GenerateTestTriangles()
-        {
-            Mesh mesh = new Mesh();
-            return mesh;
         }
 
 

@@ -11,7 +11,8 @@ using NostalgiaEngine.RasterizerPipeline;
 using TextureDisplay;
 using NostalgiaEngine.ConsoleGUI;
 using System.Diagnostics;
-
+using NostalgiaEngine.RasterizerPipeline;
+using NostalgiaEngine.Demos.RasterizerDemos;
 using NostalgiaEngine.Demos;
 namespace NostalgiaEngineApplication
 {
@@ -49,7 +50,9 @@ namespace NostalgiaEngineApplication
             PhotoViewer demo = new PhotoViewer(paths);
             BandLevelDemo bld = new BandLevelDemo();
             TextDemo ted = new TextDemo();
-            Renderer3D sc = new Renderer3D();
+            //Scene3D sc = new Scene3D();
+
+            ExampleRasterizerScene sc = new ExampleRasterizerScene();
             engine.Start(sc);
 
 
