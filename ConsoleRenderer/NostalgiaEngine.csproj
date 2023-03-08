@@ -75,6 +75,7 @@
     <Compile Include="Extensions\RasterizerPipeline\GeometryGenerator.cs" />
     <Compile Include="Extensions\RasterizerPipeline\Model.cs" />
     <Compile Include="Extensions\RasterizerPipeline\NEObjLoader.cs" />
+    <Compile Include="Extensions\RasterizerPipeline\RenderData.cs" />
     <Compile Include="NostalgiaEngine\Core\StaticResources.cs" />
     <Compile Include="NostalgiaEngine\Core\NEPlane.cs" />
     <Compile Include="Extensions\RasterizerPipeline\ResourceManager.cs" />
@@ -83,7 +84,7 @@
     <Compile Include="Extensions\RasterizerPipeline\Transform.cs" />
     <Compile Include="Extensions\RasterizerPipeline\Triangle.cs" />
     <Compile Include="Extensions\RasterizerPipeline\Vertex.cs" />
-    <Compile Include="Extensions\RasterizerPipeline\VertexBuffer.cs" />
+    <Compile Include="Extensions\RasterizerPipeline\Mesh.cs" />
     <Compile Include="NostalgiaEngine\Core\ColorManagement.cs" />
     <Compile Include="NostalgiaEngine\Core\ColorPalette.cs" />
     <Compile Include="NostalgiaEngine\Core\Fbuffer.cs" />
