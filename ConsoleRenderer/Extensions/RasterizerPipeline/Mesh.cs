@@ -13,43 +13,28 @@ namespace NostalgiaEngine.RasterizerPipeline
         public List<Vertex> ModelVertices { get; private set; }
         public List<Triangle> ModelTriangles { get; private set; }
 
-        public List<Vertex> ProcessedVertices;
-        public List<Triangle> ProcessedTriangles;
-
-        public List<Triangle> TempTriangleContainer;
 
         public Mesh()
         {
             ModelVertices = new List<Vertex>(100);
-            ProcessedVertices = new List<Vertex>(100);
             ModelTriangles = new List<Triangle>(100);
-            ProcessedTriangles = new List<Triangle>(100);
-            TempTriangleContainer = new List<Triangle>(100);
         }
 
-        public void ClearProcessedData()
-        {
-            ProcessedTriangles.Clear();
-            ProcessedVertices.Clear();
-            TempTriangleContainer.Clear();
-        }
+
 
         public void AddVertex(Vertex v)
         {
             ModelVertices.Add(v);
-          //  TempVertices.Add(v.Duplicate());
         }
 
         public void AddVertex(float x, float y, float z)
         {
             ModelVertices.Add(new Vertex(x, y, z));
-            //TempVertices.Add(new Vertex(x, y, z));
         }
 
         public void AddVertex(float x, float y, float z, float u, float v)
         {
             ModelVertices.Add(new Vertex(x, y, z, u, v));
-          //  TempVertices.Add(new Vertex(x, y, z, u, v));
         }
 
         public void AddTriangle(int i0, int i1, int i2)
@@ -57,14 +42,6 @@ namespace NostalgiaEngine.RasterizerPipeline
             ModelTriangles.Add(new Triangle(i0, i1, i2, this));
         }
 
-
-        //public void CalculateTriangleEdges()
-        //{
-        //    for (int i =0; i < Triangles.Count; ++i)
-        //    {
-        //        Triangles[i].CalculateEdges();
-        //    }
-        //}
 
 
         static public int GetLeftmost(List<Vertex> vertices, NEVector4 n, int iPt, int iA, int iB, int iC)

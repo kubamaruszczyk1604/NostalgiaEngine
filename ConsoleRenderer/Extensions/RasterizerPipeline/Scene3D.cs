@@ -174,113 +174,25 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         private void ProcessModel(float dt, Model model)
         {
+
             model.Transform.CalculateWorld();
-            Mesh mesh = model.Mesh;
-            mesh.ClearProcessedData();
+            
 
-            NEMatrix4x4 world = model.Transform.World;
-            NEMatrix4x4 view = MainCamera.View;
-            for (int i = 0; i < mesh.ModelVertices.Count; ++i)
-            {
-                mesh.ProcessedVertices.Add(mesh.ModelVertices[i].Duplicate());
-                mesh.ProcessedVertices[i].Position = (view * world) * mesh.ProcessedVertices[i].Position;
-                mesh.ProcessedVertices[i].Vert2Camera = -mesh.ProcessedVertices[i].Position.Normalized;
-                mesh.ProcessedVertices[i].UV = mesh.ModelVertices[i].UV;
-                mesh.ProcessedVertices[i].Position = (MainCamera.Projection) * mesh.ProcessedVertices[i].Position;
-            }
+            NEMatrix4x4 MVP = MainCamera.Projection * MainCamera.View * model.Transform.World;
 
-            //Projection space
-            for (int i = 0; i < mesh.ModelTriangles.Count; ++i)
-            {
-                Triangle tri = mesh.ModelTriangles[i];
-                tri.TransformedNormal = NEMatrix4x4.RemoveTranslation(MainCamera.View) * model.Transform.RotationMat * mesh.ModelTriangles[i].ModelNormal;
-                if (CullTest(tri, model.FaceCull)) continue;
-                List<Triangle> nearClipped = Clipping.ClipTriangleAgainstPlane(tri, mesh, ClipPlane.Near);
-                foreach (Triangle triangle in nearClipped)
-                {    
-                    mesh.TempTriangleContainer.Add(triangle);
-                }
 
-            }
-            for (int i = 0; i < mesh.TempTriangleContainer.Count; ++i)
-            {
-                Triangle triangle = mesh.TempTriangleContainer[i];
-                triangle.ZDivide();
-                triangle.CalculateEdges();
-                
-            }
-
-            for (int i = 0; i < mesh.TempTriangleContainer.Count; ++i)
-            {
-                Triangle triangle = mesh.TempTriangleContainer[i];
-                if (IsOutsideFrustum(triangle)) continue;
-                List<Triangle> LeftClipped = Clipping.ClipTriangleAgainstPlane(triangle, mesh, ClipPlane.Left);
-                List<Triangle> RightClipped = Clipping.ClipTrianglesAgainstPlane(LeftClipped, mesh, ClipPlane.Right);
-                List<Triangle> BottomClipped = Clipping.ClipTrianglesAgainstPlane(RightClipped, mesh, ClipPlane.Bottom);
-                List<Triangle> TopClipped = Clipping.ClipTrianglesAgainstPlane(BottomClipped, mesh, ClipPlane.Top);
-                List<Triangle> FarClipped = Clipping.ClipTrianglesAgainstPlane(TopClipped, mesh, ClipPlane.Far);
-
-                mesh.ProcessedTriangles.AddRange(FarClipped);
-            }
-
-            m_RenderedTriangleCount += mesh.ProcessedTriangles.Count;
+            model.VBO.PrepareForRender(MainCamera);
+            //m_RenderedTriangleCount += mesh.ProcessedTriangles.Count;
             //NEScreenBuffer.ClearColor(0);
             //m_DepthBuffer.Clear();
 
         }
 
-        private bool IsOutsideFrustum(Triangle triangle)
-        {
-            float depthA = triangle.A.Z;
-            float depthB = triangle.B.Z;
-            float depthC = triangle.C.Z;
-
-            if (depthA < 0.0f && depthB < 0.0f && depthC < 0.0f) return true;
-            if (depthA > 1.0f && depthB > 1.0f && depthC > 1.0f) return true;
-
-            float xA = triangle.A.X;
-            float xB = triangle.B.X;
-            float xC = triangle.C.X;
-
-            float yA = triangle.A.Y;
-            float yB = triangle.B.Y;
-            float yC = triangle.C.Y;
-
-            //bool sameX = (Math.Abs(Math.Sign(xA) + Math.Sign(xB) + Math.Sign(xC)) == 3);
-            //bool sameY = (Math.Abs(Math.Sign(yA) + Math.Sign(yB) + Math.Sign(yC)) == 3);
-
-            if (xA < -1.0f && xB < -1.0f && xC < -1.0f) return true;
-            if (xA > 1.0f && xB > 1.0f && xC > 1.0f) return true;
-
-            if (yA < -1.0f && yB < -1.0f && yC < -1.0f) return true;
-            if (yA > 1.0f && yB > 1.0f && yC > 1.0f) return true;
-
-
-            return false;
-        }
-
-        private bool CullTest(Triangle triangle, CullMode cullMode)
-        {
-            if (cullMode == CullMode.None) return false;
-            //NEVector4 vA = -triangle.A.Position.Normalized;
-            //NEVector4 vB = -triangle.B.Position.Normalized;
-            //NEVector4 vC = -triangle.C.Position.Normalized;
-
-            NEVector4 vA = -triangle.VBO.ProcessedVertices[triangle.Indices[0]].Position;
-            NEVector4 vB = -triangle.VBO.ProcessedVertices[triangle.Indices[1]].Position;
-            NEVector4 vC = -triangle.VBO.ProcessedVertices[triangle.Indices[2]].Position;
-
-            float dotA = NEVector4.Dot3(vA, triangle.TransformedNormal);
-            float dotB = NEVector4.Dot3(vB, triangle.TransformedNormal);
-            float dotC = NEVector4.Dot3(vC, triangle.TransformedNormal);
-
-            return (dotA < 0.0f && dotB < 0.0f && dotC < 0.0f) ^ (cullMode == CullMode.Front);
-        }
 
         private void RenderModel(int x, float u, Model model)
         {
 
-            Mesh m_VBO = model.Mesh;
+            VertexBuffer m_VBO = model.VBO;
             for (int i = 0; i < m_VBO.ProcessedTriangles.Count; ++i)
             {
                 Triangle tr = m_VBO.ProcessedTriangles[i];
@@ -356,7 +268,7 @@ namespace NostalgiaEngine.RasterizerPipeline
                         float teX = texCoord.X / fragW;
                         float teY = texCoord.Y / fragW;
                         // dot = 1.0f;
-                        float luma = 0.2f + dot * dot;
+                        float luma = 0.2f + dot;
                         if (model.LumaTexture != null)
                         {
                             luma *= model.LumaTexture.FastSample(teX, 1.0f - teY);

@@ -9,7 +9,8 @@ namespace NostalgiaEngine.RasterizerPipeline
     public class Triangle
     {
 
-        public Mesh VBO { get; private set; }
+        public Mesh ParentMesh { get; private set; }
+        public VertexBuffer VBO { get; private set; }
         public int[] Indices { get; private set; }
         public int[] LeftSortedIndices { get; private set; }
 
@@ -27,22 +28,32 @@ namespace NostalgiaEngine.RasterizerPipeline
 
        
 
-        public Triangle(int i0, int i1, int i2, Mesh vbo)
+        public Triangle(int i0, int i1, int i2, Mesh mesh)
         {
-            VBO = vbo;
+            ParentMesh = mesh;
             Indices = new int[] { i0, i1, i2 };
             LeftSortedIndices = new int[3];
             CalculateNormal();
            
         }
 
-        public Triangle(int i0, int i1, int i2, Mesh vbo, NEVector4 normal, NEVector4 transformedNormal)
+        public Triangle(int i0, int i1, int i2, VertexBuffer vbo, NEVector4 normal, NEVector4 transformedNormal)
         {
             VBO = vbo;
             Indices = new int[] { i0, i1, i2 };
             LeftSortedIndices = new int[3];
             ModelNormal = normal;
             TransformedNormal = transformedNormal;
+        }
+
+        public Triangle(Triangle triangle, VertexBuffer vbo)
+        {
+            VBO = vbo;
+            Indices = new int[] { triangle.Indices[0], triangle.Indices[1], triangle.Indices[2]};
+            LeftSortedIndices = new int[3];
+            ModelNormal = triangle.ModelNormal;
+            TransformedNormal = triangle.TransformedNormal;
+            ColorAttrib = triangle.ColorAttrib;
         }
 
 
@@ -54,21 +65,6 @@ namespace NostalgiaEngine.RasterizerPipeline
         }
 
 
-        public void WDivide(NEMatrix4x4 proj)
-        {
-            if (!VBO.ProcessedVertices[Indices[0]].m_ZDividedFlag)
-                VBO.ProcessedVertices[Indices[0]].Position = proj * VBO.ProcessedVertices[Indices[0]].Position;
-
-            if (!VBO.ProcessedVertices[Indices[1]].m_ZDividedFlag)
-                VBO.ProcessedVertices[Indices[1]].Position = proj * VBO.ProcessedVertices[Indices[1]].Position;
-
-            if (!VBO.ProcessedVertices[Indices[2]].m_ZDividedFlag)
-                VBO.ProcessedVertices[Indices[2]].Position = proj * VBO.ProcessedVertices[Indices[2]].Position;
-
-            VBO.ProcessedVertices[Indices[0]].ZDivide();
-            VBO.ProcessedVertices[Indices[1]].ZDivide();
-            VBO.ProcessedVertices[Indices[2]].ZDivide();
-        }
 
         public void DoLeftSort()
         {
@@ -122,66 +118,6 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         }
 
-        //public void CreateIntersectionManifest(float x, out ScanlineIntersectionManifest manifest)
-        //{
-        //    manifest = new ScanlineIntersectionManifest();
-        //    float yAC = AC.a * x + AC.c;
-
-        //    manifest.Y1 = yAC;
-
-         
-        //    float t_AC = (x - A.X) / (C.X - A.X);
-
-        //    float t_Other = 0.0f;
-
-        //    Vertex otherP0 = A;
-        //    Vertex otherP1 = B;
-
-        //    if (x <= B.X)
-        //    {
-        //        //AB is other 
-        //        manifest.Y0 = AB.a * x + AB.c;
-        //        t_Other = (x - A.X) / (B.X - A.X); 
-
-
-        //    }
-        //    else 
-        //    {
-        //        //BC is other
-        //        manifest.Y0 = BC.a * x + BC.c;
-        //        t_Other = (x - B.X) / (C.X - B.X);
-
-        //        otherP0 = B;
-        //        otherP1 = C;
-        //    }
-
-        //    if (yAC > manifest.Y0) //ac is upper
-        //    {
-
-        //        manifest.top_t = t_AC;
-        //        manifest.bottom_t = t_Other;
-
-        //        manifest.top_P0 = A;
-        //        manifest.top_P1 = C;
-
-        //        manifest.bottom_P0 = otherP0;
-        //        manifest.bottom_P1 = otherP1;
-
-
-        //    }
-        //    else
-        //    {
-        //        manifest.top_t = t_Other;
-        //        manifest.bottom_t = t_AC;
-
-        //        manifest.top_P0 = otherP0;
-        //        manifest.top_P1 = otherP1;
-
-        //        manifest.bottom_P0 = A;
-        //        manifest.bottom_P1 = C;
-        //    }
-
-        //}
 
 
         public void ComputeScanlineIntersection(float x, out ScanlineIntersectionManifest manifest)
@@ -286,8 +222,8 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         private void CalculateNormal()
         {
-            NEVector4 a = (VBO.ModelVertices[Indices[1]].Position - VBO.ModelVertices[Indices[0]].Position).Normalized;
-            NEVector4 b = (VBO.ModelVertices[Indices[2]].Position - VBO.ModelVertices[Indices[0]].Position).Normalized;
+            NEVector4 a = (ParentMesh.ModelVertices[Indices[1]].Position - ParentMesh.ModelVertices[Indices[0]].Position).Normalized;
+            NEVector4 b = (ParentMesh.ModelVertices[Indices[2]].Position - ParentMesh.ModelVertices[Indices[0]].Position).Normalized;
 
             float x = a.Y * b.Z - a.Z * b.Y;
             float y = a.Z * b.X - a.X * b.Z;

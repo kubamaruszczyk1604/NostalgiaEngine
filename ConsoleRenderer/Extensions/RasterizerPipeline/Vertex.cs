@@ -19,8 +19,6 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         public float U { get { return m_UVs.X; } }
         public float V { get { return m_UVs.Y; } }
-
-        public float ZInViewSpace { get; private set; }
         public NEVector4 Vert2Camera { get; set; }
 
         public  bool m_ZDividedFlag;
@@ -70,7 +68,6 @@ namespace NostalgiaEngine.RasterizerPipeline
             //m_Position.Z *= signZ;
             m_UVs.X /= posDiv;
             m_UVs.Y /= posDiv;
-            ZInViewSpace = m_Position.W;
             m_Position.W = 1.0f / posDiv;
         }
 
@@ -80,14 +77,13 @@ namespace NostalgiaEngine.RasterizerPipeline
         {
             NEVector4 pos = NEVector4.Lerp(v0.Position, v1.Position, t);
             NEVector2 uvs = NEVector2.Lerp(v0.m_UVs, v1.m_UVs,t);
-            float zViewSpace = v0.ZInViewSpace + (v1.ZInViewSpace - v0.ZInViewSpace) * t;
             NEVector4 vertToCam = NEVector4.Lerp(v0.Vert2Camera, v1.Vert2Camera, t);
 
 
             Vertex ret = new Vertex(0, 0, 0);
             ret.m_Position = pos;
             ret.m_UVs = uvs;
-           // ret.ZInViewSpace = zViewSpace;
+
             ret.Vert2Camera = vertToCam;
             return ret;
         }
@@ -96,17 +92,21 @@ namespace NostalgiaEngine.RasterizerPipeline
         {
             return new Vertex(X, Y, Z, U, V);
         }
+
+
+        public void Set(Vertex v)
+        {
+           m_Position = v.m_Position;
+            m_UVs = v.m_UVs;
+        }
+
         override public string ToString()
         {
             return m_Position.X.ToString() + ", " + m_Position.Y.ToString() + ", " + m_Position.Z.ToString()/* + ",   " + oldX.ToString()*/;
 
         }
 
-        public string ToString2()
-        {
-            return m_Position.X.ToString() + ", " + m_Position.W.ToString() + ", " + ZInViewSpace.ToString();
 
-        }
 
         static public void OrderByY(ref Vertex A, ref Vertex B)
         {

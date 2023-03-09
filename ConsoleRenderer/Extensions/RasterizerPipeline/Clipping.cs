@@ -10,9 +10,9 @@ namespace NostalgiaEngine.RasterizerPipeline
     public class Clipping
     {
         static public bool DebugMode { get; set; }
-        static public void VertsToTris(Mesh mesh, Triangle triangle, int va, int vb, int vc, int vd, List<Triangle> triangleStream)
+        static public void VertsToTris(VertexBuffer vbo, Triangle triangle, int va, int vb, int vc, int vd, List<Triangle> triangleStream)
         {
-            List<Vertex> vertices = mesh.ProcessedVertices;
+            List<Vertex> vertices = vbo.ProcessedVertices;
             List<int> vrt = new List<int>(3);
             vrt.AddRange(new int[] { vb, vc, vd });
 
@@ -22,37 +22,37 @@ namespace NostalgiaEngine.RasterizerPipeline
             vrt.Remove(v2);
 
 
-            Triangle tr1 = new Triangle(va, v1, v2, mesh, triangle.ModelNormal, triangle.TransformedNormal);
+            Triangle tr1 = new Triangle(va, v1, v2, vbo, triangle.ModelNormal, triangle.TransformedNormal);
             tr1.ColorAttrib =  DebugMode ? 2 : triangle.ColorAttrib;
             tr1.CalculateEdges();
             triangleStream.Add(tr1);
 
-            Triangle tr2 = new Triangle(va, v2, vrt[0], mesh, triangle.ModelNormal, triangle.TransformedNormal);
+            Triangle tr2 = new Triangle(va, v2, vrt[0], vbo, triangle.ModelNormal, triangle.TransformedNormal);
             tr2.ColorAttrib = DebugMode ? 1 : triangle.ColorAttrib;
             tr2.CalculateEdges();
             triangleStream.Add(tr2);
         }
 
-        static public void VertsToTris(Mesh mesh, Triangle triangle, int va, int vb, int vc, List<Triangle> triangleStream)
+        static public void VertsToTris(VertexBuffer vbo, Triangle triangle, int va, int vb, int vc, List<Triangle> triangleStream)
         {
-            int v1 = Mesh.GetLeftmost(mesh.ProcessedVertices, triangle.TransformedNormal, va, vb, vc);
+            int v1 = Mesh.GetLeftmost(vbo.ProcessedVertices, triangle.TransformedNormal, va, vb, vc);
             int v2 = 0;
             if (vb == v1) v2 = vc;
             else v2 = vb;
 
-            Triangle tr = new Triangle(va, v1, v2, mesh, triangle.ModelNormal, triangle.TransformedNormal);
+            Triangle tr = new Triangle(va, v1, v2, vbo, triangle.ModelNormal, triangle.TransformedNormal);
             tr.ColorAttrib = DebugMode ? 9 : triangle.ColorAttrib;
             tr.CalculateEdges();
             triangleStream.Add(tr);
         }
 
 
-        static public List<Triangle> ClipTriangleAgainstPlane(Triangle inTriangle, Mesh mesh, ClipPlane clPlane)
+        static public List<Triangle> ClipTriangleAgainstPlane(Triangle inTriangle, VertexBuffer vbo, ClipPlane clPlane)
         {
             NEPlane plane = clPlane.Plane;
-            List<Vertex> vertices = mesh.ProcessedVertices;
+            List<Vertex> vertices = vbo.ProcessedVertices;
             List<Triangle> newTriangles = new List<Triangle>(4);
-            int outCount = CheckBoundry(inTriangle, mesh, clPlane);
+            int outCount = CheckBoundry(inTriangle, vbo, clPlane);
             if (outCount == 0)
             {
                 newTriangles.Add(inTriangle);
@@ -76,7 +76,7 @@ namespace NostalgiaEngine.RasterizerPipeline
                 vertices.Add(new1);
                 int v0 = vertices.Count - 2;
                 int v1 = vertices.Count - 1;
-                VertsToTris(mesh, inTriangle, v0, v1, vIn0I, vIn1I, newTriangles);
+                VertsToTris(vbo, inTriangle, v0, v1, vIn0I, vIn1I, newTriangles);
 
                 return newTriangles;
 
@@ -95,7 +95,7 @@ namespace NostalgiaEngine.RasterizerPipeline
                 vertices.Add(new1);
                 int v0 = vertices.Count - 2;
                 int v1 = vertices.Count - 1;
-                VertsToTris(mesh, inTriangle, v0, v1, vInI, newTriangles);
+                VertsToTris(vbo, inTriangle, v0, v1, vInI, newTriangles);
 
                 return newTriangles;
             }
@@ -103,7 +103,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             return newTriangles;
         }
 
-        static public List<Triangle> ClipTrianglesAgainstPlane(List<Triangle> inTriangles, Mesh mesh, ClipPlane clPlane)
+        static public List<Triangle> ClipTrianglesAgainstPlane(List<Triangle> inTriangles, VertexBuffer mesh, ClipPlane clPlane)
         {
             List<Triangle> output = new List<Triangle>(inTriangles.Count * 2); // in worst case scenario, each input triangle 
                                                                                // will produce two new triangles, hence count*2
@@ -120,7 +120,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         static int[] INS = new int[3];
         static int[] OUTS = new int[3];
-        static private int CheckBoundry(Triangle triangle, Mesh mesh, ClipPlane plane)
+        static private int CheckBoundry(Triangle triangle, VertexBuffer mesh, ClipPlane plane)
         {
             bool checkGreater = plane.RejectCriteria == RejectCriteria.GreaterThan;
             int inI = 0; int outI = 0;

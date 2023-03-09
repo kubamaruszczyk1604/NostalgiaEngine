@@ -10,6 +10,7 @@ namespace NostalgiaEngine.RasterizerPipeline
     {
         public Transform Transform { get; private set; }
         public NEMatrix4x4 View { get; private set;}
+        public NEMatrix4x4 RotationInv { get; private set; }
 
         public NEMatrix4x4 PointAt { get; private set;}
 
@@ -43,6 +44,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             Transform.CalculateWorld();
             View = NEMatrix4x4.CreateView(Transform.LocalPosition, Transform.Forward, Transform.Up);
             PointAt = NEMatrix4x4.CreatePointAt(Transform.Forward, Transform.Up);
+            RotationInv = NEMatrix4x4.RemoveTranslation(View);
         }
     }
 }

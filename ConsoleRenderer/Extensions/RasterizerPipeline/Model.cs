@@ -15,6 +15,7 @@ namespace NostalgiaEngine.RasterizerPipeline
         public NEFloatBuffer LumaTexture { get; set; }
         public Transform Transform { get; private set; }
         public CullMode FaceCull { get; set; }
+        public VertexBuffer VBO {get; private set;}
         public Model(Mesh mesh, CullMode faceCull = CullMode.Back, NEColorTexture16 colorTexture = null, NEFloatBuffer lumaTexture = null)
         {
             Mesh = mesh;
@@ -30,6 +31,8 @@ namespace NostalgiaEngine.RasterizerPipeline
                 LumaTexture = new NEFloatBuffer(20, 20, StaticResources.M_Excamation);
                 colorTexture = null;
             }
+
+            VBO = new VertexBuffer(this);
         }
 
         public Model(Mesh mesh, NEFloatBuffer lumaTexture): this(mesh, CullMode.Back, null, lumaTexture)

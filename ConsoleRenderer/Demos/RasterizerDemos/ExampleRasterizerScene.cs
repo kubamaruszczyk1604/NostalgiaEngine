@@ -25,7 +25,7 @@ namespace NostalgiaEngine.Demos
             cubeModel.Transform.LocalPosition = new NEVector4(2.0f, 1.0f, 1.0f);
 
             Model cubeModel2 = new Model(cubeMesh, CullMode.Back, luma);
-            cubeModel2.Transform.LocalPosition = new NEVector4(0.0f, 1.0f, 1.0f);
+            cubeModel2.Transform.LocalPosition = new NEVector4(-1.0f, 1.0f, 1.0f);
 
             Model floorModel = new Model(floorMesh, luma);
 
@@ -45,8 +45,8 @@ namespace NostalgiaEngine.Demos
 
             Models.Add(teapotModel);
             Models.Add(floorModel);
-            //Models.Add(cubeModel2);
-            //Models.Add(bunnyModel);
+            Models.Add(cubeModel2);
+           // Models.Add(bunnyModel);
 
             MainCamera.Transform.LocalPosition = new NEVector4(0.0f, 1.0f, -5.0f);
 
