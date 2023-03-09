@@ -7,7 +7,7 @@ using NostalgiaEngine.Core;
 
 namespace NostalgiaEngine.RasterizerPipeline
 {
-
+    
     public class VertexPool
     {
 

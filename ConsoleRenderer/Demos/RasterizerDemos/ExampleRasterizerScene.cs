@@ -46,7 +46,7 @@ namespace NostalgiaEngine.Demos
             Models.Add(teapotModel);
             Models.Add(floorModel);
             Models.Add(cubeModel2);
-            // Models.Add(bunnyModel);
+            Models.Add(bunnyModel);
 
             MainCamera.Transform.LocalPosition = new NEVector4(0.0f, 1.0f, -5.0f);
 

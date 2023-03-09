@@ -22,12 +22,15 @@ namespace NostalgiaEngine.RasterizerPipeline
             vrt.Remove(v2);
 
 
-            Triangle tr1 = new Triangle(va, v1, v2, vbo, triangle.ModelNormal, triangle.TransformedNormal);
+            Triangle tr1 = vbo.RequestFromPool(va, v1, v2, triangle.ModelNormal, triangle.TransformedNormal);
+                
+                //new Triangle(va, v1, v2, vbo, triangle.ModelNormal, triangle.TransformedNormal);
             tr1.ColorAttrib =  DebugMode ? 2 : triangle.ColorAttrib;
             tr1.CalculateEdges();
             triangleStream.Add(tr1);
 
-            Triangle tr2 = new Triangle(va, v2, vrt[0], vbo, triangle.ModelNormal, triangle.TransformedNormal);
+            Triangle tr2 = vbo.RequestFromPool(va, v2, vrt[0], triangle.ModelNormal, triangle.TransformedNormal);
+                //new Triangle(va, v2, vrt[0], vbo, triangle.ModelNormal, triangle.TransformedNormal);
             tr2.ColorAttrib = DebugMode ? 1 : triangle.ColorAttrib;
             tr2.CalculateEdges();
             triangleStream.Add(tr2);
@@ -40,7 +43,8 @@ namespace NostalgiaEngine.RasterizerPipeline
             if (vb == v1) v2 = vc;
             else v2 = vb;
 
-            Triangle tr = new Triangle(va, v1, v2, vbo, triangle.ModelNormal, triangle.TransformedNormal);
+            Triangle tr = vbo.RequestFromPool(va, v1, v2, triangle.ModelNormal, triangle.TransformedNormal);
+                //new Triangle(va, v1, v2, vbo, triangle.ModelNormal, triangle.TransformedNormal);
             tr.ColorAttrib = DebugMode ? 9 : triangle.ColorAttrib;
             tr.CalculateEdges();
             triangleStream.Add(tr);

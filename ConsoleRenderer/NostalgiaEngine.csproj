@@ -75,6 +75,7 @@
     <Compile Include="Extensions\RasterizerPipeline\GeometryGenerator.cs" />
     <Compile Include="Extensions\RasterizerPipeline\Model.cs" />
     <Compile Include="Extensions\RasterizerPipeline\NEObjLoader.cs" />
+    <Compile Include="Extensions\RasterizerPipeline\TrianglePool.cs" />
     <Compile Include="Extensions\RasterizerPipeline\VertexBuffer.cs" />
     <Compile Include="Extensions\RasterizerPipeline\VertexPool.cs" />
     <Compile Include="NostalgiaEngine\Core\StaticResources.cs" />

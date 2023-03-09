@@ -68,8 +68,12 @@ namespace NostalgiaEngine.RasterizerPipeline
         {
             VBO = vbo;
             ParentMesh = triangle.ParentMesh;
-            Indices = new int[] { triangle.Indices[0], triangle.Indices[1], triangle.Indices[2] };
-            LeftSortedIndices = new int[3];
+            Indices[0] = triangle.Indices[0];
+            Indices[1] = triangle.Indices[1];
+            Indices[2] =  triangle.Indices[2];
+            LeftSortedIndices[0] = triangle.LeftSortedIndices[0];
+            LeftSortedIndices[1] = triangle.LeftSortedIndices[1];
+            LeftSortedIndices[2] = triangle.LeftSortedIndices[2];
             ModelNormal = triangle.ModelNormal;
             TransformedNormal = triangle.TransformedNormal;
             ColorAttrib = triangle.ColorAttrib;
@@ -80,12 +84,29 @@ namespace NostalgiaEngine.RasterizerPipeline
         {
             VBO = triangle.VBO;
             ParentMesh = triangle.ParentMesh;
-            Indices = new int[] { triangle.Indices[0], triangle.Indices[1], triangle.Indices[2] };
-            LeftSortedIndices = new int[3];
+            Indices[0] = triangle.Indices[0];
+            Indices[1] = triangle.Indices[1];
+            Indices[2] = triangle.Indices[2];
+            LeftSortedIndices[0] = triangle.LeftSortedIndices[0];
+            LeftSortedIndices[1] = triangle.LeftSortedIndices[1];
+            LeftSortedIndices[2] = triangle.LeftSortedIndices[2];
             ModelNormal = triangle.ModelNormal;
             TransformedNormal = triangle.TransformedNormal;
             ColorAttrib = triangle.ColorAttrib;
 
+        }
+
+        public void Set(int i0, int i1, int i2, VertexBuffer vbo, NEVector4 normal, NEVector4 transformedNormal)
+        {
+            VBO = vbo;
+            Indices[0] = i0;
+            Indices[1] = i1;
+            Indices[2] = i2;
+            LeftSortedIndices[0] = 0;
+            LeftSortedIndices[1] = 0;
+            LeftSortedIndices[2] = 0;
+            ModelNormal = normal;
+            TransformedNormal = transformedNormal;
         }
 
         public void ZDivide()

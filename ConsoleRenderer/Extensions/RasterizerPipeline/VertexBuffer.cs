@@ -15,9 +15,10 @@ namespace NostalgiaEngine.RasterizerPipeline
         public List<Vertex> ProcessedVertices;
         public List<Triangle> TrianglesReadyToRender;
 
-        public List<Triangle> TriangleBuffer;
+        public List<Triangle> TempTriangleList;
 
         private VertexPool m_VertexPool;
+        private TrianglePool m_TrianglePool;
        // public VertexPool VertexPool { get { return m_VertexPool; } }
 
         public VertexBuffer(Model model)
@@ -26,14 +27,13 @@ namespace NostalgiaEngine.RasterizerPipeline
             ProcessedVertices = new List<Vertex>(AssociatedModel.Mesh.Vertices.Count * 2);
 
             TrianglesReadyToRender = new List<Triangle>(AssociatedModel.Mesh.Triangles.Count * 2);
-            TriangleBuffer = new List<Triangle>(AssociatedModel.Mesh.Triangles.Count * 2);
-            //for(int i =0; i< TriangleBuffer.Capacity - 20 ;++i)
-            //{
-            //    TriangleBuffer.Add(new Triangle());
-            //}
+            TempTriangleList = new List<Triangle>(AssociatedModel.Mesh.Triangles.Count * 2);
 
             m_VertexPool = new VertexPool();
             m_VertexPool.Allocate(AssociatedModel.Mesh.Vertices.Count * 2);
+
+            m_TrianglePool = new TrianglePool();
+            m_TrianglePool.Allocate(AssociatedModel.Mesh.Triangles.Count * 2);
 
         }
 
@@ -60,28 +60,29 @@ namespace NostalgiaEngine.RasterizerPipeline
             {
                 Triangle tri = mesh.Triangles[i];
                 tri.TransformedNormal = normalTransformMat * mesh.Triangles[i].ModelNormal;
-                tri = new Triangle(tri, model.VBO);
+               // tri = new Triangle(tri, model.VBO);
+                tri = RequestFromPool(tri);
                 if (CullTest(tri, model.FaceCull)) continue;
                 List<Triangle> nearClipped = Clipping.ClipTriangleAgainstPlane(tri, this, ClipPlane.Near);
                 foreach (Triangle triangle in nearClipped)
                 {
                    
-                   TriangleBuffer.Add(triangle);
+                   TempTriangleList.Add(triangle);
                     currentTriangle++;
                 }
 
             }
-            for (int i = 0; i < TriangleBuffer.Count; ++i)
+            for (int i = 0; i < TempTriangleList.Count; ++i)
             {
-                Triangle triangle = TriangleBuffer[i];
+                Triangle triangle = TempTriangleList[i];
                 triangle.ZDivide();
                 triangle.CalculateEdges();
 
             }
 
-            for (int i = 0; i < TriangleBuffer.Count; ++i)
+            for (int i = 0; i < TempTriangleList.Count; ++i)
             {
-                Triangle triangle = TriangleBuffer[i];
+                Triangle triangle = TempTriangleList[i];
                 if (IsOutsideFrustum(triangle)) continue;
                 List<Triangle> LeftClipped = Clipping.ClipTriangleAgainstPlane(triangle, this, ClipPlane.Left);
                 List<Triangle> RightClipped = Clipping.ClipTrianglesAgainstPlane(LeftClipped, this, ClipPlane.Right);
@@ -102,6 +103,16 @@ namespace NostalgiaEngine.RasterizerPipeline
         public Vertex RequestFromPool(ref NEVector4 setPosition, ref NEVector2 setUVs)
         {
             return m_VertexPool.Get(ref setPosition, ref setUVs);
+        }
+
+        public Triangle RequestFromPool(Triangle setValue)
+        {
+            return m_TrianglePool.Get(setValue, this);
+        }
+
+        public Triangle RequestFromPool(int i0, int i1, int i2,  NEVector4 normal,  NEVector4 transformedNormal)
+        {
+            return m_TrianglePool.Get(i0, i1, i2, this, ref normal, ref transformedNormal);
         }
 
         private bool IsOutsideFrustum(Triangle triangle)
@@ -151,8 +162,9 @@ namespace NostalgiaEngine.RasterizerPipeline
         {
             TrianglesReadyToRender.Clear();
             ProcessedVertices.Clear();
-            TriangleBuffer.Clear();
+            TempTriangleList.Clear();
            m_VertexPool.ReturnAllToPool();
+            m_TrianglePool.ReturnAllToPool();
         }
     }
 }
