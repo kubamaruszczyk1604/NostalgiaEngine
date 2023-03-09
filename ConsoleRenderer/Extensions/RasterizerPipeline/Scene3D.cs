@@ -182,9 +182,8 @@ namespace NostalgiaEngine.RasterizerPipeline
 
 
             model.VBO.PrepareForRender(MainCamera);
-            //m_RenderedTriangleCount += mesh.ProcessedTriangles.Count;
-            //NEScreenBuffer.ClearColor(0);
-            //m_DepthBuffer.Clear();
+            m_RenderedTriangleCount += model.VBO.TrianglesReadyToRender.Count;
+
 
         }
 

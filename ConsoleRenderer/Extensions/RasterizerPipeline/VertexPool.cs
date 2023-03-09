@@ -54,7 +54,7 @@ namespace NostalgiaEngine.RasterizerPipeline
         }
 
 
-        public void FreeVertices()
+        public void ReturnAllToPool()
         {
             m_StackPtr = 0;
         }

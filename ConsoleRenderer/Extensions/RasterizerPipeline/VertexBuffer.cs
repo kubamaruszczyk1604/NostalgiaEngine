@@ -152,7 +152,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             TrianglesReadyToRender.Clear();
             ProcessedVertices.Clear();
             TriangleBuffer.Clear();
-           m_VertexPool.FreeVertices();
+           m_VertexPool.ReturnAllToPool();
         }
     }
 }
