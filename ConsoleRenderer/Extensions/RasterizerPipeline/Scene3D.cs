@@ -160,9 +160,9 @@ namespace NostalgiaEngine.RasterizerPipeline
                     NEVector4 sampleDir = (MainCamera.PointAt) * new NEVector4(u * MainCamera.InverseAspectRatio, v, rayZ, 0.0f).Normalized;
                     float luma = SceneSkybox.Sample(sampleDir);
                     int low = 0;
-                    int high = 15;
+                    int high = 10;
                     if (luma > 0.1f) low = 6;
-                    if (luma > 0.8f) high = 12;
+                    if (luma > 0.8f) high = 15;
                     var col = NEColorSample.MakeCol10((ConsoleColor)low, (ConsoleColor)high, luma);
                     NEScreenBuffer.PutChar(col.Character, col.BitMask, x, y);
                 }
@@ -273,7 +273,8 @@ namespace NostalgiaEngine.RasterizerPipeline
                             luma *= model.LumaTexture.FastSample(teX, 1.0f - teY);
                         }
 
-                        var col = NEColorSample.MakeCol5(ConsoleColor.Black, (ConsoleColor)tr.ColorAttrib, 1.0f*luma);
+                        int fullCol = model.Color == -1 ? tr.ColorAttrib : model.Color;
+                        var col = NEColorSample.MakeCol5(ConsoleColor.Black, (ConsoleColor)fullCol, 1.0f*luma);
                         //var col = m_Texture.Sample(teX, 1.0f - teY, dot);
                         NEScreenBuffer.PutChar(col.Character, col.BitMask, x, fillStart + y);
                     }
