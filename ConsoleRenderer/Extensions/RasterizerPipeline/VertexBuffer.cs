@@ -13,17 +13,22 @@ namespace NostalgiaEngine.RasterizerPipeline
         public Model AssociatedModel { get; private set; }
 
         public List<Vertex> ProcessedVertices;
-        public List<Triangle> ProcessedTriangles;
+        public List<Triangle> TrianglesReadyToRender;
 
-        public List<Triangle> TempTriangleContainer;
+        public List<Triangle> TriangleBuffer;
 
 
         public VertexBuffer(Model model)
         {
             AssociatedModel = model;
-            ProcessedVertices = new List<Vertex>(AssociatedModel.Mesh.ModelVertices.Count + 50);
-            ProcessedTriangles = new List<Triangle>(AssociatedModel.Mesh.ModelVertices.Count + 50);
-            TempTriangleContainer = new List<Triangle>(AssociatedModel.Mesh.ModelVertices.Count + 50);
+            ProcessedVertices = new List<Vertex>(AssociatedModel.Mesh.Vertices.Count * 2);
+            TrianglesReadyToRender = new List<Triangle>(AssociatedModel.Mesh.Triangles.Count * 2);
+            TriangleBuffer = new List<Triangle>(AssociatedModel.Mesh.Triangles.Count * 2);
+            //for(int i =0; i< TriangleBuffer.Capacity - 20 ;++i)
+            //{
+            //    TriangleBuffer.Add(new Triangle());
+            //}
+
         }
 
 
@@ -34,40 +39,42 @@ namespace NostalgiaEngine.RasterizerPipeline
             Model model = AssociatedModel;
 
             NEMatrix4x4 MVP = camera.Projection * camera.View * model.Transform.World;
-            for (int i = 0; i < mesh.ModelVertices.Count; ++i)
+            for (int i = 0; i < mesh.Vertices.Count; ++i)
             {
-               ProcessedVertices.Add(mesh.ModelVertices[i].Duplicate());
+               ProcessedVertices.Add(mesh.Vertices[i].Duplicate());
                ProcessedVertices[i].Position = MVP * ProcessedVertices[i].Position;
                ProcessedVertices[i].Vert2Camera = -ProcessedVertices[i].Position.Normalized;
 
             }
-
+            int currentTriangle = 0;
             NEMatrix4x4 normalTransformMat = camera.RotationInv * model.Transform.RotationMat;
             //Projection space
-            for (int i = 0; i < mesh.ModelTriangles.Count; ++i)
+            for (int i = 0; i < mesh.Triangles.Count; ++i)
             {
-                Triangle tri = mesh.ModelTriangles[i];
-                tri.TransformedNormal = normalTransformMat * mesh.ModelTriangles[i].ModelNormal;
+                Triangle tri = mesh.Triangles[i];
+                tri.TransformedNormal = normalTransformMat * mesh.Triangles[i].ModelNormal;
                 tri = new Triangle(tri, model.VBO);
                 if (CullTest(tri, model.FaceCull)) continue;
                 List<Triangle> nearClipped = Clipping.ClipTriangleAgainstPlane(tri, this, ClipPlane.Near);
                 foreach (Triangle triangle in nearClipped)
                 {
-                   TempTriangleContainer.Add(triangle);
+                   
+                   TriangleBuffer.Add(triangle);
+                    currentTriangle++;
                 }
 
             }
-            for (int i = 0; i < TempTriangleContainer.Count; ++i)
+            for (int i = 0; i < TriangleBuffer.Count; ++i)
             {
-                Triangle triangle = TempTriangleContainer[i];
+                Triangle triangle = TriangleBuffer[i];
                 triangle.ZDivide();
                 triangle.CalculateEdges();
 
             }
 
-            for (int i = 0; i < TempTriangleContainer.Count; ++i)
+            for (int i = 0; i < TriangleBuffer.Count; ++i)
             {
-                Triangle triangle = TempTriangleContainer[i];
+                Triangle triangle = TriangleBuffer[i];
                 if (IsOutsideFrustum(triangle)) continue;
                 List<Triangle> LeftClipped = Clipping.ClipTriangleAgainstPlane(triangle, this, ClipPlane.Left);
                 List<Triangle> RightClipped = Clipping.ClipTrianglesAgainstPlane(LeftClipped, this, ClipPlane.Right);
@@ -75,7 +82,7 @@ namespace NostalgiaEngine.RasterizerPipeline
                 List<Triangle> TopClipped = Clipping.ClipTrianglesAgainstPlane(BottomClipped, this, ClipPlane.Top);
                 List<Triangle> FarClipped = Clipping.ClipTrianglesAgainstPlane(TopClipped, this, ClipPlane.Far);
 
-                ProcessedTriangles.AddRange(FarClipped);
+                TrianglesReadyToRender.AddRange(FarClipped);
             }
 
         }
@@ -111,9 +118,6 @@ namespace NostalgiaEngine.RasterizerPipeline
         private bool CullTest(Triangle triangle, CullMode cullMode)
         {
             if (cullMode == CullMode.None) return false;
-            //NEVector4 vA = -triangle.A.Position.Normalized;
-            //NEVector4 vB = -triangle.B.Position.Normalized;
-            //NEVector4 vC = -triangle.C.Position.Normalized;
 
             NEVector4 vA = -triangle.VBO.ProcessedVertices[triangle.Indices[0]].Position;
             NEVector4 vB = -triangle.VBO.ProcessedVertices[triangle.Indices[1]].Position;
@@ -129,9 +133,9 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         public void ClearProcessedData()
         {
-            ProcessedTriangles.Clear();
+            TrianglesReadyToRender.Clear();
             ProcessedVertices.Clear();
-            TempTriangleContainer.Clear();
+            TriangleBuffer.Clear();
         }
     }
 }

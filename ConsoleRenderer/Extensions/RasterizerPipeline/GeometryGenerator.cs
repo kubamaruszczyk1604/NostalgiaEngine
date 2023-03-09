@@ -21,8 +21,8 @@ namespace NostalgiaEngine.RasterizerPipeline
             mesh.AddTriangle(0, 1, 2);
             mesh.AddTriangle(0, 2, 3);
 
-            mesh.ModelTriangles[0].ColorAttrib = col;
-            mesh.ModelTriangles[1].ColorAttrib = col;
+            mesh.Triangles[0].ColorAttrib = col;
+            mesh.Triangles[1].ColorAttrib = col;
             return mesh;
         }
 
@@ -38,8 +38,8 @@ namespace NostalgiaEngine.RasterizerPipeline
             mesh.AddTriangle(0, 1, 2);
             mesh.AddTriangle(0, 2, 3);
 
-            mesh.ModelTriangles[0].ColorAttrib = col;
-            mesh.ModelTriangles[1].ColorAttrib = col;
+            mesh.Triangles[0].ColorAttrib = col;
+            mesh.Triangles[1].ColorAttrib = col;
             return mesh;
         }
 
@@ -65,44 +65,44 @@ namespace NostalgiaEngine.RasterizerPipeline
             mesh.AddTriangle(0, 1, 2);
             mesh.AddTriangle(0, 2, 3);
 
-            mesh.ModelTriangles[0].ColorAttrib = col;
-            mesh.ModelTriangles[1].ColorAttrib = col;
+            mesh.Triangles[0].ColorAttrib = col;
+            mesh.Triangles[1].ColorAttrib = col;
 
 
             mesh.AddTriangle(4, 6, 5);
             mesh.AddTriangle(4, 7, 6);
 
-            mesh.ModelTriangles[2].ColorAttrib = col;
-            mesh.ModelTriangles[3].ColorAttrib = col;
+            mesh.Triangles[2].ColorAttrib = col;
+            mesh.Triangles[3].ColorAttrib = col;
 
 
             mesh.AddTriangle(4, 5, 1);
             mesh.AddTriangle(4, 1, 0);
 
-            mesh.ModelTriangles[4].ColorAttrib = col;
-            mesh.ModelTriangles[5].ColorAttrib = col;
+            mesh.Triangles[4].ColorAttrib = col;
+            mesh.Triangles[5].ColorAttrib = col;
 
 
             mesh.AddTriangle(3, 2, 6);
             mesh.AddTriangle(3, 6, 7);
 
-            mesh.ModelTriangles[6].ColorAttrib = col;
-            mesh.ModelTriangles[7].ColorAttrib = col;
+            mesh.Triangles[6].ColorAttrib = col;
+            mesh.Triangles[7].ColorAttrib = col;
 
 
 
             mesh.AddTriangle(1, 5, 6);
             mesh.AddTriangle(1, 6, 2);
 
-            mesh.ModelTriangles[8].ColorAttrib = col;
-            mesh.ModelTriangles[9].ColorAttrib = col;
+            mesh.Triangles[8].ColorAttrib = col;
+            mesh.Triangles[9].ColorAttrib = col;
 
 
             mesh.AddTriangle(0, 3, 7);
             mesh.AddTriangle(0, 7, 4);
 
-            mesh.ModelTriangles[10].ColorAttrib = col;
-            mesh.ModelTriangles[11].ColorAttrib = col;
+            mesh.Triangles[10].ColorAttrib = col;
+            mesh.Triangles[11].ColorAttrib = col;
             return mesh;
         }
 
@@ -154,40 +154,40 @@ namespace NostalgiaEngine.RasterizerPipeline
 
             mesh.AddTriangle(0, 1, 2);
             mesh.AddTriangle(0, 2, 3);
-            mesh.ModelTriangles[0].ColorAttrib = col;
-            mesh.ModelTriangles[1].ColorAttrib = col;
+            mesh.Triangles[0].ColorAttrib = col;
+            mesh.Triangles[1].ColorAttrib = col;
 
 
             mesh.AddTriangle(4, 6, 5);
             mesh.AddTriangle(4, 7, 6);
-            mesh.ModelTriangles[2].ColorAttrib = col;
-            mesh.ModelTriangles[3].ColorAttrib = col;
+            mesh.Triangles[2].ColorAttrib = col;
+            mesh.Triangles[3].ColorAttrib = col;
 
 
             mesh.AddTriangle(8, 9, 10);
             mesh.AddTriangle(8, 10, 11);
-            mesh.ModelTriangles[4].ColorAttrib = col;
-            mesh.ModelTriangles[5].ColorAttrib = col;
+            mesh.Triangles[4].ColorAttrib = col;
+            mesh.Triangles[5].ColorAttrib = col;
 
 
             mesh.AddTriangle(12, 13, 14);
             mesh.AddTriangle(12, 14, 15);
-            mesh.ModelTriangles[6].ColorAttrib = col;
-            mesh.ModelTriangles[7].ColorAttrib = col;
+            mesh.Triangles[6].ColorAttrib = col;
+            mesh.Triangles[7].ColorAttrib = col;
 
 
 
             mesh.AddTriangle(16, 17, 18);
             mesh.AddTriangle(16, 18, 19);
-            mesh.ModelTriangles[8].ColorAttrib = col;
-            mesh.ModelTriangles[9].ColorAttrib = col;
+            mesh.Triangles[8].ColorAttrib = col;
+            mesh.Triangles[9].ColorAttrib = col;
 
 
             mesh.AddTriangle(20, 21, 22);
             mesh.AddTriangle(20, 22, 23);
 
-            mesh.ModelTriangles[10].ColorAttrib = col;
-            mesh.ModelTriangles[11].ColorAttrib = col;
+            mesh.Triangles[10].ColorAttrib = col;
+            mesh.Triangles[11].ColorAttrib = col;
             return mesh;
         }
     }

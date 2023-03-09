@@ -30,7 +30,7 @@ namespace NostalgiaEngine.RasterizerPipeline
                         {
                             string[] pieces = line.Split(' ');
                             vbo.AddTriangle(int.Parse(pieces[1])-1, int.Parse(pieces[2])-1, int.Parse(pieces[3])-1);
-                            vbo.ModelTriangles[vbo.ModelTriangles.Count - 1].ColorAttrib = colAttrib;
+                            vbo.Triangles[vbo.Triangles.Count - 1].ColorAttrib = colAttrib;
                             //index++;
                             //index %= 15;
                         }

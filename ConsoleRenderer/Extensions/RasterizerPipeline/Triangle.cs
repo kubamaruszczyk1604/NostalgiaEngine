@@ -37,6 +37,14 @@ namespace NostalgiaEngine.RasterizerPipeline
            
         }
 
+        public Triangle()
+        {
+            //ParentMesh = mesh;
+            Indices = new int[3];
+            LeftSortedIndices = new int[3];
+
+        }
+
         public Triangle(int i0, int i1, int i2, VertexBuffer vbo, NEVector4 normal, NEVector4 transformedNormal)
         {
             VBO = vbo;
@@ -56,6 +64,29 @@ namespace NostalgiaEngine.RasterizerPipeline
             ColorAttrib = triangle.ColorAttrib;
         }
 
+        public void Set(Triangle triangle, VertexBuffer vbo)
+        {
+            VBO = vbo;
+            ParentMesh = triangle.ParentMesh;
+            Indices = new int[] { triangle.Indices[0], triangle.Indices[1], triangle.Indices[2] };
+            LeftSortedIndices = new int[3];
+            ModelNormal = triangle.ModelNormal;
+            TransformedNormal = triangle.TransformedNormal;
+            ColorAttrib = triangle.ColorAttrib;
+
+        }
+
+        public void Set(Triangle triangle)
+        {
+            VBO = triangle.VBO;
+            ParentMesh = triangle.ParentMesh;
+            Indices = new int[] { triangle.Indices[0], triangle.Indices[1], triangle.Indices[2] };
+            LeftSortedIndices = new int[3];
+            ModelNormal = triangle.ModelNormal;
+            TransformedNormal = triangle.TransformedNormal;
+            ColorAttrib = triangle.ColorAttrib;
+
+        }
 
         public void ZDivide()
         {
@@ -66,13 +97,13 @@ namespace NostalgiaEngine.RasterizerPipeline
 
 
 
-        public void DoLeftSort()
-        {
-            SortX(out LeftSortedIndices[0], out LeftSortedIndices[1], out LeftSortedIndices[2]);
-            A = VBO.ProcessedVertices[LeftSortedIndices[0]];
-            B = VBO.ProcessedVertices[LeftSortedIndices[1]];
-            C = VBO.ProcessedVertices[LeftSortedIndices[2]];
-        }
+        //public void DoLeftSort()
+        //{
+        //    SortX(out LeftSortedIndices[0], out LeftSortedIndices[1], out LeftSortedIndices[2]);
+        //    A = VBO.ProcessedVertices[LeftSortedIndices[0]];
+        //    B = VBO.ProcessedVertices[LeftSortedIndices[1]];
+        //    C = VBO.ProcessedVertices[LeftSortedIndices[2]];
+        //}
 
         public void CalculateEdges()
         {
@@ -222,8 +253,8 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         private void CalculateNormal()
         {
-            NEVector4 a = (ParentMesh.ModelVertices[Indices[1]].Position - ParentMesh.ModelVertices[Indices[0]].Position).Normalized;
-            NEVector4 b = (ParentMesh.ModelVertices[Indices[2]].Position - ParentMesh.ModelVertices[Indices[0]].Position).Normalized;
+            NEVector4 a = (ParentMesh.Vertices[Indices[1]].Position - ParentMesh.Vertices[Indices[0]].Position).Normalized;
+            NEVector4 b = (ParentMesh.Vertices[Indices[2]].Position - ParentMesh.Vertices[Indices[0]].Position).Normalized;
 
             float x = a.Y * b.Z - a.Z * b.Y;
             float y = a.Z * b.X - a.X * b.Z;

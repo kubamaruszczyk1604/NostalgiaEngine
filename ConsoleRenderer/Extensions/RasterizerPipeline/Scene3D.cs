@@ -193,9 +193,9 @@ namespace NostalgiaEngine.RasterizerPipeline
         {
 
             VertexBuffer m_VBO = model.VBO;
-            for (int i = 0; i < m_VBO.ProcessedTriangles.Count; ++i)
+            for (int i = 0; i < m_VBO.TrianglesReadyToRender.Count; ++i)
             {
-                Triangle tr = m_VBO.ProcessedTriangles[i];
+                Triangle tr = m_VBO.TrianglesReadyToRender[i];
                 if (!tr.IsColScanlineInTriangle(u)) continue;
 
                 ScanlineIntersectionManifest manifest;
