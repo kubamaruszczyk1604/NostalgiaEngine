@@ -17,17 +17,23 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         public List<Triangle> TriangleBuffer;
 
+        private VertexPool m_VertexPool;
+       // public VertexPool VertexPool { get { return m_VertexPool; } }
 
         public VertexBuffer(Model model)
         {
             AssociatedModel = model;
             ProcessedVertices = new List<Vertex>(AssociatedModel.Mesh.Vertices.Count * 2);
+
             TrianglesReadyToRender = new List<Triangle>(AssociatedModel.Mesh.Triangles.Count * 2);
             TriangleBuffer = new List<Triangle>(AssociatedModel.Mesh.Triangles.Count * 2);
             //for(int i =0; i< TriangleBuffer.Capacity - 20 ;++i)
             //{
             //    TriangleBuffer.Add(new Triangle());
             //}
+
+            m_VertexPool = new VertexPool();
+            m_VertexPool.Allocate(AssociatedModel.Mesh.Vertices.Count * 2);
 
         }
 
@@ -41,9 +47,10 @@ namespace NostalgiaEngine.RasterizerPipeline
             NEMatrix4x4 MVP = camera.Projection * camera.View * model.Transform.World;
             for (int i = 0; i < mesh.Vertices.Count; ++i)
             {
-               ProcessedVertices.Add(mesh.Vertices[i].Duplicate());
-               ProcessedVertices[i].Position = MVP * ProcessedVertices[i].Position;
-               ProcessedVertices[i].Vert2Camera = -ProcessedVertices[i].Position.Normalized;
+               // ProcessedVertices.Add(mesh.Vertices[i].Duplicate());
+                ProcessedVertices.Add( m_VertexPool.Get(mesh.Vertices[i]));
+                ProcessedVertices[i].Position = MVP * ProcessedVertices[i].Position;
+                ProcessedVertices[i].Vert2Camera = -ProcessedVertices[i].Position.Normalized;
 
             }
             int currentTriangle = 0;
@@ -87,6 +94,15 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         }
 
+        public Vertex RequestFromPool(Vertex setValue)
+        {
+            return m_VertexPool.Get(setValue);
+        }
+
+        public Vertex RequestFromPool(ref NEVector4 setPosition, ref NEVector2 setUVs)
+        {
+            return m_VertexPool.Get(ref setPosition, ref setUVs);
+        }
 
         private bool IsOutsideFrustum(Triangle triangle)
         {
@@ -136,6 +152,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             TrianglesReadyToRender.Clear();
             ProcessedVertices.Clear();
             TriangleBuffer.Clear();
+           m_VertexPool.FreeVertices();
         }
     }
 }

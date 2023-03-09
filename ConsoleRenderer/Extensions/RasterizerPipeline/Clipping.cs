@@ -68,9 +68,9 @@ namespace NostalgiaEngine.RasterizerPipeline
                 int vOutI = OUTS[0]; int vIn0I = INS[0]; int vIn1I = INS[1];
 
                 PlaneIntersectionManifest m1 = NEPlane.IntersectionWithLineSegment(vertices[vOutI].Position, vertices[vIn0I].Position, plane);
-                Vertex new0 = Vertex.Lerp(vertices[vOutI], vertices[vIn0I], m1.MagnitudeNormalized);
+                Vertex new0 = Vertex.Lerp(vertices[vOutI], vertices[vIn0I], m1.MagnitudeNormalized, vbo);
                 m1 = NEPlane.IntersectionWithLineSegment(vertices[vOutI].Position, vertices[vIn1I].Position, plane);
-                Vertex new1 = Vertex.Lerp(vertices[vOutI], vertices[vIn1I], m1.MagnitudeNormalized);
+                Vertex new1 = Vertex.Lerp(vertices[vOutI], vertices[vIn1I], m1.MagnitudeNormalized, vbo);
 
                 vertices.Add(new0);
                 vertices.Add(new1);
@@ -87,9 +87,9 @@ namespace NostalgiaEngine.RasterizerPipeline
                 int vOut0I = OUTS[0]; int vOut1I = OUTS[1]; int vInI = INS[0];
 
                 PlaneIntersectionManifest m1 = NEPlane.IntersectionWithLineSegment(vertices[vOut0I].Position, vertices[vInI].Position, plane);
-                Vertex new0 = Vertex.Lerp(vertices[vOut0I], vertices[vInI], m1.MagnitudeNormalized);
+                Vertex new0 = Vertex.Lerp(vertices[vOut0I], vertices[vInI], m1.MagnitudeNormalized, vbo);
                 m1 = NEPlane.IntersectionWithLineSegment(vertices[vOut1I].Position, vertices[vInI].Position, plane);
-                Vertex new1 = Vertex.Lerp(vertices[vOut1I], vertices[vInI], m1.MagnitudeNormalized);
+                Vertex new1 = Vertex.Lerp(vertices[vOut1I], vertices[vInI], m1.MagnitudeNormalized, vbo);
 
                 vertices.Add(new0);
                 vertices.Add(new1);

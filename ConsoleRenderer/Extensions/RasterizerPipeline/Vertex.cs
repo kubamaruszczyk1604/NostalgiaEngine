@@ -88,6 +88,22 @@ namespace NostalgiaEngine.RasterizerPipeline
             return ret;
         }
 
+
+        static public Vertex Lerp(Vertex v0, Vertex v1, float t, VertexBuffer vbo)
+        {
+            NEVector4 pos = NEVector4.Lerp(v0.Position, v1.Position, t);
+            NEVector2 uvs = NEVector2.Lerp(v0.m_UVs, v1.m_UVs, t);
+            NEVector4 vertToCam = NEVector4.Lerp(v0.Vert2Camera, v1.Vert2Camera, t);
+
+
+            Vertex ret = vbo.RequestFromPool(ref pos, ref uvs);
+            //ret.m_Position = pos;
+            //ret.m_UVs = uvs;
+
+            ret.Vert2Camera = vertToCam;
+            return ret;
+        }
+
         public Vertex Duplicate()
         {
             return new Vertex(X, Y, Z, U, V);
@@ -96,8 +112,16 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         public void Set(Vertex v)
         {
-           m_Position = v.m_Position;
+            m_Position = v.m_Position;
             m_UVs = v.m_UVs;
+            m_ZDividedFlag = false;
+        }
+
+        public void Set(NEVector4 pos, NEVector2 uv)
+        {
+            m_Position = pos;
+            m_UVs = uv;
+            m_ZDividedFlag = false;
         }
 
         override public string ToString()
