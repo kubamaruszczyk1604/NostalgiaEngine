@@ -40,7 +40,7 @@ namespace NostalgiaEngine.Demos
             bunnyModel.Transform.ScaleX = 10.5f;
             bunnyModel.Transform.ScaleY = 10.5f;
             bunnyModel.Transform.ScaleZ = 10.5f;
-            bunnyModel.Transform.LocalPosition = new NEVector4(5.0f, 0.0f, -4.0f, 1.0f);
+            bunnyModel.Transform.LocalPosition = new NEVector4(5.0f, 0.0f, -3.0f, 1.0f);
 
 
 

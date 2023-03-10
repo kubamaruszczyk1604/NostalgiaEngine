@@ -250,16 +250,22 @@ namespace NostalgiaEngine.RasterizerPipeline
 
                     if (m_DepthBuffer.TryUpdate(x, fillStart + y, fragmentDepth))
                     {
-                        NEVector4 vDirBottom = manifest.bottom_P0.Vert2Camera * (1.0f - manifest.bottom_t) + manifest.bottom_P1.Vert2Camera * manifest.bottom_t;
-                        NEVector4 vDirTop = manifest.top_P0.Vert2Camera * (1.0f - manifest.top_t) + manifest.top_P1.Vert2Camera * manifest.top_t;
-                        NEVector4 vDir = vDirTop * (1.0f - t) + vDirBottom * t;
+                        //NEVector4 vDirBottom = manifest.bottom_P0.Vert2Camera * (1.0f - manifest.bottom_t) + manifest.bottom_P1.Vert2Camera * manifest.bottom_t;
+                        //NEVector4 vDirTop = manifest.top_P0.Vert2Camera * (1.0f - manifest.top_t) + manifest.top_P1.Vert2Camera * manifest.top_t;
+                        //NEVector4 vDir = vDirTop * (1.0f - t) + vDirBottom * t;
 
                         // float dot = NEVector4.Dot3(tr.TransformedNormal, vDir);
                         float v = (float)(fillStart + y) *m_ScrHeightReciprocal;
                         v = -((2.0f * v) - 1.0f);
-                        float dot = NEVector4.Dot3(tr.TransformedNormal, new NEVector4(u, v, 1.0f).Normalized);
-                        dot = NEMathHelper.Abs(dot);
-                        //dot = NEMathHelper.Clamp(dot, 0.0f, 1.0f);
+                       
+                        float dotGlobalLight = NEVector4.Dot3(tr.ModelNormal, new NEVector4(-1.0f, 1.0f, 1.0f).Normalized);
+                        dotGlobalLight = NEMathHelper.Clamp(dotGlobalLight, 0.0f, 1.0f);
+                        float dotHeadlamp = NEVector4.Dot3(tr.TransformedNormal, new NEVector4(u, v, 1.0f).Normalized);
+                        dotHeadlamp = NEMathHelper.Abs(dotHeadlamp);
+
+                        float dot = /*1.0f-NEMathHelper.Pow(fragmentDepth, 20);*/
+                             0.5f * dotGlobalLight + 0.5f * dotHeadlamp;
+
 
                         float fragWBottom = (1.0f - manifest.bottom_t) * manifest.bottom_P0.W + manifest.bottom_t * manifest.bottom_P1.W;
                         float fragWTop = (1.0f - manifest.top_t) * manifest.top_P0.W + manifest.top_t * manifest.top_P1.W;
@@ -277,14 +283,14 @@ namespace NostalgiaEngine.RasterizerPipeline
                         float teX = texCoord.X / fragW;
                         float teY = texCoord.Y / fragW;
                         // dot = 1.0f;
-                        float luma = 0.2f + dot ;
+                        float luma = dot;
                         if (model.LumaTexture != null)
                         {
                             luma *= model.LumaTexture.FastSample(teX, 1.0f - teY);
                         }
 
                         int fullCol = model.Color == -1 ? tr.ColorAttrib : model.Color;
-                        var col = NEColorSample.MakeCol5(ConsoleColor.Black, (ConsoleColor)fullCol, 1.0f*luma);
+                        var col = NEColorSample.MakeCol5(ConsoleColor.Black, (ConsoleColor)fullCol, 0.1f + luma);
                         //var col = m_Texture.Sample(teX, 1.0f - teY, dot);
                         NEScreenBuffer.PutChar(col.Character, col.BitMask, x, fillStart + y);
                     }
