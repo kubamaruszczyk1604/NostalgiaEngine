@@ -53,7 +53,7 @@ namespace NostalgiaEngine.Demos
 
             MakeTree(new NEVector4(-3.2f, 0.0f, 1.0f), cubeMesh, treeTexture);
             MakeTree(new NEVector4(3.5f, 0.0f, 5.0f), cubeMesh, treeTexture);
-            MakeTree(new NEVector4(-15.5f, 0.0f, 10.0f), cubeMesh, treeTexture);
+            MakeTree(new NEVector4(-15.0f, 0.0f, 10.0f), cubeMesh, treeTexture);
             MakeTree(new NEVector4(8.4f, 0.0f, -5.3f), cubeMesh, treeTexture);
 
             MakeWall(new NEVector4(-10.2f, 0.0f, -7.4f, 1.0f), cubeMesh, wallTexture, 1.0f, 3.14f * 0.5f);
