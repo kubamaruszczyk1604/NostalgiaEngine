@@ -64,8 +64,8 @@ namespace NostalgiaEngine.Core
 
         public static NEVector4 Normalize(NEVector4 v)
         {
-            float l = CalculateLength(v);
-            return new NEVector4(v.X / l, v.Y / l, v.Z / l, v.W / l);
+            float l = 1.0f/CalculateLength(v);
+            return new NEVector4(v.X * l, v.Y * l, v.Z * l, v.W * l);
         }
 
         /// <summary>

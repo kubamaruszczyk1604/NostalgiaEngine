@@ -26,6 +26,9 @@ namespace NostalgiaEngine.RasterizerPipeline
         bool m_DrawPaletteFlag;
         bool m_ShowClippingFlag;
 
+        float m_ScrHeightReciprocal;
+        float m_ScrWidthReciprocal;
+
         public Scene3D():base()
         {
             ScreenWidth = 320;
@@ -44,6 +47,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             MainCamera.Transform.LocalPosition = new NEVector4(0.0f, 0.0f, -2.0f);
             m_DrawPaletteFlag = false;
             m_ShowClippingFlag = false;
+            
         }
 
         public override bool OnLoad()
@@ -56,6 +60,8 @@ namespace NostalgiaEngine.RasterizerPipeline
             m_PaletteCellHeight = m_PaletteCellWidth;
             m_PaletteStripPos = new NEVector2(m_PaletteCellWidth / 2, m_PaletteCellWidth / 2);
             //Clipping.DebugMode = true;
+            m_ScrHeightReciprocal = 1.0f / ScreenHeight;
+            m_ScrWidthReciprocal = 1.0f / ScreenWidth;
             return base.OnLoad();
         }
 
@@ -95,7 +101,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         public override void OnDrawPerColumn(int x)
         {
-            float xNorm = ((float)x) / ((float)ScreenWidth);
+            float xNorm = ((float)x) *m_ScrWidthReciprocal;
             float u = 2.0f * xNorm - 1.0f;
 
 
@@ -155,7 +161,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             {
                 if (m_DepthBuffer.TryUpdate(x, y, 1.0f))
                 {
-                    float v = (float)y / (float)ScreenHeight;
+                    float v = (float)y * m_ScrHeightReciprocal;
                     v = -((2.0f * v) - 1.0f);
                     NEVector4 sampleDir = (MainCamera.PointAt) * new NEVector4(u * MainCamera.InverseAspectRatio, v, rayZ, 0.0f).Normalized;
                     float luma = SceneSkybox.Sample(sampleDir);
@@ -190,7 +196,8 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         private void RenderModel(int x, float u, Model model)
         {
-
+           // float len = 1.0f - NEVector4.CalculateLength(MainCamera.View * model.Transform.World * new NEVector4(0,0,0,1)) / 15.0f;
+           // len = NEMathHelper.Clamp(len, 0.0f, 1.0f);
             VertexBuffer m_VBO = model.VBO;
             for (int i = 0; i < m_VBO.TrianglesReadyToRender.Count; ++i)
             {
@@ -247,7 +254,10 @@ namespace NostalgiaEngine.RasterizerPipeline
                         NEVector4 vDirTop = manifest.top_P0.Vert2Camera * (1.0f - manifest.top_t) + manifest.top_P1.Vert2Camera * manifest.top_t;
                         NEVector4 vDir = vDirTop * (1.0f - t) + vDirBottom * t;
 
-                        float dot = NEVector4.Dot3(tr.TransformedNormal, vDir);
+                        // float dot = NEVector4.Dot3(tr.TransformedNormal, vDir);
+                        float v = (float)(fillStart + y) *m_ScrHeightReciprocal;
+                        v = -((2.0f * v) - 1.0f);
+                        float dot = NEVector4.Dot3(tr.TransformedNormal, new NEVector4(u, v, 1.0f).Normalized);
                         dot = NEMathHelper.Abs(dot);
                         //dot = NEMathHelper.Clamp(dot, 0.0f, 1.0f);
 
@@ -267,7 +277,7 @@ namespace NostalgiaEngine.RasterizerPipeline
                         float teX = texCoord.X / fragW;
                         float teY = texCoord.Y / fragW;
                         // dot = 1.0f;
-                        float luma = 0.2f + dot;
+                        float luma = 0.2f + dot ;
                         if (model.LumaTexture != null)
                         {
                             luma *= model.LumaTexture.FastSample(teX, 1.0f - teY);

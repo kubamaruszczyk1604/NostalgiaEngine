@@ -12,14 +12,22 @@ namespace NostalgiaEngine.Demos
             SceneSkybox = new Skybox("RasterizerDemoResources/skybox1");
             Mesh floorMesh = GeometryGenerator.CreateHorizontalQuad(15.0f, 15.0f, new NEVector4(0.0f, 0.0f, 0.0f), 4);
             Mesh cubeMesh = GeometryGenerator.GenerateCube2(1.0f, 1.0f, 1.0f, NEVector4.Zero, 4);
-            Mesh teapotMesh = NEObjLoader.LoadObj("RasterizerDemoResources/teapot.obj",1);
-            Mesh bunnyMesh = NEObjLoader.LoadObj("RasterizerDemoResources/bunny.obj",3);
+            Mesh teapotMesh = NEObjLoader.LoadObj("RasterizerDemoResources/teapot.obj",14);
+            Mesh bunnyMesh = NEObjLoader.LoadObj("RasterizerDemoResources/bunny.obj",14);
             var luma = ResourceManager.Instance.GetLumaTexture("RasterizerDemoResources/uv_test_tex/luma.buf");
 
+            var wallTexture = ResourceManager.Instance.GetLumaTexture(@"C:\Users\Kuba\Desktop\NE_Texture1\luma.buf");
 
 
+                
 
-            Model floorModel = new Model(floorMesh, luma);
+            var treeTexture = ResourceManager.Instance.GetLumaTexture(" C:/Users/Kuba/Desktop/NE_Texture/luma.buf");
+       
+
+
+         Model floorModel = new Model(floorMesh, treeTexture);
+
+
 
             Model teapotModel = new Model(teapotMesh, CullMode.None);
             teapotModel.Transform.ScaleX = 0.5f;
@@ -32,21 +40,39 @@ namespace NostalgiaEngine.Demos
             bunnyModel.Transform.ScaleX = 10.5f;
             bunnyModel.Transform.ScaleY = 10.5f;
             bunnyModel.Transform.ScaleZ = 10.5f;
-            bunnyModel.Transform.LocalPosition = new NEVector4(3.0f, 1.5f, -1.0f, 1.0f);
+            bunnyModel.Transform.LocalPosition = new NEVector4(5.0f, 0.0f, -4.0f, 1.0f);
+
+
 
             
             Models.Add(floorModel);
-            Models.Add(teapotModel);
-            //  Models.Add(bunnyModel);
-
-           
-
-            //MakeTree(new NEVector4(-3.2f, 0.0f, 1.0f), cubeMesh, luma);
-            //MakeTree(new NEVector4(3.5f, 0.0f, 5.0f), cubeMesh, luma);
+            //Models.Add(teapotModel);
+             Models.Add(bunnyModel);
+            
 
 
+            MakeTree(new NEVector4(-3.2f, 0.0f, 1.0f), cubeMesh, treeTexture);
+            MakeTree(new NEVector4(3.5f, 0.0f, 5.0f), cubeMesh, treeTexture);
+            MakeTree(new NEVector4(-15.5f, 0.0f, 10.0f), cubeMesh, treeTexture);
+            MakeTree(new NEVector4(8.4f, 0.0f, -5.3f), cubeMesh, treeTexture);
 
-            MainCamera.Transform.LocalPosition = new NEVector4(0.0f, 2.8f, -5.3f);
+            MakeWall(new NEVector4(-10.2f, 0.0f, -7.4f, 1.0f), cubeMesh, wallTexture, 1.0f, 3.14f * 0.5f);
+            MakeWall(new NEVector4(-10.2f, 0.0f, -4.2f, 1.0f), cubeMesh, wallTexture, 1.0f, 3.14f * 0.5f);
+            MakeWall(new NEVector4(-10.2f, 0.0f, -1.0f, 1.0f), cubeMesh, wallTexture, 1.0f, 3.14f * 0.5f);
+            MakeWall(new NEVector4(-9.3f, 0.0f, 4.0f, 1.0f), cubeMesh, wallTexture, 1.0f);
+            MakeWall(new NEVector4(-6.4f, 0.0f, 5.0f, 1.0f), cubeMesh, wallTexture, 1.0f);
+            MakeWall(new NEVector4(-3.2f, 0.0f, 5.0f, 1.0f), cubeMesh, wallTexture, 1.0f);
+            MakeWall(new NEVector4(-1.0f, 0.0f, 7.0f, 1.0f), cubeMesh, wallTexture, 1.0f, 3.14f * 0.5f);
+            MakeWall(new NEVector4(-1.0f, 0.0f, 10.2f, 1.0f), cubeMesh, wallTexture, 1.0f, 3.14f * 0.5f);
+            MakeWall(new NEVector4(2.9f, 0.0f, 7.0f, 1.0f), cubeMesh, wallTexture, 1.0f);
+            MakeWall(new NEVector4(6.1f, 0.0f, 7.0f, 1.0f), cubeMesh, wallTexture, 1.0f);
+            MakeWall(new NEVector4(9.3f, 0.0f, 7.0f, 1.0f), cubeMesh, wallTexture, 1.0f);
+            MakeWall(new NEVector4(9.3f, 0.0f, 4.8f, 1.0f), cubeMesh, wallTexture, 1.0f, 3.14f * 0.5f);
+            MakeWall(new NEVector4(9.3f, 0.0f, 1.6f, 1.0f), cubeMesh, wallTexture, 1.0f, 3.14f * 0.5f);
+            MakeWall(new NEVector4(10.3f, 0.0f, -1.6f, 1.0f), cubeMesh, wallTexture, 1.0f, 3.14f * 0.5f);
+            MakeWall(new NEVector4(10.3f, 0.0f, -4.8f, 1.0f), cubeMesh, wallTexture, 1.0f, 3.14f * 0.5f);
+
+            MainCamera.Transform.LocalPosition = new NEVector4(0.0f, 1.9f, -5.3f);
 
             TogglePalette();
 
@@ -146,7 +172,7 @@ namespace NostalgiaEngine.Demos
         private void MakeTree(NEVector4 pos, Mesh cubeMesh, NEFloatBuffer texture)
         {
            
-            Model trunk = new Model(cubeMesh, CullMode.Back);
+            Model trunk = new Model(cubeMesh, CullMode.Back, texture);
             trunk.Transform.LocalPosition =  pos +  new NEVector4(0.0f, 1.0f, 0.0f);
             trunk.Transform.ScaleX = 0.4f;
             trunk.Transform.ScaleZ = 0.4f;
@@ -154,7 +180,7 @@ namespace NostalgiaEngine.Demos
             trunk.Color = 5;
             Models.Add(trunk);
 
-            int numRings = rnd.Next(10, 25);
+            int numRings = rnd.Next(10, 15);
             
             for(int i =0; i < numRings; ++i )
             {
@@ -171,21 +197,17 @@ namespace NostalgiaEngine.Demos
                 Models.Add(crown);
             }
 
-            //Model crown = new Model(cubeMesh, CullMode.Back, texture);
-            //crown.Transform.LocalPosition = pos + new NEVector4(0.0f, 2.2f, 0.0f);
-            //crown.Transform.ScaleY = 0.3f;
+        }
 
-
-            //Model crown2 = new Model(cubeMesh, CullMode.Back, texture);
-            //crown2.Transform.LocalPosition = pos + new NEVector4(0.0f, 2.8f, 0.0f);
-            //crown2.Transform.ScaleY = 0.3f;
-            //crown2.Transform.ScaleX = 1.4f;
-            //crown2.Transform.ScaleZ = 1.4f;
- 
-
-          
-            //Models.Add(crown);
-            //Models.Add(crown2);
+        private void MakeWall(NEVector4 pos, Mesh cubeMesh, NEFloatBuffer texture, float scale = 1.0f, float rotationYRad = 0 )
+        {
+            Model wallModel = new Model(cubeMesh, CullMode.Back, texture);
+            wallModel.Transform.LocalPosition = new NEVector4(0.0f,scale*0.6f,0.0f) + pos;
+            wallModel.Transform.ScaleY = 0.6f * scale;
+            wallModel.Transform.ScaleX = 1.6f * scale;
+            wallModel.Color = 11;
+            wallModel.Transform.RotateY(rotationYRad);
+            Models.Add(wallModel);
         }
     }
 }
