@@ -16,20 +16,20 @@ namespace NostalgiaEngine.RasterizerPipeline
             List<int> vrt = new List<int>(3);
             vrt.AddRange(new int[] { vb, vc, vd });
 
-            int v1 = Mesh.GetLeftmost(vertices, triangle.TransformedNormal, va, vb, vc, vd);
+            int v1 = Mesh.GetLeftmost(vertices, triangle.NormalView, va, vb, vc, vd);
             vrt.Remove(v1);
-            int v2 = Mesh.GetLeftmost(vertices, triangle.TransformedNormal, v1, vrt[0], vrt[1]);
+            int v2 = Mesh.GetLeftmost(vertices, triangle.NormalView, v1, vrt[0], vrt[1]);
             vrt.Remove(v2);
 
 
-            Triangle tr1 = vbo.RequestFromPool(va, v1, v2, triangle.ModelNormal, triangle.TransformedNormal);
+            Triangle tr1 = vbo.RequestFromPool(va, v1, v2, triangle.NormalModel, triangle.NormalView);
                 
                 //new Triangle(va, v1, v2, vbo, triangle.ModelNormal, triangle.TransformedNormal);
             tr1.ColorAttrib =  DebugMode ? 2 : triangle.ColorAttrib;
             tr1.CalculateEdges();
             triangleStream.Add(tr1);
 
-            Triangle tr2 = vbo.RequestFromPool(va, v2, vrt[0], triangle.ModelNormal, triangle.TransformedNormal);
+            Triangle tr2 = vbo.RequestFromPool(va, v2, vrt[0], triangle.NormalModel, triangle.NormalView);
                 //new Triangle(va, v2, vrt[0], vbo, triangle.ModelNormal, triangle.TransformedNormal);
             tr2.ColorAttrib = DebugMode ? 1 : triangle.ColorAttrib;
             tr2.CalculateEdges();
@@ -38,12 +38,12 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         static public void VertsToTris(VertexBuffer vbo, Triangle triangle, int va, int vb, int vc, List<Triangle> triangleStream)
         {
-            int v1 = Mesh.GetLeftmost(vbo.ProcessedVertices, triangle.TransformedNormal, va, vb, vc);
+            int v1 = Mesh.GetLeftmost(vbo.ProcessedVertices, triangle.NormalView, va, vb, vc);
             int v2 = 0;
             if (vb == v1) v2 = vc;
             else v2 = vb;
 
-            Triangle tr = vbo.RequestFromPool(va, v1, v2, triangle.ModelNormal, triangle.TransformedNormal);
+            Triangle tr = vbo.RequestFromPool(va, v1, v2, triangle.NormalModel, triangle.NormalView);
                 //new Triangle(va, v1, v2, vbo, triangle.ModelNormal, triangle.TransformedNormal);
             tr.ColorAttrib = DebugMode ? 9 : triangle.ColorAttrib;
             tr.CalculateEdges();

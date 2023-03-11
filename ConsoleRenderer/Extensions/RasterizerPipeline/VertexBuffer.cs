@@ -59,7 +59,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             for (int i = 0; i < mesh.Triangles.Count; ++i)
             {
                 Triangle tri = mesh.Triangles[i];
-                tri.TransformedNormal = normalTransformMat * mesh.Triangles[i].ModelNormal;
+                tri.NormalView = normalTransformMat * mesh.Triangles[i].NormalModel;
                // tri = new Triangle(tri, model.VBO);
                 tri = RequestFromPool(tri);
                 if (CullTest(tri, model.FaceCull)) continue;
@@ -89,6 +89,7 @@ namespace NostalgiaEngine.RasterizerPipeline
                 List<Triangle> BottomClipped = Clipping.ClipTrianglesAgainstPlane(RightClipped, this, ClipPlane.Bottom);
                 List<Triangle> TopClipped = Clipping.ClipTrianglesAgainstPlane(BottomClipped, this, ClipPlane.Top);
                 List<Triangle> FarClipped = Clipping.ClipTrianglesAgainstPlane(TopClipped, this, ClipPlane.Far);
+
 
                 TrianglesReadyToRender.AddRange(FarClipped);
             }
@@ -150,9 +151,9 @@ namespace NostalgiaEngine.RasterizerPipeline
             NEVector4 vB = -triangle.VBO.ProcessedVertices[triangle.Indices[1]].Position;
             NEVector4 vC = -triangle.VBO.ProcessedVertices[triangle.Indices[2]].Position;
 
-            float dotA = NEVector4.Dot3(vA, triangle.TransformedNormal);
-            float dotB = NEVector4.Dot3(vB, triangle.TransformedNormal);
-            float dotC = NEVector4.Dot3(vC, triangle.TransformedNormal);
+            float dotA = NEVector4.Dot3(vA, triangle.NormalView);
+            float dotB = NEVector4.Dot3(vB, triangle.NormalView);
+            float dotC = NEVector4.Dot3(vC, triangle.NormalView);
 
             return (dotA < 0.0f && dotB < 0.0f && dotC < 0.0f) ^ (cullMode == CullMode.Front);
         }

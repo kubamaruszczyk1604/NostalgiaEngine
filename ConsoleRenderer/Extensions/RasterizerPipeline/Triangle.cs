@@ -23,10 +23,10 @@ namespace NostalgiaEngine.RasterizerPipeline
         public Vertex C { get; private set; }
 
         public int ColorAttrib = 1;
-        public NEVector4 ModelNormal { get; private set; }
-        public NEVector4 TransformedNormal { get; set; }
+        public NEVector4 NormalModel { get; private set; }
+        public NEVector4 NormalView { get; set; }
+        public NEVector4 NormalWorld { get; set; }
 
-       
 
         public Triangle(int i0, int i1, int i2, Mesh mesh)
         {
@@ -50,8 +50,8 @@ namespace NostalgiaEngine.RasterizerPipeline
             VBO = vbo;
             Indices = new int[] { i0, i1, i2 };
             LeftSortedIndices = new int[3];
-            ModelNormal = normal;
-            TransformedNormal = transformedNormal;
+            NormalModel = normal;
+            NormalView = transformedNormal;
         }
 
         public Triangle(Triangle triangle, VertexBuffer vbo)
@@ -59,8 +59,8 @@ namespace NostalgiaEngine.RasterizerPipeline
             VBO = vbo;
             Indices = new int[] { triangle.Indices[0], triangle.Indices[1], triangle.Indices[2]};
             LeftSortedIndices = new int[3];
-            ModelNormal = triangle.ModelNormal;
-            TransformedNormal = triangle.TransformedNormal;
+            NormalModel = triangle.NormalModel;
+            NormalView = triangle.NormalView;
             ColorAttrib = triangle.ColorAttrib;
         }
 
@@ -74,8 +74,8 @@ namespace NostalgiaEngine.RasterizerPipeline
             LeftSortedIndices[0] = triangle.LeftSortedIndices[0];
             LeftSortedIndices[1] = triangle.LeftSortedIndices[1];
             LeftSortedIndices[2] = triangle.LeftSortedIndices[2];
-            ModelNormal = triangle.ModelNormal;
-            TransformedNormal = triangle.TransformedNormal;
+            NormalModel = triangle.NormalModel;
+            NormalView = triangle.NormalView;
             ColorAttrib = triangle.ColorAttrib;
 
         }
@@ -90,8 +90,8 @@ namespace NostalgiaEngine.RasterizerPipeline
             LeftSortedIndices[0] = triangle.LeftSortedIndices[0];
             LeftSortedIndices[1] = triangle.LeftSortedIndices[1];
             LeftSortedIndices[2] = triangle.LeftSortedIndices[2];
-            ModelNormal = triangle.ModelNormal;
-            TransformedNormal = triangle.TransformedNormal;
+            NormalModel = triangle.NormalModel;
+            NormalView = triangle.NormalView;
             ColorAttrib = triangle.ColorAttrib;
 
         }
@@ -105,8 +105,8 @@ namespace NostalgiaEngine.RasterizerPipeline
             LeftSortedIndices[0] = 0;
             LeftSortedIndices[1] = 0;
             LeftSortedIndices[2] = 0;
-            ModelNormal = normal;
-            TransformedNormal = transformedNormal;
+            NormalModel = normal;
+            NormalView = transformedNormal;
         }
 
         public void ZDivide()
@@ -280,7 +280,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             float x = a.Y * b.Z - a.Z * b.Y;
             float y = a.Z * b.X - a.X * b.Z;
             float z = a.X * b.Y - a.Y * b.X;
-            ModelNormal = new NEVector4(x, y, z,0.0f).Normalized;
+            NormalModel = new NEVector4(x, y, z,0.0f).Normalized;
         }
 
 

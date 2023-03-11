@@ -17,6 +17,10 @@ namespace NostalgiaEngine.RasterizerPipeline
         public CullMode FaceCull { get; set; }
         public VertexBuffer VBO {get; private set;}
         public int Color { get; set; }
+        public int UnlitColor { get; set; }
+        //public float AmbientIntensity { get; set; }
+        //public float DiffuseIntensity { get; set; }
+        //public float GlowIntensity { get; set; }
         public Model(Mesh mesh, CullMode faceCull = CullMode.Back, NEColorTexture16 colorTexture = null, NEFloatBuffer lumaTexture = null)
         {
             Mesh = mesh;
@@ -35,6 +39,8 @@ namespace NostalgiaEngine.RasterizerPipeline
 
             VBO = new VertexBuffer(this);
             Color = -1;
+            UnlitColor = 0;
+            //DiffuseIntensity = 1.0f;
         }
 
         public Model(Mesh mesh, NEFloatBuffer lumaTexture): this(mesh, CullMode.Back, null, lumaTexture)

@@ -166,7 +166,7 @@ namespace NostalgiaEngine.RasterizerPipeline
                     NEVector4 sampleDir = (MainCamera.PointAt) * new NEVector4(u * MainCamera.InverseAspectRatio, v, rayZ, 0.0f).Normalized;
                     float luma = SceneSkybox.Sample(sampleDir);
                     int low = 0;
-                    int high = 10;
+                    int high = 14;
                     if (luma > 0.1f) low = 6;
                     if (luma > 0.8f) high = 15;
                     var col = NEColorSample.MakeCol10((ConsoleColor)low, (ConsoleColor)high, luma);
@@ -198,11 +198,17 @@ namespace NostalgiaEngine.RasterizerPipeline
         {
            // float len = 1.0f - NEVector4.CalculateLength(MainCamera.View * model.Transform.World * new NEVector4(0,0,0,1)) / 15.0f;
            // len = NEMathHelper.Clamp(len, 0.0f, 1.0f);
+
+            
             VertexBuffer m_VBO = model.VBO;
             for (int i = 0; i < m_VBO.TrianglesReadyToRender.Count; ++i)
             {
                 Triangle tr = m_VBO.TrianglesReadyToRender[i];
                 if (!tr.IsColScanlineInTriangle(u)) continue;
+
+
+                float dotGlobalLight = NEVector4.Dot3(tr.NormalModel, new NEVector4(-1.0f, 1.0f, 1.0f).Normalized);
+                dotGlobalLight = NEMathHelper.Clamp(dotGlobalLight, 0.0f, 1.0f);
 
                 ScanlineIntersectionManifest manifest;
                 tr.ComputeScanlineIntersection(u, out manifest);
@@ -258,13 +264,10 @@ namespace NostalgiaEngine.RasterizerPipeline
                         float v = (float)(fillStart + y) *m_ScrHeightReciprocal;
                         v = -((2.0f * v) - 1.0f);
                        
-                        float dotGlobalLight = NEVector4.Dot3(tr.ModelNormal, new NEVector4(-1.0f, 1.0f, 1.0f).Normalized);
-                        dotGlobalLight = NEMathHelper.Clamp(dotGlobalLight, 0.0f, 1.0f);
-                        float dotHeadlamp = NEVector4.Dot3(tr.TransformedNormal, new NEVector4(u, v, 1.0f).Normalized);
+
+                        float dotHeadlamp = NEVector4.Dot3(tr.NormalView, new NEVector4(u, v, 1.0f).Normalized);
                         dotHeadlamp = NEMathHelper.Abs(dotHeadlamp);
 
-                        float dot = /*1.0f-NEMathHelper.Pow(fragmentDepth, 20);*/
-                             0.5f * dotGlobalLight + 0.5f * dotHeadlamp;
 
 
                         float fragWBottom = (1.0f - manifest.bottom_t) * manifest.bottom_P0.W + manifest.bottom_t * manifest.bottom_P1.W;
@@ -282,15 +285,20 @@ namespace NostalgiaEngine.RasterizerPipeline
 
                         float teX = texCoord.X / fragW;
                         float teY = texCoord.Y / fragW;
-                        // dot = 1.0f;
-                        float luma = dot;
+                        float global =  dotGlobalLight;
+                        float headlamp = 3 * fragW * dotHeadlamp;
+                        float diffuse = global + headlamp;
                         if (model.LumaTexture != null)
                         {
-                            luma *= model.LumaTexture.FastSample(teX, 1.0f - teY);
+                            float sampleCol = model.LumaTexture.FastSample(teX, 1.0f - teY);
+                            diffuse *= sampleCol;
+
                         }
 
                         int fullCol = model.Color == -1 ? tr.ColorAttrib : model.Color;
-                        var col = NEColorSample.MakeCol5(ConsoleColor.Black, (ConsoleColor)fullCol, 0.1f + luma);
+                        int lowCol =  model.UnlitColor;
+                        //float luma = NEMathHelper.Clamp(model.GlowIntensity + ambient + diffuse, 0.0f, 1.0f);
+                        var col = NEColorSample.MakeCol5((ConsoleColor)lowCol, (ConsoleColor)fullCol,diffuse);
                         //var col = m_Texture.Sample(teX, 1.0f - teY, dot);
                         NEScreenBuffer.PutChar(col.Character, col.BitMask, x, fillStart + y);
                     }
