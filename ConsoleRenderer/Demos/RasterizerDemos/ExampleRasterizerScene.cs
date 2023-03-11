@@ -93,6 +93,15 @@ namespace NostalgiaEngine.Demos
                 ToggleShowClipping();
             }
 
+            if (NEInput.CheckKeyPress(ConsoleKey.H))
+            {
+                ToggleHeadlamp();
+            }
+
+            if (NEInput.CheckKeyPress(ConsoleKey.T))
+            {
+                ToggleTexturing();
+            }
             //Models[1].Transform.RotateY(deltaTime * 0.5f);
             //Models[1].Transform.PositionY = 1.6f + (float)(Math.Sin(Engine.Instance.TotalTime) * 0.1);
             NEScreenBuffer.Clear();

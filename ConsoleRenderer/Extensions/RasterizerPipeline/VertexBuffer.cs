@@ -19,8 +19,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         private VertexPool m_VertexPool;
         private TrianglePool m_TrianglePool;
-       // public VertexPool VertexPool { get { return m_VertexPool; } }
-
+       
         public VertexBuffer(Model model)
         {
             AssociatedModel = model;
@@ -50,7 +49,7 @@ namespace NostalgiaEngine.RasterizerPipeline
                // ProcessedVertices.Add(mesh.Vertices[i].Duplicate());
                 ProcessedVertices.Add( m_VertexPool.Get(mesh.Vertices[i]));
                 ProcessedVertices[i].Position = MVP * ProcessedVertices[i].Position;
-                ProcessedVertices[i].Vert2Camera = -ProcessedVertices[i].Position.Normalized;
+               // ProcessedVertices[i].Vert2Camera = -ProcessedVertices[i].Position.Normalized;
 
             }
             int currentTriangle = 0;
@@ -93,6 +92,11 @@ namespace NostalgiaEngine.RasterizerPipeline
 
 
                 TrianglesReadyToRender.AddRange(FarClipped);
+            }
+
+            for (int i = 0; i < ProcessedVertices.Count; ++i)
+            {
+                ProcessedVertices[i].Vert2Camera = -ProcessedVertices[i].Position.Normalized;
             }
 
         }
