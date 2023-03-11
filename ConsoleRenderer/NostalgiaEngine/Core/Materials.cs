@@ -13,6 +13,8 @@ namespace NostalgiaEngine.Core
     class NEBLOCKS
     {
         static public int[] BLOCK_ARR = new int[] { (int)NEBlock.Space, (int)NEBlock.Weak, (int)NEBlock.Middle, (int)NEBlock.Strong, (int)NEBlock.Solid};
+
+        static public int[] BLOCK_ARR_EXT = new int[] { (int)NEBlock.Space, 221, 179,  (int)NEBlock.Weak, 181, 186, 185, (int)NEBlock.Middle, (int)NEBlock.Strong, (int)NEBlock.Solid };
     }
 
 
@@ -79,7 +81,24 @@ namespace NostalgiaEngine.Core
             return sample;
         }
 
+        static public NEColorSample MakeCol10F(ConsoleColor col1, ConsoleColor col2, float t)
+        {
+            float tFract = t >= 1.0f ? 1.0f : t - (float)Math.Floor(t);
+            tFract = NEMathHelper.Clamp(tFract, 0.0f, 1.0f);
 
+
+            int index = (int)(tFract * 10.0f);
+            if (index > 9) index = 9;
+
+            NEColorSample sample = new NEColorSample();
+            sample.BitMask = (short)((int)col1 << 4 | ((int)col2));
+
+
+
+            sample.Character = (char)NEBLOCKS.BLOCK_ARR_EXT[index];
+
+            return sample;
+        }
         static public NEColorSample MakeCol5(ConsoleColor col1, ConsoleColor col2, float t)
         {
 

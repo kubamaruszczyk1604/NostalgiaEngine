@@ -10,10 +10,10 @@ namespace NostalgiaEngine.Demos
         {
 
             SceneSkybox = new Skybox("RasterizerDemoResources/skybox1");
-            Mesh floorMesh = GeometryGenerator.CreateHorizontalQuad(15.0f, 15.0f, new NEVector4(0.0f, 0.0f, 0.0f), 4);
+            Mesh floorMesh = GeometryGenerator.CreateHorizontalQuad(15.0f, 15.0f, new NEVector4(0.0f, 0.0f, 0.0f), 7);
             Mesh cubeMesh = GeometryGenerator.GenerateCube2(1.0f, 1.0f, 1.0f, NEVector4.Zero, 4);
             Mesh teapotMesh = NEObjLoader.LoadObj("RasterizerDemoResources/teapot.obj",14);
-            Mesh bunnyMesh = NEObjLoader.LoadObj("RasterizerDemoResources/bunny.obj",4);
+            Mesh bunnyMesh = NEObjLoader.LoadObj("RasterizerDemoResources/bunny.obj",7);
             var luma = ResourceManager.Instance.GetLumaTexture("RasterizerDemoResources/uv_test_tex/luma.buf");
 
             var wallTexture = ResourceManager.Instance.GetLumaTexture(@"C:\Users\Kuba\Desktop\NE_Texture1\luma.buf");
@@ -40,7 +40,7 @@ namespace NostalgiaEngine.Demos
             bunnyModel.Transform.ScaleX = 10.5f;
             bunnyModel.Transform.ScaleY = 10.5f;
             bunnyModel.Transform.ScaleZ = 10.5f;
-            bunnyModel.Transform.LocalPosition = new NEVector4(5.0f, -0.4f, -3.0f, 1.0f);
+            bunnyModel.Transform.LocalPosition = new NEVector4(5.0f, -0.4f, -1.0f, 1.0f);
 
 
 

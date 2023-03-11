@@ -314,7 +314,8 @@ namespace NostalgiaEngine.RasterizerPipeline
 
                         int fullCol = model.Color == -1 ? tr.ColorAttrib : model.Color;
                         int lowCol =  model.UnlitColor;
-                        var col = NEColorSample.MakeCol5((ConsoleColor)lowCol, (ConsoleColor)fullCol, diffuse);
+                         var col = NEColorSample.MakeCol10F((ConsoleColor)lowCol, (ConsoleColor)fullCol, diffuse);
+                        //var col = NEColorSample.MakeCol10((ConsoleColor)0, (ConsoleColor)14, 1.0f-NEMathHelper.Pow(fragmentDepth,20));
                         //var col = m_Texture.Sample(teX, 1.0f - teY, dot);
                         NEScreenBuffer.PutChar(col.Character, col.BitMask, x, fillStart + y);
                     }
