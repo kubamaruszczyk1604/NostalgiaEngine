@@ -59,7 +59,8 @@ namespace NostalgiaEngine.RasterizerPipeline
             for (int i = 0; i < mesh.Triangles.Count; ++i)
             {
                 Triangle tri = mesh.Triangles[i];
-                tri.NormalView = normalTransformMat * mesh.Triangles[i].NormalModel;
+                tri.NormalView = normalTransformMat * tri.NormalModel;
+                tri.NormalWorld = model.Transform.RotationMat * tri.NormalModel;
                // tri = new Triangle(tri, model.VBO);
                 tri = RequestFromPool(tri);
                 if (CullTest(tri, model.FaceCull)) continue;
@@ -111,9 +112,9 @@ namespace NostalgiaEngine.RasterizerPipeline
             return m_TrianglePool.Get(setValue, this);
         }
 
-        public Triangle RequestFromPool(int i0, int i1, int i2,  NEVector4 normal,  NEVector4 transformedNormal)
+        public Triangle RequestFromPool(int i0, int i1, int i2,  NEVector4 normal,  NEVector4 normalView, NEVector4 normalWorld)
         {
-            return m_TrianglePool.Get(i0, i1, i2, this, ref normal, ref transformedNormal);
+            return m_TrianglePool.Get(i0, i1, i2, this, ref normal, ref normalView, ref normalWorld);
         }
 
         private bool IsOutsideFrustum(Triangle triangle)

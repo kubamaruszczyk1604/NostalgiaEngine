@@ -166,8 +166,8 @@ namespace NostalgiaEngine.RasterizerPipeline
                     NEVector4 sampleDir = (MainCamera.PointAt) * new NEVector4(u * MainCamera.InverseAspectRatio, v, rayZ, 0.0f).Normalized;
                     float luma = SceneSkybox.Sample(sampleDir);
                     int low = 0;
-                    int high = 14;
-                    if (luma > 0.1f) low = 6;
+                    int high = 6;
+                    if (luma > 0.7f) low = 6;
                     if (luma > 0.8f) high = 15;
                     var col = NEColorSample.MakeCol10((ConsoleColor)low, (ConsoleColor)high, luma);
                     NEScreenBuffer.PutChar(col.Character, col.BitMask, x, y);
@@ -207,7 +207,7 @@ namespace NostalgiaEngine.RasterizerPipeline
                 if (!tr.IsColScanlineInTriangle(u)) continue;
 
 
-                float dotGlobalLight = NEVector4.Dot3(tr.NormalModel, new NEVector4(-1.0f, 1.0f, 1.0f).Normalized);
+                float dotGlobalLight = NEVector4.Dot3(tr.NormalWorld, new NEVector4(-1.0f, 1.0f, 1.0f).Normalized);
                 dotGlobalLight = NEMathHelper.Clamp(dotGlobalLight, 0.0f, 1.0f);
 
                 ScanlineIntersectionManifest manifest;
@@ -265,8 +265,8 @@ namespace NostalgiaEngine.RasterizerPipeline
                         v = -((2.0f * v) - 1.0f);
                        
 
-                        float dotHeadlamp = NEVector4.Dot3(tr.NormalView, new NEVector4(u, v, 1.0f).Normalized);
-                        dotHeadlamp = NEMathHelper.Abs(dotHeadlamp);
+                        float dotHeadlamp = NEVector4.Dot3(tr.NormalView, new NEVector4(u, v, -1.0f).Normalized);
+                        dotHeadlamp = NEMathHelper.Clamp(dotHeadlamp, 0.0f, 1.0f);
 
 
 

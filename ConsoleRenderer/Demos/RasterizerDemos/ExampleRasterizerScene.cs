@@ -194,7 +194,7 @@ namespace NostalgiaEngine.Demos
                 //crown.DiffuseIntensity = 0.5f;
                 crown.Transform.ScaleX = 0.5f + a;
                 crown.Transform.ScaleZ = 0.5f + a;
-                // crown.Transform.RotateY(t);
+                crown.Transform.RotateY(t);
                 crown.UnlitColor = 3;
                 Models.Add(crown);
             }
@@ -208,6 +208,7 @@ namespace NostalgiaEngine.Demos
             wallModel.Transform.ScaleY = 0.6f * scale;
             wallModel.Transform.ScaleX = 1.6f * scale;
             wallModel.Color = 11;
+            wallModel.UnlitColor = 10;
             //wallModel.AmbientIntensity = 0.4f;
             wallModel.Transform.RotateY(rotationYRad);
             Models.Add(wallModel);

@@ -39,14 +39,14 @@ namespace NostalgiaEngine.RasterizerPipeline
             return ret;
         }
 
-        public Triangle Get(int i0, int i1, int i2, VertexBuffer vbo, ref NEVector4 normal, ref NEVector4 transformedNormal)
+        public Triangle Get(int i0, int i1, int i2, VertexBuffer vbo, ref NEVector4 normal, ref NEVector4 normalView, ref NEVector4 normalWorld)
         {
             if (m_StackPtr > m_Triangles.Count - 20)
             {
                 Allocate(m_Triangles.Count);
             }
             Triangle ret = m_Triangles[m_StackPtr];
-            ret.Set(i0, i1, i2, vbo, normal, transformedNormal);
+            ret.Set(i0, i1, i2, vbo, normal, normalView, normalWorld);
             m_StackPtr++;
             return ret;
         }

@@ -45,13 +45,14 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         }
 
-        public Triangle(int i0, int i1, int i2, VertexBuffer vbo, NEVector4 normal, NEVector4 transformedNormal)
+        public Triangle(int i0, int i1, int i2, VertexBuffer vbo, NEVector4 normal, NEVector4 transformedNormal, NEVector4 normalWorld)
         {
             VBO = vbo;
             Indices = new int[] { i0, i1, i2 };
             LeftSortedIndices = new int[3];
             NormalModel = normal;
             NormalView = transformedNormal;
+            NormalWorld = normalWorld;
         }
 
         public Triangle(Triangle triangle, VertexBuffer vbo)
@@ -61,6 +62,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             LeftSortedIndices = new int[3];
             NormalModel = triangle.NormalModel;
             NormalView = triangle.NormalView;
+            NormalWorld = triangle.NormalWorld;
             ColorAttrib = triangle.ColorAttrib;
         }
 
@@ -76,6 +78,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             LeftSortedIndices[2] = triangle.LeftSortedIndices[2];
             NormalModel = triangle.NormalModel;
             NormalView = triangle.NormalView;
+            NormalWorld = triangle.NormalWorld;
             ColorAttrib = triangle.ColorAttrib;
 
         }
@@ -92,11 +95,12 @@ namespace NostalgiaEngine.RasterizerPipeline
             LeftSortedIndices[2] = triangle.LeftSortedIndices[2];
             NormalModel = triangle.NormalModel;
             NormalView = triangle.NormalView;
+            NormalWorld = triangle.NormalWorld;
             ColorAttrib = triangle.ColorAttrib;
 
         }
 
-        public void Set(int i0, int i1, int i2, VertexBuffer vbo, NEVector4 normal, NEVector4 transformedNormal)
+        public void Set(int i0, int i1, int i2, VertexBuffer vbo, NEVector4 normal, NEVector4 normalView, NEVector4 normalWorld)
         {
             VBO = vbo;
             Indices[0] = i0;
@@ -106,7 +110,8 @@ namespace NostalgiaEngine.RasterizerPipeline
             LeftSortedIndices[1] = 0;
             LeftSortedIndices[2] = 0;
             NormalModel = normal;
-            NormalView = transformedNormal;
+            NormalView = normalView;
+            NormalWorld = normalWorld;
         }
 
         public void ZDivide()
