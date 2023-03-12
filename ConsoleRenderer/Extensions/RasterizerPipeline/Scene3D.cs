@@ -10,9 +10,17 @@ namespace NostalgiaEngine.RasterizerPipeline
     {
 
         
-        NEDepthBuffer m_DepthBuffer;
-        
-        NEColorPalette m_Palette;
+        private NEDepthBuffer m_DepthBuffer;
+        private NEColorPalette m_Palette;
+
+        private int m_RenderedTriangleCount = 0;
+
+        private bool m_DrawPaletteFlag;
+
+        private float m_HeadlampIntensity;
+
+        private float m_ScrHeightReciprocal;
+        private float m_ScrWidthReciprocal;
 
 
         protected Skybox SceneSkybox { get; set; }
@@ -21,14 +29,13 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         protected bool HeadlampOn { get; set; }
         protected bool TexturingOn { get; set; }
+        protected float HeadlampIntensity
+        {
+            get { return m_HeadlampIntensity; }
+            set { m_HeadlampIntensity = NEMathHelper.Clamp(value, 0.0f, 1.0f); }
+        }
 
-        int m_RenderedTriangleCount = 0;
 
-        bool m_DrawPaletteFlag;
-        bool m_ShowClippingFlag;
-
-        float m_ScrHeightReciprocal;
-        float m_ScrWidthReciprocal;
 
         public Scene3D():base()
         {
@@ -47,7 +54,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             MainCamera = new Camera(ScreenWidth, ScreenHeight, 1.05f, 0.1f, 100.0f);
             MainCamera.Transform.LocalPosition = new NEVector4(0.0f, 0.0f, -2.0f);
             m_DrawPaletteFlag = false;
-            m_ShowClippingFlag = false;
+            m_HeadlampIntensity = 1.0f;
             TexturingOn = true;
             
         }
@@ -277,12 +284,9 @@ namespace NostalgiaEngine.RasterizerPipeline
                         float dotHeadlamp = 0;
                         if (HeadlampOn)
                         {
-                            dotHeadlamp = NEVector4.Dot3(vDir,  new NEVector4(u, v, -1.0f).Normalized);
-                            dotHeadlamp = NEMathHelper.Clamp(dotHeadlamp, 0.0f, 1.0f);
-
-                            float intensity = NEMathHelper.Clamp(NEVector4.Dot3(tr.NormalView, vDir),0,1);
-                            dotHeadlamp *= intensity;
-                           // dotHeadlamp = NEMathHelper.Abs(dotHeadlamp);
+                            dotHeadlamp = NEMathHelper.Clamp(NEVector4.Dot3(tr.NormalView, vDir),0,1)*m_HeadlampIntensity;
+                            float coneMask = NEMathHelper.Clamp(NEVector4.Dot3(vDir, new NEVector4(u*1.5f, v, -1.0f).Normalized), 0.0f, 1.0f); ;
+                            dotHeadlamp *= coneMask;
                         }
 
                         float fragWBottom = (1.0f - manifest.bottom_t) * manifest.bottom_P0.W + manifest.bottom_t * manifest.bottom_P1.W;
