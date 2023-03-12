@@ -285,7 +285,7 @@ namespace NostalgiaEngine.RasterizerPipeline
                         if (HeadlampOn)
                         {
                             dotHeadlamp = NEMathHelper.Clamp(NEVector4.Dot3(tr.NormalView, vDir),0,1)*m_HeadlampIntensity;
-                            float coneMask = NEMathHelper.Clamp(NEVector4.Dot3(vDir, new NEVector4(u*1.5f, v, -1.0f).Normalized), 0.0f, 1.0f); ;
+                            float coneMask = NEMathHelper.Clamp(NEVector4.Dot3(vDir, new NEVector4(u*1.5f, v, -1.0f).Normalized), 0.0f, 1.0f);
                             dotHeadlamp *= coneMask;
                         }
 

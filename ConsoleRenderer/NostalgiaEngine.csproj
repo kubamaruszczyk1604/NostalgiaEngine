@@ -110,7 +110,7 @@
     <Compile Include="NostalgiaEngine\Core\Helper.cs" />
     <Compile Include="NostalgiaEngine\Core\Input.cs" />
     <Compile Include="NostalgiaEngine\Core\InputSimulator.cs" />
-    <Compile Include="NostalgiaEngine\Core\Materials.cs" />
+    <Compile Include="NostalgiaEngine\Core\NEColorSample.cs" />
     <Compile Include="NostalgiaEngine\GUI\FileExplorer.cs" />
     <Compile Include="NostalgiaEngine\GUI\ConsoleSounds.cs" />
     <Compile Include="NostalgiaEngine\GUI\OpenDialog.cs" />
