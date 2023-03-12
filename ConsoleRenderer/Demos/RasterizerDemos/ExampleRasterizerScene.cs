@@ -46,8 +46,8 @@ namespace NostalgiaEngine.Demos
 
             
             Models.Add(floorModel);
-           // Models.Add(teapotModel);
-             Models.Add(bunnyModel);
+            //Models.Add(teapotModel);
+            Models.Add(bunnyModel);
             
 
 

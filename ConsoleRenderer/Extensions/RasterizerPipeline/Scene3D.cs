@@ -57,6 +57,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 
 
             m_Palette = NEColorPalette.FromFile("C:/test/skybox3/px/palette.txt");
+            m_Palette.MultiplyBy(2.0f);
             NEColorManagement.SetPalette(m_Palette);
             //Clipping.DebugMode = true;
             m_ScrHeightReciprocal = 1.0f / ScreenHeight;
@@ -278,6 +279,9 @@ namespace NostalgiaEngine.RasterizerPipeline
                         {
                             dotHeadlamp = NEVector4.Dot3(vDir,  new NEVector4(u, v, -1.0f).Normalized);
                             dotHeadlamp = NEMathHelper.Clamp(dotHeadlamp, 0.0f, 1.0f);
+
+                            float intensity = NEMathHelper.Clamp(NEVector4.Dot3(tr.NormalView, vDir),0,1);
+                            dotHeadlamp *= intensity;
                            // dotHeadlamp = NEMathHelper.Abs(dotHeadlamp);
                         }
 
