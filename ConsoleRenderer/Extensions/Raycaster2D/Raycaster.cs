@@ -56,6 +56,9 @@ namespace NostalgiaEngine.Raycaster
         private NEStaticSprite m_Lamp2Sprite;
         private NEFloatBuffer m_Wall;
         private NEFloatBuffer m_Sky;
+
+
+        private bool m_ShowPalette;
         public override bool OnLoad()
         {
             //ScreenWidth = 120;
@@ -104,6 +107,7 @@ namespace NostalgiaEngine.Raycaster
             m_AspectRatio = (float)ScreenWidth / (float)ScreenHeight;
             m_Fov = 80.0f * DEG_TO_RAD;
             m_DepthBuffer = new NEDepthBuffer(ScreenWidth, ScreenHeight);
+            m_ShowPalette = false;
         }
 
         override public void OnUpdate(float dt)
@@ -165,6 +169,10 @@ namespace NostalgiaEngine.Raycaster
             if (NEInput.CheckKeyPress(ConsoleKey.N))
             {
                 //Engine.Instance.PushScene(new TextureEditor.Test_MemTex16());
+            }
+            if(NEInput.CheckKeyPress(ConsoleKey.P))
+            {
+                m_ShowPalette = !m_ShowPalette;
             }
             m_DepthBuffer.Clear();
 
@@ -440,6 +448,7 @@ namespace NostalgiaEngine.Raycaster
                     }
                 }
             }
+            if(m_ShowPalette)NEDebug.DrawPalette(ScreenWidth, ScreenHeight);
             return base.OnDraw();
         }
 

@@ -58,9 +58,6 @@ namespace NostalgiaEngine.RasterizerPipeline
 
             m_Palette = NEColorPalette.FromFile("C:/test/skybox3/px/palette.txt");
             NEColorManagement.SetPalette(m_Palette);
-            m_PaletteCellWidth = (int)(ScreenWidth * 0.039f);
-            m_PaletteCellHeight = m_PaletteCellWidth;
-            m_PaletteStripPos = new NEVector2(m_PaletteCellWidth / 2, m_PaletteCellWidth / 2);
             //Clipping.DebugMode = true;
             m_ScrHeightReciprocal = 1.0f / ScreenHeight;
             m_ScrWidthReciprocal = 1.0f / ScreenWidth;
@@ -123,13 +120,8 @@ namespace NostalgiaEngine.RasterizerPipeline
 
             if (m_DrawPaletteFlag)
             {
-                for (int y = (int)m_PaletteStripPos.Y; y < ((int)m_PaletteStripPos.Y + m_PaletteCellHeight); ++y)
-                {
-                    for (int x = 0; x < ScreenWidth; ++x)
-                    {
-                        DrawPalette(x, y);
-                    }
-                }
+
+                NEDebug.DrawPalette(ScreenWidth, ScreenHeight);
             }
             return base.OnDraw();
         }
@@ -280,12 +272,13 @@ namespace NostalgiaEngine.RasterizerPipeline
                         v = -((2.0f * v) - 1.0f);
 
 
-                        // float dotHeadlamp = NEVector4.Dot3(tr.NormalView, new NEVector4(u, v, -1.0f).Normalized);
+                        //float dotHeadlamp = NEVector4.Dot3(tr.NormalView, new NEVector4(u, v, -1.0f).Normalized);
                         float dotHeadlamp = 0;
                         if (HeadlampOn)
                         {
-                            dotHeadlamp = NEVector4.Dot3(vDir, new NEVector4(u, v, -1.0f).Normalized);
+                            dotHeadlamp = NEVector4.Dot3(vDir,  new NEVector4(u, v, -1.0f).Normalized);
                             dotHeadlamp = NEMathHelper.Clamp(dotHeadlamp, 0.0f, 1.0f);
+                           // dotHeadlamp = NEMathHelper.Abs(dotHeadlamp);
                         }
 
                         float fragWBottom = (1.0f - manifest.bottom_t) * manifest.bottom_P0.W + manifest.bottom_t * manifest.bottom_P1.W;
@@ -297,7 +290,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 
 
                         float global =  dotGlobalLight;
-                        float headlamp = 7 * fragW * dotHeadlamp;
+                        float headlamp = /*7 * fragW **/ dotHeadlamp;
                         float diffuse = global + headlamp;
                         if (model.LumaTexture != null && TexturingOn)
                         {
@@ -327,24 +320,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             }
 
         }
-        private int m_PaletteCellWidth = 10;
-        private int m_PaletteCellHeight = 10;
 
-        private NEVector2 m_PaletteStripPos = new NEVector2(10, 10);
-        private void DrawPalette(int x, int y)
-        {
-        
-
-            NEVector2 pixelPos = new NEVector2(x, y);
-            for (int i = 0; i < 16; ++i)
-            {
-                if (NEMathHelper.InRectangle(pixelPos, new NEVector2(m_PaletteCellWidth * (i), 0) + m_PaletteStripPos, m_PaletteCellWidth, m_PaletteCellHeight))
-                {
-                    NEScreenBuffer.PutChar(' ', (short)((i) << 4), x, y);
-                    if (i == 16) NEScreenBuffer.PutChar((char)NEBlock.Solid, (short)(8 << 4), x, y);
-                }
-            }
-        }
 
 
     }

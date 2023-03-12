@@ -44,10 +44,11 @@ namespace TextureDisplay
         NEColorTexture16 m_MainTex;
         NEColorPalette m_MainTexPal;
         NEFloatBuffer m_LumaBuffer;
-        float m_RefreshIntervalCounter;
-        float m_Col;
-        bool m_IntroPhase;
-        int m_Index = 0;
+        private float m_RefreshIntervalCounter;
+        private float m_Col;
+        private bool m_IntroPhase;
+        private int m_Index = 0;
+        private bool m_ShowPalette;
 
         List<TexImage> m_Images;
 
@@ -96,7 +97,10 @@ namespace TextureDisplay
         override public void OnUpdate(float dt)
         {
 
-
+            if (NEInput.CheckKeyPress(ConsoleKey.P))
+            {
+                m_ShowPalette = !m_ShowPalette;
+            }
             if (m_RefreshIntervalCounter <= 2.0f)
             {
                 m_RefreshIntervalCounter += dt;
@@ -129,35 +133,39 @@ namespace TextureDisplay
 
         public override bool OnDraw()
         {
-            if (m_RefreshIntervalCounter>2.0f) return false;
-            NEScreenBuffer.Clear();
-            for (int x = 0; x < ScreenWidth; ++x)
+           
+            if (m_RefreshIntervalCounter <= 2.0f)
             {
-                float u = ((float)x) / ((float)ScreenWidth);
-
-                for (int y = 0; y < ScreenHeight; ++y)
+                NEScreenBuffer.Clear();
+                for (int x = 0; x < ScreenWidth; ++x)
                 {
-                    float du = u;
-                    if (y % 2 == 0)
-                    {
-                        du = u - 1 + m_Col;
-                    }
-                    else
-                    {
-                        du = u - m_Col + 1.0f;
-                    }
-                    float v = ((float)y) / ((float)ScreenHeight);
+                    float u = ((float)x) / ((float)ScreenWidth);
 
-                    float luma = 1.0f;
-                    if (m_LumaBuffer != null)
+                    for (int y = 0; y < ScreenHeight; ++y)
                     {
-                        luma = m_LumaBuffer.Sample(du, v);
+                        float du = u;
+                        if (y % 2 == 0)
+                        {
+                            du = u - 1 + m_Col;
+                        }
+                        else
+                        {
+                            du = u - m_Col + 1.0f;
+                        }
+                        float v = ((float)y) / ((float)ScreenHeight);
+
+                        float luma = 1.0f;
+                        if (m_LumaBuffer != null)
+                        {
+                            luma = m_LumaBuffer.Sample(du, v);
+                        }
+                        NEColorSample sample = m_MainTex.Sample(du, v, luma);
+                        //NEColorSample sample = NEColorSample.MakeCol5(ConsoleColor.Black, ConsoleColor.Gray, luma);
+                        NEScreenBuffer.PutChar(sample.Character, sample.BitMask, x, y);
                     }
-                    NEColorSample sample = m_MainTex.Sample(du, v, luma);
-                    //NEColorSample sample = NEColorSample.MakeCol5(ConsoleColor.Black, ConsoleColor.Gray, luma);
-                    NEScreenBuffer.PutChar(sample.Character, sample.BitMask, x, y);
                 }
             }
+            if (m_ShowPalette) NEDebug.DrawPalette(ScreenWidth, ScreenHeight);
             return true;
         }
 

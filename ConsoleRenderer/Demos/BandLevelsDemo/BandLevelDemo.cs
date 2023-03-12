@@ -111,7 +111,7 @@ namespace NostalgiaEngine.Demos
                     NEScreenBuffer.PutChar(cs.Character, cs.BitMask, x, y);
                 }
             }
-             return base.OnDraw();
+            return base.OnDraw();
             
         }
     }

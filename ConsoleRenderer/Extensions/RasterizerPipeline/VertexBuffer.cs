@@ -49,7 +49,7 @@ namespace NostalgiaEngine.RasterizerPipeline
                // ProcessedVertices.Add(mesh.Vertices[i].Duplicate());
                 ProcessedVertices.Add( m_VertexPool.Get(mesh.Vertices[i]));
                 ProcessedVertices[i].Position = MVP * ProcessedVertices[i].Position;
-                //ProcessedVertices[i].Vert2Camera = -ProcessedVertices[i].Position.Normalized;
+               // ProcessedVertices[i].Vert2Camera = -ProcessedVertices[i].Position.Normalized;
 
             }
             int currentTriangle = 0;
