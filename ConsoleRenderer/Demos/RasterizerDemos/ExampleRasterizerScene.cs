@@ -74,6 +74,11 @@ namespace NostalgiaEngine.Demos
 
             MainCamera.Transform.LocalPosition = new NEVector4(0.0f, 1.9f, -5.3f);
 
+
+            NEColorPalette pal = NEColorPalette.FromFile("RasterizerDemoResources/palette.txt");
+            pal.MultiplyBy(2.0f);
+            NEColorManagement.SetPalette(pal);
+
             TogglePalette();
 
             return base.OnLoad();

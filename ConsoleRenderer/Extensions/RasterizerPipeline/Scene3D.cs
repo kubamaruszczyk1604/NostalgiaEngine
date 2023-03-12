@@ -11,7 +11,6 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         
         private NEDepthBuffer m_DepthBuffer;
-        private NEColorPalette m_Palette;
 
         private int m_RenderedTriangleCount = 0;
 
@@ -63,9 +62,7 @@ namespace NostalgiaEngine.RasterizerPipeline
         {
 
 
-            m_Palette = NEColorPalette.FromFile("C:/test/skybox3/px/palette.txt");
-            m_Palette.MultiplyBy(2.0f);
-            NEColorManagement.SetPalette(m_Palette);
+
             //Clipping.DebugMode = true;
             m_ScrHeightReciprocal = 1.0f / ScreenHeight;
             m_ScrWidthReciprocal = 1.0f / ScreenWidth;

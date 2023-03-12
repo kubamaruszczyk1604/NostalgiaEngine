@@ -169,6 +169,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Demos\RasterizerDemos\Resources\palette.txt" />
     <Content Include="Demos\RasterizerDemos\Resources\uv_test_tex\palette.txt" />
     <Content Include="Demos\RasterizerDemos\Resources\skybox1\nx\palette.txt" />
     <Content Include="Demos\RasterizerDemos\Resources\skybox1\ny\palette.txt" />
