@@ -26,7 +26,7 @@ namespace NostalgiaEngine.RasterizerPipeline
                
                 if (comparison == RejectCriteria.LessThan)  // left plane
                 {
-                    p = NEVector4.Left;
+                    p = NEVector4.Left - new NEVector4(0.01f,0.0f,0.0f,0.0f);
                     n = NEVector4.Right;
                 }
                 else  // right plane                                
@@ -40,7 +40,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             {
                 if(comparison == RejectCriteria.LessThan) // bottom plane
                 {
-                    p = NEVector4.Down;
+                    p = NEVector4.Down - new NEVector4(0.0f, 0.01f, 0.0f, 0.0f); ;
                     n = NEVector4.Up;
                 }
                 else   // top plane

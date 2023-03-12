@@ -118,6 +118,22 @@ namespace NostalgiaEngine.Demos
             base.OnDrawPerColumn(x);
         }
 
+        protected override NEColorSample OnSkyboxSample(NEVector4 direction, float sampledValue)
+        {
+
+
+            int low = 0;
+            int high = 8;
+            if (sampledValue > 0.7f)
+            {
+                low = 6;
+                high = 12;
+            }
+            //else
+            //sampledValue += 0.3f-NEMathHelper.Clamp(0.5f-direction.Normalized.Y, 0.0f, 1.0f)*0.3f;
+            return NEColorSample.MakeCol10((ConsoleColor)low, (ConsoleColor)high, sampledValue);
+        }
+
 
         private void Movement(float dt)
         {

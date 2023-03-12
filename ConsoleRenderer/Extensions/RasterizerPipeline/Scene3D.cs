@@ -139,6 +139,12 @@ namespace NostalgiaEngine.RasterizerPipeline
             base.OnExit();
         }
 
+
+        protected virtual NEColorSample OnSkyboxSample(NEVector4 direction, float sampledValue)
+        {
+
+            return  NEColorSample.MakeCol10((ConsoleColor)0, (ConsoleColor)6, sampledValue);
+        }
        
         protected void TogglePalette()
         {
@@ -177,11 +183,8 @@ namespace NostalgiaEngine.RasterizerPipeline
                     v = -((2.0f * v) - 1.0f);
                     NEVector4 sampleDir = (MainCamera.PointAt) * new NEVector4(u * MainCamera.InverseAspectRatio, v, rayZ, 0.0f).Normalized;
                     float luma = SceneSkybox.Sample(sampleDir);
-                    int low = 0;
-                    int high = 6;
-                    if (luma > 0.7f) low = 6;
-                    if (luma > 0.8f) high = 15;
-                    var col = NEColorSample.MakeCol10((ConsoleColor)low, (ConsoleColor)high, luma);
+                  
+                    var col = OnSkyboxSample(sampleDir, luma); 
                     NEScreenBuffer.PutChar(col.Character, col.BitMask, x, y);
                 }
 
@@ -220,7 +223,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 
 
                 float dotGlobalLight = NEVector4.Dot3(tr.NormalWorld, new NEVector4(-1.0f, 1.0f, 1.0f).Normalized);
-                dotGlobalLight = NEMathHelper.Clamp(dotGlobalLight, 0.0f, 1.0f);
+                dotGlobalLight =  NEMathHelper.Clamp(dotGlobalLight, 0.0f, 1.0f);
 
                 ScanlineIntersectionManifest manifest;
                 tr.ComputeScanlineIntersection(u, out manifest);
