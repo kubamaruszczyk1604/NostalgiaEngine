@@ -79,6 +79,7 @@
     <Compile Include="Extensions\RasterizerPipeline\VertexBuffer.cs" />
     <Compile Include="Extensions\RasterizerPipeline\VertexPool.cs" />
     <Compile Include="NostalgiaEngine\Core\NEDebug.cs" />
+    <Compile Include="NostalgiaEngine\Core\NEMaterial.cs" />
     <Compile Include="NostalgiaEngine\Core\StaticResources.cs" />
     <Compile Include="NostalgiaEngine\Core\NEPlane.cs" />
     <Compile Include="Extensions\RasterizerPipeline\ResourceManager.cs" />
