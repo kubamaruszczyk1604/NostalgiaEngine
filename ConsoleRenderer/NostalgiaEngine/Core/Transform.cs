@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NostalgiaEngine.Core;
 
-namespace NostalgiaEngine.RasterizerPipeline
+namespace NostalgiaEngine.Core
 {
     public class Transform
     {

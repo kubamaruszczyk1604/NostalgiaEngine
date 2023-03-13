@@ -11,6 +11,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         
         private NEDepthBuffer m_DepthBuffer;
+        private List<NELight> m_Lights;
 
         private int m_RenderedTriangleCount = 0;
 
@@ -37,7 +38,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         protected NEVector4 GlobalLightDirection { get; set; }
 
-
+        
         public Scene3D():base()
         {
             ScreenWidth = 320;
@@ -57,7 +58,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             m_DrawPaletteFlag = false;
             m_HeadlampIntensity = 1.0f;
             TexturingOn = true;
-            GlobalLightDirection = new NEVector4(-1.0f, 1.0f, 1.0f).Normalized;
+            m_Lights = new List<NELight>();
         }
 
         public override bool OnLoad()
@@ -143,7 +144,7 @@ namespace NostalgiaEngine.RasterizerPipeline
         protected virtual NEColorSample OnSkyboxSample(NEVector4 direction, float sampledValue)
         {
 
-            return  NEColorSample.MakeColFromBlocks10((ConsoleColor)0, (ConsoleColor)6, sampledValue);
+            return  NEColorSample.MakeCol((ConsoleColor)0, (ConsoleColor)6, sampledValue, NECHAR_RAMPS.CHAR_RAMP_FULL);
         }
        
         protected void TogglePalette()
@@ -170,6 +171,29 @@ namespace NostalgiaEngine.RasterizerPipeline
         protected void ToggleTexturing()
         {
             TexturingOn = !TexturingOn;
+        }
+
+        protected void AddLight(NELight light)
+        {
+            m_Lights.Add(light);
+        }
+
+        protected void RemoveLigtht(NELight light)
+        {
+            if(m_Lights.Contains(light))
+            {
+                m_Lights.Remove(light);
+            }
+        }
+
+        protected void RemoveLight(string name)
+        {
+            List<NELight> toRem = m_Lights.FindAll(x => x.Name == name);
+            if (toRem == null) return;
+            for(int i = 0; i < toRem.Count; ++i)
+            {
+                m_Lights.Remove(toRem[i]);
+            }
         }
 
         private void RenderSkybox(int x, float u)
@@ -218,9 +242,16 @@ namespace NostalgiaEngine.RasterizerPipeline
                 Triangle tr = m_VBO.TrianglesReadyToRender[i];
                 if (!tr.IsColScanlineInTriangle(u)) continue;
 
+                float directionalLightsSum = 0;// 
+                for (int l = 0; l< m_Lights.Count; ++l)
+                {
+                    if (m_Lights[l].LightType != NELightType.Directional) continue;
+                    float intensity = NEVector4.Dot3(tr.NormalWorld, ((DirectionalLight)m_Lights[l]).Direction);
+                    directionalLightsSum += NEMathHelper.Clamp(intensity, 0.0f, 1.0f);
+                }
 
-                float dotGlobalLight = NEVector4.Dot3(tr.NormalWorld, GlobalLightDirection);
-                dotGlobalLight =  NEMathHelper.Clamp(dotGlobalLight, 0.0f, 1.0f);
+                directionalLightsSum = NEMathHelper.Clamp(directionalLightsSum, 0.0f, 1.0f);
+               
 
                 ScanlineIntersectionManifest manifest;
                 tr.ComputeScanlineIntersection(u, out manifest);
@@ -296,7 +327,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 
 
 
-                        float global =  dotGlobalLight;
+                        float global =  directionalLightsSum;
                         float headlamp = NEMathHelper.Clamp(49.0f * fragW * fragW, 0.0f, 0.99f) * dotHeadlamp;
                         float diffuse = global + headlamp;
                         if (model.LumaTexture != null && TexturingOn)

@@ -78,14 +78,16 @@
     <Compile Include="Extensions\RasterizerPipeline\TrianglePool.cs" />
     <Compile Include="Extensions\RasterizerPipeline\VertexBuffer.cs" />
     <Compile Include="Extensions\RasterizerPipeline\VertexPool.cs" />
+    <Compile Include="NostalgiaEngine\Core\Light.cs" />
     <Compile Include="NostalgiaEngine\Core\NEDebug.cs" />
+    <Compile Include="NostalgiaEngine\Core\NESceneobject.cs" />
     <Compile Include="NostalgiaEngine\Core\NEMaterial.cs" />
     <Compile Include="NostalgiaEngine\Core\StaticResources.cs" />
     <Compile Include="NostalgiaEngine\Core\NEPlane.cs" />
     <Compile Include="Extensions\RasterizerPipeline\ResourceManager.cs" />
     <Compile Include="Extensions\RasterizerPipeline\Scene3D.cs" />
     <Compile Include="Extensions\RasterizerPipeline\Skybox.cs" />
-    <Compile Include="Extensions\RasterizerPipeline\Transform.cs" />
+    <Compile Include="NostalgiaEngine\Core\Transform.cs" />
     <Compile Include="Extensions\RasterizerPipeline\Triangle.cs" />
     <Compile Include="Extensions\RasterizerPipeline\Vertex.cs" />
     <Compile Include="Extensions\RasterizerPipeline\Mesh.cs" />

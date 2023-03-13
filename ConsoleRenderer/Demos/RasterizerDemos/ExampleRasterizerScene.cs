@@ -83,6 +83,8 @@ namespace NostalgiaEngine.Demos
             pal.MultiplyBy(2.8f);
             NEColorManagement.SetPalette(pal);
 
+            AddLight(new DirectionalLight(new NEVector4(-1.0f, 1.0f, 1.0f)));
+
             TogglePalette();
 
             return base.OnLoad();

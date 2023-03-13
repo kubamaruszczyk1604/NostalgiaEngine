@@ -8,12 +8,11 @@ using NostalgiaEngine.Core;
 namespace NostalgiaEngine.RasterizerPipeline
 {
     public enum CullMode { None = 0, Front = 1, Back = 2 }
-    public class Model
+    public class Model: NESceneObject
     {
         public Mesh Mesh { get; set; }
         public NEColorTexture16 ColorTexture { get; set; }
         public NEFloatBuffer LumaTexture { get; set; }
-        public Transform Transform { get; private set; }
         public CullMode FaceCull { get; set; }
         public VertexBuffer VBO {get; private set;}
 
@@ -24,12 +23,11 @@ namespace NostalgiaEngine.RasterizerPipeline
         //public float GlowIntensity { get; set; }
 
 
-        public Model(Mesh mesh, CullMode faceCull = CullMode.Back, NEColorTexture16 colorTexture = null, NEFloatBuffer lumaTexture = null)
+        public Model(Mesh mesh, CullMode faceCull = CullMode.Back, NEColorTexture16 colorTexture = null, NEFloatBuffer lumaTexture = null):base()
         {
             Mesh = mesh;
             ColorTexture = colorTexture;
             LumaTexture = lumaTexture;
-            Transform = new Transform();
             FaceCull = faceCull;
 
             if(Mesh == null)
