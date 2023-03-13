@@ -134,6 +134,9 @@
     <None Include="App.config" />
     <None Include="Demos\BandLevelsDemo\Textures\band\luma.buf" />
     <None Include="Demos\RasterizerDemos\Resources\bunny.obj" />
+    <None Include="Demos\RasterizerDemos\Resources\textures\grass.buf" />
+    <None Include="Demos\RasterizerDemos\Resources\textures\tree_crown.buf" />
+    <None Include="Demos\RasterizerDemos\Resources\textures\wall.buf" />
     <None Include="Demos\RasterizerDemos\Resources\uv_test_tex\color.tex" />
     <None Include="Demos\RasterizerDemos\Resources\uv_test_tex\luma.buf" />
     <None Include="Demos\RasterizerDemos\Resources\skybox1\nx\color.tex" />

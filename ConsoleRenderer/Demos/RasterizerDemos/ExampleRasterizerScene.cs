@@ -16,13 +16,13 @@ namespace NostalgiaEngine.Demos
             Mesh bunnyMesh = NEObjLoader.LoadObj("RasterizerDemoResources/bunny.obj",7);
             var luma = ResourceManager.Instance.GetLumaTexture("RasterizerDemoResources/uv_test_tex/luma.buf");
 
-            var wallTexture = ResourceManager.Instance.GetLumaTexture(@"C:\Users\Kuba\Desktop\NE_Texture1\luma.buf");
+            var wallTexture = ResourceManager.Instance.GetLumaTexture("RasterizerDemoResources/textures/wall.buf");
 
 
                 
 
-            var treeTexture = ResourceManager.Instance.GetLumaTexture(" C:/Users/Kuba/Desktop/NE_Texture/luma.buf");
-            var groundTexture = ResourceManager.Instance.GetLumaTexture(" C:/Users/Kuba/Desktop/NE_Texture2/luma.buf");
+            var treeTexture = ResourceManager.Instance.GetLumaTexture("RasterizerDemoResources/textures/tree_crown.buf");
+            var groundTexture = ResourceManager.Instance.GetLumaTexture("RasterizerDemoResources/textures/grass.buf");
 
 
             Model floorModel = new Model(floorMesh, groundTexture);
