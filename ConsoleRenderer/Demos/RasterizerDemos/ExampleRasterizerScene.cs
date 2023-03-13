@@ -80,7 +80,7 @@ namespace NostalgiaEngine.Demos
 
 
             NEColorPalette pal = NEColorPalette.FromFile("RasterizerDemoResources/palette.txt");
-            pal.MultiplyBy(2.0f);
+            pal.MultiplyBy(2.8f);
             NEColorManagement.SetPalette(pal);
 
             TogglePalette();
@@ -214,7 +214,7 @@ namespace NostalgiaEngine.Demos
 
             int numRings = rnd.Next(5, 10);
             
-            for(int i =0; i < numRings; ++i )
+            for(int i = 0; i < numRings; ++i )
             {
 
                 float t = ((float)i) / ((float)numRings);

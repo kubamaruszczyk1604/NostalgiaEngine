@@ -16,7 +16,7 @@ namespace NostalgiaEngine.Raycaster
         private readonly float M_PI = 3.1415926535f;
         private readonly float DEPTH = 24.0f;
         private readonly float ROTATION_SPEED = 1.0f;
-        private readonly float MOVEMENT_SPEED = 3.0f;
+        private readonly float MOVEMENT_SPEED = 1.6f;
 
 
         private int m_MapWidth = 20;

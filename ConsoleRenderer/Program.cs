@@ -51,7 +51,7 @@ namespace NostalgiaEngineApplication
             //Scene3D sc = new Scene3D();
 
             ExampleRasterizerScene sc = new ExampleRasterizerScene();
-            engine.Start(raycaster);
+            engine.Start(sc);
 
 
             //Envelope env = new Envelope(200, 300, 200);
