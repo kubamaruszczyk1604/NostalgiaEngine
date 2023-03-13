@@ -35,6 +35,8 @@ namespace NostalgiaEngine.RasterizerPipeline
         }
 
 
+        protected NEVector4 GlobalLightDirection { get; set; }
+
 
         public Scene3D():base()
         {
@@ -55,7 +57,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             m_DrawPaletteFlag = false;
             m_HeadlampIntensity = 1.0f;
             TexturingOn = true;
-            
+            GlobalLightDirection = new NEVector4(-1.0f, 1.0f, 1.0f).Normalized;
         }
 
         public override bool OnLoad()
@@ -209,9 +211,6 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         private void RenderModel(int x, float u, Model model)
         {
-           // float len = 1.0f - NEVector4.CalculateLength(MainCamera.View * model.Transform.World * new NEVector4(0,0,0,1)) / 15.0f;
-           // len = NEMathHelper.Clamp(len, 0.0f, 1.0f);
-
             
             VertexBuffer m_VBO = model.VBO;
             for (int i = 0; i < m_VBO.TrianglesReadyToRender.Count; ++i)
@@ -220,7 +219,7 @@ namespace NostalgiaEngine.RasterizerPipeline
                 if (!tr.IsColScanlineInTriangle(u)) continue;
 
 
-                float dotGlobalLight = NEVector4.Dot3(tr.NormalWorld, new NEVector4(-1.0f, 1.0f, 1.0f).Normalized);
+                float dotGlobalLight = NEVector4.Dot3(tr.NormalWorld, GlobalLightDirection);
                 dotGlobalLight =  NEMathHelper.Clamp(dotGlobalLight, 0.0f, 1.0f);
 
                 ScanlineIntersectionManifest manifest;
@@ -241,37 +240,36 @@ namespace NostalgiaEngine.RasterizerPipeline
                 float y1clamped = NEMathHelper.Clamp(y1, 0, 1.0f);
                 float distanceClamped = y1clamped - y0clamped;
 
-                float coeff = distanceClamped / distance;
+                //float coeff = distanceClamped / distance;
 
-                float tOffset = 0.0f;
-                if (y0 < 0.0f)
-                {
-                    tOffset = -y0 / distance;
-                }
+                //float tOffset = 0.0f;
+                //if (y0 < 0.0f)
+                //{
+                //    tOffset = -y0 / distance;
+                //}
                 int fillStart = (int)(y0clamped * ScreenHeight);
                 int fillEnd = (int)(y1clamped * ScreenHeight);
 
                 float span = fillEnd - fillStart;
+                float spanReciprocal = 1.0f / span;
 
                 for (int y = 0; y < span; ++y)
                 {
 
-                    float t = ((float)y / span)* coeff + tOffset;
+                    float t = ((float)y * spanReciprocal );// * coeff + tOffset;
 
-                    float depthBottom = (1.0f - manifest.bottom_t) * manifest.bottom_P0.Z+ manifest.bottom_t * manifest.bottom_P1.Z;
+                    float depthBottom = (1.0f - manifest.bottom_t) * manifest.bottom_P0.Z + manifest.bottom_t * manifest.bottom_P1.Z;
                     float depthTop = (1.0f - manifest.top_t) * manifest.top_P0.Z + manifest.top_t * manifest.top_P1.Z;
                     float fragmentDepth = (1.0f - t) * depthTop + t * depthBottom;
 
-                    if (fragmentDepth > 1.0f || fragmentDepth <= 0)
-                    {
-                        continue;
-                    }
+                    //if (fragmentDepth > 1.0f || fragmentDepth <= 0)
+                    //{
+                    //    continue;
+                    //}
 
                     if (m_DepthBuffer.TryUpdate(x, fillStart + y, fragmentDepth))
                     {
-                        NEVector4 vDirBottom = manifest.bottom_P0.Vert2Camera * (1.0f - manifest.bottom_t) + manifest.bottom_P1.Vert2Camera * manifest.bottom_t;
-                        NEVector4 vDirTop = manifest.top_P0.Vert2Camera * (1.0f - manifest.top_t) + manifest.top_P1.Vert2Camera * manifest.top_t;
-                        NEVector4 vDir = vDirTop * (1.0f - t) + vDirBottom * t;
+
 
                         // float dot = NEVector4.Dot3(tr.TransformedNormal, vDir);
                         float v = (float)(fillStart + y) *m_ScrHeightReciprocal;
@@ -282,6 +280,9 @@ namespace NostalgiaEngine.RasterizerPipeline
                         float dotHeadlamp = 0;
                         if (HeadlampOn)
                         {
+                            NEVector4 vDirBottom = manifest.bottom_P0.Vert2Camera * (1.0f - manifest.bottom_t) + manifest.bottom_P1.Vert2Camera * manifest.bottom_t;
+                            NEVector4 vDirTop = manifest.top_P0.Vert2Camera * (1.0f - manifest.top_t) + manifest.top_P1.Vert2Camera * manifest.top_t;
+                            NEVector4 vDir = vDirTop * (1.0f - t) + vDirBottom * t;
                             dotHeadlamp = NEMathHelper.Clamp(NEVector4.Dot3(tr.NormalView, vDir),0,1)*m_HeadlampIntensity;
                             float coneMask = NEMathHelper.Clamp(NEVector4.Dot3(vDir, new NEVector4(u*MainCamera.InverseAspectRatio, v, -1.0f).Normalized), 0.0f, 1.0f);
                             dotHeadlamp *= coneMask;
@@ -314,7 +315,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 
                         }
 
-                        int fullCol = model.Color == -1 ? tr.ColorAttrib : model.Color;
+                        int fullCol = (model.Color == -1) ? tr.ColorAttrib : model.Color;
                         int lowCol =  model.UnlitColor;
                          var col = NEColorSample.MakeCol((ConsoleColor)lowCol, (ConsoleColor)fullCol, diffuse, NECHAR_RAMPS.CHAR_RAMP_FULL);
                         //var col = NEColorSample.MakeCol10((ConsoleColor)0, (ConsoleColor)14, 1.0f-NEMathHelper.Pow(fragmentDepth,20));
