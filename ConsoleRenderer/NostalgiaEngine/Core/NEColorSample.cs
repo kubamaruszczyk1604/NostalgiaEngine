@@ -10,11 +10,30 @@ namespace NostalgiaEngine.Core
     public enum NEBlock {Space= 32, Weak = 176, Middle = 177, Strong = 178, Solid = 219 } // mapped to ascii
 
 
-    class NEBLOCKS
+    class NECHAR_RAMPS
     {
-        static public int[] BLOCK_ARR = new int[] { (int)NEBlock.Space, (int)NEBlock.Weak, (int)NEBlock.Middle, (int)NEBlock.Strong, (int)NEBlock.Solid};
+        static public int[] BLOCK_RAMP5 = new int[] { (int)NEBlock.Space, (int)NEBlock.Weak, (int)NEBlock.Middle, (int)NEBlock.Strong, (int)NEBlock.Solid};
 
-        static public int[] BLOCK_ARR_EXT = new int[] { (int)NEBlock.Space, 221, 179,  (int)NEBlock.Weak, 181, 186, 185, (int)NEBlock.Middle, (int)NEBlock.Strong, (int)NEBlock.Solid };
+        static public int[] CHAR_RAMP_10 = new int[] { (int)' ', (int)'.', (int)':', (int)'-', (int)'=', (int)'+', (int)'*', (int)'#', (int)'%', (int)'@'};
+
+        static public int[] CHAR_RAMP_12 = new int[] { (int)' ', (int)'.', (int)':', (int)'-', (int)'=', (int)'+', (int)'*', (int)'#', (int)'%', (int)'@', (int)NEBlock.Strong, (int)NEBlock.Solid };
+
+        static public int[] String2BlockArray(string str)
+        {
+            int[] ret = new int[str.Length+3];
+            for(int i=0; i < str.Length; ++i)
+            {
+                ret[i] =  str[i];
+            }
+            ret[str.Length] = 177;
+            ret[str.Length + 1] = 178;
+            ret[str.Length + 2] = 219;
+            return ret;
+        }
+
+        static public int[] CHAR_RAMP_FULL = String2BlockArray(@" `.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@");
+
+        //static public int[] BLOCK_ARR_FULL2 = new int[] { (int)NEBlock.Space, 221, 179,  (int)NEBlock.Weak, 181, 186, 185, (int)NEBlock.Middle, (int)NEBlock.Strong, (int)NEBlock.Solid };
     }
 
 
@@ -76,7 +95,7 @@ namespace NostalgiaEngine.Core
                 sample.BitMask = (short)pairs[0];
             }
 
-            sample.Character = (char)NEBLOCKS.BLOCK_ARR[index];
+            sample.Character = (char)NECHAR_RAMPS.BLOCK_RAMP5[index];
 
             return sample;
         }
@@ -95,10 +114,31 @@ namespace NostalgiaEngine.Core
 
 
 
-            sample.Character = (char)NEBLOCKS.BLOCK_ARR_EXT[index];
+            sample.Character = (char)NECHAR_RAMPS.CHAR_RAMP_10[index];
 
             return sample;
         }
+
+        static public NEColorSample MakeCol(ConsoleColor col1, ConsoleColor col2, float t, int[] charRamp)
+        {
+            float tFract = t >= 1.0f ? 1.0f : t - (float)Math.Floor(t);
+            tFract = NEMathHelper.Clamp(tFract, 0.0f, 1.0f);
+
+            int rampLastIndex = charRamp.Length - 1; 
+            int index = (int)(tFract * charRamp.Length);
+            if (index > rampLastIndex) index = rampLastIndex;
+
+            NEColorSample sample = new NEColorSample();
+            sample.BitMask = (short)((int)col1 << 4 | ((int)col2));
+
+
+
+            sample.Character = (char)charRamp[index];
+
+            return sample;
+        }
+
+
         static public NEColorSample MakeCol5(ConsoleColor col1, ConsoleColor col2, float t)
         {
 
@@ -115,7 +155,7 @@ namespace NostalgiaEngine.Core
 
 
 
-            sample.Character = (char)NEBLOCKS.BLOCK_ARR[index];
+            sample.Character = (char)NECHAR_RAMPS.BLOCK_RAMP5[index];
 
             return sample;
         }

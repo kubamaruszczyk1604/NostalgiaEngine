@@ -10,7 +10,7 @@ namespace NostalgiaEngine.Core
     {
 
         public NEFloatBuffer LumaTexture { get; set; }
-        public int[] CharacterSpectrum = NEBLOCKS.BLOCK_ARR_EXT;
+        public int[] CharacterSpectrum = NECHAR_RAMPS.CHAR_RAMP_10;
         public float LitCoefficient
         {
             get { return m_LitCoefficient; }

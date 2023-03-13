@@ -119,7 +119,7 @@ namespace NostalgiaEngine.RasterizerPipeline
         }
 
 
-
+        bool test = true;
         public override bool OnDraw()
         {
 
@@ -128,6 +128,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 
                 NEDebug.DrawPalette(ScreenWidth, ScreenHeight);
             }
+            test = !test;
             return base.OnDraw();
         }
 
@@ -282,7 +283,7 @@ namespace NostalgiaEngine.RasterizerPipeline
                         if (HeadlampOn)
                         {
                             dotHeadlamp = NEMathHelper.Clamp(NEVector4.Dot3(tr.NormalView, vDir),0,1)*m_HeadlampIntensity;
-                            float coneMask = NEMathHelper.Clamp(NEVector4.Dot3(vDir, new NEVector4(u*1.5f, v, -1.0f).Normalized), 0.0f, 1.0f);
+                            float coneMask = NEMathHelper.Clamp(NEVector4.Dot3(vDir, new NEVector4(u*MainCamera.InverseAspectRatio, v, -1.0f).Normalized), 0.0f, 1.0f);
                             dotHeadlamp *= coneMask;
                         }
 
@@ -295,7 +296,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 
 
                         float global =  dotGlobalLight;
-                        float headlamp = /*7 * fragW **/ dotHeadlamp;
+                        float headlamp = NEMathHelper.Clamp(49.0f * fragW * fragW, 0.0f, 0.99f) * dotHeadlamp;
                         float diffuse = global + headlamp;
                         if (model.LumaTexture != null && TexturingOn)
                         {
@@ -315,7 +316,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 
                         int fullCol = model.Color == -1 ? tr.ColorAttrib : model.Color;
                         int lowCol =  model.UnlitColor;
-                         var col = NEColorSample.MakeCol10F((ConsoleColor)lowCol, (ConsoleColor)fullCol, diffuse);
+                         var col = NEColorSample.MakeCol((ConsoleColor)lowCol, (ConsoleColor)fullCol, diffuse, NECHAR_RAMPS.CHAR_RAMP_FULL);
                         //var col = NEColorSample.MakeCol10((ConsoleColor)0, (ConsoleColor)14, 1.0f-NEMathHelper.Pow(fragmentDepth,20));
                         //var col = m_Texture.Sample(teX, 1.0f - teY, dot);
                         NEScreenBuffer.PutChar(col.Character, col.BitMask, x, fillStart + y);
