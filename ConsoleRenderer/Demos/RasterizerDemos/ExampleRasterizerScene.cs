@@ -134,8 +134,6 @@ namespace NostalgiaEngine.Demos
                 low = 6;
                 high = 12;
             }
-            //else
-            //sampledValue += 0.3f-NEMathHelper.Clamp(0.5f-direction.Normalized.Y, 0.0f, 1.0f)*0.3f;
             return NEColorSample.MakeCol10((ConsoleColor)low, (ConsoleColor)high, sampledValue);
         }
 
