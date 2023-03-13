@@ -53,7 +53,7 @@ namespace NostalgiaEngine.Demos
 
             MakeTree(new NEVector4(-3.2f, 0.0f, 1.0f), cubeMesh, treeTexture);
             MakeTree(new NEVector4(3.5f, 0.0f, 5.0f), cubeMesh, treeTexture);
-            MakeTree2(new NEVector4(-15.0f, 0.0f, 10.0f), cubeMesh, treeTexture);
+            MakeTree2(new NEVector4(-12.0f, 0.0f, 10.0f), cubeMesh, treeTexture);
             MakeTree2(new NEVector4(8.4f, 0.0f, -5.3f), cubeMesh, treeTexture);
 
             MakeWall(new NEVector4(-10.2f, 0.0f, -7.4f, 1.0f), cubeMesh, wallTexture, 1.0f, 3.14f * 0.5f);
@@ -71,6 +71,10 @@ namespace NostalgiaEngine.Demos
             MakeWall(new NEVector4(9.3f, 0.0f, 1.6f, 1.0f), cubeMesh, wallTexture, 1.0f, 3.14f * 0.5f);
             MakeWall(new NEVector4(10.3f, 0.0f, -1.6f, 1.0f), cubeMesh, wallTexture, 1.0f, 3.14f * 0.5f);
             MakeWall(new NEVector4(10.3f, 0.0f, -4.8f, 1.0f), cubeMesh, wallTexture, 1.0f, 3.14f * 0.5f);
+
+
+            MakePlatform(new NEVector4(0.0f,2.0f,-16.0f), cubeMesh, wallTexture,treeTexture);
+            MakePlatform(new NEVector4(2.0f, 2.0f, -16.0f), cubeMesh, wallTexture, treeTexture);
 
             MainCamera.Transform.LocalPosition = new NEVector4(0.0f, 1.9f, -5.3f);
 
@@ -274,6 +278,27 @@ namespace NostalgiaEngine.Demos
             //wallModel.AmbientIntensity = 0.4f;
             wallModel.Transform.RotateY(rotationYRad);
             Models.Add(wallModel);
+        }
+
+
+        private void MakePlatform(NEVector4 pos, Mesh cubeMesh, NEFloatBuffer groundTex, NEFloatBuffer topTex)
+        {
+            Model groundModel = new Model(cubeMesh, CullMode.Back, groundTex);
+            groundModel.Transform.LocalPosition = new NEVector4(0.0f, 0.6f, 0.0f) + pos;
+            groundModel.Transform.ScaleY = 0.6f ;
+            groundModel.Transform.ScaleX = 1;
+            groundModel.Color = 11;
+            groundModel.UnlitColor = 10;
+            Models.Add(groundModel);
+
+            Model topdModel = new Model(cubeMesh, CullMode.Back,topTex);
+            topdModel.Transform.LocalPosition = new NEVector4(0.0f,0.8f, 0.0f) + groundModel.Transform.LocalPosition;
+            topdModel.Transform.ScaleY = 0.2f ;
+            topdModel.Color = 7;
+            topdModel.UnlitColor = 10;
+            Models.Add(topdModel);
+
+
         }
     }
 }
