@@ -99,7 +99,7 @@ namespace NostalgiaEngine.Core
             {
                 if (u < 0.0f || u > 1.0f )
                 {
-                    return NEColorSample.MakeColFromBlocks10(ConsoleColor.Black, 0, intensity);
+                    return NEColorSample.MakeCol(ConsoleColor.Black, 0, intensity, NECHAR_RAMPS.CHAR_RAMP_FULL);
                 }
                 u -= (int)u;
             }
@@ -124,7 +124,7 @@ namespace NostalgiaEngine.Core
                 return NEColorSample.MakeTransparent();
             }
 
-            return NEColorSample.MakeColFromBlocks10(ConsoleColor.Black, (ConsoleColor)col, intensity);
+            return NEColorSample.MakeCol(ConsoleColor.Black, (ConsoleColor)col, intensity, NECHAR_RAMPS.CHAR_RAMP_FULL);
         }
 
     }
