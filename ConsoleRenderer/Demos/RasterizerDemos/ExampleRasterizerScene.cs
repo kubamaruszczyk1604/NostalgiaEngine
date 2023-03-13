@@ -53,8 +53,8 @@ namespace NostalgiaEngine.Demos
 
             MakeTree(new NEVector4(-3.2f, 0.0f, 1.0f), cubeMesh, treeTexture);
             MakeTree(new NEVector4(3.5f, 0.0f, 5.0f), cubeMesh, treeTexture);
-            MakeTree(new NEVector4(-15.0f, 0.0f, 10.0f), cubeMesh, treeTexture);
-            MakeTree(new NEVector4(8.4f, 0.0f, -5.3f), cubeMesh, treeTexture);
+            MakeTree2(new NEVector4(-15.0f, 0.0f, 10.0f), cubeMesh, treeTexture);
+            MakeTree2(new NEVector4(8.4f, 0.0f, -5.3f), cubeMesh, treeTexture);
 
             MakeWall(new NEVector4(-10.2f, 0.0f, -7.4f, 1.0f), cubeMesh, wallTexture, 1.0f, 3.14f * 0.5f);
             MakeWall(new NEVector4(-10.2f, 0.0f, -4.2f, 1.0f), cubeMesh, wallTexture, 1.0f, 3.14f * 0.5f);
@@ -218,13 +218,47 @@ namespace NostalgiaEngine.Demos
                 Model crown = new Model(cubeMesh, CullMode.Back, crownTexture);
                 crown.Transform.LocalPosition = pos + new NEVector4(0.0f, 2.15f+i*0.6f, 0.0f);
                 crown.Transform.ScaleY = 0.3f;
-                //crown.GlowIntensity = 0.2f;
-                //crown.DiffuseIntensity = 0.5f;
                 crown.Transform.ScaleX = 0.5f + a;
                 crown.Transform.ScaleZ = 0.5f + a;
                 crown.Transform.RotateY(t);
                 crown.UnlitColor = 3;
                 Models.Add(crown);
+            }
+
+        }
+
+        private void MakeTree2(NEVector4 pos, Mesh cubeMesh, NEFloatBuffer crownTexture)
+        {
+
+            Model trunk = new Model(cubeMesh, CullMode.Back);
+            trunk.Transform.LocalPosition = pos + new NEVector4(0.0f, 1.0f, 0.0f);
+            trunk.Transform.ScaleX = 0.4f;
+            trunk.Transform.ScaleZ = 0.4f;
+            //trunk.Transform.RotateY(0.4f);
+            trunk.Color = 5;
+            Models.Add(trunk);
+
+            int numRings = 10;
+
+            for (int arm = 0; arm < 7; ++arm)
+            {
+                float s = arm / 7.0f;
+                float xP = NEMathHelper.Cos(s*6.28f);
+                float zP = NEMathHelper.Sin(s*6.28f);
+                for (int i = 0; i < numRings; ++i)
+                {
+
+                    float t = ((float)i) / ((float)numRings);
+                    float a = NEMathHelper.Sin(t * 3.14f * 1.2f);
+                    Model crown = new Model(cubeMesh, CullMode.Back, crownTexture);
+                    crown.Transform.LocalPosition = pos + new NEVector4( xP*i * 0.3f, 2.15f + a * 1.5f, zP * i * 0.3f);
+                    crown.Transform.ScaleY = 0.3f;
+                    crown.Transform.ScaleX = 0.4f;
+                    crown.Transform.ScaleZ = 0.4f;
+                    //crown.Transform.RotateY(t);
+                    crown.UnlitColor = 3;
+                    Models.Add(crown);
+                }
             }
 
         }
