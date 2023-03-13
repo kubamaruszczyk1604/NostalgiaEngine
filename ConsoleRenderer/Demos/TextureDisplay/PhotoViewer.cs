@@ -49,13 +49,14 @@ namespace TextureDisplay
         private bool m_IntroPhase;
         private int m_Index = 0;
         private bool m_ShowPalette;
+        private bool m_RefreshPalette;
 
         List<TexImage> m_Images;
 
         public PhotoViewer(string[] paths)
         {
             m_IntroPhase = true;
-
+            m_RefreshPalette = false;
             m_Images = new List<TexImage>(paths.Length);
             for (int i = 0; i < paths.Length; ++i)
             {
@@ -100,6 +101,7 @@ namespace TextureDisplay
             if (NEInput.CheckKeyPress(ConsoleKey.P))
             {
                 m_ShowPalette = !m_ShowPalette;
+                m_RefreshPalette = true;
             }
             if (m_RefreshIntervalCounter <= 2.0f)
             {
@@ -134,7 +136,7 @@ namespace TextureDisplay
         public override bool OnDraw()
         {
            
-            if (m_RefreshIntervalCounter <= 2.0f)
+            if (m_RefreshIntervalCounter <= 2.0f || ( m_RefreshPalette))
             {
                 NEScreenBuffer.Clear();
                 for (int x = 0; x < ScreenWidth; ++x)
@@ -164,9 +166,13 @@ namespace TextureDisplay
                         NEScreenBuffer.PutChar(sample.Character, sample.BitMask, x, y);
                     }
                 }
+               if(m_ShowPalette) NEDebug.DrawPalette(ScreenWidth, ScreenHeight);
+                m_RefreshPalette = false;
+                return true;
             }
-            if (m_ShowPalette) NEDebug.DrawPalette(ScreenWidth, ScreenHeight);
-            return true;
+            
+           
+            return false;
         }
 
 

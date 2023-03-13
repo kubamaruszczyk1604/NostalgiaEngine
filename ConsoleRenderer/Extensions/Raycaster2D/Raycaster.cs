@@ -200,6 +200,7 @@ namespace NostalgiaEngine.Raycaster
                 if (cell != 0)
                     hit = true;
             }
+            t = t * NEMathHelper.Cos(px);
             float depth = (t / DEPTH);
             float ceilingStartY = (1.0f / t);
             float floorStartY = (-1.0f / t);
@@ -213,16 +214,16 @@ namespace NostalgiaEngine.Raycaster
                 float py = pixelY / ((float)ScreenHeight);
                 py *= m_Fov;
                 //ColorSample floorSample = ColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkGray, fd);
-                NEColorSample floorSample = NEColorSample.MakeCol5(ConsoleColor.Black, (ConsoleColor)7, 0.2f);// Math.Abs(py) -Math.Abs(px * 0.1f));
+                NEColorSample floorSample = NEColorSample.MakeColFromBlocks5(ConsoleColor.Black, (ConsoleColor)7, 0.2f);// Math.Abs(py) -Math.Abs(px * 0.1f));
 
 
                // NEColorSample ceilSample = NEColorSample.MakeCol5((ConsoleColor)12, (ConsoleColor)0, Math.Abs(py) - 0.71f);
                float dd = m_Sky.Sample((((float)x)/((float)ScreenWidth) ) +m_PlayerRotation*0.4f, py);
-                NEColorSample ceilSample = NEColorSample.MakeCol5((ConsoleColor)12, (ConsoleColor)4, dd* (Math.Abs(py) - 0.71f));
+                NEColorSample ceilSample = NEColorSample.MakeColFromBlocks5((ConsoleColor)12, (ConsoleColor)4, dd* (Math.Abs(py) - 0.71f));
                 if (py < 0.3f + (float)Math.Sin(px * 10 + m_PlayerRotation * 4) * 0.1f)
                 {
                     //ceilSample = NEColorSample.MakeCol5((ConsoleColor)0, (ConsoleColor)4, Math.Abs(py * 1.75f) + NEMathHelper.Sin(px * 10 + m_PlayerRotation * 4) * 0.05f);
-                    ceilSample = NEColorSample.MakeCol5((ConsoleColor)0, (ConsoleColor)0, 0.0f);
+                    ceilSample = NEColorSample.MakeColFromBlocks5((ConsoleColor)0, (ConsoleColor)0, 0.0f);
                 }
 
                 if (hit)
@@ -264,7 +265,7 @@ namespace NostalgiaEngine.Raycaster
 
 
 
-                        NEColorSample csample = NEColorSample.MakeCol5(ConsoleColor.Black, ConsoleColor.DarkGray, luma*1.4f*intensity);
+                        NEColorSample csample = NEColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.White, luma*luma*luma * intensity, NECHAR_RAMPS.CHAR_RAMP_FULL);
 
                         char wallChar = csample.Character;
                         short wallCol = csample.BitMask;

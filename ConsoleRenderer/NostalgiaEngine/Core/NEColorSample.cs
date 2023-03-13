@@ -67,7 +67,7 @@ namespace NostalgiaEngine.Core
             return s;
         }
 
-        static public NEColorSample MakeCol10(ConsoleColor col1, ConsoleColor col2, float t)
+        static public NEColorSample MakeColFromBlocks10(ConsoleColor col1, ConsoleColor col2, float t)
         {
             //if (t == float.NaN) t = 0.0f;
             int BG1 = (int)col1;
@@ -100,24 +100,24 @@ namespace NostalgiaEngine.Core
             return sample;
         }
 
-        static public NEColorSample MakeCol10F(ConsoleColor col1, ConsoleColor col2, float t)
-        {
-            float tFract = t >= 1.0f ? 1.0f : t - (float)Math.Floor(t);
-            tFract = NEMathHelper.Clamp(tFract, 0.0f, 1.0f);
+        //static public NEColorSample MakeCol10F(ConsoleColor col1, ConsoleColor col2, float t)
+        //{
+        //    float tFract = t >= 1.0f ? 1.0f : t - (float)Math.Floor(t);
+        //    tFract = NEMathHelper.Clamp(tFract, 0.0f, 1.0f);
 
 
-            int index = (int)(tFract * 10.0f);
-            if (index > 9) index = 9;
+        //    int index = (int)(tFract * 10.0f);
+        //    if (index > 9) index = 9;
 
-            NEColorSample sample = new NEColorSample();
-            sample.BitMask = (short)((int)col1 << 4 | ((int)col2));
+        //    NEColorSample sample = new NEColorSample();
+        //    sample.BitMask = (short)((int)col1 << 4 | ((int)col2));
 
 
 
-            sample.Character = (char)NECHAR_RAMPS.CHAR_RAMP_10[index];
+        //    sample.Character = (char)NECHAR_RAMPS.CHAR_RAMP_10[index];
 
-            return sample;
-        }
+        //    return sample;
+        //}
 
         static public NEColorSample MakeCol(ConsoleColor col1, ConsoleColor col2, float t, int[] charRamp)
         {
@@ -139,7 +139,7 @@ namespace NostalgiaEngine.Core
         }
 
 
-        static public NEColorSample MakeCol5(ConsoleColor col1, ConsoleColor col2, float t)
+        static public NEColorSample MakeColFromBlocks5(ConsoleColor col1, ConsoleColor col2, float t)
         {
 
 

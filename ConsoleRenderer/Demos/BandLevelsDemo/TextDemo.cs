@@ -112,7 +112,7 @@ namespace NostalgiaEngine.Demos
                     //uvTex.X += 0.5f;
                     //uvTex.Y += 0.5f;
                     float luma = m_LumaBuffer.Sample(uvTex.X, uvTex.Y);
-                    NEColorSample cs = NEColorSample.MakeCol5((ConsoleColor)0, (ConsoleColor)7, (luma)*yNormRev);
+                    NEColorSample cs = NEColorSample.MakeColFromBlocks5((ConsoleColor)0, (ConsoleColor)7, (luma)*yNormRev);
 
                     NEVector2 uvs = new NEVector2(u, yNorm) * 2.0f;
                     uvs.X -= 1;
@@ -126,21 +126,21 @@ namespace NostalgiaEngine.Demos
                         float d = (circleL - low) / (high - low);
                         float brightness = NEMathHelper.Sin(d * 3.14f);
                         brightness *= brightness * brightness;
-                        cs = NEColorSample.MakeCol5((ConsoleColor)0, (ConsoleColor)10,brightness + 0.25f);
+                        cs = NEColorSample.MakeColFromBlocks5((ConsoleColor)0, (ConsoleColor)10,brightness + 0.25f);
                     }
 
 
                     if (DrawArm(uvs, seconds, 0.72f, 0.007f))
                     {
-                        cs = NEColorSample.MakeCol10((ConsoleColor)0, (ConsoleColor)10,1);
+                        cs = NEColorSample.MakeColFromBlocks10((ConsoleColor)0, (ConsoleColor)10,1);
                     }
                     if (DrawArm(uvs, minutes, 0.72f, 0.02f))
                     {
-                        cs = NEColorSample.MakeCol10((ConsoleColor)0, (ConsoleColor)10,1);
+                        cs = NEColorSample.MakeColFromBlocks10((ConsoleColor)0, (ConsoleColor)10,1);
                     }
                     if (DrawArm(uvs, hours, 0.46f, 0.02f))
                     {
-                        cs = NEColorSample.MakeCol5((ConsoleColor)0, (ConsoleColor)10, 1);
+                        cs = NEColorSample.MakeColFromBlocks5((ConsoleColor)0, (ConsoleColor)10, 1);
                     }
 
                     NEScreenBuffer.PutChar(cs.Character, cs.BitMask, x, y);

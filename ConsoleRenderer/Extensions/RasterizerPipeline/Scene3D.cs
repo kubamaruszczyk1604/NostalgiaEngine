@@ -141,7 +141,7 @@ namespace NostalgiaEngine.RasterizerPipeline
         protected virtual NEColorSample OnSkyboxSample(NEVector4 direction, float sampledValue)
         {
 
-            return  NEColorSample.MakeCol10((ConsoleColor)0, (ConsoleColor)6, sampledValue);
+            return  NEColorSample.MakeColFromBlocks10((ConsoleColor)0, (ConsoleColor)6, sampledValue);
         }
        
         protected void TogglePalette()

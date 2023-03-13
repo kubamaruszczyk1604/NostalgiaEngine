@@ -138,7 +138,7 @@ namespace NostalgiaEngine.Demos
                 low = 6;
                 high = 12;
             }
-            return NEColorSample.MakeCol10((ConsoleColor)low, (ConsoleColor)high, sampledValue);
+            return NEColorSample.MakeColFromBlocks10((ConsoleColor)low, (ConsoleColor)high, sampledValue);
         }
 
 
