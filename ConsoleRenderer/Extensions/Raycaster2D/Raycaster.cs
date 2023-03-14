@@ -5,12 +5,16 @@ using System.Text;
 using System.Threading.Tasks;
 using NostalgiaEngine.Core;
 
+
+/// <summary>
+/// This is very much work in progress!
+/// Sp far it is a naive implementation of 2D raycasting. There is plenty of ways to optimize this it (e.g. cell boundry - ray intersection).
+/// Also lots of stuff is hardcoded atm. Eventually I will clean this up.
+/// </summary>
 namespace NostalgiaEngine.Raycaster
 {
     class NERaycaster2D : NEScene
     {
-
-
         private readonly float EPSILON = 0.01f;
         private readonly float DEG_TO_RAD = 0.0174532f;
         private readonly float M_PI = 3.1415926535f;
@@ -75,22 +79,16 @@ namespace NostalgiaEngine.Raycaster
             //PixelWidth = 6;
             //PixelHeight = 6;
             //ParallelScreenDraw = true;
-            //m_WallTex = NEColorTexture16.LoadFromFile($"C:/test/murek.tex");
-            //if (m_WallTex == null) return false;
-
-            // NEColorPalette pal = NEColorPalette.FromFile($"C:/test/murek1/palette.txt");
-            // NEColorManagement.SetPalette(pal);
 
             m_Wall = NEFloatBuffer.FromFile(@"RaycasterDemoResources\nt1\luma.buf");
-            //m_Wall= NEFloatBuffer.FromFile(@"c:\test\text\luma.buf");
             if (m_Wall == null) return false;
             m_Wall.SampleMode = NESampleMode.Repeat;
 
-            m_Sky = NEFloatBuffer.FromFile(@"RaycasterDemoResources \sky\luma.buf");
+            m_Sky = NEFloatBuffer.FromFile(@"RaycasterDemoResources\sky\luma.buf");
             if (m_Sky == null) return false;
             m_Sky.SampleMode = NESampleMode.Repeat;
 
-            NEColorTexture16 lampTex = NEColorTexture16.LoadFromFile("RaycasterDemoResources /lantern1.tex");
+            NEColorTexture16 lampTex = NEColorTexture16.LoadFromFile("RaycasterDemoResources/lantern1.tex");
             if (lampTex == null) return false;
             m_Lamp1Sprite = new NEStaticSprite(lampTex);
             m_Lamp1Sprite.X = 7.8f;
@@ -213,16 +211,13 @@ namespace NostalgiaEngine.Raycaster
                 float pixelY = -(y - ScreenHeight / 2);
                 float py = pixelY / ((float)ScreenHeight);
                 py *= m_Fov;
-                //ColorSample floorSample = ColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.DarkGray, fd);
+
                 NEColorSample floorSample = NEColorSample.MakeColFromBlocks5(ConsoleColor.Black, (ConsoleColor)7, 0.2f);// Math.Abs(py) -Math.Abs(px * 0.1f));
 
-
-               // NEColorSample ceilSample = NEColorSample.MakeCol5((ConsoleColor)12, (ConsoleColor)0, Math.Abs(py) - 0.71f);
                float dd = m_Sky.Sample((((float)x)/((float)ScreenWidth) ) +m_PlayerRotation*0.4f, py);
                 NEColorSample ceilSample = NEColorSample.MakeColFromBlocks5((ConsoleColor)12, (ConsoleColor)4, dd* (Math.Abs(py) - 0.71f));
                 if (py < 0.3f + (float)Math.Sin(px * 10 + m_PlayerRotation * 4) * 0.1f)
                 {
-                    //ceilSample = NEColorSample.MakeCol5((ConsoleColor)0, (ConsoleColor)4, Math.Abs(py * 1.75f) + NEMathHelper.Sin(px * 10 + m_PlayerRotation * 4) * 0.05f);
                     ceilSample = NEColorSample.MakeColFromBlocks5((ConsoleColor)0, (ConsoleColor)0, 0.0f);
                 }
 

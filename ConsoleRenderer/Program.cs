@@ -18,58 +18,59 @@ namespace NostalgiaEngineApplication
     class Program
     {
 
-        static void Main(string[] args)
+        static void TextureEditorDemo(Engine engine)
         {
-            //Note[] notes = new Note[] { new Note(Note.GetNoteFrequency(12), 510),
-            //    new Note(Note.GetNoteFrequency(13), 110),
-            //new Note(Note.GetNoteFrequency(14), 110),
-            // new Note(Note.GetNoteFrequency(15), 110),
-            //  new Note(Note.GetNoteFrequency(16), 110),
-            //   new Note(Note.GetNoteFrequency(17), 110),
-            //    new Note(Note.GetNoteFrequency(18), 110),
-            //     new Note(Note.GetNoteFrequency(19), 110),
-            //      new Note(Note.GetNoteFrequency(20), 110),
-            //       new Note(Note.GetNoteFrequency(21), 110),
-            //        new Note(Note.GetNoteFrequency(22), 110),
-            //         new Note(Note.GetNoteFrequency(23), 110),
-            //          new Note(Note.GetNoteFrequency(24), 110),
-            //};
-           // NESoundSynth.Play(notes);
-
-
-            Engine engine = new Engine();
             NETextureEditor ed = new NETextureEditor();
+            engine.Start(ed);
+        }
+
+        static void RaycasterDemo(Engine engine)
+        {
             NERaycaster2D raycaster = new NERaycaster2D();
+            engine.Start(raycaster);
+        }
+
+        static void ImageViewerDemo(Engine engine)
+        {
             string[] paths = new string[] {
                 @"C:\test\nowa_textura10", @"C:\test\nowa_textura4",
                 @"C:\test\nowa_textura6", @"C:\test\nowa_textura5",@"C:\test\balcony",@"C:\test\water",
                 @"C:\test\playground", @"C:\test\nowa_textura", @"C:\test\nowa_textura2", @"C:\test\food",
                 @"C:\test\example1"};
-            PhotoViewer demo = new PhotoViewer(paths);
-            BandLevelDemo bld = new BandLevelDemo();
-            TextDemo ted = new TextDemo();
-            //Scene3D sc = new Scene3D();
+            AsciiImageViewer imageViewer = new AsciiImageViewer(paths);
 
-            ExampleRasterizerScene sc = new ExampleRasterizerScene();
-            engine.Start(sc);
+            engine.Start(imageViewer);
+        }
 
+        static void AnalogClockDemo(Engine engine)
+        {
+            AnalogClock analogClock = new AnalogClock();
+            engine.Start(analogClock);
+        }
 
-            //Envelope env = new Envelope(200, 300, 200);
-            //env.SampleEnvelope(44000, 300);
+        static void BandLevelDemo(Engine engine)
+        {
+            BandLevelDemo bandDemo = new BandLevelDemo();
+            engine.Start(bandDemo);
+        }
 
+        static void RasterizerDemo(Engine engine)
+        {
+            ExampleRasterizerScene scene3D = new ExampleRasterizerScene();
+            engine.Start(scene3D);
+        }
 
-            //NEVector4 left = new NEVector4(-1.0f, 1.0f, 1.0f);
-            //NEVector4 right = new NEVector4(1.0f, 1.0f, 1.0f);
+        static void Main(string[] args)
+        {
 
-            //bool res = NEVector4.CompareLeft(left, right, NEVector4.Up);
-            //Console.WriteLine(res);
-            //Console.ReadLine();
+            Engine engine = new Engine();
 
-
-            //Console.WriteLine("Matrix-Vector multiply test: " + (NEMatrix4x4.UnitTest_MatVecMultiply()?"pass":"fail"));
-            //Console.WriteLine("Matrix-Matrix multiply test: " + (NEMatrix4x4.UnitTest_MatMatMultiply() ? "pass" : "fail"));
-            //Console.ReadLine();
-
+            //TextureEditorDemo(engine);
+            //RaycasterDemo(engine);
+            //ImageViewerDemo(engine);
+            //AnalogClockDemo(engine);
+            //BandLevelDemo(engine);
+            RasterizerDemo(engine);
         }
     }
 }

@@ -13,7 +13,7 @@ namespace NostalgiaEngine.Demos
             Mesh floorMesh = GeometryGenerator.CreateHorizontalQuad(15.0f, 15.0f, new NEVector4(0.0f, 0.0f, 0.0f), 7);
             Mesh cubeMesh = GeometryGenerator.GenerateCube2(1.0f, 1.0f, 1.0f, NEVector4.Zero, 4);
             Mesh teapotMesh = NEObjLoader.LoadObj("RasterizerDemoResources/teapot.obj",14);
-            Mesh bunnyMesh = NEObjLoader.LoadObj("RasterizerDemoResources/bunny.obj",7);
+            Mesh bunnyMesh = NEObjLoader.LoadObj("RasterizerDemoResources/bunny.obj",8);
             var luma = ResourceManager.Instance.GetLumaTexture("RasterizerDemoResources/uv_test_tex/luma.buf");
 
             var wallTexture = ResourceManager.Instance.GetLumaTexture("RasterizerDemoResources/textures/wall.buf");
@@ -46,7 +46,7 @@ namespace NostalgiaEngine.Demos
 
             
             Models.Add(floorModel);
-            //Models.Add(teapotModel);
+           // Models.Add(teapotModel);
             Models.Add(bunnyModel);
             
 

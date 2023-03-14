@@ -7,14 +7,14 @@ using NostalgiaEngine.Core;
 
 namespace NostalgiaEngine.Demos
 {
-    public class TextDemo : NEScene
+    public class AnalogClock : NEScene
     {
 
         Random m_Rng;
         float[] m_SignalBands;
         private NEFloatBuffer m_LumaBuffer;
         private float m_AspectRatio = 1.0f;
-        public TextDemo()
+        public AnalogClock()
         {
             m_SignalBands = new float[20];
             for (int i = 0; i < 20; ++i)
@@ -32,8 +32,7 @@ namespace NostalgiaEngine.Demos
             PixelWidth = 4;
             PixelHeight = 4;
             m_AspectRatio = (float)ScreenWidth / (float)ScreenHeight;
-            m_LumaBuffer = NEFloatBuffer.FromFile(@"textures\band\luma.buf");
-           // m_LumaBuffer = NEFloatBuffer.FromFile(@"c:\test\text\luma.buf");
+            m_LumaBuffer = NEFloatBuffer.FromFile("BandLevelDemoResources/band/luma.buf");
             m_LumaBuffer.SampleMode = NESampleMode.Repeat;
 
             if (m_LumaBuffer == null) return false;
@@ -41,7 +40,6 @@ namespace NostalgiaEngine.Demos
         }
         public override void OnStart()
         {
-            //NEColorManagement.SetSpectralPalette1();
             base.OnStart();
         }
         public override void OnPause()
@@ -57,15 +55,12 @@ namespace NostalgiaEngine.Demos
         float tCount = 0;
         public override void OnUpdate(float deltaTime)
         {
-
             base.OnUpdate(deltaTime);
             if (NEInput.CheckKeyPress(NEKey.Escape))
             {
                 Exit();
             }
-
             tCount += deltaTime;
-
         }
 
 
@@ -74,7 +69,6 @@ namespace NostalgiaEngine.Demos
         {
             uvs.Y *= -1;
             float rt = num * 3.141f;
-            //if (NEVector2.CalculateLength(uvs) < 0.025f) return false;
             bool isOnLine = NEMathHelper.IsOnLine(uvs, new NEVector2(0, 0), new NEVector2(NEMathHelper.Sin(rt), NEMathHelper.Cos(-rt) + 0.02f),thickness);
             if (!isOnLine) return false;
             if (NEVector2.CalculateLength(uvs) > armLen) return false;

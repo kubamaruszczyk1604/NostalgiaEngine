@@ -66,9 +66,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Demos\BandLevelsDemo\BandLevelDemo.cs" />
-    <Compile Include="Demos\BandLevelsDemo\TextDemo.cs" />
+    <Compile Include="Demos\BandLevelsDemo\AnalogClock.cs" />
     <Compile Include="Demos\RasterizerDemos\ExampleRasterizerScene.cs" />
-    <Compile Include="Demos\TextureDisplay\PhotoViewer.cs" />
+    <Compile Include="Demos\TextureDisplay\AsciiImageViewer.cs" />
     <Compile Include="Extensions\RasterizerPipeline\Clipping.cs" />
     <Compile Include="Extensions\RasterizerPipeline\Camera.cs" />
     <Compile Include="Extensions\RasterizerPipeline\ClipPlane.cs" />
@@ -126,7 +126,6 @@
     <Compile Include="Extensions\Raycaster2D\Raycaster.cs" />
     <Compile Include="NostalgiaEngine\Core\Texture16.cs" />
     <Compile Include="NostalgiaEngine\Core\WindowControl.cs" />
-    <Compile Include="Demos\TextureDisplay\NETexturePreviewApp.cs" />
     <Compile Include="Extensions\TextureEditor\TextureEditor.cs" />
     <Compile Include="NostalgiaEngine\GUI\WindowRect.cs" />
     <Compile Include="Extensions\TextureEditor\MemTex16.cs" />

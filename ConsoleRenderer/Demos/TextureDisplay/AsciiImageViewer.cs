@@ -7,7 +7,7 @@ using NostalgiaEngine.Core;
 using NostalgiaEngine.ConsoleGUI;
 namespace TextureDisplay
 {
-    public class PhotoViewer : NEScene
+    public class AsciiImageViewer : NEScene
     {
 
         class TexImage
@@ -53,7 +53,7 @@ namespace TextureDisplay
 
         List<TexImage> m_Images;
 
-        public PhotoViewer(string[] paths)
+        public AsciiImageViewer(string[] paths)
         {
             m_IntroPhase = true;
             m_RefreshPalette = false;
