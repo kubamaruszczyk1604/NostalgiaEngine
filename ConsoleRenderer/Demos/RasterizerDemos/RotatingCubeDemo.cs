@@ -7,34 +7,25 @@ using NostalgiaEngine.Core;
 using NostalgiaEngine.RasterizerPipeline;
 namespace NostalgiaEngine.Demos
 {
-    public class TeapotDemo: Scene3D
+    public class RotatingCubeDemo: Scene3D
     {
 
         // Loads resources. Called once, when the scene is loaded.
         public override bool OnLoad()
         {
 
-            Mesh teapotMesh = NEObjLoader.LoadObj("RasterizerDemoResources/teapot.obj", 14);
+            Mesh cubeMesh = GeometryGenerator.GenerateCube2(1.0f, 1.0f, 1.0f, NEVector4.Zero, 9);
+            var texture = ResourceManager.Instance.GetLumaTexture("RasterizerDemoResources/uv_test_tex/luma.buf");
+            Model cubeModel = new Model(cubeMesh, CullMode.Back, texture);
 
-            Model teapotModel = new Model(teapotMesh, CullMode.None);
-            teapotModel.Transform.ScaleX = 0.5f;
-            teapotModel.Transform.ScaleY = 0.5f;
-            teapotModel.Transform.ScaleZ = 0.5f;
-            teapotModel.Transform.LocalPosition = new NEVector4(0.0f, 0.0f, -1.0f, 1.0f);
 
-            Models.Add(teapotModel);
+            Models.Add(cubeModel);
 
-            AddLight(new DirectionalLight(new NEVector4(-1.0f, 1.0f, 0.0f)));
+           AddLight(new DirectionalLight(new NEVector4(-1.0f, 1.0f, -3.0f)));
 
-            MainCamera.Transform.LocalPosition = new NEVector4(0.0f, 0.3f, -5.3f);
+            MainCamera.Transform.LocalPosition = new NEVector4(0.0f, 0.3f, -4.3f);
 
-            //skybox (optional)
-            SceneSkybox = new Skybox("RasterizerDemoResources/skybox1");
-
-            //color palette (optional)
-            NEColorPalette pal = NEColorPalette.FromFile("RasterizerDemoResources/palette.txt");
-            pal.MultiplyBy(2.8f);
-            NEColorManagement.SetPalette(pal);
+            TogglePalette();
 
             return base.OnLoad();
         }
@@ -42,8 +33,9 @@ namespace NostalgiaEngine.Demos
         // Called once per frame
         public override void OnUpdate(float deltaTime)
         {
-            //animate teapot
+            //animate 
             Models[0].Transform.RotateY(deltaTime * 0.5f);
+            Models[0].Transform.RotateZ(deltaTime * 0.75f);
             Models[0].Transform.PositionY = (float)(Math.Sin(Engine.Instance.TotalTime) * 0.1);
 
             // Show/hide color palette strip
@@ -89,7 +81,7 @@ namespace NostalgiaEngine.Demos
             // direction is the direction vector used to sample the skybox
             // sampledValue is the intensity value sampled from the skybox (in range from 0 to 1)
 
-            int color0 = 0; 
+            int color0 = 0;
             int color1 = 8;
             if (sampledValue > 0.7f)
             {

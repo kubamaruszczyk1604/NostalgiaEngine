@@ -89,7 +89,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 
             m_DepthBuffer.Clear();
             MainCamera.UpdateTransform();
-
+            if (SceneSkybox == null) SceneSkybox = new Skybox();
             float yDisp = (float)Math.Sin(Engine.Instance.TotalTime);
             Engine.Instance.TitleBarAppend = "Rendered Triangles: " + m_RenderedTriangleCount.ToString();
             m_RenderedTriangleCount = 0;
@@ -110,8 +110,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             {
                 RenderModel(x, u, Models[i]);
             }
-
-           if(SceneSkybox.Available) RenderSkybox(x, u);
+            if (SceneSkybox.Available) RenderSkybox(x, u);
             base.OnDrawPerColumn(x);
         }
 
@@ -322,7 +321,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 
 
                         float global =  directionalLightsSum;
-                        float headlamp = NEMathHelper.Clamp(49.0f * fragW * fragW, 0.0f, 0.99f) * dotHeadlamp;
+                        float headlamp = NEMathHelper.Clamp(49.0f * fragW * fragW, 0.0f, 1.0f) * dotHeadlamp;
                         float diffuse = NEMathHelper.Clamp(global + headlamp, 0.0f, 1.0f);
                         if (model.LumaTexture != null && TexturingOn)
                         {

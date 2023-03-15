@@ -68,6 +68,7 @@
     <Compile Include="Demos\BandLevelsDemo\BandLevelDemo.cs" />
     <Compile Include="Demos\BandLevelsDemo\AnalogClock.cs" />
     <Compile Include="Demos\RasterizerDemos\NightGardenScene3D.cs" />
+    <Compile Include="Demos\RasterizerDemos\RotatingCubeDemo.cs" />
     <Compile Include="Demos\RasterizerDemos\TeapotDemo.cs" />
     <Compile Include="Demos\TextureDisplay\AsciiImageViewer.cs" />
     <Compile Include="Extensions\RasterizerPipeline\Clipping.cs" />

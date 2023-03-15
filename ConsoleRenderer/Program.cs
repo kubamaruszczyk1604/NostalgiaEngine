@@ -60,24 +60,32 @@ namespace NostalgiaEngineApplication
             engine.Start(scene3D);
         }
 
-
         static void TeapotDemo(Engine engine)
         {
             TeapotDemo teapotDemo = new TeapotDemo();
             engine.Start(teapotDemo);
         }
+
+        static void CubeDemo(Engine engine)
+        {
+            RotatingCubeDemo cubeDemo = new RotatingCubeDemo();
+            engine.Start(cubeDemo);
+        }
+
         static void Main(string[] args)
         {
 
             Engine engine = new Engine();
 
             //TextureEditorDemo(engine);
-             //RaycasterDemo(engine);
-             //ImageViewerDemo(engine);
+            //RaycasterDemo(engine);
+            //ImageViewerDemo(engine);
             //AnalogClockDemo(engine);
             //BandLevelDemo(engine);
             // RasterizerDemo(engine);
-             TeapotDemo(engine);
+            //TeapotDemo(engine);
+
+            CubeDemo(engine);
         }
     }
 }

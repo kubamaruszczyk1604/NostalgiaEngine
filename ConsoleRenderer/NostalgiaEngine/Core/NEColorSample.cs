@@ -25,9 +25,6 @@ namespace NostalgiaEngine.Core
             {
                 ret[i] =  str[i];
             }
-            //ret[str.Length] = 177;
-            //ret[str.Length + 1] = 178;
-            //ret[str.Length + 2] = 219;
             return ret;
         }
         static public int[] CoppyWithAppendBlocks(int[] sourceCharRamp, int[] setToAppend)
@@ -41,7 +38,7 @@ namespace NostalgiaEngine.Core
 
         static public int[] CHAR_RAMP_FULL = String2BlockArray(@" `.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@");
 
-        static public int[] BLOCK_ARR_FULL2 = CoppyWithAppendBlocks(CHAR_RAMP_FULL, new int[] { (int)NEBlock.Middle, (int)NEBlock.Strong, (int)NEBlock.Solid });
+        static public int[] CHAR_RAMP_FULL_EXT = CoppyWithAppendBlocks(CHAR_RAMP_FULL, new int[] { (int)NEBlock.Middle, (int)NEBlock.Strong, (int)NEBlock.Solid });
     }
 
 
