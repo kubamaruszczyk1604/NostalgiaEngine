@@ -56,21 +56,28 @@ namespace NostalgiaEngineApplication
 
         static void RasterizerDemo(Engine engine)
         {
-            ExampleRasterizerScene scene3D = new ExampleRasterizerScene();
+            NightGardenScene3D scene3D = new NightGardenScene3D();
             engine.Start(scene3D);
         }
 
+
+        static void TeapotDemo(Engine engine)
+        {
+            TeapotDemo teapotDemo = new TeapotDemo();
+            engine.Start(teapotDemo);
+        }
         static void Main(string[] args)
         {
 
             Engine engine = new Engine();
 
             //TextureEditorDemo(engine);
-            //RaycasterDemo(engine);
-            //ImageViewerDemo(engine);
+             //RaycasterDemo(engine);
+             //ImageViewerDemo(engine);
             //AnalogClockDemo(engine);
             //BandLevelDemo(engine);
-            RasterizerDemo(engine);
+            // RasterizerDemo(engine);
+             TeapotDemo(engine);
         }
     }
 }

@@ -99,7 +99,7 @@ namespace NostalgiaEngine.Core
             {
                 if (u < 0.0f || u > 1.0f )
                 {
-                    return NEColorSample.MakeCol(ConsoleColor.Black, 0, intensity, NECHAR_RAMPS.CHAR_RAMP_FULL);
+                    return NEColorSample.MakeCol(ConsoleColor.Black, 0, intensity, NECHAR_RAMPS.BLOCK_ARR_FULL2);
                 }
                 u -= (int)u;
             }
@@ -124,7 +124,45 @@ namespace NostalgiaEngine.Core
                 return NEColorSample.MakeTransparent();
             }
 
-            return NEColorSample.MakeCol(ConsoleColor.Black, (ConsoleColor)col, intensity, NECHAR_RAMPS.CHAR_RAMP_FULL);
+            return NEColorSample.MakeCol(ConsoleColor.Black, (ConsoleColor)col, intensity, NECHAR_RAMPS.BLOCK_ARR_FULL2);
+        }
+
+        public NEColorSample SampleFromBlocks10(float u, float v, float intensity)
+        {
+            // u = NEMathHelper.Abs(u);
+            //v = NEMathHelper.Abs(v);
+
+
+            if (SampleMode == NESampleMode.Clamp)
+            {
+                if (u < 0.0f || u > 1.0f)
+                {
+                    return NEColorSample.MakeColFromBlocks10(ConsoleColor.Black, 0, intensity);
+                }
+                u -= (int)u;
+            }
+            else if (SampleMode == NESampleMode.Repeat)
+            {
+                u -= (int)u;
+                u = u < 0 ? 1.0f - NEMathHelper.Abs(u) : u;
+            }
+
+            v -= (int)v;
+            v = v < 0 ? 1.0f - NEMathHelper.Abs(v) : v;
+
+            int x = (int)Math.Round(u * (float)Width);
+            if (x >= (Width - 1)) x = Width - 1;
+
+            int y = (int)Math.Round(v * (float)Height);
+            if (y >= (Height - 1)) y = Height - 1;
+            int index = y * Width + x;
+            int col = m_Data != null ? m_Data[index] : 13;
+            if (col == 16)
+            {
+                return NEColorSample.MakeTransparent();
+            }
+
+            return NEColorSample.MakeColFromBlocks10(ConsoleColor.Black, (ConsoleColor)col, intensity);
         }
 
     }

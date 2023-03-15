@@ -4,7 +4,7 @@ using System;
 
 namespace NostalgiaEngine.Demos
 {
-    class ExampleRasterizerScene: Scene3D
+    class NightGardenScene3D: Scene3D
     {
         public override bool OnLoad()
         {
@@ -115,6 +115,7 @@ namespace NostalgiaEngine.Demos
             }
             //Models[1].Transform.RotateY(deltaTime * 0.5f);
             //Models[1].Transform.PositionY = 1.6f + (float)(Math.Sin(Engine.Instance.TotalTime) * 0.1);
+            //Models[1].Transform.PositionY = 1.6f + (float)(Math.Sin(Engine.Instance.TotalTime) * 0.1);
             NEScreenBuffer.Clear();
             base.OnUpdate(deltaTime);
         }
@@ -131,8 +132,6 @@ namespace NostalgiaEngine.Demos
 
         protected override NEColorSample OnSkyboxSample(NEVector4 direction, float sampledValue)
         {
-
-
             int low = 0;
             int high = 8;
             if (sampledValue > 0.7f)
@@ -281,7 +280,6 @@ namespace NostalgiaEngine.Demos
             wallModel.Transform.RotateY(rotationYRad);
             Models.Add(wallModel);
         }
-
 
         private void MakePlatform(NEVector4 pos, Mesh cubeMesh, NEFloatBuffer groundTex, NEFloatBuffer topTex)
         {

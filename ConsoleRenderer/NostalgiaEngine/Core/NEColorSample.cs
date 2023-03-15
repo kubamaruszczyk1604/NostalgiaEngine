@@ -20,20 +20,28 @@ namespace NostalgiaEngine.Core
 
         static public int[] String2BlockArray(string str)
         {
-            int[] ret = new int[str.Length+3];
+            int[] ret = new int[str.Length];
             for(int i=0; i < str.Length; ++i)
             {
                 ret[i] =  str[i];
             }
-            ret[str.Length] = 177;
-            ret[str.Length + 1] = 178;
-            ret[str.Length + 2] = 219;
+            //ret[str.Length] = 177;
+            //ret[str.Length + 1] = 178;
+            //ret[str.Length + 2] = 219;
+            return ret;
+        }
+        static public int[] CoppyWithAppendBlocks(int[] sourceCharRamp, int[] setToAppend)
+        {
+
+            int[] ret = new int[sourceCharRamp.Length + setToAppend.Length];
+            Array.Copy(sourceCharRamp, ret, sourceCharRamp.Length);
+            Array.Copy(setToAppend, 0, ret, sourceCharRamp.Length, setToAppend.Length);
             return ret;
         }
 
         static public int[] CHAR_RAMP_FULL = String2BlockArray(@" `.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@");
 
-        //static public int[] BLOCK_ARR_FULL2 = new int[] { (int)NEBlock.Space, 221, 179,  (int)NEBlock.Weak, 181, 186, 185, (int)NEBlock.Middle, (int)NEBlock.Strong, (int)NEBlock.Solid };
+        static public int[] BLOCK_ARR_FULL2 = CoppyWithAppendBlocks(CHAR_RAMP_FULL, new int[] { (int)NEBlock.Middle, (int)NEBlock.Strong, (int)NEBlock.Solid });
     }
 
 

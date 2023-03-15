@@ -157,11 +157,16 @@ namespace TextureDisplay
                         float v = ((float)y) / ((float)ScreenHeight);
 
                         float luma = 1.0f;
+                        NEColorSample sample;
                         if (m_LumaBuffer != null)
                         {
                             luma = m_LumaBuffer.Sample(du, v);
+                            sample = m_MainTex.Sample(du, v, luma);
                         }
-                        NEColorSample sample = m_MainTex.Sample(du, v, luma);
+                        else
+                        {
+                            sample = m_MainTex.SampleFromBlocks10(du, v, luma);
+                        }
                         //NEColorSample sample = NEColorSample.MakeCol5(ConsoleColor.Black, ConsoleColor.Gray, luma);
                         NEScreenBuffer.PutChar(sample.Character, sample.BitMask, x, y);
                     }

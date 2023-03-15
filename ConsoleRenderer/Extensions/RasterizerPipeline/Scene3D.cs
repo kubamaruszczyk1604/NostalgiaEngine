@@ -46,10 +46,8 @@ namespace NostalgiaEngine.RasterizerPipeline
             PixelWidth = 4;
             PixelHeight = 4;
 
-            //ScreenWidth = 200;
-            //ScreenHeight = 100;
-            //PixelWidth = 6;
-            //PixelHeight = 6;
+            m_ScrHeightReciprocal = 1.0f / ScreenHeight;
+            m_ScrWidthReciprocal = 1.0f / ScreenWidth;
             m_DepthBuffer = new NEDepthBuffer(ScreenWidth, ScreenHeight);
             Models = new List<Model>();
             SceneSkybox = new Skybox();
@@ -63,10 +61,6 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         public override bool OnLoad()
         {
-
-
-
-            //Clipping.DebugMode = true;
             m_ScrHeightReciprocal = 1.0f / ScreenHeight;
             m_ScrWidthReciprocal = 1.0f / ScreenWidth;
             return base.OnLoad();
@@ -329,7 +323,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 
                         float global =  directionalLightsSum;
                         float headlamp = NEMathHelper.Clamp(49.0f * fragW * fragW, 0.0f, 0.99f) * dotHeadlamp;
-                        float diffuse = global + headlamp;
+                        float diffuse = NEMathHelper.Clamp(global + headlamp, 0.0f, 1.0f);
                         if (model.LumaTexture != null && TexturingOn)
                         {
                             NEVector2 textCoordBottom = manifest.bottom_P0.UV * (1.0f - manifest.bottom_t)
