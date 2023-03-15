@@ -100,7 +100,7 @@ namespace NostalgiaEngine.Raycaster
             return true;
         }
 
-        override public void OnStart()
+        override public void OnInitializeSuccess()
         {
             m_AspectRatio = (float)ScreenWidth / (float)ScreenHeight;
             m_Fov = 80.0f * DEG_TO_RAD;

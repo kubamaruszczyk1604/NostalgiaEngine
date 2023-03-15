@@ -70,7 +70,7 @@ namespace NostalgiaEngineExtensions.TextureEditor
         //{
         //    NEInput.FlushKeyboard();
         //}
-        public override void OnStart()
+        public override void OnInitializeSuccess()
         {
             NEWindowControl.DisableConsoleWindowButtons();
 

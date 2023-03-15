@@ -68,9 +68,9 @@ namespace NostalgiaEngine.RasterizerPipeline
 
 
 
-        public override void OnStart()
+        public override void OnInitializeSuccess()
         {
-            base.OnStart();
+            base.OnInitializeSuccess();
         }
 
         public override void OnPause()

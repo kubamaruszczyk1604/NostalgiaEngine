@@ -38,9 +38,9 @@ namespace NostalgiaEngine.Demos
             if (m_LumaBuffer == null) return false;
             return true;
         }
-        public override void OnStart()
+        public override void OnInitializeSuccess()
         {
-            base.OnStart();
+            base.OnInitializeSuccess();
         }
         public override void OnPause()
         {

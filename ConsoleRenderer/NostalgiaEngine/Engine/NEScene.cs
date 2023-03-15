@@ -10,10 +10,10 @@ namespace NostalgiaEngine.Core
     public abstract class NEScene
     {
         public string Title { get; protected set; }
-        public int ScreenWidth { get; protected set; }
-        public int ScreenHeight { get; protected set; }
-        public int PixelWidth { get; protected set; }
-        public int PixelHeight { get; protected set; }
+        public int ScreenWidth { get; set; }
+        public int ScreenHeight { get; set; }
+        public int PixelWidth { get;  set; }
+        public int PixelHeight { get; set; }
         public bool ParallelScreenDraw{ get; protected set; }
         public object ReturnData { get; private set; }
         public Type ReturnDataType { get; private set; }
@@ -35,7 +35,7 @@ namespace NostalgiaEngine.Core
             onSceneExit = null;
         }
         public virtual bool OnLoad() { NEInput.FlushKeyboard(); return true; }
-        public virtual void OnStart() { NEInput.FlushKeyboard(); }
+        public virtual void OnInitializeSuccess() { NEInput.FlushKeyboard(); }
         public virtual void OnPause() { NEInput.FlushKeyboard(); }
         public virtual void OnResume() { NEInput.FlushKeyboard(); }
         public virtual void OnUpdate(float deltaTime) { }

@@ -71,10 +71,14 @@ namespace NostalgiaEngine.Core
         }
         private bool InitializeScreen(NEScene scene)
         {
-            ScreenWidth = scene.ScreenWidth > 10 ? scene.ScreenWidth : DEFAULT_SCR_W;
-            ScreenHeight = scene.ScreenHeight > 10 ? scene.ScreenHeight : DEFAULT_SCR_H;
-            PixelWidth = scene.PixelWidth > 0 ? scene.PixelWidth : DEFAULT_PIXEL_W;
-            PixelHeight = scene.PixelHeight > 0 ? scene.PixelHeight : DEFAULT_PIXEL_H;
+            scene.ScreenWidth = scene.ScreenWidth > 10 ? scene.ScreenWidth : DEFAULT_SCR_W;
+            scene.ScreenHeight = scene.ScreenHeight > 10 ? scene.ScreenHeight : DEFAULT_SCR_H;
+            scene.PixelWidth = scene.PixelWidth > 0 ? scene.PixelWidth : DEFAULT_PIXEL_W;
+            scene.PixelHeight = scene.PixelHeight > 0 ? scene.PixelHeight : DEFAULT_PIXEL_H;
+            ScreenWidth = scene.ScreenWidth;
+            ScreenHeight = scene.ScreenHeight;
+            PixelWidth = scene.PixelWidth;
+            PixelHeight = scene.PixelHeight;
             return NEScreenBuffer.Initialize((short)ScreenWidth, (short)ScreenHeight, (short)PixelWidth, (short)PixelHeight,scene.ParallelScreenDraw);
         }
 
@@ -84,12 +88,11 @@ namespace NostalgiaEngine.Core
             if(m_CurrentScene != null) m_CurrentScene.OnPause();
             bool loadOK = scene.OnLoad();
             bool screenOK = InitializeScreen(scene);
-
             if (loadOK && screenOK )
             {
                 m_CurrentScene = scene;
                 m_SceneStack.Push(scene);
-                scene.OnStart();
+                scene.OnInitializeSuccess();
                 return true;
             }
             else
@@ -139,6 +142,7 @@ namespace NostalgiaEngine.Core
 
         public void Start(NEScene scene)
         {
+            Console.Clear();
             NEInput.FlushKeyboard();
             NEColorManagement.SetNostalgiaPalette();
             if (!PushScene(scene))

@@ -75,8 +75,7 @@ namespace TextureDisplay
             PixelWidth = 5;
             PixelHeight = 5;
             m_Col = 0;
-           // ParallelScreenDraw = true;
-
+            
             m_MainTex = NEColorTexture16.LoadFromFile(@"ImageViewerResources\intro.dat");
             m_RefreshIntervalCounter = 0.0f;
             if (m_MainTex == null) return false;
@@ -84,20 +83,15 @@ namespace TextureDisplay
             m_MainTexPal = NEColorPalette.FromFile(@"ImageViewerResources\intro.res");
             m_Col = 1.0f;
             if (m_MainTexPal == null) return false;
+            NEColorManagement.SetPalette(m_MainTexPal);
 
             return true;
         }
 
-        public override void OnStart()
-        {
-            base.OnStart();
-            NEColorManagement.SetPalette(m_MainTexPal);
-
-        }
 
         override public void OnUpdate(float dt)
         {
-
+     
             if (NEInput.CheckKeyPress(ConsoleKey.P))
             {
                 m_ShowPalette = !m_ShowPalette;
@@ -130,6 +124,7 @@ namespace TextureDisplay
             if (!m_IntroPhase) return;
             m_MainTexPal.FadeIn(dt * 0.65f);
             NEColorManagement.SetPalette(m_MainTexPal);
+
         }
 
 
