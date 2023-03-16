@@ -58,6 +58,11 @@ namespace NostalgiaEngine.Demos
                 ToggleHeadlamp();
             }
 
+            if (NEInput.CheckKeyPress(ConsoleKey.Escape))
+            {
+                Exit();
+            }
+
             //FPS like camera movement
             Movement(deltaTime);
 

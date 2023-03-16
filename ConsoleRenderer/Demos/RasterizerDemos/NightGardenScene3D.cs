@@ -113,6 +113,11 @@ namespace NostalgiaEngine.Demos
             {
                 ToggleTexturing();
             }
+
+            if (NEInput.CheckKeyPress(ConsoleKey.Escape))
+            {
+                Exit();
+            }
             //Models[1].Transform.RotateY(deltaTime * 0.5f);
             //Models[1].Transform.PositionY = 1.6f + (float)(Math.Sin(Engine.Instance.TotalTime) * 0.1);
             //Models[1].Transform.PositionY = 1.6f + (float)(Math.Sin(Engine.Instance.TotalTime) * 0.1);

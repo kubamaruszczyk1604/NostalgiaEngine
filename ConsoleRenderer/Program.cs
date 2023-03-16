@@ -86,13 +86,13 @@ namespace NostalgiaEngineApplication
              //TextureEditorDemo(engine);
              //RaycasterDemo(engine);
              //ImageViewerDemo(engine);
-            //AnalogClockDemo(engine);
+              AnalogClockDemo(engine);
             //BandLevelDemo(engine);
-            // RasterizerDemo(engine);
-            //TeapotDemo(engine);
+             //RasterizerDemo(engine);
+             //TeapotDemo(engine);
             //CubeDemo(engine);
 
-            NoiseDemo(engine);
+            // NoiseDemo(engine);
         }
     }
 }

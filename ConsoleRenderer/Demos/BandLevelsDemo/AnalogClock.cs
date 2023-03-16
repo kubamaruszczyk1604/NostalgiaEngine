@@ -120,19 +120,21 @@ namespace NostalgiaEngine.Demos
                         float d = (circleL - low) / (high - low);
                         float brightness = NEMathHelper.Sin(d * 3.14f);
                         brightness *= brightness * brightness;
-                        cs = NEColorSample.MakeColFromBlocks5((ConsoleColor)0, (ConsoleColor)10,brightness + 0.25f);
+                        cs = NEColorSample.MakeCol((ConsoleColor)0, (ConsoleColor)10,brightness + 0.25f, NECHAR_RAMPS.CHAR_RAMP_FULL);
                     }
 
 
-                    if (DrawArm(uvs, seconds, 0.72f, 0.007f))
+
+
+                    if (DrawArm(uvs, hours, 0.46f, 0.02f))
                     {
-                        cs = NEColorSample.MakeColFromBlocks10((ConsoleColor)0, (ConsoleColor)10,1);
+                        cs = NEColorSample.MakeColFromBlocks5((ConsoleColor)0, (ConsoleColor)10, 0.55f);
                     }
                     if (DrawArm(uvs, minutes, 0.72f, 0.02f))
                     {
-                        cs = NEColorSample.MakeColFromBlocks10((ConsoleColor)0, (ConsoleColor)10,1);
+                        cs = NEColorSample.MakeColFromBlocks5((ConsoleColor)0, (ConsoleColor)10, 0.7f);
                     }
-                    if (DrawArm(uvs, hours, 0.46f, 0.02f))
+                    if (DrawArm(uvs, seconds, 0.72f, 0.007f))
                     {
                         cs = NEColorSample.MakeColFromBlocks5((ConsoleColor)0, (ConsoleColor)10, 1);
                     }
