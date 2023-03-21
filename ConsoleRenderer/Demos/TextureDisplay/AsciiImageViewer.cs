@@ -100,7 +100,6 @@ namespace TextureDisplay
             if (m_RefreshIntervalCounter <= 2.0f)
             {
                 m_RefreshIntervalCounter += dt;
-
             }
 
             if (NEInput.CheckKeyPress(ConsoleKey.Escape))

@@ -8,9 +8,7 @@ namespace NostalgiaEngine.ConsoleGUI
 {
     public class NEConsoleSounds
     {
-        //[DllImport("kernel32.dll", SetLastError = true)]
-        //[return: MarshalAs(UnmanagedType.Bool)]
-        //static extern bool Beep(uint dwFreq, uint dwDuration);
+
 
         public static void ConfirmBeep()
         {
@@ -30,6 +28,7 @@ namespace NostalgiaEngine.ConsoleGUI
         {
             Console.Beep(587, 20);
         }
+
         public static void WarningBeep2()
         {
             Console.Beep(784, 20);

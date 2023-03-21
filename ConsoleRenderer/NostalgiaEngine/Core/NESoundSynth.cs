@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 
+// Work in progress..
 namespace NostalgiaEngine.Core
 {
     public struct Note

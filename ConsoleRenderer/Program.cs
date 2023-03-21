@@ -78,21 +78,27 @@ namespace NostalgiaEngineApplication
             engine.Start(screenNoiseDemo);
         }
 
+
+
+
+
         static void Main(string[] args)
         {
 
             Engine engine = new Engine();
-
-             //TextureEditorDemo(engine);
-             //RaycasterDemo(engine);
-             //ImageViewerDemo(engine);
-              AnalogClockDemo(engine);
+            //TextureEditorDemo(engine);
+            //RaycasterDemo(engine);
+            //ImageViewerDemo(engine);
+            //AnalogClockDemo(engine);
             //BandLevelDemo(engine);
-             //RasterizerDemo(engine);
-             //TeapotDemo(engine);
-            //CubeDemo(engine);
-
+            RasterizerDemo(engine);
+            //TeapotDemo(engine);
+            // CubeDemo(engine);
             // NoiseDemo(engine);
+
+           
+      
+
         }
     }
 }

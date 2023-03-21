@@ -10,7 +10,6 @@ namespace NostalgiaEngine.Demos
     class ScreenNoiseDemo: NEScene
     {
         Random m_Random;
-
         public override bool OnLoad()
         {
             m_Random = new Random();
@@ -23,12 +22,13 @@ namespace NostalgiaEngine.Demos
 
         public override void OnUpdate(float deltaTime)
         {
-            if(NEInput.CheckKeyPress(ConsoleKey.Escape))
+            if (NEInput.CheckKeyPress(ConsoleKey.Escape))
             {
                 Exit();
             }
             base.OnUpdate(deltaTime);
         }
+
 
         public override bool OnDraw()
         {
@@ -42,5 +42,6 @@ namespace NostalgiaEngine.Demos
             }
             return base.OnDraw();
         }
+
     }
 }

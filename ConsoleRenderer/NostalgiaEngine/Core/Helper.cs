@@ -138,9 +138,6 @@ namespace NostalgiaEngine.Core
 
         }
 
-
-
-
         public static bool InTriangle(NEVector2 p, NEVector2 A, NEVector2 B, NEVector2 C)
         {
             float a = NEVector2.Dot((p - A), FindNormal(A, B));

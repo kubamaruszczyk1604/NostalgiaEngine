@@ -11,7 +11,6 @@ namespace NostalgiaEngine.Core
     public class NEWindowControl
     {
 
-
         public enum StdHandle : int
         {
             STD_INPUT_HANDLE = -10,
@@ -78,6 +77,9 @@ namespace NostalgiaEngine.Core
         static uint SWP_NOSIZE = 1;
         static uint SWP_NOZORDER = 4;
 
+        static private Process c_CurrentProcess = Process.GetCurrentProcess();
+        static private NERect c_MainWindowRect = new NERect();
+        static private NEPoint c_MainWindowPos = new NEPoint();
 
         public static void DisableConsoleWindowButtons()
         {
@@ -106,18 +108,12 @@ namespace NostalgiaEngine.Core
             SetConsoleMode(consoleHandle, consoleMode);
         }
         
-
-        static private Process c_CurrentProcess = Process.GetCurrentProcess();
-        static private NERect c_MainWindowRect = new NERect();
-        static private NEPoint c_MainWindowPos = new NEPoint();
         static public NEPoint GetWindowPosition()
-        {
-            
+        {    
             GetWindowRect(c_CurrentProcess.MainWindowHandle, ref c_MainWindowRect);
             c_MainWindowPos.X = c_MainWindowRect.Left;
             c_MainWindowPos.Y = c_MainWindowRect.Top;
             return c_MainWindowPos;
-           
         }
 
         public static void SetWindowPosition(int x, int y)
