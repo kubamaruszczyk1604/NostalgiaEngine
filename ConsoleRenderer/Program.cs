@@ -95,11 +95,11 @@ namespace NostalgiaEngineApplication
 
             //ImageViewerDemo(engine);
             //AnalogClockDemo(engine);
-             BandLevelDemo(engine);
-             //NightGardenDemo(engine);
-             //TeapotDemo(engine);
-             // CubeDemo(engine);
-            // NoiseDemo(engine);
+            //BandLevelDemo(engine);
+            NightGardenDemo(engine);
+            //TeapotDemo(engine);
+            //CubeDemo(engine);
+             //NoiseDemo(engine);
 
             //ShooterDemo(engine);
 
