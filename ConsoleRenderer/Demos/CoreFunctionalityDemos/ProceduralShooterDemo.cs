@@ -20,8 +20,8 @@ namespace NostalgiaEngine.Demos
             ScreenHeight = 200;
             PixelWidth = 4;
             PixelHeight = 4;
-            m_ShipTexture = NEFloatBuffer.FromFile("C:/users/kuba/documents/NE_Texture/luma.buf");
-            m_ProjectileTexture = NEFloatBuffer.FromFile("C:/users/kuba/documents/NE_Texture2/luma.buf");
+            m_ShipTexture = NEFloatBuffer.FromFile("CoreDemosResources/shipTexture.buf");
+            m_ProjectileTexture = NEFloatBuffer.FromFile("CoreDemosResources/projectileTexture.buf");
             NEColorManagement.SetDefaultPalette();
             return (base.OnLoad() && m_ShipTexture!=null && m_ProjectileTexture != null);
         }

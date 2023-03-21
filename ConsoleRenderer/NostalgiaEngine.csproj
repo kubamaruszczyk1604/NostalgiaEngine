@@ -137,6 +137,8 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="Demos\BandLevelsDemo\Textures\band\luma.buf" />
+    <None Include="Demos\CoreFunctionalityDemos\Resources\projectileTexture.buf" />
+    <None Include="Demos\CoreFunctionalityDemos\Resources\shipTexture.buf" />
     <None Include="Demos\RasterizerDemos\Resources\bunny.obj" />
     <None Include="Demos\RasterizerDemos\Resources\textures\grass.buf" />
     <None Include="Demos\RasterizerDemos\Resources\textures\tree_crown.buf" />
@@ -206,7 +208,7 @@ xcopy $(ProjectDir)Demos\BandLevelsDemo\Textures\  $(TargetDir)BandLevelDemoReso
 xcopy $(ProjectDir)Demos\TextureDisplay\ScreenTextures\MainScreen\ $(TargetDir)ImageViewerResources /Y /I /E
 
 
-</PostBuildEvent>
+xcopy $(ProjectDir)Demos\CoreFunctionalityDemos\Resources\ $(TargetDir)CoreDemosResources /Y /I /E</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
