@@ -33,10 +33,10 @@ namespace NostalgiaEngineApplication
         static void ImageViewerDemo(Engine engine)
         {
             string[] paths = new string[] {
-                @"C:\test\nowa_textura10", @"C:\test\nowa_textura4",
-                @"C:\test\nowa_textura6", @"C:\test\nowa_textura5",@"C:\test\balcony",@"C:\test\water",
-                @"C:\test\playground", @"C:\test\nowa_textura", @"C:\test\nowa_textura2", @"C:\test\food",
-                @"C:\test\example1"};
+                "ImageViewerDemoImages/nostalgia", "ImageViewerDemoImages/mario","ImageViewerDemoImages/dyna_intro",
+                "ImageViewerDemoImages/dyna_gameplay","ImageViewerDemoImages/balcony","ImageViewerDemoImages/water",
+                "ImageViewerDemoImages/playground", "ImageViewerDemoImages/mallorca", "ImageViewerDemoImages/kitchen",
+                "ImageViewerDemoImages/food", "ImageViewerDemoImages/eastbourne"};
             AsciiImageViewer imageViewer = new AsciiImageViewer(paths);
 
             engine.Start(imageViewer);
@@ -95,13 +95,13 @@ namespace NostalgiaEngineApplication
 
             //ImageViewerDemo(engine);
             //AnalogClockDemo(engine);
-            // BandLevelDemo(engine);
+             BandLevelDemo(engine);
              //NightGardenDemo(engine);
              //TeapotDemo(engine);
              // CubeDemo(engine);
             // NoiseDemo(engine);
 
-            ShooterDemo(engine);
+            //ShooterDemo(engine);
 
         }
 

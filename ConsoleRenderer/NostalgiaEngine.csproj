@@ -158,6 +158,21 @@
     <None Include="Demos\RasterizerDemos\Resources\skybox1\pz\color.tex" />
     <None Include="Demos\RasterizerDemos\Resources\skybox1\pz\luma.buf" />
     <None Include="Demos\RasterizerDemos\Resources\teapot.obj" />
+    <None Include="Demos\TextureDisplay\DemoTextures\balcony\color.tex" />
+    <None Include="Demos\TextureDisplay\DemoTextures\balcony\luma.buf" />
+    <None Include="Demos\TextureDisplay\DemoTextures\eastbourne\color.tex" />
+    <None Include="Demos\TextureDisplay\DemoTextures\eastbourne\luma.buf" />
+    <None Include="Demos\TextureDisplay\DemoTextures\food\color.tex" />
+    <None Include="Demos\TextureDisplay\DemoTextures\food\luma.buf" />
+    <None Include="Demos\TextureDisplay\DemoTextures\nostalgia\color.tex" />
+    <None Include="Demos\TextureDisplay\DemoTextures\kitchen\color.tex" />
+    <None Include="Demos\TextureDisplay\DemoTextures\mario\color.tex" />
+    <None Include="Demos\TextureDisplay\DemoTextures\dyna_gameplay\color.tex" />
+    <None Include="Demos\TextureDisplay\DemoTextures\dyna_intro\color.tex" />
+    <None Include="Demos\TextureDisplay\DemoTextures\mallorca\color.tex" />
+    <None Include="Demos\TextureDisplay\DemoTextures\playground\color.tex" />
+    <None Include="Demos\TextureDisplay\DemoTextures\water\color.tex" />
+    <None Include="Demos\TextureDisplay\DemoTextures\water\luma.buf" />
     <None Include="Demos\TextureDisplay\ScreenTextures\MainScreen\intro.dat" />
     <None Include="Extensions\Raycaster2D\Textures\lantern1.tex" />
     <None Include="Extensions\Raycaster2D\Textures\nt1\color.tex" />
@@ -186,6 +201,17 @@
     <Content Include="Demos\RasterizerDemos\Resources\skybox1\px\palette.txt" />
     <Content Include="Demos\RasterizerDemos\Resources\skybox1\py\palette.txt" />
     <Content Include="Demos\RasterizerDemos\Resources\skybox1\pz\palette.txt" />
+    <Content Include="Demos\TextureDisplay\DemoTextures\balcony\palette.txt" />
+    <Content Include="Demos\TextureDisplay\DemoTextures\eastbourne\palette.txt" />
+    <Content Include="Demos\TextureDisplay\DemoTextures\food\palette.txt" />
+    <Content Include="Demos\TextureDisplay\DemoTextures\nostalgia\palette.txt" />
+    <Content Include="Demos\TextureDisplay\DemoTextures\kitchen\palette.txt" />
+    <Content Include="Demos\TextureDisplay\DemoTextures\mario\palette.txt" />
+    <Content Include="Demos\TextureDisplay\DemoTextures\dyna_gameplay\palette.txt" />
+    <Content Include="Demos\TextureDisplay\DemoTextures\dyna_intro\palette.txt" />
+    <Content Include="Demos\TextureDisplay\DemoTextures\mallorca\palette.txt" />
+    <Content Include="Demos\TextureDisplay\DemoTextures\playground\palette.txt" />
+    <Content Include="Demos\TextureDisplay\DemoTextures\water\palette.txt" />
     <Content Include="Demos\TextureDisplay\ScreenTextures\MainScreen\intro.res" />
     <Content Include="Extensions\Raycaster2D\Textures\nt1\palette.txt" />
     <Content Include="Extensions\Raycaster2D\Textures\sky\palette.txt" />
@@ -206,6 +232,8 @@ xcopy $(ProjectDir)Demos\BandLevelsDemo\Textures\  $(TargetDir)BandLevelDemoReso
 
 
 xcopy $(ProjectDir)Demos\TextureDisplay\ScreenTextures\MainScreen\ $(TargetDir)ImageViewerResources /Y /I /E
+
+xcopy $(ProjectDir)Demos\TextureDisplay\DemoTextures\ $(TargetDir)ImageViewerDemoImages /Y /I /E
 
 
 xcopy $(ProjectDir)Demos\CoreFunctionalityDemos\Resources\ $(TargetDir)CoreDemosResources /Y /I /E</PostBuildEvent>
