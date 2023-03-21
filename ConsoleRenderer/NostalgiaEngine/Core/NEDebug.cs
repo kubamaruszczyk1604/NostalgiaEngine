@@ -33,7 +33,7 @@ namespace NostalgiaEngine.Core
             NEVector2 pixelPos = new NEVector2(x, y);
             for (int i = 0; i < 16; ++i)
             {
-                if (NEMathHelper.InRectangle(pixelPos, new NEVector2(paletteCellWidth * (i), 0) + paletteStripPos, paletteCellWidth, paletteCellHeight))
+                if (NEMathHelper.InRectangle(pixelPos, new NEVector2(paletteCellWidth * (i), 0) + paletteStripPos, paletteCellWidth-1, paletteCellHeight))
                 {
                     NEScreenBuffer.PutChar(' ', (short)((i) << 4), x, y);
                     if (i == 16) NEScreenBuffer.PutChar((char)NEBlock.Solid, (short)(8 << 4), x, y);

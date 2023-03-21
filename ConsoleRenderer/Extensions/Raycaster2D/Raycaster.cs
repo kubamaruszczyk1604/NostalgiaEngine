@@ -65,8 +65,8 @@ namespace NostalgiaEngine.Raycaster
         private bool m_ShowPalette;
         public override bool OnLoad()
         {
-            ScreenWidth = 320;
-            ScreenHeight = 200;
+            ScreenWidth = 240;
+            ScreenHeight = 150;
             PixelWidth = 4;
             PixelHeight = 4;
 

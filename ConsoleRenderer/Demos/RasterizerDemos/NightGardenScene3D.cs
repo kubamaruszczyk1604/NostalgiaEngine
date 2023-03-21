@@ -8,6 +8,10 @@ namespace NostalgiaEngine.Demos
     {
         public override bool OnLoad()
         {
+            ScreenWidth = 280;
+            ScreenHeight = 170;
+            PixelWidth = 4;
+            PixelHeight = 4;
 
             SceneSkybox = new Skybox("RasterizerDemoResources/skybox1");
             Mesh floorMesh = GeometryGenerator.CreateHorizontalQuad(15.0f, 15.0f, new NEVector4(0.0f, 0.0f, 0.0f), 7);
@@ -17,10 +21,6 @@ namespace NostalgiaEngine.Demos
             var luma = ResourceManager.Instance.GetLumaTexture("RasterizerDemoResources/uv_test_tex/luma.buf");
 
             var wallTexture = ResourceManager.Instance.GetLumaTexture("RasterizerDemoResources/textures/wall.buf");
-
-
-                
-
             var treeTexture = ResourceManager.Instance.GetLumaTexture("RasterizerDemoResources/textures/tree_crown.buf");
             var groundTexture = ResourceManager.Instance.GetLumaTexture("RasterizerDemoResources/textures/grass.buf");
 
@@ -28,25 +28,13 @@ namespace NostalgiaEngine.Demos
             Model floorModel = new Model(floorMesh, groundTexture);
             floorModel.UnlitColor = 3;
 
-
-            Model teapotModel = new Model(teapotMesh, CullMode.None);
-            teapotModel.Transform.ScaleX = 0.5f;
-            teapotModel.Transform.ScaleY = 0.5f;
-            teapotModel.Transform.ScaleZ = 0.5f;
-            teapotModel.Transform.LocalPosition = new NEVector4(0.0f, 0.5f, -1.0f, 1.0f);
-
-
             Model bunnyModel = new Model(bunnyMesh, CullMode.None);
             bunnyModel.Transform.ScaleX = 10.5f;
             bunnyModel.Transform.ScaleY = 10.5f;
             bunnyModel.Transform.ScaleZ = 10.5f;
             bunnyModel.Transform.LocalPosition = new NEVector4(5.0f, -0.4f, -1.0f, 1.0f);
-
-
-
             
             Models.Add(floorModel);
-           // Models.Add(teapotModel);
             Models.Add(bunnyModel);
             
 
@@ -118,9 +106,6 @@ namespace NostalgiaEngine.Demos
             {
                 Exit();
             }
-            //Models[1].Transform.RotateY(deltaTime * 0.5f);
-            //Models[1].Transform.PositionY = 1.6f + (float)(Math.Sin(Engine.Instance.TotalTime) * 0.1);
-            //Models[1].Transform.PositionY = 1.6f + (float)(Math.Sin(Engine.Instance.TotalTime) * 0.1);
             NEScreenBuffer.Clear();
             base.OnUpdate(deltaTime);
         }

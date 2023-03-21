@@ -27,8 +27,12 @@ namespace NostalgiaEngine.Demos
         public override bool OnLoad()
         {
             base.OnLoad();
-            ScreenWidth = 250;
-            ScreenHeight = 200;
+            //ScreenWidth = 250;
+            //ScreenHeight = 200;
+            //PixelWidth = 4;
+            //PixelHeight = 4;
+            ScreenWidth = 240;
+            ScreenHeight = 150;
             PixelWidth = 4;
             PixelHeight = 4;
             m_AspectRatio = (float)ScreenWidth / (float)ScreenHeight;

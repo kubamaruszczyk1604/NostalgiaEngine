@@ -13,7 +13,10 @@ namespace NostalgiaEngine.Demos
         // Loads resources. Called once, when the scene is loaded.
         public override bool OnLoad()
         {
-
+            ScreenWidth = 240;
+            ScreenHeight = 150;
+            PixelWidth = 4;
+            PixelHeight = 4;
             Mesh cubeMesh = GeometryGenerator.GenerateCube2(1.0f, 1.0f, 1.0f, NEVector4.Zero, 9);
             var texture = ResourceManager.Instance.GetLumaTexture("RasterizerDemoResources/uv_test_tex/luma.buf");
             Model cubeModel = new Model(cubeMesh, CullMode.Back, texture);

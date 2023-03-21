@@ -92,13 +92,13 @@ namespace NostalgiaEngineApplication
             Engine engine = new Engine();
             //TextureEditorDemo(engine);
             //RaycasterDemo(engine);
-            //Console.SetBufferSize(120, 120);
+
             //ImageViewerDemo(engine);
             //AnalogClockDemo(engine);
-             //BandLevelDemo(engine);
+            // BandLevelDemo(engine);
              //NightGardenDemo(engine);
-            //TeapotDemo(engine);
-            // CubeDemo(engine);
+             //TeapotDemo(engine);
+             // CubeDemo(engine);
             // NoiseDemo(engine);
 
             ShooterDemo(engine);

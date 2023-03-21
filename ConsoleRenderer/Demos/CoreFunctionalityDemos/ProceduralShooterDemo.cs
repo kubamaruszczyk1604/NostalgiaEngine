@@ -8,7 +8,6 @@ namespace NostalgiaEngine.Demos
 {
     class ProceduralShooterDemo: NEScene
     {
-
         NEFloatBuffer m_ShipTexture;
         NEFloatBuffer m_ProjectileTexture;
 
@@ -16,8 +15,8 @@ namespace NostalgiaEngine.Demos
         List<NEStaticSpriteLuma> m_ProjectileSprites = new List<NEStaticSpriteLuma>();
         public override bool OnLoad()
         {
-            ScreenWidth = 320;
-            ScreenHeight = 200;
+            ScreenWidth = 240;
+            ScreenHeight = 150;
             PixelWidth = 4;
             PixelHeight = 4;
             m_ShipTexture = NEFloatBuffer.FromFile("CoreDemosResources/shipTexture.buf");
@@ -39,7 +38,7 @@ namespace NostalgiaEngine.Demos
             List<NEStaticSpriteLuma> toRemove = new List<NEStaticSpriteLuma>();
             foreach (NEStaticSpriteLuma p in m_ProjectileSprites)
             {
-                p.X += 0.05f;
+                p.X += 0.98f*deltaTime;
                 if (p.X > 2.0f)
                 {
                     toRemove.Add(p);
@@ -61,6 +60,11 @@ namespace NostalgiaEngine.Demos
                 proj.Position = new NEVector2(m_ShipSprite.X + 0.2f, m_ShipSprite.Y + 0.09f);
                 m_ProjectileSprites.Add(proj);
             }
+            if(NEInput.CheckKeyPress(ConsoleKey.Escape))
+            {
+                Exit();
+            }
+
             base.OnUpdate(deltaTime);
         }
 

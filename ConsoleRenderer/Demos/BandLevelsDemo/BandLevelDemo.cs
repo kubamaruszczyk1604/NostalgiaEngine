@@ -25,10 +25,10 @@ namespace NostalgiaEngine.Demos
         public override bool OnLoad()
         {
             base.OnLoad();
-            ScreenWidth = 161;
+            ScreenWidth = 180;
             ScreenHeight = 100;
-            PixelWidth = 6;
-            PixelHeight = 7;
+            PixelWidth = 5;
+            PixelHeight = 6;
 
             m_LumaBuffer = NEFloatBuffer.FromFile(@"BandLevelDemoResources\band\luma.buf");
             //m_LumaBuffer = NEFloatBuffer.FromFile(@"c:\test\text\luma.buf");

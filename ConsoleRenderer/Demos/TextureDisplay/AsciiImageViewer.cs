@@ -71,10 +71,10 @@ namespace TextureDisplay
 
         public override bool OnLoad()
         {
-            ScreenWidth = 220;
-            ScreenHeight = 180;
-            PixelWidth = 5;
-            PixelHeight = 5;
+            ScreenWidth = 180;
+            ScreenHeight = 150;
+            PixelWidth = 4;
+            PixelHeight = 4;
             m_Col = 0;
             
             m_MainTex = NEColorTexture16.LoadFromFile(@"ImageViewerResources\intro.dat");
