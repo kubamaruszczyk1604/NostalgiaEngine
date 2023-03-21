@@ -33,6 +33,7 @@ namespace TextureDisplay
                 if (Palette != null)
                 {
                     NEColorManagement.SetPalette(Palette);
+                    
                 }
                 else
                 {
@@ -122,7 +123,7 @@ namespace TextureDisplay
 
             if (!m_IntroPhase) return;
             m_MainTexPal.FadeIn(dt * 0.65f);
-            NEColorManagement.SetPalette(m_MainTexPal);
+             NEColorManagement.SetPalette(m_MainTexPal);
 
         }
 

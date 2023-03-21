@@ -124,6 +124,7 @@ namespace NostalgiaEngine.Core
         //    return sample;
         //}
 
+
         static public NEColorSample MakeCol(ConsoleColor col1, ConsoleColor col2, float t, int[] charRamp)
         {
             float tFract = t >= 1.0f ? 1.0f : t - (float)Math.Floor(t);

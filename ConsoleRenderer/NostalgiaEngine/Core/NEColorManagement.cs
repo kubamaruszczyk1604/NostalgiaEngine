@@ -15,29 +15,35 @@ namespace NostalgiaEngine.Core
         [StructLayout(LayoutKind.Sequential)]
         struct CONSOLE_SCREEN_BUFFER_INFO_EX
         {
-            //static internal void CopyColors(CONSOLE_SCREEN_BUFFER_INFO_EX src, ref CONSOLE_SCREEN_BUFFER_INFO_EX dest)
-            //{
 
-            //    dest.Black = src.Black;
-            //    dest.DarkBlue = src.DarkBlue;
-            //    dest.DarkGreen = src.DarkGreen;
-            //    dest.DarkCyan = src.DarkCyan;
-            //    dest.DarkRed = src.DarkRed;
-            //    dest.DarkMagenta = src.DarkMagenta;
-            //    dest.DarkYellow = src.DarkYellow;
-            //    dest.Gray = src.Gray;
-            //    dest.DarkGray = src.DarkGray;
-            //    dest.Blue = src.Blue;
-            //    dest.Green = src.Green;
-            //    dest.Cyan = src.Cyan;
-            //    dest.Red = src.Red;
-            //    dest.Magenta = src.Magenta;
-            //    dest.Yellow = src.Yellow;
-            //    dest.White = src.White;
 
-            //}
+            //internal int Size;
+            //internal NEPoint WndSize;
+            //internal NEPoint CursorPosition;
+            //internal ushort Attributes;
+            //internal NERect Window;
+            //internal NEPoint MaxWndSize;
+            //internal ushort PopupAttributes;
+            //internal bool FullScreenSupportedFlag;
 
-            internal int Size;
+            //internal NEConsoleColorDef Black;
+            //internal NEConsoleColorDef DarkBlue;
+            //internal NEConsoleColorDef DarkGreen;
+            //internal NEConsoleColorDef DarkCyan;
+            //internal NEConsoleColorDef DarkRed;
+            //internal NEConsoleColorDef DarkMagenta;
+            //internal NEConsoleColorDef DarkYellow;
+            //internal NEConsoleColorDef Gray;
+            //internal NEConsoleColorDef DarkGray;
+            //internal NEConsoleColorDef Blue;
+            //internal NEConsoleColorDef Green;
+            //internal NEConsoleColorDef Cyan;
+            //internal NEConsoleColorDef Red;
+            //internal NEConsoleColorDef Magenta;
+            //internal NEConsoleColorDef Yellow;
+            //internal NEConsoleColorDef White;
+
+            internal uint Size;
             internal NEPoint WndSize;
             internal NEPoint CursorPosition;
             internal ushort Attributes;
@@ -87,7 +93,7 @@ namespace NostalgiaEngine.Core
         public static int RedefineColor(int consoleColor, NEConsoleColorDef colDef)
         {
             CONSOLE_SCREEN_BUFFER_INFO_EX screenBuffInfo = new CONSOLE_SCREEN_BUFFER_INFO_EX();
-            screenBuffInfo.Size = Marshal.SizeOf(screenBuffInfo);
+            screenBuffInfo.Size = (uint)Marshal.SizeOf(screenBuffInfo);
             IntPtr outputHandle = GetStdHandle((int)NEWindowControl.StdHandle.STD_OUTPUT_HANDLE);
 
             if (outputHandle == new IntPtr(-1))
@@ -173,7 +179,8 @@ namespace NostalgiaEngine.Core
 
 
             CONSOLE_SCREEN_BUFFER_INFO_EX screenBuffInfo = new CONSOLE_SCREEN_BUFFER_INFO_EX();
-            screenBuffInfo.Size = Marshal.SizeOf(screenBuffInfo);
+            
+            screenBuffInfo.Size = (uint)Marshal.SizeOf(screenBuffInfo);
             IntPtr outputHandle = GetStdHandle((int)NEWindowControl.StdHandle.STD_OUTPUT_HANDLE);
 
             if (outputHandle == new IntPtr(-1))
@@ -216,7 +223,6 @@ namespace NostalgiaEngine.Core
             {
                 return Marshal.GetLastWin32Error();
             }
-
             return 0;
 
         }

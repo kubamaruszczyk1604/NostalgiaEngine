@@ -8,14 +8,24 @@ namespace NostalgiaEngine.Core
 {
     public class NEColorPalette
     {
+        //static public readonly NEConsoleColorDef[] DefaultPalette =
+        //{
+        //    new NEConsoleColorDef(0, 0, 0), new NEConsoleColorDef(0, 55, 218), new NEConsoleColorDef(19, 161, 14),
+        //    new NEConsoleColorDef(58, 150, 221), new NEConsoleColorDef(195,17, 31), new NEConsoleColorDef(136, 23, 152),
+        //    new NEConsoleColorDef(193, 156, 0), new NEConsoleColorDef(204, 204, 204), new NEConsoleColorDef(118, 118,118),
+        //    new NEConsoleColorDef(59, 120, 255), new NEConsoleColorDef(22, 198, 12), new NEConsoleColorDef(97, 214, 214),
+        //    new NEConsoleColorDef(231, 72, 86), new NEConsoleColorDef(180, 0, 158), new NEConsoleColorDef(249, 213, 150),
+        //    new NEConsoleColorDef(242, 242, 242)
+        //};
+
         static public readonly NEConsoleColorDef[] DefaultPalette =
         {
-            new NEConsoleColorDef(0, 0, 0), new NEConsoleColorDef(0, 55, 218), new NEConsoleColorDef(19, 161, 14),
-            new NEConsoleColorDef(58, 150, 221), new NEConsoleColorDef(195,17, 31), new NEConsoleColorDef(136, 23, 152),
-            new NEConsoleColorDef(193, 156, 0), new NEConsoleColorDef(204, 204, 204), new NEConsoleColorDef(118, 118,118),
-            new NEConsoleColorDef(59, 120, 255), new NEConsoleColorDef(22, 198, 12), new NEConsoleColorDef(97, 214, 214),
-            new NEConsoleColorDef(231, 72, 86), new NEConsoleColorDef(180, 0, 158), new NEConsoleColorDef(249, 213, 150),
-            new NEConsoleColorDef(242, 242, 242)
+            new NEConsoleColorDef(0, 0, 0), new NEConsoleColorDef(0, 0, 128), new NEConsoleColorDef(0, 128, 0),
+            new NEConsoleColorDef(0, 128, 128), new NEConsoleColorDef(128, 0, 0), new NEConsoleColorDef(128, 0, 128),
+            new NEConsoleColorDef(128, 128, 0), new NEConsoleColorDef(192, 192, 192), new NEConsoleColorDef(128, 128, 128),
+            new NEConsoleColorDef(0, 0, 255), new NEConsoleColorDef(0, 255, 0), new NEConsoleColorDef(0, 0, 255),
+            new NEConsoleColorDef(255, 0, 0), new NEConsoleColorDef(255, 0, 255), new NEConsoleColorDef(255, 255, 0),
+            new NEConsoleColorDef(255, 255, 255)
         };
 
         static public readonly NEConsoleColorDef[] ColorSpectrumPalette_1 = {

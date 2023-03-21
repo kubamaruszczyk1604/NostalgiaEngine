@@ -97,9 +97,9 @@ namespace NostalgiaEngine.Core
             }
             else
             {
+                NEColorManagement.SetDefaultPalette();
                 NEScreenBuffer.SetDefaultConsole();
                 NEInput.FlushKeyboard();
-                NEColorManagement.SetDefaultPalette();
                 Console.Clear();
                 Console.Title = Title;
                 m_SuspendTaskbarFlag = true;

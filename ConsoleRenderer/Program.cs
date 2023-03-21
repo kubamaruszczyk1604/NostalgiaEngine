@@ -78,7 +78,11 @@ namespace NostalgiaEngineApplication
             engine.Start(screenNoiseDemo);
         }
 
-
+        static void ShooterDemo(Engine engine)
+        {
+            ProceduralShooterDemo pcs = new ProceduralShooterDemo();
+            engine.Start(pcs);
+        }
 
 
 
@@ -87,18 +91,19 @@ namespace NostalgiaEngineApplication
 
             Engine engine = new Engine();
             //TextureEditorDemo(engine);
-            RaycasterDemo(engine);
+            //RaycasterDemo(engine);
+            //Console.SetBufferSize(120, 120);
             //ImageViewerDemo(engine);
             //AnalogClockDemo(engine);
-            //BandLevelDemo(engine);
-            //NightGardenDemo(engine);
+             //BandLevelDemo(engine);
+             //NightGardenDemo(engine);
             //TeapotDemo(engine);
             // CubeDemo(engine);
             // NoiseDemo(engine);
 
-           
-      
+            ShooterDemo(engine);
 
         }
+
     }
 }

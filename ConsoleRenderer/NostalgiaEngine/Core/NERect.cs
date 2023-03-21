@@ -10,10 +10,10 @@ namespace NostalgiaEngine.Core
     [StructLayout(LayoutKind.Sequential)]
     public struct NERect
     {
-        public short Left { get; set; }
-        public short Top { get; set; }
-        public short Right { get; set; }
-        public short Bottom { get; set; }
+        public short Left;
+        public short Top;
+        public short Right;
+        public short Bottom;
 
         public NERect(short left, short top, short right, short bottom)
         {

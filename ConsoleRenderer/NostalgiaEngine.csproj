@@ -67,6 +67,7 @@
   <ItemGroup>
     <Compile Include="Demos\BandLevelsDemo\BandLevelDemo.cs" />
     <Compile Include="Demos\BandLevelsDemo\AnalogClock.cs" />
+    <Compile Include="Demos\CoreFunctionalityDemos\ProceduralShooterDemo.cs" />
     <Compile Include="Demos\CoreFunctionalityDemos\ScreenNoiseDemo.cs" />
     <Compile Include="Demos\RasterizerDemos\NightGardenScene3D.cs" />
     <Compile Include="Demos\RasterizerDemos\RotatingCubeDemo.cs" />

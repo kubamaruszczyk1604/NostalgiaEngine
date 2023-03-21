@@ -31,7 +31,6 @@ namespace NostalgiaEngine.Core
         [DllImport("kernel32.dll", SetLastError = true)]
         internal static extern IntPtr GetStdHandle(int nStdHandle);
 
-
         [return: MarshalAs(UnmanagedType.Bool)]
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         internal static extern bool SetCurrentConsoleFontEx(IntPtr hConsoleOutput, bool MaximumWindow, ref FontInfoEx ConsoleCurrentFontEx);
@@ -124,8 +123,8 @@ namespace NostalgiaEngine.Core
                     FontWidth = pixelW
                 };
                 SetCurrentConsoleFontEx(m_ConsoleHandle.DangerousGetHandle(), false, ref set);
-                //Console.SetWindowSize(width + 10, height + 4);
                 Console.SetWindowSize(width + 2, height + 4);
+                //Console.SetBufferSize(width + 2, height + 4);
             }
             catch
             {
@@ -135,7 +134,6 @@ namespace NostalgiaEngine.Core
             m_Bufer = new List<CharInfo[]>(2);
             m_Bufer.Add(new CharInfo[width * height]);
             m_Bufer.Add(new CharInfo[width * height]);
-            // m_ConsoleRect = new NERect() { Left = 5, Top = 2, Right = (short)(width + 5), Bottom = (short)(height + 2) };
             m_ConsoleRect = new NERect() { Left = 1, Top = 2, Right = (short)(width + 1), Bottom = (short)(height + 2) };
 
             Console.CursorVisible = false;
@@ -148,6 +146,7 @@ namespace NostalgiaEngine.Core
                 m_SwapRequestedFlag = false;
                 m_ConsoleDrawWorker.Start();
             }
+           
             return true;
         }
 
@@ -189,21 +188,6 @@ namespace NostalgiaEngine.Core
             {
                 m_Bufer[m_WriteBufferPtr][i].Attributes = (short)(col << 4);
                 m_Bufer[m_WriteBufferPtr][i].Char.AsciiChar = (byte)' ';
-
-            }
-
-        }
-
-        static private void SwapWorker()
-        {
-            while (true)
-            {
-                while (!m_SwapRequestedFlag) { }
-                WriteConsoleOutput(m_ConsoleHandle, m_Bufer[m_DrawBufferPtr], m_ScrBottomRight, m_ScrTopLeft, ref m_ConsoleRect);
-                lock (LOCK)
-                {
-                    m_SwapRequestedFlag = false;
-                }
             }
         }
 
@@ -231,7 +215,7 @@ namespace NostalgiaEngine.Core
         {
             if (m_ConsoleDrawWorker != null) m_ConsoleDrawWorker.Abort();
             Console.Clear();
-            Console.SetWindowSize(m_InitialW, 30);
+            Console.SetWindowSize(120, 30);
             FontInfoEx set = new FontInfoEx
             {
                 cbSize = Marshal.SizeOf<FontInfoEx>(),
@@ -245,292 +229,31 @@ namespace NostalgiaEngine.Core
             SetCurrentConsoleFontEx(m_ConsoleHandle.DangerousGetHandle(), false, ref set);
             Console.CursorVisible = true;
             Console.SetCursorPosition(0, 0);
+            Console.SetBufferSize(120, 30);
         }
+
         static public void Reallign()
         {
             Console.SetWindowSize(m_sWidth + 2, m_sHeight + 4);
+        }
+
+        static private void SwapWorker()
+        {
+            while (true)
+            {
+                while (!m_SwapRequestedFlag) { }
+                WriteConsoleOutput(m_ConsoleHandle, m_Bufer[m_DrawBufferPtr], m_ScrBottomRight, m_ScrTopLeft, ref m_ConsoleRect);
+                lock (LOCK)
+                {
+                    m_SwapRequestedFlag = false;
+                }
+            }
         }
     }
 
 
 
-    //public class NEScreenBuffer
-    //{
-    //    /* TEXT FRAME BUFFER FOR FAST RENDERING */
-    //    [DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-    //    static extern SafeFileHandle CreateFile(
-    //        string fileName,
-    //        [MarshalAs(UnmanagedType.U4)] uint fileAccess,
-    //        [MarshalAs(UnmanagedType.U4)] uint fileShare,
-    //        IntPtr securityAttributes,
-    //        [MarshalAs(UnmanagedType.U4)] FileMode creationDisposition,
-    //        [MarshalAs(UnmanagedType.U4)] int flags,
-    //        IntPtr template);
-
-    //    [DllImport("kernel32.dll", SetLastError = true)]
-    //    static extern bool WriteConsoleOutput(
-    //      SafeFileHandle hConsoleOutput,
-    //      CharInfo[] lpBuffer,
-    //      NEPoint dwBufferSize,
-    //      NEPoint dwBufferCoord,
-    //      ref NERect lpWriteRegion);
-
-
-    //    [DllImport("kernel32.dll", SetLastError = true)]
-    //    internal static extern IntPtr GetStdHandle(int nStdHandle);
-
-
-    //    [return: MarshalAs(UnmanagedType.Bool)]
-    //    [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-    //    internal static extern bool SetCurrentConsoleFontEx(IntPtr hConsoleOutput, bool MaximumWindow, ref FontInfoEx ConsoleCurrentFontEx);
-
-    //    [return: MarshalAs(UnmanagedType.Bool)]
-    //    [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-    //    internal static extern bool GetCurrentConsoleFontEx(IntPtr hConsoleOutput, bool MaximumWindow, ref FontInfoEx ConsoleCurrentFontEx);
-
-
-    //    [StructLayout(LayoutKind.Explicit)]
-    //    public struct CharUnion
-    //    {
-    //        [FieldOffset(0)]
-    //        public char UnicodeChar;
-    //        [FieldOffset(0)]
-    //        public byte AsciiChar;
-    //    }
-
-    //    [StructLayout(LayoutKind.Explicit)]
-    //    public struct CharInfo
-    //    {
-    //        [FieldOffset(0)]
-    //        public CharUnion Char;
-    //        [FieldOffset(2)]
-    //        public short Attributes;
-    //    }
-
-    //    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-    //    public struct FontInfoEx
-    //    {
-    //        internal int cbSize;
-    //        internal int FontIndex;
-    //        public short FontWidth;
-    //        public short FontSize;
-    //        public int FontFamily;
-    //        public int FontWeight;
-    //        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
-    //        public string FontName;
-    //    }
-
-
-    //    static private readonly object LOCK = new object();
-    //    static private SafeFileHandle m_ConsoleHandle;
-    //    static private int m_sWidth;
-    //    static private int m_sHeight;
-    //    static private CharInfo[] m_Bufer;
-    //    static private NERect m_ConsoleRect;
-    //    static private NEPoint m_ScrTopLeft;
-    //    static private NEPoint m_ScrBottomRight;
-    //    static private int m_InitialW;
-    //    static private int m_InitialH;
-    //    static private bool m_FirstRun = true;
-
-
-    //    static public bool Initialize(short width, short height, short pixelW, short pixelH, bool renderOnSeparateThread = true)
-    //    {
-
-    //        m_sWidth = width;
-    //        m_sHeight = height;
-    //        m_ScrBottomRight = new NEPoint() { X = (short)m_sWidth, Y = (short)m_sHeight };
-    //        m_ScrTopLeft = new NEPoint() { X = 0, Y = 0 };
-    //        m_ConsoleHandle = CreateFile("CONOUT$", 0x40000000, 2, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero);
-    //        if (m_ConsoleHandle.IsInvalid) return false;
-
-
-    //        if (m_FirstRun)
-    //        {
-    //            m_InitialW = Console.WindowWidth;
-    //            m_InitialH = Console.WindowHeight;
-    //        }
-    //        m_FirstRun = false;
-    //        try
-    //        {
-    //            FontInfoEx set = new FontInfoEx
-    //            {
-    //                cbSize = Marshal.SizeOf<FontInfoEx>(),
-    //                FontIndex = 0,
-    //                FontFamily = 0x00,
-    //                FontName = "Consolas",
-    //                FontWeight = 400,
-    //                FontSize = pixelH,
-    //                FontWidth = pixelW
-    //            };
-    //            SetCurrentConsoleFontEx(m_ConsoleHandle.DangerousGetHandle(), false, ref set);
-    //            Console.SetWindowSize(width + 2, height + 4);
-    //        }
-    //        catch
-    //        {
-    //            SetDefaultConsole();
-    //            return false;
-    //        }
-    //        m_Bufer = new CharInfo[width * height];
-    //        m_ConsoleRect = new NERect() { Left = 1, Top = 2, Right = (short)(width + 1), Bottom = (short)(height + 2) };
-
-    //        Console.CursorVisible = false;
-    //        Console.Clear();
-    //        return true;
-    //    }
-
-    //    static public void PutChar(char c, short color, int x, int y)
-    //    {
-
-    //        int index = m_sWidth * (y) + x;
-    //        index %= m_sWidth * m_sHeight;
-    //        m_Bufer[index].Attributes = color;
-    //        m_Bufer[index].Char.AsciiChar = (byte)c;
-
-    //    }
-
-    //    static public void WriteXY(int x, int y, short col, string line)
-    //    {
-    //        for (int i = 0; i < line.Length; ++i)
-    //        {
-    //            int putX = x + i;
-    //            if (putX < m_sWidth)
-    //            {
-    //                PutChar(line[i], col, putX, y);
-    //            }
-    //        }
-    //    }
-
-    //    static public void Clear()
-    //    {
-    //        Array.Clear(m_Bufer, 0, m_Bufer.Length);
-    //    }
-
-    //    static public void ClearColor(int col)
-    //    {
-    //        int len = m_sWidth * m_sHeight;
-    //        for (int i = 0; i < len; ++i)
-    //        {
-    //            m_Bufer[i].Attributes = (short)(col << 4);
-    //            m_Bufer[i].Char.AsciiChar = (byte)' ';
-
-    //        }
-
-    //    }
-
-
-    //    static public void SwapBuffers()
-    //    {
-    //        WriteConsoleOutput(m_ConsoleHandle, m_Bufer, m_ScrBottomRight, m_ScrTopLeft, ref m_ConsoleRect);
-    //    }
-
-
-    //    static public void SetDefaultConsole()
-    //    {
-
-    //        Console.Clear();
-    //        Console.SetWindowSize(m_InitialW, 30);
-    //        FontInfoEx set = new FontInfoEx
-    //        {
-    //            cbSize = Marshal.SizeOf<FontInfoEx>(),
-    //            FontIndex = 0,
-    //            FontFamily = 0x00,
-    //            FontName = "Consolas",
-    //            FontWeight = 400,
-    //            FontSize = 16,
-    //            FontWidth = 8
-    //        };
-    //        SetCurrentConsoleFontEx(m_ConsoleHandle.DangerousGetHandle(), false, ref set);
-    //        Console.CursorVisible = true;
-    //        Console.SetCursorPosition(0, 0);
-    //    }
-    //    static public void Reallign()
-    //    {
-    //        Console.SetWindowSize(m_sWidth + 2, m_sHeight + 4);
-    //    }
-    //}
-
-
-    //static class ConsoleHelper
-    //{
-    //    private const int FixedWidthTrueType = 54;
-    //    private const int StandardOutputHandle = -11;
-
-    //    [DllImport("kernel32.dll", SetLastError = true)]
-    //    internal static extern IntPtr GetStdHandle(int nStdHandle);
-
-    //    [return: MarshalAs(UnmanagedType.Bool)]
-    //    [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-    //    internal static extern bool SetCurrentConsoleFontEx(IntPtr hConsoleOutput, bool MaximumWindow, ref FontInfo ConsoleCurrentFontEx);
-
-    //    [return: MarshalAs(UnmanagedType.Bool)]
-    //    [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-    //    internal static extern bool GetCurrentConsoleFontEx(IntPtr hConsoleOutput, bool MaximumWindow, ref FontInfo ConsoleCurrentFontEx);
-
-
-    //    private static readonly IntPtr ConsoleOutputHandle = GetStdHandle(StandardOutputHandle);
-
-    //    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-    //    public struct FontInfo
-    //    {
-    //        internal int cbSize;
-    //        internal int FontIndex;
-    //        public short FontWidth;
-    //        public short FontSize;
-    //        public int FontFamily;
-    //        public int FontWeight;
-    //        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
-    //        //[MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.wc, SizeConst = 32)]
-    //        public string FontName;
-    //    }
-
-    //    public static FontInfo[] SetCurrentFont(string font, short fontSize = 0)
-    //    {
-    //        Console.WriteLine("Set Current Font: " + font);
-
-    //        FontInfo before = new FontInfo
-    //        {
-    //            cbSize = Marshal.SizeOf<FontInfo>()
-    //        };
-
-    //        if (GetCurrentConsoleFontEx(ConsoleOutputHandle, false, ref before))
-    //        {
-
-    //            FontInfo set = new FontInfo
-    //            {
-    //                cbSize = Marshal.SizeOf<FontInfo>(),
-    //                FontIndex = 0,
-    //                //FontFamily = FixedWidthTrueType,
-    //               // FontName = font,
-    //                FontWeight = 400,
-    //                FontSize = fontSize > 0 ? fontSize : before.FontSize,
-    //                FontWidth = fontSize
-    //            };
-
-    //            // Get some settings from current font.
-    //            if (!SetCurrentConsoleFontEx(ConsoleOutputHandle, false, ref set))
-    //            {
-    //                var ex = Marshal.GetLastWin32Error();
-    //                Console.WriteLine("Set error " + ex);
-    //                throw new System.ComponentModel.Win32Exception(ex);
-    //            }
-
-    //            FontInfo after = new FontInfo
-    //            {
-    //                cbSize = Marshal.SizeOf<FontInfo>()
-    //            };
-    //            GetCurrentConsoleFontEx(ConsoleOutputHandle, false, ref after);
-
-    //            return new[] { before, set, after };
-    //        }
-    //        else
-    //        {
-    //            var er = Marshal.GetLastWin32Error();
-    //            Console.WriteLine("Get error " + er);
-    //            throw new System.ComponentModel.Win32Exception(er);
-    //        }
-    //    }
-    //}
+   
 
 
 
