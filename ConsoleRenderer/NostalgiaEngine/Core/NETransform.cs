@@ -14,9 +14,6 @@ namespace NostalgiaEngine.Core
         public NEMatrix4x4 RotationMat { get; private set; }
 
         public NEMatrix4x4 World { get; private set; }
-       
-
-
         public NEVector4 LocalPosition { get { return m_Position; } set { m_Position = value; m_Position.W = 1.0f; } }
        // public NEVector4 Rotation { get { return m_Rotation; } /*set { m_Rotation = value; m_Rotation.W = 0.0f; }*/ }
         public NEVector4 Forward { get { return RotationMat * NEVector4.Forward; } }

@@ -8,7 +8,7 @@ using NostalgiaEngine.Core;
 
 /// <summary>
 /// This is very much work in progress!
-/// Sp far it is a naive implementation of 2D raycasting. There is plenty of ways to optimize this it (e.g. cell boundry - ray intersection).
+/// So far it is a naive implementation of 2D raycasting. There is plenty of ways to optimize this it (e.g. cell boundry - ray intersection).
 /// Also lots of stuff is hardcoded atm. Eventually I will clean this up.
 /// </summary>
 namespace NostalgiaEngine.Raycaster
@@ -65,26 +65,16 @@ namespace NostalgiaEngine.Raycaster
         private bool m_ShowPalette;
         public override bool OnLoad()
         {
-            //ScreenWidth = 120;
-            //ScreenHeight = 50;
-            //PixelWidth = 8;
-            //PixelHeight = 12;
             ScreenWidth = 320;
             ScreenHeight = 200;
             PixelWidth = 4;
             PixelHeight = 4;
 
-            //ScreenWidth = 200;
-            //ScreenHeight = 120;
-            //PixelWidth = 6;
-            //PixelHeight = 6;
-            //ParallelScreenDraw = true;
-
-            m_Wall = NEFloatBuffer.FromFile(@"RaycasterDemoResources\nt1\luma.buf");
+            m_Wall = NEFloatBuffer.FromFile("RaycasterDemoResources/nt1/luma.buf");
             if (m_Wall == null) return false;
             m_Wall.SampleMode = NESampleMode.Repeat;
 
-            m_Sky = NEFloatBuffer.FromFile(@"RaycasterDemoResources\sky\luma.buf");
+            m_Sky = NEFloatBuffer.FromFile("RaycasterDemoResources/sky/luma.buf");
             if (m_Sky == null) return false;
             m_Sky.SampleMode = NESampleMode.Repeat;
 
@@ -178,13 +168,15 @@ namespace NostalgiaEngine.Raycaster
 
         override public void OnDrawPerColumn(int x)
         {
-            float px = (((float)x / (float)ScreenWidth) - 0.5f) * 0.5f;
-
-            px *= m_Fov; // TO DO: consider aspect ratio 
+            float rayAngle = (((float)x / (float)ScreenWidth) - 0.5f) * 0.5f;
+            rayAngle *= m_Fov; // TO DO: consider aspect ratio 
 
             NEVector2 dir = new NEVector2(m_ViewerDir.X, m_ViewerDir.Y);
-            NEVector2.RotateClockWise(ref dir, px);
-            dir = NEVector2.Normalize(dir);
+            NEVector2.RotateClockWise(ref dir,  rayAngle);
+
+
+
+            dir =   NEVector2.Normalize(dir);
 
             float t = 0.0f;
             const float stp = 0.01f;
@@ -198,7 +190,7 @@ namespace NostalgiaEngine.Raycaster
                 if (cell != 0)
                     hit = true;
             }
-            t = t * NEMathHelper.Cos(px);
+            t = t * NEMathHelper.Cos(rayAngle);
             float depth = (t / DEPTH);
             float ceilingStartY = (1.0f / t);
             float floorStartY = (-1.0f / t);
@@ -216,7 +208,7 @@ namespace NostalgiaEngine.Raycaster
 
                float dd = m_Sky.Sample((((float)x)/((float)ScreenWidth) ) +m_PlayerRotation*0.4f, py);
                 NEColorSample ceilSample = NEColorSample.MakeColFromBlocks5((ConsoleColor)12, (ConsoleColor)4, dd* (Math.Abs(py) - 0.71f));
-                if (py < 0.3f + (float)Math.Sin(px * 10 + m_PlayerRotation * 4) * 0.1f)
+                if (py < 0.3f + (float)Math.Sin(rayAngle * 10 + m_PlayerRotation * 4) * 0.1f)
                 {
                     ceilSample = NEColorSample.MakeColFromBlocks5((ConsoleColor)0, (ConsoleColor)0, 0.0f);
                 }
@@ -287,42 +279,42 @@ namespace NostalgiaEngine.Raycaster
 
         }
 
-        private void RenderSpriteCol(NEStaticSprite sprite, NEVector2 dir, float py, int x, int y)
-        {
-            // Sprites
-            NEVector2 rayToSprite = sprite.Position - m_ViewerPos;
+        //private void RenderSpriteCol(NEStaticSprite sprite, NEVector2 dir, float py, int x, int y)
+        //{
+        //    // Sprites
+        //    NEVector2 rayToSprite = sprite.Position - m_ViewerPos;
 
-            float angleFromRay = (float)Math.Acos(NEVector2.Dot(dir, rayToSprite.Normalized));
-            NEVector2 rayPerp = NEVector2.FindNormal(rayToSprite.Normalized);
+        //    float angleFromRay = (float)Math.Acos(NEVector2.Dot(dir, rayToSprite.Normalized));
+        //    NEVector2 rayPerp = NEVector2.FindNormal(rayToSprite.Normalized);
 
 
-            float distanceToSprite = rayToSprite.Length;
-            float scailingFactor = (1.0f / distanceToSprite)*m_Fov ;// scale here
+        //    float distanceToSprite = rayToSprite.Length;
+        //    float scailingFactor = (1.0f / distanceToSprite)*m_Fov ;// scale here
 
-            float aspectRatio = sprite.AstpectRatio / m_Fov;
+        //    float aspectRatio = sprite.AstpectRatio / m_Fov;
 
-            //render only if deviation from sprite ray is within selected bounds
-            bool shouldRender = (angleFromRay) <= (aspectRatio * scailingFactor) * 0.5f;
-            if (shouldRender)
-            {
-                float spriteTop = scailingFactor;
-                float spriteFloor = -scailingFactor;
-                if (py < spriteTop && py >= spriteFloor)
-                {
-                    // figure out whether current pos is left or right of the sprite ray
-                    float sign = NEMathHelper.Sign(NEVector2.Dot(dir, rayPerp));
-                    float u = (angleFromRay / aspectRatio / scailingFactor) * sign + 0.5f;
-                    float v = py / (spriteFloor - spriteTop) + 0.5f;
-                    NEColorSample csample = sprite.Texture.Sample(u, v, 1.0f);
-                    if (csample.Character != 't')
-                    {
-                        if (m_DepthBuffer.TryUpdate(x, y, distanceToSprite / DEPTH))
-                            NEScreenBuffer.PutChar(csample.Character, csample.BitMask, x, y);
-                    }
-                }
+        //    //render only if deviation from sprite ray is within selected bounds
+        //    bool shouldRender = (angleFromRay) <= (aspectRatio * scailingFactor) * 0.5f;
+        //    if (shouldRender)
+        //    {
+        //        float spriteTop = scailingFactor;
+        //        float spriteFloor = -scailingFactor;
+        //        if (py < spriteTop && py >= spriteFloor)
+        //        {
+        //            // figure out whether current pos is left or right of the sprite ray
+        //            float sign = NEMathHelper.Sign(NEVector2.Dot(dir, rayPerp));
+        //            float u = (angleFromRay / aspectRatio / scailingFactor) * sign + 0.5f;
+        //            float v = py / (spriteFloor - spriteTop) + 0.5f;
+        //            NEColorSample csample = sprite.Texture.Sample(u, v, 1.0f);
+        //            if (csample.Character != 't')
+        //            {
+        //                if (m_DepthBuffer.TryUpdate(x, y, distanceToSprite / DEPTH))
+        //                    NEScreenBuffer.PutChar(csample.Character, csample.BitMask, x, y);
+        //            }
+        //        }
 
-            }
-        }
+        //    }
+        //}
 
         void RenderSpriteFull(NEStaticSprite sprite)
         {
@@ -448,18 +440,13 @@ namespace NostalgiaEngine.Raycaster
             return base.OnDraw();
         }
 
-        int GetCoord(int x, int y)
-        {
-            return (m_MapWidth * y) + x;
-        }
-
         int GetCell(NEVector2 p)
         {
             int x = (int)p.X;
             int y = (int)p.Y;
             if ((x > m_MapWidth - 1.0) || (x < 0)) return 0;
             if ((y > m_MapHeight - 1.0) || (y < 0)) return 0;
-            return m_Map[GetCoord(x, y)];
+            return m_Map[(m_MapWidth * y) + x];
         }
     }
 }

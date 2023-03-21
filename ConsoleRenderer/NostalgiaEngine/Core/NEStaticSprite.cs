@@ -8,10 +8,13 @@ namespace NostalgiaEngine.Core
 {
     public class NEStaticSprite
     {
-        public float X { get; set; }
-        public float Y { get; set; }
+        private NEVector2 m_Position;
 
-        public NEVector2 Position { get { return new NEVector2(X, Y); } }
+        public float X { get { return m_Position.X; } set { m_Position.X = value; } }
+        public float Y { get { return m_Position.Y; } set { m_Position.Y = value; } }
+
+
+        public NEVector2 Position { get { return m_Position; } set { m_Position = value; } }
         public float AstpectRatio { get { return ((float)Texture.Width) / ((float)Texture.Height); } }
 
         public NETexture Texture { get; private set; }
@@ -19,6 +22,7 @@ namespace NostalgiaEngine.Core
         public NEStaticSprite(NETexture texture)
         {
             Texture = texture;
+            m_Position = new NEVector2();
         }
 
     }

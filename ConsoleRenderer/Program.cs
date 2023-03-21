@@ -54,7 +54,7 @@ namespace NostalgiaEngineApplication
             engine.Start(bandDemo);
         }
 
-        static void RasterizerDemo(Engine engine)
+        static void NightGardenDemo(Engine engine)
         {
             NightGardenScene3D scene3D = new NightGardenScene3D();
             engine.Start(scene3D);
@@ -87,11 +87,11 @@ namespace NostalgiaEngineApplication
 
             Engine engine = new Engine();
             //TextureEditorDemo(engine);
-            //RaycasterDemo(engine);
+            RaycasterDemo(engine);
             //ImageViewerDemo(engine);
             //AnalogClockDemo(engine);
             //BandLevelDemo(engine);
-            RasterizerDemo(engine);
+            //NightGardenDemo(engine);
             //TeapotDemo(engine);
             // CubeDemo(engine);
             // NoiseDemo(engine);

@@ -81,6 +81,11 @@ namespace NostalgiaEngine.Core
             return (float)Math.Cos(a);
         }
 
+        static public float Tan(float a)
+        {
+            return (float)Math.Tan(a);
+        }
+
         static public float Sign(float a)
         {
             return (float)Math.Sign(a);
