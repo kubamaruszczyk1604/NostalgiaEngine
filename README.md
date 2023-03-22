@@ -5,3 +5,9 @@ A real-time ASCII graphics engine in command prompt (windows console). Uses ASCI
 <img src="https://lh3.googleusercontent.com/d/1Ehc9vtt5g_1ok_lX1soGly7VD6OSqKb0">
 <img src="https://lh3.googleusercontent.com/d/1WX9RCHiqLiEQRmVE6N5t54hrY_GeLwfs">
 
+
+Downloads:
+
+Tool for extracting color palettes and converting normal images into Nostalgia-friendly CSV textures: 
+https://drive.google.com/file/d/1reHsQpU4cwvhfebJzrAIyaf63aqZzb28/view?usp=sharing
+
