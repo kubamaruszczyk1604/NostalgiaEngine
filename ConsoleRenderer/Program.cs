@@ -1,16 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Runtime.InteropServices;
-using NostalgiaEngineExtensions.TextureEditor;
+﻿using NostalgiaEngineExtensions.TextureEditor;
 using NostalgiaEngine.Core;
 using NostalgiaEngine.Raycaster;
-using NostalgiaEngine.RasterizerPipeline;
 using TextureDisplay;
-using NostalgiaEngine.ConsoleGUI;
-using System.Diagnostics;
 using NostalgiaEngine.Demos;
 namespace NostalgiaEngineApplication
 {
