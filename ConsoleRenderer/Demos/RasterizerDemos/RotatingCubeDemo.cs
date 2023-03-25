@@ -13,8 +13,10 @@ namespace NostalgiaEngine.Demos
         // Loads resources. Called once, when the scene is loaded.
         public override bool OnLoad()
         {
-            ScreenWidth = 240;
-            ScreenHeight = 150;
+            //ScreenWidth = 240;
+            //ScreenHeight = 150;
+            ScreenWidth = 350;
+            ScreenHeight = 230;
             PixelWidth = 4;
             PixelHeight = 4;
             Mesh cubeMesh = GeometryGenerator.GenerateCube2(1.0f, 1.0f, 1.0f, NEVector4.Zero, 9);
@@ -51,6 +53,10 @@ namespace NostalgiaEngine.Demos
             if (NEInput.CheckKeyPress(ConsoleKey.H))
             {
                 ToggleHeadlamp();
+            }
+            if(NEInput.CheckKeyPress(ConsoleKey.Escape))
+            {
+                Exit();
             }
 
             //FPS like camera movement

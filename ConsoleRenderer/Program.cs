@@ -84,14 +84,14 @@ namespace NostalgiaEngineApplication
             //TextureEditorDemo(engine);
             //RaycasterDemo(engine);
 
-            //ImageViewerDemo(engine);
+             //ImageViewerDemo(engine);
             //AnalogClockDemo(engine);
             //BandLevelDemo(engine);
-            NightGardenDemo(engine);
-            //TeapotDemo(engine);
-            //CubeDemo(engine);
-             //NoiseDemo(engine);
 
+             NoiseDemo(engine);
+             CubeDemo(engine);
+             TeapotDemo(engine);
+             NightGardenDemo(engine);
             //ShooterDemo(engine);
 
         }

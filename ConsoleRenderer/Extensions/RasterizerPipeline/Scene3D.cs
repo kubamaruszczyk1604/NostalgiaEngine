@@ -48,7 +48,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 
             m_ScrHeightReciprocal = 1.0f / ScreenHeight;
             m_ScrWidthReciprocal = 1.0f / ScreenWidth;
-            m_DepthBuffer = new NEDepthBuffer(ScreenWidth, ScreenHeight);
+
             Models = new List<Model>();
             SceneSkybox = new Skybox();
             MainCamera = new Camera(ScreenWidth, ScreenHeight, 1.05f, 0.1f, 100.0f);
@@ -61,6 +61,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         public override bool OnLoad()
         {
+            m_DepthBuffer = new NEDepthBuffer(ScreenWidth, ScreenHeight);
             m_ScrHeightReciprocal = 1.0f / ScreenHeight;
             m_ScrWidthReciprocal = 1.0f / ScreenWidth;
             return base.OnLoad();

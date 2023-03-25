@@ -8,10 +8,13 @@ namespace NostalgiaEngine.Demos
     {
         public override bool OnLoad()
         {
-            ScreenWidth = 280;
-            ScreenHeight = 170;
+            //ScreenWidth = 280;
+            //ScreenHeight = 170;
+            ScreenWidth = 350;
+            ScreenHeight = 230;
             PixelWidth = 4;
             PixelHeight = 4;
+
 
             SceneSkybox = new Skybox("RasterizerDemoResources/skybox1");
             Mesh floorMesh = GeometryGenerator.CreateHorizontalQuad(15.0f, 15.0f, new NEVector4(0.0f, 0.0f, 0.0f), 7);

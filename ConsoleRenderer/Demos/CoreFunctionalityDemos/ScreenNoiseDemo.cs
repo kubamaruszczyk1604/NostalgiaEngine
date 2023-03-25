@@ -13,10 +13,15 @@ namespace NostalgiaEngine.Demos
         public override bool OnLoad()
         {
             m_Random = new Random();
-            ScreenWidth = 140;
-            ScreenHeight = 100;
-            PixelWidth = 6;
-            PixelHeight = 6;
+            //ScreenWidth = 140;
+            //ScreenHeight = 100;
+            //PixelWidth = 6;
+            //PixelHeight = 6;
+            ScreenWidth = 350;
+            ScreenHeight = 230;
+            PixelWidth = 4;
+            PixelHeight = 4;
+
             return base.OnLoad();
         }
 
