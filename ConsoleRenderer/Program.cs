@@ -88,9 +88,9 @@ namespace NostalgiaEngineApplication
             //AnalogClockDemo(engine);
             //BandLevelDemo(engine);
 
-             NoiseDemo(engine);
-             CubeDemo(engine);
-             TeapotDemo(engine);
+             //NoiseDemo(engine);
+             //CubeDemo(engine);
+             //TeapotDemo(engine);
              NightGardenDemo(engine);
             //ShooterDemo(engine);
 
