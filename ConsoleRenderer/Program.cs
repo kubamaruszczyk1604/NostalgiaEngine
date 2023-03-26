@@ -3,6 +3,7 @@ using NostalgiaEngine.Core;
 using NostalgiaEngine.Raycaster;
 using TextureDisplay;
 using NostalgiaEngine.Demos;
+using NostalgiaEngine.Extensions;
 namespace NostalgiaEngineApplication
 {
 
@@ -74,8 +75,12 @@ namespace NostalgiaEngineApplication
             ProceduralShooterDemo pcs = new ProceduralShooterDemo();
             engine.Start(pcs);
         }
-
-
+        
+        static void ConsoleCameraDemo(Engine engine)
+        {
+            ConsoleCamera consoleCamera = new ConsoleCamera();
+            engine.Start(consoleCamera);
+        }
 
         static void Main(string[] args)
         {
@@ -84,15 +89,17 @@ namespace NostalgiaEngineApplication
             //TextureEditorDemo(engine);
             //RaycasterDemo(engine);
 
-             //ImageViewerDemo(engine);
+            //ImageViewerDemo(engine);
             //AnalogClockDemo(engine);
             //BandLevelDemo(engine);
 
-             //NoiseDemo(engine);
-             //CubeDemo(engine);
-             //TeapotDemo(engine);
-             NightGardenDemo(engine);
+            //NoiseDemo(engine);
+            //CubeDemo(engine);
+            //TeapotDemo(engine);
+            //NightGardenDemo(engine);
             //ShooterDemo(engine);
+            ConsoleCameraDemo(engine);
+
 
         }
 
