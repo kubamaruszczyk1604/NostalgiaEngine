@@ -71,8 +71,8 @@ namespace TextureDisplay
 
         public override bool OnLoad()
         {
-            ScreenWidth = 180;
-            ScreenHeight = 150;
+            ScreenWidth = 350;
+            ScreenHeight = 220;
             PixelWidth = 4;
             PixelHeight = 4;
             m_Col = 0;

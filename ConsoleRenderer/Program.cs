@@ -25,7 +25,7 @@ namespace NostalgiaEngineApplication
 
         static void ImageViewerDemo(Engine engine)
         {
-            string[] paths = new string[] {
+            string[] paths = new string[] {"C:/Users/Kuba/Documents/NE_Texture",
                 "ImageViewerDemoImages/nostalgia", "ImageViewerDemoImages/mario","ImageViewerDemoImages/dyna_intro",
                 "ImageViewerDemoImages/dyna_gameplay","ImageViewerDemoImages/balcony","ImageViewerDemoImages/water",
                 "ImageViewerDemoImages/playground", "ImageViewerDemoImages/mallorca", "ImageViewerDemoImages/kitchen",
@@ -99,7 +99,7 @@ namespace NostalgiaEngineApplication
             //TeapotDemo(engine);
             //NightGardenDemo(engine);
             //ShooterDemo(engine);
-            ConsoleCameraDemo(engine);
+             ConsoleCameraDemo(engine);
 
 
         }

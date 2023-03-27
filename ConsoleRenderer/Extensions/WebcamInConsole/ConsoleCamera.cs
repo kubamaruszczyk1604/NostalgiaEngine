@@ -19,9 +19,14 @@ namespace NostalgiaEngine.Extensions
         {
             ScreenWidth = 150;
             ScreenHeight = 100;
-
             PixelWidth = 8;
             PixelHeight = 8;
+
+            ScreenWidth = 220;
+            ScreenHeight = 150;
+            PixelWidth = 5;
+            PixelHeight = 5;
+
             NEColorPalette palette = NEColorPalette.FromFile("C:/Users/Kuba/Desktop/palettes/hsv_pal.txt");
 
             m_ColorPairs = ColorPair.GenerateColorPairs(palette);
@@ -69,12 +74,13 @@ namespace NostalgiaEngine.Extensions
                     float bestDist = 10.0f;
                     for (int c = 0; c < m_ColorPairs.Length; ++c)
                     {
-                        float dist = m_ColorPairs[c].GetDistanceToLine(r, g, b);
+                        float dist =  m_ColorPairs[c].GetDistanceToLine(r, g, b);
                         if (dist < bestDist)
                         {
                             bestDist = dist;
                             bestPair = m_ColorPairs[c];
                         }
+                      // if (dist < 0.1f) break;
                     }
 
 
@@ -88,6 +94,7 @@ namespace NostalgiaEngine.Extensions
 
                 }
             }
+
            // NEDebug.DrawPalette(ScreenWidth, ScreenHeight);
             return base.OnDraw();
         }
