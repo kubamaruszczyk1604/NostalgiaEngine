@@ -17,11 +17,11 @@ namespace NostalgiaEngine.Extensions
         ColorPair[] m_ColorPairs;
         public override bool OnLoad()
         {
-            ScreenWidth = 250;
-            ScreenHeight = 160;
+            ScreenWidth = 150;
+            ScreenHeight = 100;
 
-            PixelWidth = 5;
-            PixelHeight = 5;
+            PixelWidth = 8;
+            PixelHeight = 8;
             NEColorPalette palette = NEColorPalette.FromFile("C:/Users/Kuba/Desktop/palettes/hsv_pal.txt");
 
             m_ColorPairs = ColorPair.GenerateColorPairs(palette);
@@ -66,11 +66,11 @@ namespace NostalgiaEngine.Extensions
                     //g *= g*g*g;
                     //b *= b*b*b;
                     ColorPair bestPair = null;
-                    float bestDist = 0.0f;
+                    float bestDist = 10.0f;
                     for (int c = 0; c < m_ColorPairs.Length; ++c)
                     {
                         float dist = m_ColorPairs[c].GetDistanceToLine(r, g, b);
-                        if (dist > bestDist)
+                        if (dist < bestDist)
                         {
                             bestDist = dist;
                             bestPair = m_ColorPairs[c];
@@ -79,7 +79,7 @@ namespace NostalgiaEngine.Extensions
 
 
                     float val = (r + g + b) * 0.33f;
-                    val *= val;
+                    //val *= val;
 
                      val *= bestPair.CalculateLerpCoeff();
                     //NEColorSample sample = NEColorSample.MakeCol((ConsoleColor)0, (ConsoleColor)15, val, NECHAR_RAMPS.BLOCK_RAMP5);
@@ -88,7 +88,7 @@ namespace NostalgiaEngine.Extensions
 
                 }
             }
-            NEDebug.DrawPalette(ScreenWidth, ScreenHeight);
+           // NEDebug.DrawPalette(ScreenWidth, ScreenHeight);
             return base.OnDraw();
         }
     }

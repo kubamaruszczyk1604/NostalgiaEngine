@@ -39,8 +39,9 @@ namespace NostalgiaEngine.Extensions
 
             NEVector4 c = new NEVector4(r, g, b, 0.0f);
             NEVector4 cProj = FindProjectedPoint(ref c, ref col0, ref col1);
-            float dist = (cProj - col0).Length;
-            DistCached = dist;
+            //float dist = (cProj - col0).Length;
+            float dist = (c - cProj).Length;
+            DistCached = (cProj - col0).Length;
             return dist;
         }
 
@@ -62,7 +63,7 @@ namespace NostalgiaEngine.Extensions
 
         private NEVector4 FindProjectedPoint(ref NEVector4 P, ref NEVector4 A, ref NEVector4 B)
         {
-            NEVector4 d = (B - A)* ColDistanceInv;//(B - A).Length;
+            NEVector4 d = (B - A) * ColDistanceInv;//(B - A).Length;
             NEVector4 v = P - A;
             float t = NEVector4.Dot(v, d);
             return A + d * t;
