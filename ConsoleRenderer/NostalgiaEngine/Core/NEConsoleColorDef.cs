@@ -12,7 +12,7 @@ namespace NostalgiaEngine.Core
     public struct NEConsoleColorDef
     {
         public uint ColMask;
-
+        private static readonly float s_NormConstant = 1.0f / 255.0f;
 
         public NEConsoleColorDef(uint r, uint g, uint b)
         {
@@ -91,9 +91,9 @@ namespace NostalgiaEngine.Core
         public uint G { get { return (ColMask & 0x00ff00) >> 8; } }
         public uint B { get { return (ColMask & 0xff0000) >> 16; } }
 
-        public float RNormalized { get { return ((float)R) / 255.0f; } }
-        public float GNormalized { get { return ((float)G) / 255.0f; } }
-        public float BNormalized { get { return ((float)B) / 255.0f; } }
+        public float RNormalized { get { return ((float)R) * s_NormConstant; } }
+        public float GNormalized { get { return ((float)G) * s_NormConstant; } }
+        public float BNormalized { get { return ((float)B) * s_NormConstant; } }
 
     }
 

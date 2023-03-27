@@ -86,6 +86,7 @@
     <Compile Include="Extensions\RasterizerPipeline\TrianglePool.cs" />
     <Compile Include="Extensions\RasterizerPipeline\VertexBuffer.cs" />
     <Compile Include="Extensions\RasterizerPipeline\VertexPool.cs" />
+    <Compile Include="Extensions\WebcamInConsole\ColorPair.cs" />
     <Compile Include="Extensions\WebcamInConsole\ConsoleCamera.cs" />
     <Compile Include="NostalgiaEngine\Core\NELight.cs" />
     <Compile Include="NostalgiaEngine\Core\NEDebug.cs" />
@@ -229,7 +230,9 @@
     <Content Include="Extensions\WebcamInConsole\CameraLib\AForge.xml" />
     <Content Include="Extensions\WebcamInConsole\CameraLib\VideoCamCapture.dll" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Extensions\WebcamInConsole\Resources\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

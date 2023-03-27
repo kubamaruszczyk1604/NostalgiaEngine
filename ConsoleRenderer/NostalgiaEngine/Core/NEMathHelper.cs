@@ -202,6 +202,12 @@ namespace NostalgiaEngine.Core
             return false;
         }
 
+        public static float DistToLine(NEVector4 p, NEVector4 l0, NEVector4 l1)
+        {
+           return NEVector4.Cross3(p - l0, l1 - l0).Length / (l1 - l0).Length;
+        }
+
+        
 
         static public NEVector2 Abs(NEVector2 a)
         {

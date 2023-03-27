@@ -12,21 +12,25 @@ namespace NostalgiaEngine.Extensions
     public class ConsoleCamera: NEScene
     {
         CameraCapture m_CamCapture;
+        float normalizeConst = 1.0f / 255.0f;
 
+        ColorPair[] m_ColorPairs;
         public override bool OnLoad()
         {
-            ScreenWidth = 350;
-            ScreenHeight = 230;
-            //ScreenWidth = 150;
-            //ScreenHeight = 80;
-            PixelWidth = 4;
-            PixelHeight = 4;
+            ScreenWidth = 250;
+            ScreenHeight = 160;
+
+            PixelWidth = 5;
+            PixelHeight = 5;
+            NEColorPalette palette = NEColorPalette.FromFile("C:/Users/Kuba/Desktop/palettes/hsv_pal.txt");
+
+            m_ColorPairs = ColorPair.GenerateColorPairs(palette);
             m_CamCapture = new CameraCapture();
 
             m_CamCapture.InitCamera();
 
             m_CamCapture.Start();
-           
+            NEColorManagement.SetPalette(palette);
             return base.OnLoad();
         }
 
@@ -54,14 +58,32 @@ namespace NostalgiaEngine.Extensions
 
                     int camY = (int)(v * m_CamCapture.FrameHeight);
 
-                    float r = ((float)frame[m_CamCapture.Coords2Index(camX, camY) + 2]) / 255.0f;
-                    float g = ((float)frame[m_CamCapture.Coords2Index(camX, camY) + 1]) / 255.0f;
-                    float b = ((float)frame[m_CamCapture.Coords2Index(camX, camY)]) / 255.0f;
+                    float r = ((float)frame[m_CamCapture.Coords2Index(camX, camY) + 2]) * normalizeConst;
+                    float g = ((float)frame[m_CamCapture.Coords2Index(camX, camY) + 1]) * normalizeConst;
+                    float b = ((float)frame[m_CamCapture.Coords2Index(camX, camY)]) * normalizeConst;
+
+                    //r *= r*r*r;
+                    //g *= g*g*g;
+                    //b *= b*b*b;
+                    ColorPair bestPair = null;
+                    float bestDist = 0.0f;
+                    for (int c = 0; c < m_ColorPairs.Length; ++c)
+                    {
+                        float dist = m_ColorPairs[c].GetDistanceToLine(r, g, b);
+                        if (dist > bestDist)
+                        {
+                            bestDist = dist;
+                            bestPair = m_ColorPairs[c];
+                        }
+                    }
 
 
                     float val = (r + g + b) * 0.33f;
                     val *= val;
-                    NEColorSample sample = NEColorSample.MakeCol((ConsoleColor)0, (ConsoleColor)15, val, NECHAR_RAMPS.CHAR_RAMP_FULL);
+
+                     val *= bestPair.CalculateLerpCoeff();
+                    //NEColorSample sample = NEColorSample.MakeCol((ConsoleColor)0, (ConsoleColor)15, val, NECHAR_RAMPS.BLOCK_RAMP5);
+                    NEColorSample sample = NEColorSample.MakeCol((ConsoleColor)bestPair.CI0, (ConsoleColor)bestPair.CI1, val, NECHAR_RAMPS.CHAR_RAMP_FULL_EXT);
                     NEScreenBuffer.PutChar(sample.Character, sample.BitMask, x, y);
 
                 }
