@@ -91,13 +91,12 @@ namespace NostalgiaEngineApplication
         {
 
             Engine engine = new Engine();
-            Engine.Instance.PostMessage = "Press ENTER to move to next resolution..";
             //TextureEditorDemo(engine);
             //RaycasterDemo(engine);
 
             //ImageViewerDemo(engine);
             //AnalogClockDemo(engine);
-            //BandLevelDemo(engine);
+             //BandLevelDemo(engine);
 
             //NoiseDemo(engine);
             //CubeDemo(engine);
@@ -105,7 +104,7 @@ namespace NostalgiaEngineApplication
             //NightGardenDemo(engine);
             //ShooterDemo(engine);
 
-            // ConsoleCameraDemo(engine, 320, 180, 5, 5);
+            //ConsoleCameraDemo(engine, 150, 50, 8, 16);
             //ConsoleCameraDemo(engine, 190, 50, 8, 16);
             ConsoleCameraDemo(engine, 220, 140, 4, 4);
         }
