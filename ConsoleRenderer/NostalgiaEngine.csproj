@@ -66,7 +66,7 @@
     <Reference Include="VideoCamCapture, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Extensions\WebcamInConsole\CameraLib\VideoCamCapture.dll</HintPath>
-      <Private>True</Private>
+      <Private>False</Private>
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
   </ItemGroup>
@@ -187,7 +187,6 @@
     <None Include="Extensions\Raycaster2D\Textures\nt1\luma.buf" />
     <None Include="Extensions\Raycaster2D\Textures\sky\color.tex" />
     <None Include="Extensions\Raycaster2D\Textures\sky\luma.buf" />
-    <None Include="Extensions\WebcamInConsole\CameraLib\VideoCamCapture.dll.config" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
@@ -224,12 +223,8 @@
     <Content Include="Demos\TextureDisplay\ScreenTextures\MainScreen\intro.res" />
     <Content Include="Extensions\Raycaster2D\Textures\nt1\palette.txt" />
     <Content Include="Extensions\Raycaster2D\Textures\sky\palette.txt" />
-    <Content Include="Extensions\WebcamInConsole\CameraLib\AForge.dll" />
     <Content Include="Extensions\WebcamInConsole\CameraLib\AForge.Video.DirectShow.dll" />
-    <Content Include="Extensions\WebcamInConsole\CameraLib\AForge.Video.DirectShow.xml" />
     <Content Include="Extensions\WebcamInConsole\CameraLib\AForge.Video.dll" />
-    <Content Include="Extensions\WebcamInConsole\CameraLib\AForge.Video.xml" />
-    <Content Include="Extensions\WebcamInConsole\CameraLib\AForge.xml" />
     <Content Include="Extensions\WebcamInConsole\CameraLib\VideoCamCapture.dll" />
   </ItemGroup>
   <ItemGroup>
@@ -245,8 +240,10 @@
 
 
 xcopy $(ProjectDir)Extensions\Raycaster2D\Textures\  $(TargetDir)RaycasterDemoResources /Y /I /E
+xcopy $(ProjectDir)Extensions\WebcamInConsole\CameraLib\  $(TargetDir)WebcamLib /Y /I /E
 
 xcopy $(ProjectDir)Demos\BandLevelsDemo\Textures\  $(TargetDir)BandLevelDemoResources /Y /I /E
+
 
 
 xcopy $(ProjectDir)Demos\TextureDisplay\ScreenTextures\MainScreen\ $(TargetDir)ImageViewerResources /Y /I /E
