@@ -38,7 +38,7 @@ namespace NostalgiaEngine.Extensions
             m_InputGamma = 2.0f;
             m_OutputGamma = 1.0f;
             m_Gain = 1.5f;
-            m_Color = false;
+            m_Color = true;
         }
 
         public override bool OnLoad()
