@@ -100,6 +100,7 @@ namespace NostalgiaEngine.Raycaster
 
         override public void OnUpdate(float dt)
         {
+            NEVector2 lastPos = m_ViewerPos;
 
             float deltaT = dt;
             if (NEInput.CheckKeyDown(ConsoleKey.LeftArrow))
@@ -108,7 +109,6 @@ namespace NostalgiaEngine.Raycaster
                 if (NEInput.CheckKeyDown(NEKey.Alt))
                 {
                     m_ViewerPos -= NEVector2.FindNormal(m_ViewerDir) * MOVEMENT_SPEED * deltaT;
-
                 }
                 else
                 {
@@ -125,9 +125,7 @@ namespace NostalgiaEngine.Raycaster
 
                 if (NEInput.CheckKeyDown(NEKey.Alt))
                 {
-
                     m_ViewerPos += NEVector2.FindNormal(m_ViewerDir) * MOVEMENT_SPEED * deltaT;
-
                 }
                 else
                 {
@@ -163,7 +161,11 @@ namespace NostalgiaEngine.Raycaster
                 m_ShowPalette = !m_ShowPalette;
             }
             m_DepthBuffer.Clear();
-
+            int cell = GetCell(m_ViewerPos);
+            if(cell != 0)
+            {
+                m_ViewerPos = lastPos;
+            }
         }
 
         override public void OnDrawPerColumn(int x)
@@ -218,7 +220,6 @@ namespace NostalgiaEngine.Raycaster
 
                     if (py > ceilingStartY) //draw ceiling
                     {
-
                         NEScreenBuffer.PutChar(ceilSample.Character, ceilSample.BitMask, x, y);
                     }
                     else if (py < floorStartY)

@@ -13,11 +13,11 @@ namespace NostalgiaEngine.Demos
         // Loads resources. Called once, when the scene is loaded.
         public override bool OnLoad()
         {
-            //ScreenWidth = 240;
-            //ScreenHeight = 150;
+            ScreenWidth = 240;
+            ScreenHeight = 150;
 
-            ScreenWidth = 350;
-            ScreenHeight = 230;
+            //ScreenWidth = 350;
+            //ScreenHeight = 230;
             PixelWidth = 4;
             PixelHeight = 4;
             Mesh teapotMesh = NEObjLoader.LoadObj("RasterizerDemoResources/teapot.obj", 14);

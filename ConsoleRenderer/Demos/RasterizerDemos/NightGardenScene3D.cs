@@ -8,10 +8,10 @@ namespace NostalgiaEngine.Demos
     {
         public override bool OnLoad()
         {
-            //ScreenWidth = 280;
-            //ScreenHeight = 170;
-            ScreenWidth = 350;
-            ScreenHeight = 230;
+            ScreenWidth = 280;
+            ScreenHeight = 170;
+            //ScreenWidth = 350;
+            //ScreenHeight = 230;
             PixelWidth = 4;
             PixelHeight = 4;
 
@@ -75,8 +75,8 @@ namespace NostalgiaEngine.Demos
             NEColorManagement.SetPalette(pal);
 
             AddLight(new DirectionalLight(new NEVector4(-1.0f, 1.0f, 1.0f)));
-
-            TogglePalette();
+            ToggleHeadlamp();
+            //TogglePalette();
 
             return base.OnLoad();
         }

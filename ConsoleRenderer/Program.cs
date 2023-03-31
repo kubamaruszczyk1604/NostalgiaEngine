@@ -1,10 +1,12 @@
-﻿using NostalgiaEngineExtensions.TextureEditor;
+﻿using System;
+using System.IO;
+using NostalgiaEngineExtensions.TextureEditor;
 using NostalgiaEngine.Core;
 using NostalgiaEngine.Raycaster;
 using TextureDisplay;
 using NostalgiaEngine.Demos;
 using NostalgiaEngine.Extensions;
-using System;
+
 namespace NostalgiaEngineApplication
 {
 
@@ -25,11 +27,13 @@ namespace NostalgiaEngineApplication
 
         static void ImageViewerDemo(Engine engine)
         {
-            string[] paths = new string[] {"C:/Users/Kuba/Documents/NE_Texture",
-                "ImageViewerDemoImages/nostalgia", "ImageViewerDemoImages/mario","ImageViewerDemoImages/dyna_intro",
-                "ImageViewerDemoImages/dyna_gameplay","ImageViewerDemoImages/balcony","ImageViewerDemoImages/water",
-                "ImageViewerDemoImages/playground", "ImageViewerDemoImages/mallorca", "ImageViewerDemoImages/kitchen",
-                "ImageViewerDemoImages/food", "ImageViewerDemoImages/eastbourne"};
+            //string[] paths = new string[] {
+            //    "ImageViewerDemoImages/nostalgia", "ImageViewerDemoImages/mario","ImageViewerDemoImages/dyna_intro",
+            //    "ImageViewerDemoImages/dyna_gameplay","ImageViewerDemoImages/balcony","ImageViewerDemoImages/water",
+            //    "ImageViewerDemoImages/playground", "ImageViewerDemoImages/mallorca", "ImageViewerDemoImages/kitchen",
+            //    "ImageViewerDemoImages/food", "ImageViewerDemoImages/eastbourne"};
+
+            string[] paths = Directory.GetDirectories("ImageViewerDemoImages");
             AsciiImageViewer imageViewer = new AsciiImageViewer(paths);
 
             engine.Start(imageViewer);
@@ -77,9 +81,9 @@ namespace NostalgiaEngineApplication
             engine.Start(pcs);
         }
         
-        static void ConsoleCameraDemo(Engine engine)
+        static void ConsoleCameraDemo(Engine engine, int w, int h, int pixW, int pixH)
         {
-            ConsoleCamera consoleCamera = new ConsoleCamera();
+            ConsoleCamera consoleCamera = new ConsoleCamera(w, h, pixW, pixH);
             engine.Start(consoleCamera);
         }
 
@@ -87,10 +91,11 @@ namespace NostalgiaEngineApplication
         {
 
             Engine engine = new Engine();
+            Engine.Instance.PostMessage = "Press ENTER to move to next resolution..";
             //TextureEditorDemo(engine);
             //RaycasterDemo(engine);
 
-            //ImageViewerDemo(engine);
+             //ImageViewerDemo(engine);
             //AnalogClockDemo(engine);
             //BandLevelDemo(engine);
 
@@ -99,9 +104,9 @@ namespace NostalgiaEngineApplication
             //TeapotDemo(engine);
             //NightGardenDemo(engine);
             //ShooterDemo(engine);
-             ConsoleCameraDemo(engine);
-
-
+            
+            ConsoleCameraDemo(engine, 320, 180, 5, 5);
+            //ConsoleCameraDemo(engine, 190, 50, 8, 16);
         }
 
     }
