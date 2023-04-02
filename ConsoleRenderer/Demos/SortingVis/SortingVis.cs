@@ -11,28 +11,35 @@ namespace NostalgiaEngine.Demos
     {
 
         BubleSortVis m_Algorithm;
+        readonly float c_TargetFrameDuration = 1.0f/90.0f;
+        float m_FrameTimeAcumulator;
         public override bool OnLoad()
         {
-            ScreenWidth = 300;
-            ScreenHeight = 150;
-            PixelWidth = 4;
-            PixelHeight = 4;
-            m_Algorithm = new BubleSortVis(100, 150);
+            ScreenWidth = 50;
+            ScreenHeight = 60;
+            PixelWidth = 20;
+            PixelHeight = 8;
+            m_Algorithm = new BubleSortVis(50, 50);
+            m_FrameTimeAcumulator = 0.0f;
             return base.OnLoad();
         }
 
+        
         public override void OnUpdate(float deltaTime)
         {
             base.OnUpdate(deltaTime);
-            for (int i = 0; i < 50; ++i)
-            {
-                m_Algorithm.DoStep();
-            }
+            m_FrameTimeAcumulator += deltaTime;
+            if (m_FrameTimeAcumulator < c_TargetFrameDuration) return;
 
-            if(NEInput.CheckKeyPress(ConsoleKey.Spacebar))
+            //m_Algorithm.DoPass();
+            m_Algorithm.DoStep();
+            if (NEInput.CheckKeyPress(ConsoleKey.Spacebar))
             {
-                m_Algorithm = new BubleSortVis(100, 140);
+                m_Algorithm = new BubleSortVis(50, 50);
             }
+            m_FrameTimeAcumulator = 0.0f;
+            //NESoundSynth.PlayBeep((ushort)(200+m_Algorithm.SwappedIndex0 * 10), 100);
+            Engine.Instance.TitleBarAppend = " |  BUBBLE SORT:   Steps = " + m_Algorithm.StepCount.ToString() + "  |";
             NEScreenBuffer.Clear();
         }
 
@@ -47,14 +54,18 @@ namespace NostalgiaEngine.Demos
 
                 for (int y = 0; y < barLen; ++y)
                 {
-                    //float intensity = ((float)y) / barLen;
-                    NEColorSample sample = NEColorSample.MakeColFromBlocks5(0, (ConsoleColor)9, 1.0f);
+                    float intensity = ((float)barLen) / ScreenHeight;
+                    int col = ((iBar == m_Algorithm.SwappedIndex0)|| (iBar == m_Algorithm.SwappedIndex0+1))&&!m_Algorithm.Done ? 2 : 9;
+                    if (col == 2 && m_Algorithm.Swapped) col = 13;
+                    NEColorSample sample = NEColorSample.MakeColFromBlocks5(0, (ConsoleColor)col, 1.0f);
                     for (int i = 0; i < barWidth; ++i)
                     {
-                        NEScreenBuffer.PutChar(sample.Character, sample.BitMask, iBar * barWidth + i, ScreenHeight - y);
+                        NEScreenBuffer.PutChar(sample.Character, sample.BitMask, iBar * barWidth + i, ScreenHeight-1 - y);
                     }
                 }
             }
+
+            NEDebug.DrawPalette(ScreenWidth, ScreenHeight);
             return base.OnDraw();
         }
 
