@@ -139,13 +139,13 @@ namespace NostalgiaEngine.RasterizerPipeline
             C = VBO.ProcessedVertices[LeftSortedIndices[2]];
 
             AB = new NEEdge();
-            NEMathHelper.Find2DLineEquation(A.Position.XY, B.Position.XY, out AB.a, out AB.c);
+            NEMath.Find2DLineEquation(A.Position.XY, B.Position.XY, out AB.a, out AB.c);
 
             AC = new NEEdge();
-            NEMathHelper.Find2DLineEquation(A.Position.XY, C.Position.XY, out AC.a, out AC.c);
+            NEMath.Find2DLineEquation(A.Position.XY, C.Position.XY, out AC.a, out AC.c);
 
             BC = new NEEdge();
-            NEMathHelper.Find2DLineEquation(B.Position.XY, C.Position.XY, out BC.a, out BC.c);
+            NEMath.Find2DLineEquation(B.Position.XY, C.Position.XY, out BC.a, out BC.c);
 
 
         }
@@ -185,7 +185,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             manifest.Y1 = yAC;
 
             float denCA = (C.X - A.X);
-            denCA = NEMathHelper.Abs(denCA) >= 0.01f ? denCA : 0.01f;
+            denCA = NEMath.Abs(denCA) >= 0.01f ? denCA : 0.01f;
             float t_AC = (x - A.X) / denCA;
 
 
@@ -199,7 +199,7 @@ namespace NostalgiaEngine.RasterizerPipeline
                 //AB is other 
                 manifest.Y0 = AB.a * x + AB.c;
                 float denBA = (B.X - A.X);
-                denBA = NEMathHelper.Abs(denBA) >= 0.01f ? denBA : 0.01f;
+                denBA = NEMath.Abs(denBA) >= 0.01f ? denBA : 0.01f;
                 t_Other = (x - A.X) / denBA;
 
             }
@@ -208,7 +208,7 @@ namespace NostalgiaEngine.RasterizerPipeline
                 //BC is other
                 manifest.Y0 = BC.a * x + BC.c;
                 float denCB = (C.X - B.X);
-                denCB = NEMathHelper.Abs(denCB) >= 0.01f ? denCB : 0.01f;
+                denCB = NEMath.Abs(denCB) >= 0.01f ? denCB : 0.01f;
                 t_Other = (x - B.X) / denCB;
 
                 otherP0 = B;

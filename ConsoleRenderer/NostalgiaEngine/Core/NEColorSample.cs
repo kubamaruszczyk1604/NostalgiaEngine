@@ -128,7 +128,7 @@ namespace NostalgiaEngine.Core
         static public NEColorSample MakeCol(ConsoleColor col1, ConsoleColor col2, float t, int[] charRamp)
         {
             float tFract = t >= 1.0f ? 1.0f : t - (float)Math.Floor(t);
-            tFract = NEMathHelper.Clamp(tFract, 0.0f, 1.0f);
+            tFract = NEMath.Clamp(tFract, 0.0f, 1.0f);
 
             int rampLastIndex = charRamp.Length - 1; 
             int index = (int)(tFract * charRamp.Length);
@@ -150,7 +150,7 @@ namespace NostalgiaEngine.Core
 
 
             float tFract = t >= 1.0f ? 1.0f : t - (float)Math.Floor(t);
-            tFract = NEMathHelper.Clamp(tFract, 0.0f, 1.0f);
+            tFract = NEMath.Clamp(tFract, 0.0f, 1.0f);
 
 
             int index = (int)(tFract * 5.0f);

@@ -140,11 +140,11 @@ namespace NostalgiaEngine.Core
             else if (SampleMode == NESampleMode.Repeat)
             {
                 u -= (int)u;
-                u = u < 0 ? 1.0f - NEMathHelper.Abs(u) : u;
+                u = u < 0 ? 1.0f - NEMath.Abs(u) : u;
             }
 
             v -= (int)v;
-            v = v < 0 ? 1.0f - NEMathHelper.Abs(v) : v;
+            v = v < 0 ? 1.0f - NEMath.Abs(v) : v;
 
             int x = (int)Math.Round(u * (float)Width);
             if (x >= (Width - 1)) x = Width - 1;
@@ -162,8 +162,8 @@ namespace NostalgiaEngine.Core
         {
             var data = Data;
 
-            u = NEMathHelper.Clamp(u, 0.0f, 1.0f);
-            v = NEMathHelper.Clamp(v, 0.0f, 1.0f);
+            u = NEMath.Clamp(u, 0.0f, 1.0f);
+            v = NEMath.Clamp(v, 0.0f, 1.0f);
 
             int x = (int)Math.Floor(u * (float)Width);
             if (x >= (Width - 1)) x = Width - 1;

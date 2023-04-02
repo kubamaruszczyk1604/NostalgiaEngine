@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace NostalgiaEngine.Core
 {
 
-    public class NEMathHelper
+    public class NEMath
     {
 
         static public float Min(float a, float b)

@@ -32,7 +32,7 @@ namespace NostalgiaEngine.RasterizerPipeline
         protected float HeadlampIntensity
         {
             get { return m_HeadlampIntensity; }
-            set { m_HeadlampIntensity = NEMathHelper.Clamp(value, 0.0f, 1.0f); }
+            set { m_HeadlampIntensity = NEMath.Clamp(value, 0.0f, 1.0f); }
         }
 
 
@@ -241,10 +241,10 @@ namespace NostalgiaEngine.RasterizerPipeline
                 {
                     if (m_Lights[l].LightType != NELightType.Directional) continue;
                     float intensity = NEVector4.Dot3(tr.NormalWorld, ((DirectionalLight)m_Lights[l]).Direction);
-                    directionalLightsSum += NEMathHelper.Clamp(intensity, 0.0f, 1.0f);
+                    directionalLightsSum += NEMath.Clamp(intensity, 0.0f, 1.0f);
                 }
 
-                directionalLightsSum = NEMathHelper.Clamp(directionalLightsSum, 0.0f, 1.0f);
+                directionalLightsSum = NEMath.Clamp(directionalLightsSum, 0.0f, 1.0f);
                
 
                 ScanlineIntersectionManifest manifest;
@@ -255,14 +255,14 @@ namespace NostalgiaEngine.RasterizerPipeline
                 float y1 = (-manifest.Y1 + 1.0f) * 0.5f;
 
                 //y0 is first from the top of the viewport 
-                if (y0 > y1) NEMathHelper.Swap(ref y0, ref y1);
+                if (y0 > y1) NEMath.Swap(ref y0, ref y1);
 
                 //normalised span of rendered line segment
                 float distance = y1 - y0;
 
 
-                float y0clamped = NEMathHelper.Clamp(y0, 0, 1.0f);
-                float y1clamped = NEMathHelper.Clamp(y1, 0, 1.0f);
+                float y0clamped = NEMath.Clamp(y0, 0, 1.0f);
+                float y1clamped = NEMath.Clamp(y1, 0, 1.0f);
                 float distanceClamped = y1clamped - y0clamped;
 
                 //float coeff = distanceClamped / distance;
@@ -308,8 +308,8 @@ namespace NostalgiaEngine.RasterizerPipeline
                             NEVector4 vDirBottom = manifest.bottom_P0.Vert2Camera * (1.0f - manifest.bottom_t) + manifest.bottom_P1.Vert2Camera * manifest.bottom_t;
                             NEVector4 vDirTop = manifest.top_P0.Vert2Camera * (1.0f - manifest.top_t) + manifest.top_P1.Vert2Camera * manifest.top_t;
                             NEVector4 vDir = vDirTop * (1.0f - t) + vDirBottom * t;
-                            dotHeadlamp = NEMathHelper.Clamp(NEVector4.Dot3(tr.NormalView, vDir),0,1)*m_HeadlampIntensity;
-                            float coneMask = NEMathHelper.Clamp(NEVector4.Dot3(vDir, new NEVector4(u*MainCamera.InverseAspectRatio, v, -1.0f).Normalized), 0.0f, 1.0f);
+                            dotHeadlamp = NEMath.Clamp(NEVector4.Dot3(tr.NormalView, vDir),0,1)*m_HeadlampIntensity;
+                            float coneMask = NEMath.Clamp(NEVector4.Dot3(vDir, new NEVector4(u*MainCamera.InverseAspectRatio, v, -1.0f).Normalized), 0.0f, 1.0f);
                             dotHeadlamp *= coneMask;
                         }
 
@@ -322,8 +322,8 @@ namespace NostalgiaEngine.RasterizerPipeline
 
 
                         float global =  directionalLightsSum;
-                        float headlamp = NEMathHelper.Clamp(49.0f * fragW * fragW, 0.0f, 1.0f) * dotHeadlamp;
-                        float diffuse = NEMathHelper.Clamp(global + headlamp, 0.0f, 1.0f);
+                        float headlamp = NEMath.Clamp(49.0f * fragW * fragW, 0.0f, 1.0f) * dotHeadlamp;
+                        float diffuse = NEMath.Clamp(global + headlamp, 0.0f, 1.0f);
                         if (model.LumaTexture != null && TexturingOn)
                         {
                             NEVector2 textCoordBottom = manifest.bottom_P0.UV * (1.0f - manifest.bottom_t)

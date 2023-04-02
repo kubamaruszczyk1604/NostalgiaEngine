@@ -16,17 +16,17 @@ namespace NostalgiaEngine.Core
 
         public NEConsoleColorDef(uint r, uint g, uint b)
         {
-            r = NEMathHelper.Clamp(r, 0, 255);
-            g = NEMathHelper.Clamp(g, 0, 255);
-            b = NEMathHelper.Clamp(b, 0, 255);
+            r = NEMath.Clamp(r, 0, 255);
+            g = NEMath.Clamp(g, 0, 255);
+            b = NEMath.Clamp(b, 0, 255);
             ColMask = r | (g << 8) | (b << 16);
         }
 
         public NEConsoleColorDef(float r, float g, float b)
         {
-            uint ri = (uint)NEMathHelper.Clamp(r * 255.0f, 0, 255.0f);
-            uint gi = (uint)NEMathHelper.Clamp(g * 255.0f, 0, 255.0f);
-            uint bi = (uint)NEMathHelper.Clamp(b * 255.0f, 0, 255.0f);
+            uint ri = (uint)NEMath.Clamp(r * 255.0f, 0, 255.0f);
+            uint gi = (uint)NEMath.Clamp(g * 255.0f, 0, 255.0f);
+            uint bi = (uint)NEMath.Clamp(b * 255.0f, 0, 255.0f);
              
             ColMask = ri | (gi << 8) | (bi << 16);
         }
@@ -44,41 +44,41 @@ namespace NostalgiaEngine.Core
 
         static public NEConsoleColorDef operator *(NEConsoleColorDef lhs, NEConsoleColorDef rhs)
         {
-            float r = NEMathHelper.Clamp(lhs.RNormalized * rhs.RNormalized, 0.0f, 1.0f);
-            float g = NEMathHelper.Clamp(lhs.GNormalized * rhs.GNormalized, 0.0f, 1.0f);
-            float b = NEMathHelper.Clamp(lhs.BNormalized * rhs.BNormalized, 0.0f, 1.0f);
+            float r = NEMath.Clamp(lhs.RNormalized * rhs.RNormalized, 0.0f, 1.0f);
+            float g = NEMath.Clamp(lhs.GNormalized * rhs.GNormalized, 0.0f, 1.0f);
+            float b = NEMath.Clamp(lhs.BNormalized * rhs.BNormalized, 0.0f, 1.0f);
             return new NEConsoleColorDef(r, g, b);
         }
 
         static public NEConsoleColorDef operator *(NEConsoleColorDef lhs, float rhs)
         {
-            float r = NEMathHelper.Clamp(lhs.RNormalized * rhs, 0.0f, 1.0f);
-            float g = NEMathHelper.Clamp(lhs.GNormalized * rhs, 0.0f, 1.0f);
-            float b = NEMathHelper.Clamp(lhs.BNormalized * rhs, 0.0f, 1.0f);
+            float r = NEMath.Clamp(lhs.RNormalized * rhs, 0.0f, 1.0f);
+            float g = NEMath.Clamp(lhs.GNormalized * rhs, 0.0f, 1.0f);
+            float b = NEMath.Clamp(lhs.BNormalized * rhs, 0.0f, 1.0f);
             return new NEConsoleColorDef(r, g, b);
         }
 
         static public NEConsoleColorDef operator +(NEConsoleColorDef lhs, NEConsoleColorDef rhs)
         {
-            uint r = NEMathHelper.Clamp(lhs.R + rhs.R, 0, 255);
-            uint g = NEMathHelper.Clamp(lhs.G + rhs.G, 0, 255);
-            uint b = NEMathHelper.Clamp(lhs.B + rhs.B, 0, 255);
+            uint r = NEMath.Clamp(lhs.R + rhs.R, 0, 255);
+            uint g = NEMath.Clamp(lhs.G + rhs.G, 0, 255);
+            uint b = NEMath.Clamp(lhs.B + rhs.B, 0, 255);
             return new NEConsoleColorDef(r, g, b);
         }
 
         static public NEConsoleColorDef operator -(NEConsoleColorDef lhs, NEConsoleColorDef rhs)
         {
-            int r =  NEMathHelper.Clamp((int)lhs.R - (int)rhs.R, 0, 255);
-            int g =  NEMathHelper.Clamp((int)lhs.G - (int)rhs.G, 0, 255);
-            int b =  NEMathHelper.Clamp((int)lhs.B - (int)rhs.B, 0, 255);
+            int r =  NEMath.Clamp((int)lhs.R - (int)rhs.R, 0, 255);
+            int g =  NEMath.Clamp((int)lhs.G - (int)rhs.G, 0, 255);
+            int b =  NEMath.Clamp((int)lhs.B - (int)rhs.B, 0, 255);
             return new NEConsoleColorDef((uint)r, (uint)g, (uint)b);
         }
 
         static public NEConsoleColorDef operator -(NEConsoleColorDef val)
         {
-            uint r = NEMathHelper.Clamp(255 - val.R, 0, 255);
-            uint g = NEMathHelper.Clamp(255 - val.G, 0, 255);
-            uint b = NEMathHelper.Clamp(255 - val.B, 0, 255);
+            uint r = NEMath.Clamp(255 - val.R, 0, 255);
+            uint g = NEMath.Clamp(255 - val.G, 0, 255);
+            uint b = NEMath.Clamp(255 - val.B, 0, 255);
             return new NEConsoleColorDef(r, g, b);
         }
 

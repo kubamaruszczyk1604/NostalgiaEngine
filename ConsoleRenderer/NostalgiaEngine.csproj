@@ -78,6 +78,8 @@
     <Compile Include="Demos\RasterizerDemos\NightGardenScene3D.cs" />
     <Compile Include="Demos\RasterizerDemos\RotatingCubeDemo.cs" />
     <Compile Include="Demos\RasterizerDemos\TeapotDemo.cs" />
+    <Compile Include="Demos\SortingVis\BubleSortVis.cs" />
+    <Compile Include="Demos\SortingVis\SortingVis.cs" />
     <Compile Include="Demos\TextureDisplay\AsciiImageViewer.cs" />
     <Compile Include="Extensions\RasterizerPipeline\Clipping.cs" />
     <Compile Include="Extensions\RasterizerPipeline\Camera.cs" />
@@ -99,6 +101,7 @@
     <Compile Include="Extensions\RasterizerPipeline\ResourceManager.cs" />
     <Compile Include="Extensions\RasterizerPipeline\Scene3D.cs" />
     <Compile Include="Extensions\RasterizerPipeline\Skybox.cs" />
+    <Compile Include="NostalgiaEngine\Core\NETools.cs" />
     <Compile Include="NostalgiaEngine\Core\NETransform.cs" />
     <Compile Include="Extensions\RasterizerPipeline\Triangle.cs" />
     <Compile Include="Extensions\RasterizerPipeline\Vertex.cs" />

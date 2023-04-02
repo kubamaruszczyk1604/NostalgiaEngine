@@ -87,6 +87,12 @@ namespace NostalgiaEngineApplication
             engine.Start(consoleCamera);
         }
 
+        static void SortingDemo(Engine engine)
+        {
+            SortingVis sortingVis = new SortingVis();
+            engine.Start(sortingVis);
+        }
+
         static void Main(string[] args)
         {
 
@@ -96,17 +102,20 @@ namespace NostalgiaEngineApplication
 
             //ImageViewerDemo(engine);
             //AnalogClockDemo(engine);
-             //BandLevelDemo(engine);
+            //BandLevelDemo(engine);
 
             //NoiseDemo(engine);
             //CubeDemo(engine);
             //TeapotDemo(engine);
             //NightGardenDemo(engine);
+            SortingDemo(engine);
             //ShooterDemo(engine);
 
             //ConsoleCameraDemo(engine, 150, 50, 8, 16);
             //ConsoleCameraDemo(engine, 190, 50, 8, 16);
-            ConsoleCameraDemo(engine, 220, 140, 4, 4);
+            //ConsoleCameraDemo(engine, 220, 140, 4, 4);
+
+           
         }
 
     }

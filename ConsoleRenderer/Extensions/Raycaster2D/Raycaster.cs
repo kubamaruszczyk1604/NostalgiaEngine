@@ -192,7 +192,7 @@ namespace NostalgiaEngine.Raycaster
                 if (cell != 0)
                     hit = true;
             }
-            t = t * NEMathHelper.Cos(rayAngle);
+            t = t * NEMath.Cos(rayAngle);
             float depth = (t / DEPTH);
             float ceilingStartY = (1.0f / t);
             float floorStartY = (-1.0f / t);
@@ -331,7 +331,7 @@ namespace NostalgiaEngine.Raycaster
             if (angleFromRay < (m_Fov*0.3f))
             {
                 NEVector2 rayPerp = NEVector2.FindNormal(rayToSprite.Normalized);
-                float sign = -NEMathHelper.Sign(NEVector2.Dot(m_ViewerDir, rayPerp));
+                float sign = -NEMath.Sign(NEVector2.Dot(m_ViewerDir, rayPerp));
 
                 //float distanceToSprite = rayToSprite.Length;
                 float scalingFactor = (1.0f / distanceToSprite);// scale here
@@ -426,7 +426,7 @@ namespace NostalgiaEngine.Raycaster
                     A += m_ViewerPos;
                     B += m_ViewerPos;
                     C += m_ViewerPos;
-                    if (NEMathHelper.InTriangle(mapXY,A,B,C))
+                    if (NEMath.InTriangle(mapXY,A,B,C))
                     {
                         NEScreenBuffer.PutChar('@', 13 << 4, (int)imgW - x, (int)imgH - y);
                     }

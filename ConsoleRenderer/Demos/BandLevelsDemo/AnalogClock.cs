@@ -73,7 +73,7 @@ namespace NostalgiaEngine.Demos
         {
             uvs.Y *= -1;
             float rt = num * 3.141f;
-            bool isOnLine = NEMathHelper.IsOnLine(uvs, new NEVector2(0, 0), new NEVector2(NEMathHelper.Sin(rt), NEMathHelper.Cos(-rt) + 0.02f),thickness);
+            bool isOnLine = NEMath.IsOnLine(uvs, new NEVector2(0, 0), new NEVector2(NEMath.Sin(rt), NEMath.Cos(-rt) + 0.02f),thickness);
             if (!isOnLine) return false;
             if (NEVector2.CalculateLength(uvs) > armLen) return false;
 
@@ -122,7 +122,7 @@ namespace NostalgiaEngine.Demos
                     if (circleL > low && circleL < high)
                     {
                         float d = (circleL - low) / (high - low);
-                        float brightness = NEMathHelper.Sin(d * 3.14f);
+                        float brightness = NEMath.Sin(d * 3.14f);
                         brightness *= brightness * brightness;
                         cs = NEColorSample.MakeCol((ConsoleColor)0, (ConsoleColor)10,brightness + 0.25f, NECHAR_RAMPS.CHAR_RAMP_FULL);
                     }

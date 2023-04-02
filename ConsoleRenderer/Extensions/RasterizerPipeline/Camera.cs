@@ -27,7 +27,7 @@ namespace NostalgiaEngine.RasterizerPipeline
         {
             float dimLow = width;
             float dimHigh = height;
-            if (dimLow > dimHigh) NEMathHelper.Swap(ref dimLow, ref dimHigh);
+            if (dimLow > dimHigh) NEMath.Swap(ref dimLow, ref dimHigh);
             float aspectRatio = dimLow / dimHigh;
             AspectRatio = aspectRatio;
             Transform = new Transform();

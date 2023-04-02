@@ -51,8 +51,8 @@ namespace NostalgiaEngine.Demos
                 m_ProjectileSprites.Remove(p);
             }
 
-            m_ShipSprite.X = 0.3f + NEMathHelper.Sin(Engine.Instance.TotalTime) * 0.1f;
-            m_ShipSprite.Y = 0.4f + NEMathHelper.Sin(Engine.Instance.TotalTime * 2.0f) * 0.3f;
+            m_ShipSprite.X = 0.3f + NEMath.Sin(Engine.Instance.TotalTime) * 0.1f;
+            m_ShipSprite.Y = 0.4f + NEMath.Sin(Engine.Instance.TotalTime * 2.0f) * 0.3f;
 
             if (NEInput.CheckKeyPress(ConsoleKey.Spacebar))
             {
@@ -72,7 +72,7 @@ namespace NostalgiaEngine.Demos
         public override void OnDrawPerColumn(int x)
         {
             float t = Engine.Instance.TotalTime;
-            float verticalMovement = NEMathHelper.Sin(t * 0.4f) * 0.1f;
+            float verticalMovement = NEMath.Sin(t * 0.4f) * 0.1f;
             float xNorm = (x / ((float)ScreenWidth));
             float terrain1H = Terrain(xNorm * 0.65f + t * 0.2f, 0.8f + verticalMovement);
             float terrain2H = Terrain(xNorm + t * 0.05f, 0.5f + verticalMovement);
@@ -85,7 +85,7 @@ namespace NostalgiaEngine.Demos
                 ConsoleColor c2 = ConsoleColor.Red;
                 if (yNorm <= terrain2H)
                 {
-                    float skyWave = (NEMathHelper.Sin(xNorm * 10.0f) + 1.0f) * 0.01f;
+                    float skyWave = (NEMath.Sin(xNorm * 10.0f) + 1.0f) * 0.01f;
                     interp = yNorm * yNorm + skyWave;
                 }
                 else if (yNorm > terrain2H && yNorm <= terrain1H)
@@ -144,10 +144,10 @@ namespace NostalgiaEngine.Demos
 
         public float Terrain(float x, float h)
         {
-            float fx = (NEMathHelper.Sin(x * 16.0f) + 1.0f) * 0.3f + h;
-            fx += NEMathHelper.Sin(x * 3.0f) * 0.2f;
-            fx += NEMathHelper.Sin(x * 25.0f) * 0.1f;
-            fx += NEMathHelper.Sin(x * 52.0f) * 0.1f;
+            float fx = (NEMath.Sin(x * 16.0f) + 1.0f) * 0.3f + h;
+            fx += NEMath.Sin(x * 3.0f) * 0.2f;
+            fx += NEMath.Sin(x * 25.0f) * 0.1f;
+            fx += NEMath.Sin(x * 52.0f) * 0.1f;
             return fx * 0.6f;
         }
     }

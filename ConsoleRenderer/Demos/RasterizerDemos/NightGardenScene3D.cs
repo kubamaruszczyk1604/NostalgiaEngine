@@ -212,7 +212,7 @@ namespace NostalgiaEngine.Demos
             {
 
                 float t = ((float)i) / ((float)numRings);
-                float a = NEMathHelper.Sin(t * 3.14f);
+                float a = NEMath.Sin(t * 3.14f);
                 Model crown = new Model(cubeMesh, CullMode.Back, crownTexture);
                 crown.Transform.LocalPosition = pos + new NEVector4(0.0f, 2.15f+i*0.6f, 0.0f);
                 crown.Transform.ScaleY = 0.3f;
@@ -241,13 +241,13 @@ namespace NostalgiaEngine.Demos
             for (int arm = 0; arm < 7; ++arm)
             {
                 float s = arm / 7.0f;
-                float xP = NEMathHelper.Cos(s*6.28f);
-                float zP = NEMathHelper.Sin(s*6.28f);
+                float xP = NEMath.Cos(s*6.28f);
+                float zP = NEMath.Sin(s*6.28f);
                 for (int i = 0; i < numRings; ++i)
                 {
 
                     float t = ((float)i) / ((float)numRings);
-                    float a = NEMathHelper.Sin(t * 3.14f * 1.2f);
+                    float a = NEMath.Sin(t * 3.14f * 1.2f);
                     Model crown = new Model(cubeMesh, CullMode.Back, crownTexture);
                     crown.Transform.LocalPosition = pos + new NEVector4( xP*i * 0.3f, 2.15f + a * 1.5f, zP * i * 0.3f);
                     crown.Transform.ScaleY = 0.3f;

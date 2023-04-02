@@ -281,14 +281,14 @@ namespace NostalgiaEngineExtensions.TextureEditor
             NEVector2 pixelPos = new NEVector2(x, y);
             for (int i = 0; i < 17; ++i)
             {
-                if (NEMathHelper.InRectangle(pixelPos, new NEVector2(c_ColorWindowWidth * (i), 0) + c_ColorPanelPos, c_ColorWindowWidth, c_ColorWindowHeight))
+                if (NEMath.InRectangle(pixelPos, new NEVector2(c_ColorWindowWidth * (i), 0) + c_ColorPanelPos, c_ColorWindowWidth, c_ColorWindowHeight))
                 {
                     NEScreenBuffer.PutChar(' ', (short)((i) << 4), x, y);
                     if (i == 16) NEScreenBuffer.PutChar((char)NEBlock.Solid, (short)(8 << 4), x, y);
                 }
             }
 
-            if (NEMathHelper.InRectangle(pixelPos, new NEVector2(c_ColorWindowWidth * SelectedColor, 8) + c_ColorPanelPos, c_ColorWindowWidth, 2))
+            if (NEMath.InRectangle(pixelPos, new NEVector2(c_ColorWindowWidth * SelectedColor, 8) + c_ColorPanelPos, c_ColorWindowWidth, 2))
             {
                 NEScreenBuffer.PutChar((char)NEBlock.Middle, (short)((15)), x, y);
             }

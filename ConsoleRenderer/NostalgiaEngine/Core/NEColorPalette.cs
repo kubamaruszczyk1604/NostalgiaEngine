@@ -167,7 +167,7 @@ namespace NostalgiaEngine.Core
 
         public NEConsoleColorDef GetColor(int colIndex)
         {
-            colIndex = NEMathHelper.Clamp(colIndex, 0, 15);
+            colIndex = NEMath.Clamp(colIndex, 0, 15);
             return OutputColors[colIndex];
         }
 

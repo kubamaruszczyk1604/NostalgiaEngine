@@ -78,7 +78,7 @@ namespace NostalgiaEngine.Demos
             {
                 int ri = m_Rng.Next(0, 19);
                 m_SignalBands[i] +=
-                    (1.0f - (((i + 1) / 19.0f)) * 0.7f + 0.09f * (NEMathHelper.Sin(m_RandomNoise * i * dt * 40.0f + i + time * 0.08f) + 1.0f) - m_SignalBands[i]) * 0.2f;
+                    (1.0f - (((i + 1) / 19.0f)) * 0.7f + 0.09f * (NEMath.Sin(m_RandomNoise * i * dt * 40.0f + i + time * 0.08f) + 1.0f) - m_SignalBands[i]) * 0.2f;
 
 
                 m_SignalBands[ri] += 0.1f * (m_RandomNoise - m_SignalBands[i]);
@@ -107,7 +107,7 @@ namespace NostalgiaEngine.Demos
                     NEScreenBuffer.PutChar(sa.Character, sa.BitMask, x, y);
                     if (yNormRev > m_SignalBands[currentBand]) continue;
                     if (x % 8 == 0) continue;
-                    NEColorSample cs = NEColorSample.MakeColFromBlocks5((ConsoleColor)4, (ConsoleColor)12, (1.0f - NEMathHelper.Pow(yNorm, 1.987f))*(luma));
+                    NEColorSample cs = NEColorSample.MakeColFromBlocks5((ConsoleColor)4, (ConsoleColor)12, (1.0f - NEMath.Pow(yNorm, 1.987f))*(luma));
                     NEScreenBuffer.PutChar(cs.Character, cs.BitMask, x, y);
                 }
             }

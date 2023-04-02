@@ -14,7 +14,7 @@ namespace NostalgiaEngine.Core
         public float LitCoefficient
         {
             get { return m_LitCoefficient; }
-            set { m_LitCoefficient = NEMathHelper.Clamp(value, 0.0f, 1.0f); }
+            set { m_LitCoefficient = NEMath.Clamp(value, 0.0f, 1.0f); }
         }
 
         private float m_LitCoefficient;

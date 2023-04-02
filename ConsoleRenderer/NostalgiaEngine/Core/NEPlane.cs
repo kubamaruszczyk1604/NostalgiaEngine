@@ -25,7 +25,7 @@ namespace NostalgiaEngine.Core
             NEVector4 n = plane.N;
             l0.W = 0; l1.W = 0; p0.W = 0; n.W = 0;
             PlaneIntersectionManifest m = new PlaneIntersectionManifest();
-            if (!NEMathHelper.FindRayEquation(l0, l1, out m.RayDirection, out m.RayLength))
+            if (!NEMath.FindRayEquation(l0, l1, out m.RayDirection, out m.RayLength))
             {
                 m.Intersected = false;
                 return m;

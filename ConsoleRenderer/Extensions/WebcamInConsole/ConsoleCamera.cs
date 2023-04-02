@@ -162,9 +162,9 @@ namespace NostalgiaEngine.Extensions
                     float g = ((float)m_CurrentCameraFrame[m_CamCapture.Coords2Index(camX, camY) + 1]) * normalizeConst;
                     float b = ((float)m_CurrentCameraFrame[m_CamCapture.Coords2Index(camX, camY)]) * normalizeConst;
 
-                     r = NEMathHelper.Pow(r, m_InputGamma)*m_Gain;
-                     g = NEMathHelper.Pow(g, m_InputGamma)*m_Gain;
-                     b = NEMathHelper.Pow(b, m_InputGamma)*m_Gain;
+                     r = NEMath.Pow(r, m_InputGamma)*m_Gain;
+                     g = NEMath.Pow(g, m_InputGamma)*m_Gain;
+                     b = NEMath.Pow(b, m_InputGamma)*m_Gain;
                     ColorPair bestPair = null;
                     float bestDist = 10.0f;
                     for (int c = 0; c < m_ColorPairs.Length; ++c)
@@ -183,7 +183,7 @@ namespace NostalgiaEngine.Extensions
                     //val *= val;
 
                     val *= bestPair.CalculateLerpCoeff();
-                    val = NEMathHelper.Pow(val, m_OutputGamma);
+                    val = NEMath.Pow(val, m_OutputGamma);
                     //val *= val;
                     NEColorSample sample;
                     if (m_Color)
