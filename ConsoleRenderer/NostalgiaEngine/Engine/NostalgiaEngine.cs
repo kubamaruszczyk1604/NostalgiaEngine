@@ -202,7 +202,7 @@ namespace NostalgiaEngine.Core
             Console.Clear();
             NEScreenBuffer.SetDefaultConsole();
             Console.WriteLine(PostMessage);
-            NEInput.BlockUntilKeyPress(NEKey.Enter);
+            //NEInput.BlockUntilKeyPress(NEKey.Enter);
         }
 
     }

@@ -214,8 +214,8 @@ namespace NostalgiaEngine.Core
         static public void SetDefaultConsole()
         {
             if (m_ConsoleDrawWorker != null) m_ConsoleDrawWorker.Abort();
-            Console.Clear();
-            Console.SetWindowSize(120, 30);
+             Console.Clear();
+
             FontInfoEx set = new FontInfoEx
             {
                 cbSize = Marshal.SizeOf<FontInfoEx>(),
@@ -229,7 +229,18 @@ namespace NostalgiaEngine.Core
             SetCurrentConsoleFontEx(m_ConsoleHandle.DangerousGetHandle(), false, ref set);
             Console.CursorVisible = true;
             Console.SetCursorPosition(0, 0);
-            Console.SetBufferSize(120, 30);
+            try
+            {
+                Console.SetWindowSize(Console.WindowLeft + 120, Console.WindowTop + 50);
+                Console.SetBufferSize(Console.WindowLeft + 120, Console.WindowTop + 50);
+
+
+            }
+            catch
+            {
+
+            }
+
         }
 
         static public void Reallign()

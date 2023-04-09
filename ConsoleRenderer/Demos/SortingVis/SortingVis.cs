@@ -37,6 +37,11 @@ namespace NostalgiaEngine.Demos
             {
                 m_Algorithm = new BubleSortVis(50, 50);
             }
+            if(NEInput.CheckKeyDown(ConsoleKey.Escape))
+            {
+                Exit();
+            }
+
             m_FrameTimeAcumulator = 0.0f;
             //NESoundSynth.PlayBeep((ushort)(200+m_Algorithm.SwappedIndex0 * 10), 100);
             Engine.Instance.TitleBarAppend = " |  BUBBLE SORT:   Steps = " + m_Algorithm.StepCount.ToString() + "  |";
