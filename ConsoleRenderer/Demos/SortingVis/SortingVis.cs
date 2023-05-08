@@ -10,7 +10,7 @@ namespace NostalgiaEngine.Demos
     class SortingVis: NEScene
     {
 
-        BubleSortVis m_Algorithm;
+        BubleSortAlgo m_Algorithm;
         readonly float c_TargetFrameDuration = 1.0f/90.0f;
         float m_FrameTimeAcumulator;
         public override bool OnLoad()
@@ -19,7 +19,7 @@ namespace NostalgiaEngine.Demos
             ScreenHeight = 60;
             PixelWidth = 20;
             PixelHeight = 8;
-            m_Algorithm = new BubleSortVis(50, 50);
+            m_Algorithm = new BubleSortAlgo(50, 50);
             m_FrameTimeAcumulator = 0.0f;
             return base.OnLoad();
         }
@@ -35,7 +35,7 @@ namespace NostalgiaEngine.Demos
             m_Algorithm.DoStep();
             if (NEInput.CheckKeyPress(ConsoleKey.Spacebar))
             {
-                m_Algorithm = new BubleSortVis(50, 50);
+                m_Algorithm = new BubleSortAlgo(50, 50);
             }
             if(NEInput.CheckKeyDown(ConsoleKey.Escape))
             {

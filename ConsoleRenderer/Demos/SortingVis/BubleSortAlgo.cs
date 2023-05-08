@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using NostalgiaEngine.Core;
 namespace NostalgiaEngine.Demos
 {
-    public class BubleSortVis
+    public class BubleSortAlgo
     {
         public int[] Data { get; private set; }
         public bool Done { get; private set; }
@@ -16,7 +16,7 @@ namespace NostalgiaEngine.Demos
         private int m_Index;
         private int m_SwapCount;
 
-        public BubleSortVis(int dataLen, int maxVal = 100)
+        public BubleSortAlgo(int dataLen, int maxVal = 100)
         {
             Data = new int[dataLen];
             for(int i = 0; i < Data.Length;++i)
