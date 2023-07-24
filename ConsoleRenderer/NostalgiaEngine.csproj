@@ -75,6 +75,7 @@
     <Compile Include="Demos\BandLevelsDemo\AnalogClock.cs" />
     <Compile Include="Demos\CoreFunctionalityDemos\ProceduralShooterDemo.cs" />
     <Compile Include="Demos\CoreFunctionalityDemos\ScreenNoiseDemo.cs" />
+    <Compile Include="Demos\Oscilloscope\Oscilloscope.cs" />
     <Compile Include="Demos\RasterizerDemos\NightGardenScene3D.cs" />
     <Compile Include="Demos\RasterizerDemos\RotatingCubeDemo.cs" />
     <Compile Include="Demos\RasterizerDemos\TeapotDemo.cs" />
