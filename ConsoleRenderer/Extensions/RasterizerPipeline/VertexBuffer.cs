@@ -36,7 +36,6 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         }
 
-
         public void PrepareForRender(Camera camera)
         {
             Mesh mesh = AssociatedModel.Mesh;
@@ -47,7 +46,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             for (int i = 0; i < mesh.Vertices.Count; ++i)
             {
                // ProcessedVertices.Add(mesh.Vertices[i].Duplicate());
-                ProcessedVertices.Add( m_VertexPool.Get(mesh.Vertices[i]));
+                ProcessedVertices.Add(m_VertexPool.RequestAndSet(mesh.Vertices[i]));
                 ProcessedVertices[i].Position = MVP * ProcessedVertices[i].Position;
                // ProcessedVertices[i].Vert2Camera = -ProcessedVertices[i].Position.Normalized;
 
@@ -103,7 +102,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         public Vertex RequestFromPool(Vertex setValue)
         {
-            return m_VertexPool.Get(setValue);
+            return m_VertexPool.RequestAndSet(setValue);
         }
 
         public Vertex RequestFromPool(ref NEVector4 setPosition, ref NEVector2 setUVs)
@@ -169,7 +168,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             TrianglesReadyToRender.Clear();
             ProcessedVertices.Clear();
             TempTriangleList.Clear();
-           m_VertexPool.ReturnAllToPool();
+            m_VertexPool.ReturnAllToPool();
             m_TrianglePool.ReturnAllToPool();
         }
     }

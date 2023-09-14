@@ -8,8 +8,6 @@ namespace NostalgiaEngine.RasterizerPipeline
 {
     public class Scene3D : NEScene
     {
-
-        
         private NEDepthBuffer m_DepthBuffer;
         private List<NELight> m_Lights;
 
@@ -22,7 +20,6 @@ namespace NostalgiaEngine.RasterizerPipeline
         private float m_ScrHeightReciprocal;
         private float m_ScrWidthReciprocal;
 
-
         protected Skybox SceneSkybox { get; set; }
         protected Camera MainCamera { get;  set; }
         protected List<Model> Models;
@@ -34,7 +31,6 @@ namespace NostalgiaEngine.RasterizerPipeline
             get { return m_HeadlampIntensity; }
             set { m_HeadlampIntensity = NEMath.Clamp(value, 0.0f, 1.0f); }
         }
-
 
         protected NEVector4 GlobalLightDirection { get; set; }
 
@@ -66,8 +62,6 @@ namespace NostalgiaEngine.RasterizerPipeline
             m_ScrWidthReciprocal = 1.0f / ScreenWidth;
             return base.OnLoad();
         }
-
-
 
         public override void OnInitializeSuccess()
         {
@@ -122,7 +116,6 @@ namespace NostalgiaEngine.RasterizerPipeline
 
             if (m_DrawPaletteFlag)
             {
-
                 NEDebug.DrawPalette(ScreenWidth, ScreenHeight);
             }
             test = !test;
@@ -134,10 +127,8 @@ namespace NostalgiaEngine.RasterizerPipeline
             base.OnExit();
         }
 
-
         protected virtual NEColorSample OnSkyboxSample(NEVector4 direction, float sampledValue)
         {
-
             return  NEColorSample.MakeCol((ConsoleColor)0, (ConsoleColor)6, sampledValue, NECHAR_RAMPS.CHAR_RAMP_FULL);
         }
        
@@ -150,7 +141,6 @@ namespace NostalgiaEngine.RasterizerPipeline
         {
             m_DrawPaletteFlag = show;
         }
-
 
         public void ToggleShowClipping()
         {
@@ -209,15 +199,13 @@ namespace NostalgiaEngine.RasterizerPipeline
             }
         }
 
-  
-
         private void ProcessModel(float dt, Model model)
         {
 
             model.Transform.CalculateWorld();
             
 
-            NEMatrix4x4 MVP = MainCamera.Projection * MainCamera.View * model.Transform.World;
+           // NEMatrix4x4 MVP = MainCamera.Projection * MainCamera.View * model.Transform.World;
 
 
             model.VBO.PrepareForRender(MainCamera);
@@ -225,7 +213,6 @@ namespace NostalgiaEngine.RasterizerPipeline
 
 
         }
-
 
         private void RenderModel(int x, float u, Model model)
         {
@@ -246,7 +233,6 @@ namespace NostalgiaEngine.RasterizerPipeline
 
                 directionalLightsSum = NEMath.Clamp(directionalLightsSum, 0.0f, 1.0f);
                
-
                 ScanlineIntersectionManifest manifest;
                 tr.ComputeScanlineIntersection(u, out manifest);
 
@@ -294,12 +280,9 @@ namespace NostalgiaEngine.RasterizerPipeline
 
                     if (m_DepthBuffer.TryUpdate(x, fillStart + y, fragmentDepth))
                     {
-
-
                         // float dot = NEVector4.Dot3(tr.TransformedNormal, vDir);
                         float v = (float)(fillStart + y) *m_ScrHeightReciprocal;
                         v = -((2.0f * v) - 1.0f);
-
 
                         //float dotHeadlamp = NEVector4.Dot3(tr.NormalView, new NEVector4(u, v, -1.0f).Normalized);
                         float dotHeadlamp = 0;
@@ -316,10 +299,6 @@ namespace NostalgiaEngine.RasterizerPipeline
                         float fragWBottom = (1.0f - manifest.bottom_t) * manifest.bottom_P0.W + manifest.bottom_t * manifest.bottom_P1.W;
                         float fragWTop = (1.0f - manifest.top_t) * manifest.top_P0.W + manifest.top_t * manifest.top_P1.W;
                         float fragW = (1.0f - t) * fragWTop + t * fragWBottom;
-
-
-
-
 
                         float global =  directionalLightsSum;
                         float headlamp = NEMath.Clamp(49.0f * fragW * fragW, 0.0f, 1.0f) * dotHeadlamp;

@@ -15,7 +15,7 @@ namespace NostalgiaEngine.RasterizerPipeline
         public RejectCriteria RejectCriteria { get; }
         public Axis Axis { get; }
 
-       private ClipPlane(Axis axis,  RejectCriteria comparison)
+       private ClipPlane(Axis axis, RejectCriteria comparison)
         {
             Axis = axis;
             RejectCriteria = comparison;

@@ -29,7 +29,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             }
         }
 
-        public Vertex Get(Vertex data)
+        public Vertex RequestAndSet(Vertex data)
         {
             if (m_StackPtr > m_Vertices.Count - 20)
             {

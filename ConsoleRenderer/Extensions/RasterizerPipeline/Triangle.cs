@@ -146,10 +146,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 
             BC = new NEEdge();
             NEMath.Find2DLineEquation(B.Position.XY, C.Position.XY, out BC.a, out BC.c);
-
-
         }
-
 
         public bool IsColScanlineInTriangle(float x)
         {
@@ -168,7 +165,6 @@ namespace NostalgiaEngine.RasterizerPipeline
             }
             else
             {
-
                 y0 = BC.a * x + BC.c;
                 y1 = AC.a * x + AC.c;
             }
