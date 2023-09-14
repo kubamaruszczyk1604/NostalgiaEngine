@@ -20,7 +20,6 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         public void Allocate(int count)
         {
-
             for (int i = 0; i < count; ++i)
             {
                 m_Triangles.Add(new Triangle());

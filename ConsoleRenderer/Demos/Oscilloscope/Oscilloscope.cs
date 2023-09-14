@@ -48,9 +48,9 @@ namespace NostalgiaEngine.Demos
             m_Data = new ConcurrentQueue<SignalData>();
 
             NEColorPalette pal = new NEColorPalette(NEColorPalette.NostalgiaPalette);
-            pal.SetColor(10, new NEConsoleColorDef(64, 255, 108));
-            pal.SetColor(0, new NEConsoleColorDef(0, 15, 2));
-            pal.SetColor(2, new NEConsoleColorDef(0, 0, 10));
+            pal.SetColor(10, new NEConsoleColorDef(64, 255, 168));
+            pal.SetColor(0, new NEConsoleColorDef(0, 25, 22));
+            pal.SetColor(2, new NEConsoleColorDef(0, 0, 0));
             NEColorManagement.SetPalette(pal);
             return base.OnLoad();
         }
@@ -199,11 +199,11 @@ namespace NostalgiaEngine.Demos
         float t0 = 0.0f;
         public override void OnUpdate(float deltaTime)
         {
-            float py = 0.2f;
-            //lock (obj)
+            float py = 0.18f;
+            float t = 0.0f;
+            if (!NEInput.CheckKeyDown(ConsoleKey.Spacebar))
             {
-                float t = 0.0f;
-                
+               
                 if (Engine.Instance.TotalTime > 0.2f)
                 {
                     t = LetterOCap(-0.8f, py, t0 + deltaTime);
@@ -252,7 +252,7 @@ namespace NostalgiaEngine.Demos
                 }
                 if (Engine.Instance.TotalTime > 2.1f)
                 {
-
+         
                     t = LetterP(0.6f, py, t);
                     t = LetterE(0.78f, py, t);
                 }
@@ -263,20 +263,26 @@ namespace NostalgiaEngine.Demos
                     {
                         float tr = Engine.Instance.TotalTime + 0.001f * i;
                         SignalX = NEMath.Cos(tr * 1.0f);
-                        SignalY =-0.5f+ NEMath.Sin(tr * 10f)*0.5f;
+                        SignalY =-0.5f+ NEMath.Sin(tr * 10f)*0.3f;
                         SignalData d = new SignalData();
                         d.Set(SignalX, SignalY);
                         m_Data.Enqueue(d);
                     }
                 }
-                t0 = t;
+              
 
             }
-
-
-
-
-           // lock (obj)
+            else
+            {
+                for (int i = 0; i < 100; ++i)
+                {
+                    SignalData d = new SignalData();
+                    d.Set(0.0f, 0.0f);
+                    m_Data.Enqueue(d);
+                }
+            }
+            t0 = t;
+            lock (obj)
             {
                 while (m_Data.Count > 4000)
                 {
@@ -289,15 +295,15 @@ namespace NostalgiaEngine.Demos
 
 
             NEScreenBuffer.Clear();
-            for (int x = 0; x < ScreenWidth; ++x)
+            for (int x = 1; x < ScreenWidth; ++x)
             {
 
-                for (int y = 0; y < ScreenHeight; ++y)
+                for (int y = 1; y < ScreenHeight; ++y)
                 {
-                    if (x % 12 == 0 || y % 12 == 0)
+                    if (x % 10 == 0 || y % 10 == 0)
                     {
-                        NEColorSample sample = NEColorSample.MakeCol(0, (ConsoleColor)2, 0.99999f, NECHAR_RAMPS.CHAR_RAMP_FULL_EXT);
-                        NEScreenBuffer.PutChar(sample.Character, sample.BitMask, x, y);
+                        
+                        NEScreenBuffer.PutChar('#', 2, x-1, y-1);
                     }
                 }
             }
@@ -306,19 +312,7 @@ namespace NostalgiaEngine.Demos
         public override void OnDrawPerColumn(int x)
         {
             base.OnDrawPerColumn(x);
-            //if (x % 12 == 0)
-            //{
-            //    for (int y = 0; y < ScreenHeight; ++y)
-            //    {
-            //        NEColorSample sample = NEColorSample.MakeCol(0, (ConsoleColor)2, 0.9f, NECHAR_RAMPS.CHAR_RAMP_FULL_EXT);
-            //        NEScreenBuffer.PutChar(sample.Character, sample.BitMask, x, y);
-            //        if (y % 12 == 0)
-            //        {
-            //            NEScreenBuffer.PutChar(sample.Character, sample.BitMask, x, y);
-            //        }
-            //    }
 
-            //}
             int cnt = m_Data.Count;
             int span = cnt / ScreenWidth;
             int start = x * span;
@@ -338,9 +332,6 @@ namespace NostalgiaEngine.Demos
 
         public override bool OnDraw()
         {
-
-
-
             return true;
         }
     }

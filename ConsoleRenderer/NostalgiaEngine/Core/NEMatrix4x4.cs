@@ -26,9 +26,6 @@ namespace NostalgiaEngine.Core
                                     { mat.m_Data[3,0],  mat.m_Data[3,1], mat.m_Data[3,2], mat.m_Data[3,3]}};
         }
 
-
-
-
         public override string ToString()
         {
             string ret = "";
@@ -41,8 +38,6 @@ namespace NostalgiaEngine.Core
 
             return ret;
         }
-
-
 
         static public bool Compare(NEMatrix4x4 lhs, NEMatrix4x4 rhs)
         {
@@ -213,6 +208,8 @@ namespace NostalgiaEngine.Core
                                         { 0.0f, 0.0f, xyz.Z, 0 },
                                         { 0.0f, 0.0f, 0.0f, 1.0f }};
             return mat;
+
+
         }
 
         public static NEMatrix4x4 CreateScale(float x, float y, float z)

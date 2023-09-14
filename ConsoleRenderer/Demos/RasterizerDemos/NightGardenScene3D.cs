@@ -15,6 +15,11 @@ namespace NostalgiaEngine.Demos
             PixelWidth = 4;
             PixelHeight = 4;
 
+            //ScreenWidth = 240;
+            //ScreenHeight = 80;
+            //PixelWidth = 4;
+            //PixelHeight =8;
+
 
             SceneSkybox = new Skybox("RasterizerDemoResources/skybox1");
             Mesh floorMesh = GeometryGenerator.CreateHorizontalQuad(15.0f, 15.0f, new NEVector4(0.0f, 0.0f, 0.0f), 7);
