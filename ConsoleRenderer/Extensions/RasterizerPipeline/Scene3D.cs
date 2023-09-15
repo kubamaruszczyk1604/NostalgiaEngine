@@ -92,12 +92,11 @@ namespace NostalgiaEngine.RasterizerPipeline
             {
                 ProcessModel(deltaTime, Models[i]);
             }
-
         }
 
         public override void OnDrawPerColumn(int x)
         {
-            float xNorm = ((float)x) *m_ScrWidthReciprocal;
+            float xNorm = ((float)x) * m_ScrWidthReciprocal;
             float u = 2.0f * xNorm - 1.0f;
 
 
@@ -195,28 +194,19 @@ namespace NostalgiaEngine.RasterizerPipeline
                     var col = OnSkyboxSample(sampleDir, luma); 
                     NEScreenBuffer.PutChar(col.Character, col.BitMask, x, y);
                 }
-
             }
         }
 
         private void ProcessModel(float dt, Model model)
         {
-
             model.Transform.CalculateWorld();
-            
-
            // NEMatrix4x4 MVP = MainCamera.Projection * MainCamera.View * model.Transform.World;
-
-
             model.VBO.PrepareForRender(MainCamera);
             m_RenderedTriangleCount += model.VBO.TrianglesReadyToRender.Count;
-
-
         }
 
         private void RenderModel(int x, float u, Model model)
-        {
-            
+        {        
             VertexBuffer m_VBO = model.VBO;
             for (int i = 0; i < m_VBO.TrianglesReadyToRender.Count; ++i)
             {
@@ -321,18 +311,13 @@ namespace NostalgiaEngine.RasterizerPipeline
 
                         int fullCol = (model.Color == -1) ? tr.ColorAttrib : model.Color;
                         int lowCol =  model.UnlitColor;
-                         var col = NEColorSample.MakeCol((ConsoleColor)lowCol, (ConsoleColor)fullCol, diffuse, NECHAR_RAMPS.CHAR_RAMP_FULL);
+                        var col = NEColorSample.MakeCol((ConsoleColor)lowCol, (ConsoleColor)fullCol, diffuse, NECHAR_RAMPS.CHAR_RAMP_FULL);
                         //var col = NEColorSample.MakeCol10((ConsoleColor)0, (ConsoleColor)14, 1.0f-NEMathHelper.Pow(fragmentDepth,20));
                         //var col = m_Texture.Sample(teX, 1.0f - teY, dot);
                         NEScreenBuffer.PutChar(col.Character, col.BitMask, x, fillStart + y);
                     }
-
                 }
             }
-
         }
-
-
-
     }
 }

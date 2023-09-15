@@ -15,10 +15,10 @@ namespace NostalgiaEngine.Demos
             PixelWidth = 4;
             PixelHeight = 4;
 
-            //ScreenWidth = 240;
+            //ScreenWidth = 110;
             //ScreenHeight = 80;
-            //PixelWidth = 4;
-            //PixelHeight =8;
+            //PixelWidth = 8;
+            //PixelHeight = 8;
 
 
             SceneSkybox = new Skybox("RasterizerDemoResources/skybox1");
@@ -44,7 +44,6 @@ namespace NostalgiaEngine.Demos
             
             Models.Add(floorModel);
             Models.Add(bunnyModel);
-            
 
 
             MakeTree(new NEVector4(-3.2f, 0.0f, 1.0f), cubeMesh, treeTexture);
@@ -69,7 +68,7 @@ namespace NostalgiaEngine.Demos
             MakeWall(new NEVector4(10.3f, 0.0f, -4.8f, 1.0f), cubeMesh, wallTexture, 1.0f, 3.14f * 0.5f);
 
 
-            MakePlatform(new NEVector4(0.0f,2.0f,-16.0f), cubeMesh, wallTexture,treeTexture);
+            MakePlatform(new NEVector4(0.0f,2.0f,-16.0f), cubeMesh, wallTexture, treeTexture);
             MakePlatform(new NEVector4(2.0f, 2.0f, -16.0f), cubeMesh, wallTexture, treeTexture);
 
             MainCamera.Transform.LocalPosition = new NEVector4(0.0f, 1.9f, -5.3f);
@@ -295,8 +294,6 @@ namespace NostalgiaEngine.Demos
             topdModel.Color = 7;
             topdModel.UnlitColor = 10;
             Models.Add(topdModel);
-
-
         }
     }
 }

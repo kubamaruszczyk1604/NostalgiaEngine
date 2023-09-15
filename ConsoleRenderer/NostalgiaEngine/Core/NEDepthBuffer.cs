@@ -30,12 +30,12 @@ namespace NostalgiaEngine.Core
 
         public float Sample(int x, int y)
         {
-            return DATA[XY2I(x, y)];
+            return DATA[Width * y + x];
         }
 
         public bool TestLess(int x, int y, float val)
         {
-            int i = XY2I(x, y);
+            int i = Width * y + x;
             if (val <= DATA[i]) return true;
             return false;
         }
@@ -69,7 +69,7 @@ namespace NostalgiaEngine.Core
         /// <param name="y">Fragment coord Y</param>
         public void ResetFragment(int x, int y)
         {
-            DATA[XY2I(x, y)] = m_InitialVal;
+            DATA[Width * y + x] = m_InitialVal;
         }
 
         /// <summary>
@@ -80,7 +80,7 @@ namespace NostalgiaEngine.Core
         /// <param name="val">Default  value</param>
         public void ResetFragment(int x, int y, float val)
         {
-            DATA[XY2I(x, y)] = val;
+            DATA[Width * y + x] = val;
         }
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace NostalgiaEngine.Core
         /// <returns>true if the buffer was updated, false otherwise</returns>
         public bool TryUpdate(int x, int y, float val, NEDepthCmpFunc cmpFunc)
         {
-            int i = XY2I(x, y);
+            int i = Width * y + x;
             if (cmpFunc(val,DATA[i]))
             {
                 DATA[i] = val;
@@ -111,7 +111,7 @@ namespace NostalgiaEngine.Core
         /// <returns>true if buffer was updated, false otherwise</returns>
         public bool TryUpdate(int x, int y, float val)
         {
-            int i = XY2I(x, y);
+            int i = Width * y + x;//  XY2I(x, y);
             if (val <= DATA[i])
             {
                 DATA[i] = val;
@@ -120,9 +120,9 @@ namespace NostalgiaEngine.Core
             return false;
         }
 
-        private int XY2I(int x, int y)
-        {
-            return (Width * y + x);
-        }
+        //private int XY2I(int x, int y)
+        //{
+        //    return (Width * y + x);
+        //}
     }
 }

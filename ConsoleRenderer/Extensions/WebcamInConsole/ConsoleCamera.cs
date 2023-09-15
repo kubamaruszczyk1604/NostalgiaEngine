@@ -59,6 +59,7 @@ namespace NostalgiaEngine.Extensions
             PixelHeight = m_PixH;
 
             NEColorPalette palette = NEColorPalette.FromFile("C:/Users/Kuba/Desktop/palettes/hsvmod_pal.txt");
+            if (palette == null) return false;
 
             m_ColorPairs = ColorPair.GenerateColorPairs(palette);
             m_CamCapture = new CameraCapture();
