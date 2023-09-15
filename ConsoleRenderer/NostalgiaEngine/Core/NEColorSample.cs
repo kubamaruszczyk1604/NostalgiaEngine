@@ -136,9 +136,6 @@ namespace NostalgiaEngine.Core
 
             NEColorSample sample = new NEColorSample();
             sample.BitMask = (short)((int)col1 << 4 | ((int)col2));
-
-
-
             sample.Character = (char)charRamp[index];
 
             return sample;

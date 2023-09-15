@@ -55,38 +55,52 @@ namespace NostalgiaEngine.RasterizerPipeline
             m_UVs = v.UV;
         }
 
+        //public void ZDivide()
+        //{
+        //    if (m_ZDividedFlag) return;
+
+        //    m_ZDividedFlag = true;
+        //    float posDiv = m_Position.W /*<= 0.0f ? 0.001f : m_Position.W*/;
+        //    float signZ = Math.Sign(m_Position.W);
+        //    m_Position.X /= posDiv;
+        //    m_Position.Y /= posDiv;
+        //    m_Position.Z /= posDiv;
+        //    //m_Position.Z *= signZ;
+        //    m_UVs.X /= posDiv;
+        //    m_UVs.Y /= posDiv;
+        //    m_Position.W = 1.0f / posDiv;
+        //}
+
+
         public void ZDivide()
         {
             if (m_ZDividedFlag) return;
 
-            m_ZDividedFlag = true; 
-            float posDiv = m_Position.W /*<= 0.0f ? 0.001f : m_Position.W*/;
-            float signZ = Math.Sign(m_Position.W);
-            m_Position.X /= posDiv;
-            m_Position.Y /= posDiv;
-            m_Position.Z /= posDiv;
-            //m_Position.Z *= signZ;
-            m_UVs.X /= posDiv;
-            m_UVs.Y /= posDiv;
-            m_Position.W = 1.0f / posDiv;
+            m_ZDividedFlag = true;
+            float posDiv = 1.0f / m_Position.W /*<= 0.0f ? 0.001f : m_Position.W*/;
+            m_Position.X *= posDiv;
+            m_Position.Y *= posDiv;
+            m_Position.Z *= posDiv;
+            m_UVs.X *= posDiv;
+            m_UVs.Y *= posDiv;
+            m_Position.W = posDiv;
         }
 
 
+        //static public Vertex Lerp(Vertex v0, Vertex v1, float t)
+        //{
+        //    NEVector4 pos = NEVector4.Lerp(v0.Position, v1.Position, t);
+        //    NEVector2 uvs = NEVector2.Lerp(v0.m_UVs, v1.m_UVs,t);
+        //    NEVector4 vertToCam = NEVector4.Lerp(v0.Vert2Camera, v1.Vert2Camera, t);
 
-        static public Vertex Lerp(Vertex v0, Vertex v1, float t)
-        {
-            NEVector4 pos = NEVector4.Lerp(v0.Position, v1.Position, t);
-            NEVector2 uvs = NEVector2.Lerp(v0.m_UVs, v1.m_UVs,t);
-            NEVector4 vertToCam = NEVector4.Lerp(v0.Vert2Camera, v1.Vert2Camera, t);
 
+        //    Vertex ret = new Vertex(0, 0, 0);
+        //    ret.m_Position = pos;
+        //    ret.m_UVs = uvs;
 
-            Vertex ret = new Vertex(0, 0, 0);
-            ret.m_Position = pos;
-            ret.m_UVs = uvs;
-
-            ret.Vert2Camera = vertToCam;
-            return ret;
-        }
+        //    ret.Vert2Camera = vertToCam;
+        //    return ret;
+        //}
 
 
         static public Vertex Lerp(Vertex v0, Vertex v1, float t, VertexBuffer vbo)

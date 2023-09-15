@@ -43,7 +43,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             return mesh;
         }
 
-        public static  Mesh GenerateCube(float width, float height, float length, NEVector4 orgin, int col)
+        public static Mesh GenerateCube(float width, float height, float length, NEVector4 orgin, int col)
         {
             Mesh mesh = new Mesh();
             float x = orgin.X;
