@@ -50,7 +50,6 @@ namespace NostalgiaEngine.RasterizerPipeline
             return ret;
         }
 
-
         public void ReturnAllToPool()
         {
             m_StackPtr = 0;

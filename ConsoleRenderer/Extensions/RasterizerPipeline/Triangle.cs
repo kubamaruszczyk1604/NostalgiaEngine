@@ -33,8 +33,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             ParentMesh = mesh;
             Indices = new int[] { i0, i1, i2 };
             LeftSortedIndices = new int[3];
-            CalculateNormal();
-           
+            CalculateNormal();      
         }
 
         public Triangle()
@@ -42,7 +41,6 @@ namespace NostalgiaEngine.RasterizerPipeline
             //ParentMesh = mesh;
             Indices = new int[3];
             LeftSortedIndices = new int[3];
-
         }
 
         public Triangle(int i0, int i1, int i2, VertexBuffer vbo, NEVector4 normal, NEVector4 transformedNormal, NEVector4 normalWorld)
@@ -97,7 +95,6 @@ namespace NostalgiaEngine.RasterizerPipeline
             NormalView = triangle.NormalView;
             NormalWorld = triangle.NormalWorld;
             ColorAttrib = triangle.ColorAttrib;
-
         }
 
         public void Set(int i0, int i1, int i2, VertexBuffer vbo, NEVector4 normal, NEVector4 normalView, NEVector4 normalWorld)
@@ -120,8 +117,6 @@ namespace NostalgiaEngine.RasterizerPipeline
             VBO.ProcessedVertices[Indices[1]].ZDivide();
             VBO.ProcessedVertices[Indices[2]].ZDivide();
         }
-
-
 
         //public void DoLeftSort()
         //{
@@ -168,10 +163,7 @@ namespace NostalgiaEngine.RasterizerPipeline
                 y0 = BC.a * x + BC.c;
                 y1 = AC.a * x + AC.c;
             }
-
         }
-
-
 
         public void ComputeScanlineIntersection(float x, out ScanlineIntersectionManifest manifest)
         {
@@ -183,7 +175,6 @@ namespace NostalgiaEngine.RasterizerPipeline
             float denCA = (C.X - A.X);
             denCA = NEMath.Abs(denCA) >= 0.01f ? denCA : 0.01f;
             float t_AC = (x - A.X) / denCA;
-
 
             float t_Other = 0.0f;
 
@@ -223,7 +214,6 @@ namespace NostalgiaEngine.RasterizerPipeline
                 manifest.bottom_P0 = otherP0;
                 manifest.bottom_P1 = otherP1;
 
-
             }
             else
             {
@@ -236,7 +226,6 @@ namespace NostalgiaEngine.RasterizerPipeline
                 manifest.bottom_P0 = A;
                 manifest.bottom_P1 = C;
             }
-
         }
 
         private void SortX(out int left, out int middle, out int right)
@@ -260,11 +249,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             {
                 SwapInt(ref left, ref middle);
             }
-
         }
-
-
-
 
         private void SwapInt(ref int a, ref int b)
         {
@@ -284,16 +269,12 @@ namespace NostalgiaEngine.RasterizerPipeline
             NormalModel = new NEVector4(x, y, z,0.0f).Normalized;
         }
 
-
-
     }
 
     public class NEEdge
     {
         public float a; //gradient
         public float c; //intercept
-
-
     }
 
     public struct ScanlineIntersectionManifest

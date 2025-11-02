@@ -25,7 +25,7 @@ namespace NostalgiaEngine.Extensions
             CI1 = ci1;
             Palette = palette;
 
-            NEConsoleColorDef c0 = Palette.GetColor(CI0);
+            NEConsoleColorDef c0 = Palette.GetColor(CI0);   
             NEConsoleColorDef c1 = Palette.GetColor(CI1);
 
             col0 = new NEVector4(c0.RNormalized, c0.GNormalized, c0.BNormalized, 0.0f);

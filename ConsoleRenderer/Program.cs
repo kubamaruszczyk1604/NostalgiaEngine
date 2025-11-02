@@ -76,7 +76,7 @@ namespace NostalgiaEngineApplication
         }
 
         static void ShooterDemo(Engine engine)
-        {
+        { 
             ProceduralShooterDemo pcs = new ProceduralShooterDemo();
             engine.Start(pcs);
         }
@@ -104,7 +104,7 @@ namespace NostalgiaEngineApplication
 
             Engine engine = new Engine();
             //TextureEditorDemo(engine);
-            // RaycasterDemo(engine);
+            //RaycasterDemo(engine);
 
             //ImageViewerDemo(engine);
             //AnalogClockDemo(engine);
@@ -113,11 +113,11 @@ namespace NostalgiaEngineApplication
             //NoiseDemo(engine);
             //CubeDemo(engine);
             //TeapotDemo(engine);
-             NightGardenDemo(engine);
+            NightGardenDemo(engine);
             //SortingDemo(engine);
             //ShooterDemo(engine);
 
-            // ConsoleCameraDemo(engine, 150, 50, 8, 16);
+            //ConsoleCameraDemo(engine, 150, 50, 8, 16);
             //ConsoleCameraDemo(engine, 190, 50, 8, 16);
             //ConsoleCameraDemo(engine, 220, 140, 4, 4);
 

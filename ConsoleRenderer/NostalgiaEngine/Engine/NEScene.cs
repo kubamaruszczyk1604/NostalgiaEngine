@@ -19,9 +19,6 @@ namespace NostalgiaEngine.Core
         public Type ReturnDataType { get; private set; }
         public OnSceneExit onSceneExit { get; set; }
 
-        
-
-
         public void Exit(object returnData = null)
         {
             NEInput.FlushKeyboard();
@@ -34,6 +31,7 @@ namespace NostalgiaEngine.Core
             onSceneExit?.Invoke(this);
             onSceneExit = null;
         }
+
         public virtual bool OnLoad() { NEInput.FlushKeyboard(); return true; }
         public virtual void OnInitializeSuccess() { NEInput.FlushKeyboard(); }
         public virtual void OnPause() { NEInput.FlushKeyboard(); }

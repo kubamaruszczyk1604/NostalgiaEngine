@@ -85,7 +85,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             m_DepthBuffer.Clear();
             MainCamera.UpdateTransform();
             if (SceneSkybox == null) SceneSkybox = new Skybox();
-            float yDisp = (float)Math.Sin(Engine.Instance.TotalTime);
+            //float yDisp = (float)Math.Sin(Engine.Instance.TotalTime);
             Engine.Instance.TitleBarAppend = "Rendered Triangles: " + m_RenderedTriangleCount.ToString();
             m_RenderedTriangleCount = 0;
             for (int i = 0; i < Models.Count; ++i)
