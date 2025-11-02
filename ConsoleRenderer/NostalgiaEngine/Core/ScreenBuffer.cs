@@ -94,6 +94,7 @@ namespace NostalgiaEngine.Core
         static public bool Initialize(short width, short height, short pixelW, short pixelH, bool renderOnSeparateThread = true)
         {
             m_MultiThreadEnabled = renderOnSeparateThread;
+
             if (m_ConsoleDrawWorker != null) m_ConsoleDrawWorker.Abort();
 
             m_sWidth = width;
@@ -103,13 +104,14 @@ namespace NostalgiaEngine.Core
             m_ConsoleHandle = CreateFile("CONOUT$", 0x40000000, 2, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero);
             if (m_ConsoleHandle.IsInvalid) return false;
 
-
             if (m_FirstRun)
             {
                 m_InitialW = Console.WindowWidth;
                 m_InitialH = Console.WindowHeight;
             }
+
             m_FirstRun = false;
+
             try
             {
                 FontInfoEx set = new FontInfoEx
@@ -131,6 +133,7 @@ namespace NostalgiaEngine.Core
                 SetDefaultConsole();
                 return false;
             }
+
             m_Bufer = new List<CharInfo[]>(2);
             m_Bufer.Add(new CharInfo[width * height]);
             m_Bufer.Add(new CharInfo[width * height]);
@@ -138,8 +141,10 @@ namespace NostalgiaEngine.Core
 
             Console.CursorVisible = false;
             Console.Clear();
+
             m_WriteBufferPtr = 0;
             m_DrawBufferPtr = 0;
+
             if (m_MultiThreadEnabled)
             {
                 m_ConsoleDrawWorker = new Thread(new ThreadStart(SwapWorker));
@@ -169,6 +174,7 @@ namespace NostalgiaEngine.Core
             for (int i = 0; i < line.Length; ++i)
             {
                 int putX = x + i;
+
                 if (putX < m_sWidth)
                 {
                     PutChar(line[i], col, putX, y);
@@ -184,6 +190,7 @@ namespace NostalgiaEngine.Core
         static public void ClearColor(int col)
         {
             int len = m_sWidth * m_sHeight;
+
             for (int i = 0; i < len; ++i)
             {
                 m_Bufer[m_WriteBufferPtr][i].Attributes = (short)(col << 4);
@@ -226,15 +233,15 @@ namespace NostalgiaEngine.Core
                 FontSize = 16,
                 FontWidth = 8
             };
+
             SetCurrentConsoleFontEx(m_ConsoleHandle.DangerousGetHandle(), false, ref set);
             Console.CursorVisible = true;
             Console.SetCursorPosition(0, 0);
+
             try
             {
                 Console.SetWindowSize(Console.WindowLeft + 120, Console.WindowTop + 50);
                 Console.SetBufferSize(Console.WindowLeft + 120, Console.WindowTop + 50);
-
-
             }
             catch
             {
@@ -261,11 +268,4 @@ namespace NostalgiaEngine.Core
             }
         }
     }
-
-
-
-   
-
-
-
 }
