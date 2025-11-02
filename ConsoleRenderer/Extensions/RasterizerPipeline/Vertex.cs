@@ -11,7 +11,6 @@ namespace NostalgiaEngine.RasterizerPipeline
         public NEVector4 Position { get { return m_Position; } set { m_Position = value; } }
         public NEVector2 UV { get { return m_UVs; }  set { m_UVs = value; } }
 
-
         public float X { get { return m_Position.X; } }
         public float Y { get { return m_Position.Y; } }
         public float Z { get { return m_Position.Z; } }

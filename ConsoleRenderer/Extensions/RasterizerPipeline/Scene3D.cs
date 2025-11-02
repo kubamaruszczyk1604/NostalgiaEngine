@@ -33,8 +33,7 @@ namespace NostalgiaEngine.RasterizerPipeline
         }
 
         protected NEVector4 GlobalLightDirection { get; set; }
-
-        
+   
         public Scene3D():base()
         {
             ScreenWidth = 320;
@@ -88,6 +87,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             //float yDisp = (float)Math.Sin(Engine.Instance.TotalTime);
             Engine.Instance.TitleBarAppend = "Rendered Triangles: " + m_RenderedTriangleCount.ToString();
             m_RenderedTriangleCount = 0;
+
             for (int i = 0; i < Models.Count; ++i)
             {
                 ProcessModel(deltaTime, Models[i]);
@@ -108,16 +108,13 @@ namespace NostalgiaEngine.RasterizerPipeline
             base.OnDrawPerColumn(x);
         }
 
-
-        bool test = true;
         public override bool OnDraw()
         {
-
             if (m_DrawPaletteFlag)
             {
                 NEDebug.DrawPalette(ScreenWidth, ScreenHeight);
             }
-            test = !test;
+
             return base.OnDraw();
         }
 
@@ -236,7 +233,6 @@ namespace NostalgiaEngine.RasterizerPipeline
                 //normalised span of rendered line segment
                 float distance = y1 - y0;
 
-
                 float y0clamped = NEMath.Clamp(y0, 0, 1.0f);
                 float y1clamped = NEMath.Clamp(y1, 0, 1.0f);
                 float distanceClamped = y1clamped - y0clamped;
@@ -256,7 +252,6 @@ namespace NostalgiaEngine.RasterizerPipeline
 
                 for (int y = 0; y < span; ++y)
                 {
-
                     float t = ((float)y * spanReciprocal );// * coeff + tOffset;
 
                     float depthBottom = (1.0f - manifest.bottom_t) * manifest.bottom_P0.Z + manifest.bottom_t * manifest.bottom_P1.Z;

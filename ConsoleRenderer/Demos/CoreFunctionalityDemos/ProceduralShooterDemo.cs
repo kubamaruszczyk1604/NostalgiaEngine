@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NostalgiaEngine.Core;
+
 namespace NostalgiaEngine.Demos
 {
     class ProceduralShooterDemo: NEScene
@@ -44,6 +42,7 @@ namespace NostalgiaEngine.Demos
                     toRemove.Add(p);
                 }
             }
+
             //Yes, there are more efficient ways to deal with inactive projectiles, like object pooling, etc
             //but this is sufficient for this demo
             foreach (NEStaticSpriteLuma p in toRemove)
@@ -133,14 +132,14 @@ namespace NostalgiaEngine.Demos
                     }
                 }
             }
-                base.OnDrawPerColumn(x);
+
+            base.OnDrawPerColumn(x);
         }
 
         public override bool OnDraw()
         {
             return base.OnDraw();
         }
-
 
         public float Terrain(float x, float h)
         {

@@ -293,7 +293,6 @@ namespace NostalgiaEngine.Demos
                 }
             }
 
-
             NEScreenBuffer.Clear();
             for (int x = 1; x < ScreenWidth; ++x)
             {
