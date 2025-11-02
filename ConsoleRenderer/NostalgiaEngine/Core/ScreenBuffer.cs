@@ -27,7 +27,6 @@ namespace NostalgiaEngine.Core
           NEPoint dwBufferCoord,
           ref NERect lpWriteRegion);
 
-
         [DllImport("kernel32.dll", SetLastError = true)]
         internal static extern IntPtr GetStdHandle(int nStdHandle);
 
@@ -71,15 +70,18 @@ namespace NostalgiaEngine.Core
             public string FontName;
         }
 
-
         static private readonly object LOCK = new object();
         static private SafeFileHandle m_ConsoleHandle;
+
         static private int m_sWidth;
         static private int m_sHeight;
+
         static private List<CharInfo[]> m_Bufer;
+
         static private NERect m_ConsoleRect;
         static private NEPoint m_ScrTopLeft;
         static private NEPoint m_ScrBottomRight;
+
         static private int m_WriteBufferPtr;
         static private int m_DrawBufferPtr;
         static private bool m_MultiThreadEnabled;
@@ -216,7 +218,6 @@ namespace NostalgiaEngine.Core
                 }
             }
         }
-
 
         static public void SetDefaultConsole()
         {
