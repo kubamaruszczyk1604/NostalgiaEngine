@@ -2,6 +2,7 @@
 using System.IO;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Collections.Generic;
 namespace NostalgiaEngine.Core
@@ -157,21 +158,36 @@ namespace NostalgiaEngine.Core
             return true;
         }
 
-        static public void PutChar(char c, short color, int x, int y)
-        {
+        //static public void PutChar(char c, short color, int x, int y)
+        //{
 
-            int index = m_sWidth * (y) + x;
-            if (index >= m_Bufer[m_WriteBufferPtr].Length)
-            {
-                index = 0;
-                //throw new Exception("DLUGOSC JEST: " + index.ToString());
-            }
-            m_Bufer[m_WriteBufferPtr][index].Attributes = color;
-            m_Bufer[m_WriteBufferPtr][index].Char.AsciiChar = (byte)c;
+        //    int index = m_sWidth * (y) + x;
+        //    if (index >= m_Bufer[m_WriteBufferPtr].Length)
+        //    {
+        //        index = 0;
+        //        //throw new Exception("DLUGOSC JEST: " + index.ToString());
+        //    }
+        //    m_Bufer[m_WriteBufferPtr][index].Attributes = color;
+        //    m_Bufer[m_WriteBufferPtr][index].Char.AsciiChar = (byte)c;
 
-        }
+        //}
 
-        static public void WriteXY(int x, int y, short col, string line)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static void PutChar(char c, short color, int x, int y)
+		{
+			int index = m_sWidth * y + x;
+			var buffer = m_Bufer[m_WriteBufferPtr];   // cache local reference
+
+			// Bounds check only once, prevent double indirection
+			if ((uint)index >= (uint)buffer.Length)
+				return; // or clamp / skip; avoid resetting to 0 (costly & unpredictable)
+
+			ref var cell = ref buffer[index];
+			cell.Attributes = color;
+			cell.Char.AsciiChar = (byte)c;
+		}
+
+		static public void WriteXY(int x, int y, short col, string line)
         {
             for (int i = 0; i < line.Length; ++i)
             {
@@ -202,22 +218,22 @@ namespace NostalgiaEngine.Core
 
         static public void SwapBuffers()
         {
-            if (!m_MultiThreadEnabled)
-            {
-                WriteConsoleOutput(m_ConsoleHandle, m_Bufer[m_DrawBufferPtr], m_ScrBottomRight, m_ScrTopLeft, ref m_ConsoleRect);
-                return;
-            }
+			if (!m_MultiThreadEnabled)
+			{
+				WriteConsoleOutput(m_ConsoleHandle, m_Bufer[m_DrawBufferPtr], m_ScrBottomRight, m_ScrTopLeft, ref m_ConsoleRect);
+				return;
+			}
 
-            lock (LOCK)
-            {
-                if (m_SwapRequestedFlag == false)
-                {
-                    m_SwapRequestedFlag = true;
-                    m_DrawBufferPtr = m_WriteBufferPtr;
-                    m_WriteBufferPtr = 1 - m_WriteBufferPtr;
-                }
-            }
-        }
+			lock (LOCK)
+			{
+				if (m_SwapRequestedFlag == false)
+				{
+					m_SwapRequestedFlag = true;
+					m_DrawBufferPtr = m_WriteBufferPtr;
+					m_WriteBufferPtr = 1 - m_WriteBufferPtr;
+				}
+			}
+		}
 
         static public void SetDefaultConsole()
         {

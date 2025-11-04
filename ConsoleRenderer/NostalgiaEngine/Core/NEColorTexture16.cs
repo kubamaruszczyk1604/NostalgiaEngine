@@ -101,10 +101,13 @@ namespace NostalgiaEngine.Core
                 {
                     return NEColorSample.MakeCol(ConsoleColor.Black, 0, intensity, NECHAR_RAMPS.CHAR_RAMP_FULL_EXT);
                 }
-                u -= (int)u;
+
+				//get fractional part of u
+				u -= (int)u;
             }
             else if(SampleMode == NESampleMode.Repeat)
             {
+				//get fractional part of u
                 u -= (int)u;
                 u = u < 0 ? 1.0f - NEMath.Abs(u) : u;
             }

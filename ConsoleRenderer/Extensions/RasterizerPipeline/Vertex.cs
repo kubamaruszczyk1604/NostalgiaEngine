@@ -85,7 +85,6 @@ namespace NostalgiaEngine.RasterizerPipeline
             m_Position.W = posDiv;
         }
 
-
         //static public Vertex Lerp(Vertex v0, Vertex v1, float t)
         //{
         //    NEVector4 pos = NEVector4.Lerp(v0.Position, v1.Position, t);
@@ -122,7 +121,6 @@ namespace NostalgiaEngine.RasterizerPipeline
             return new Vertex(X, Y, Z, U, V);
         }
 
-
         public void Set(Vertex v)
         {
             m_Position = v.m_Position;
@@ -143,8 +141,6 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         }
 
-
-
         static public void OrderByY(ref Vertex A, ref Vertex B)
         {
             if (A.Y > B.Y)
@@ -164,6 +160,5 @@ namespace NostalgiaEngine.RasterizerPipeline
                 B = temp;
             }
         }
-
     }
 }

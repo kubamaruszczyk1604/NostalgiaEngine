@@ -59,13 +59,16 @@ namespace NostalgiaEngine.Raycaster
 		private NEFloatBuffer m_Wall;
 		private NEFloatBuffer m_Sky;
 		private bool m_ShowPalette;
+		private int m_HalfScrH;
 
 		public override bool OnLoad()
 		{
-			ScreenWidth = 240;
-			ScreenHeight = 150;
+			ScreenWidth = 320;// 240;
+			ScreenHeight = 200;// 150;
 			PixelWidth = 4;
 			PixelHeight = 4;
+
+			m_HalfScrH = ScreenHeight / 2;
 
 			m_Wall = NEFloatBuffer.FromFile("RaycasterDemoResources/nt1/luma.buf");
 			if (m_Wall == null) return false;
@@ -166,7 +169,8 @@ namespace NostalgiaEngine.Raycaster
 
 		override public void OnDrawPerColumn(int x)
 		{
-			float rayAngle = (((float)x / (float)ScreenWidth) - 0.5f) * 0.5f;
+			float xNormalized = ((float)x / (float)ScreenWidth);
+			float rayAngle = (xNormalized - 0.5f) * 0.5f;
 			rayAngle *= m_Fov; // TO DO: consider aspect ratio 
 
 			NEVector2 dir = new NEVector2(m_ViewerDir.X, m_ViewerDir.Y);
@@ -178,87 +182,107 @@ namespace NostalgiaEngine.Raycaster
 			const float stp = 0.01f;
 			bool hit = false;
 			NEVector2 ray = new NEVector2(0, 0);
-			while ((t < DEPTH) && !hit)
+
+			while (t < DEPTH)
 			{
 				ray = m_ViewerPos + dir * t;
 				int cell = GetCell(ray);
 				t += stp;
 				if (cell != 0)
+				{
 					hit = true;
+					break;
+				}
+					
 			}
 			t = t * NEMath.Cos(rayAngle);
 			float depth = (t / DEPTH);
 			float ceilingStartY = (1.0f / t);
-			float floorStartY = (-1.0f / t);
+			float floorStartY = -ceilingStartY;// (-1.0f / t);
 			float intensity = 1.0f - depth;
 			//intensity *= intensity*1.5f;
 
+			float mountain =(0.3f + (float)Math.Sin(rayAngle * 10 + m_PlayerRotation * 4) * 0.1f);
+			float skySampleU = xNormalized + m_PlayerRotation * 0.4f;
+
+			NEColorSample floorSample = NEColorSample.MakeColFromBlocks5(ConsoleColor.Black, (ConsoleColor)7, 0.2f);// Math.Abs(py) -Math.Abs(px * 0.1f));
+			NEColorSample blColorSample = NEColorSample.MakeColFromBlocks5((ConsoleColor)0, (ConsoleColor)0, 0.0f);
 			for (int y = 0; y < ScreenHeight; ++y)
 			{
-
-				float pixelY = -(y - ScreenHeight / 2);
+				//map screen space to ndc space
+				float pixelY = -(y - m_HalfScrH);
 				float py = pixelY / ((float)ScreenHeight);
 				py *= m_Fov;
 
-				NEColorSample floorSample = NEColorSample.MakeColFromBlocks5(ConsoleColor.Black, (ConsoleColor)7, 0.2f);// Math.Abs(py) -Math.Abs(px * 0.1f));
-
-				float dd = m_Sky.Sample((((float)x) / ((float)ScreenWidth)) + m_PlayerRotation * 0.4f, py);
-				NEColorSample ceilSample = NEColorSample.MakeColFromBlocks5((ConsoleColor)12, (ConsoleColor)4, dd * (Math.Abs(py) - 0.71f));
-
-				if (py < 0.3f + (float)Math.Sin(rayAngle * 10 + m_PlayerRotation * 4) * 0.1f)
+				NEColorSample ceilSample;
+				if (py < mountain)
 				{
-					ceilSample = NEColorSample.MakeColFromBlocks5((ConsoleColor)0, (ConsoleColor)0, 0.0f);
-				}
-
-				if (hit)
-				{
-					if (py > ceilingStartY) //draw ceiling
-					{
-						NEScreenBuffer.PutChar(ceilSample.Character, ceilSample.BitMask, x, y);
-					}
-					else if (py < floorStartY)
-					{
-						NEScreenBuffer.PutChar(floorSample.Character, floorSample.BitMask, x, y);
-					}
-					else
-					{
-						float fractX = ray.X - (float)Math.Floor(ray.X);
-						float fractY = ray.Y - (float)Math.Floor(ray.Y);
-
-						//if viewer is left of the wall 
-						if (m_ViewerPos.X < ray.X)
-						{
-							// swap forward mapping contribution 
-							fractY = -fractY;
-						}
-						//if viewer is in front ofthe wall
-						if (m_ViewerPos.Y < ray.Y)
-						{
-							//swap sidways mapping contribution
-							fractX = -fractX;
-						}
-
-						float u = fractX - fractY;
-
-						float v = py / (floorStartY - ceilingStartY) + 0.5f;
-						// m_WallTex.SampleMode = NESampleMode.Repeat;
-						float luma = m_Wall.Sample(u, v);
-						// NEColorSample csample = m_WallTex.Sample(u, v, intensity*luma);
-
-						NEColorSample csample = NEColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.White, luma * luma * luma * intensity, NECHAR_RAMPS.CHAR_RAMP_FULL);
-
-						char wallChar = csample.Character;
-						short wallCol = csample.BitMask;
-						m_DepthBuffer.TryUpdate(x, y, depth);
-						NEScreenBuffer.PutChar(wallChar, wallCol, x, y);
-					}
-
+					ceilSample = blColorSample;
 				}
 				else
 				{
-					if (py > ceilingStartY) NEScreenBuffer.PutChar(ceilSample.Character, ceilSample.BitMask, x, y);
-					else if (py < floorStartY) NEScreenBuffer.PutChar(floorSample.Character, floorSample.BitMask, x, y);
-					else NEScreenBuffer.PutChar((char)NEBlock.Weak, 0x0000 | 0x0000, x, y);
+					float dd = m_Sky.Sample(skySampleU, py);
+					ceilSample = NEColorSample.MakeColFromBlocks5((ConsoleColor)12, (ConsoleColor)4, dd * (Math.Abs(py) - 0.71f));
+				}
+
+				if (!hit)
+				{
+					char character = (char)NEBlock.Weak;
+					short bitmask = 0;
+					if (py > ceilingStartY)
+					{
+						character = ceilSample.Character;
+						bitmask = ceilSample.BitMask;
+					}
+					else if(py < floorStartY)
+					{
+						character = floorSample.Character;
+						bitmask = floorSample.BitMask;
+					}
+					NEScreenBuffer.PutChar(character, bitmask, x, y);
+
+					continue;
+				}
+
+				if (py > ceilingStartY) //draw ceiling
+				{
+					NEScreenBuffer.PutChar(ceilSample.Character, ceilSample.BitMask, x, y);
+				}
+				else if (py < floorStartY)
+				{
+					NEScreenBuffer.PutChar(floorSample.Character, floorSample.BitMask, x, y);
+				}
+				else
+				{
+					float fractX = ray.X - (float)Math.Floor(ray.X);
+					float fractY = ray.Y - (float)Math.Floor(ray.Y);
+
+					//if viewer is left of the wall 
+					if (m_ViewerPos.X < ray.X)
+					{
+						// swap forward mapping contribution 
+						fractY = -fractY;
+					}
+					//if viewer is in front ofthe wall
+					if (m_ViewerPos.Y < ray.Y)
+					{
+						//swap sidways mapping contribution
+						fractX = -fractX;
+					}
+
+					float u = fractX - fractY;
+
+					float v = py / (floorStartY - ceilingStartY) + 0.5f;
+					// m_WallTex.SampleMode = NESampleMode.Repeat;
+					float luma = m_Wall.Sample(u, v);
+					// NEColorSample csample = m_WallTex.Sample(u, v, intensity*luma);
+
+					NEColorSample csample = NEColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.White, luma * luma * luma * intensity, NECHAR_RAMPS.CHAR_RAMP_FULL);
+
+					char wallChar = csample.Character;
+					short wallCol = csample.BitMask;
+					m_DepthBuffer.TryUpdate(x, y, depth);
+					NEScreenBuffer.PutChar(wallChar, wallCol, x, y);
 				}
 
 				// Sprites

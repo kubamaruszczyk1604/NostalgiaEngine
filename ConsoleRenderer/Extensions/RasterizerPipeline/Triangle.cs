@@ -4,7 +4,6 @@ namespace NostalgiaEngine.RasterizerPipeline
 {
 	public class Triangle
 	{
-
 		public Mesh ParentMesh { get; private set; }
 		public VertexBuffer VBO { get; private set; }
 		public int[] Indices { get; private set; }
@@ -22,7 +21,6 @@ namespace NostalgiaEngine.RasterizerPipeline
 		public NEVector4 NormalModel { get; private set; }
 		public NEVector4 NormalView { get; set; }
 		public NEVector4 NormalWorld { get; set; }
-
 
 		public Triangle(int i0, int i1, int i2, Mesh mesh)
 		{
@@ -183,7 +181,6 @@ namespace NostalgiaEngine.RasterizerPipeline
 				float denBA = (B.X - A.X);
 				denBA = NEMath.Abs(denBA) >= 0.01f ? denBA : 0.01f;
 				t_Other = (x - A.X) / denBA;
-
 			}
 			else
 			{
