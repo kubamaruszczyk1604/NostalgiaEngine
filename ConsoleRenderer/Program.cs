@@ -104,7 +104,7 @@ namespace NostalgiaEngineApplication
 
             Engine engine = new Engine();
             //TextureEditorDemo(engine);
-            RaycasterDemo(engine);
+           // RaycasterDemo(engine);
 
             //ImageViewerDemo(engine);
             //AnalogClockDemo(engine);
@@ -113,7 +113,7 @@ namespace NostalgiaEngineApplication
             //NoiseDemo(engine);
             //CubeDemo(engine);
             //TeapotDemo(engine);
-            //NightGardenDemo(engine);
+            NightGardenDemo(engine);
             //SortingDemo(engine);
             //ShooterDemo(engine);
 

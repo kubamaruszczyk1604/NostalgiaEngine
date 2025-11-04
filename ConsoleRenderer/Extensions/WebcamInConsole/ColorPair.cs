@@ -37,7 +37,6 @@ namespace NostalgiaEngine.Extensions
 
 		public float GetDistanceToLine(float r, float g, float b)
 		{
-
 			NEVector4 c = new NEVector4(r, g, b, 0.0f);
 			NEVector4 cProj = FindProjectedPoint(ref c, ref col0, ref col1);
 			//float dist = (cProj - col0).Length;

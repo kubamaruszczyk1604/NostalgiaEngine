@@ -63,8 +63,8 @@ namespace NostalgiaEngine.Raycaster
 
 		public override bool OnLoad()
 		{
-			ScreenWidth = 320;// 240;
-			ScreenHeight = 200;// 150;
+			ScreenWidth = 240;
+			ScreenHeight = 150;
 			PixelWidth = 4;
 			PixelHeight = 4;
 
@@ -207,6 +207,7 @@ namespace NostalgiaEngine.Raycaster
 
 			NEColorSample floorSample = NEColorSample.MakeColFromBlocks5(ConsoleColor.Black, (ConsoleColor)7, 0.2f);// Math.Abs(py) -Math.Abs(px * 0.1f));
 			NEColorSample blColorSample = NEColorSample.MakeColFromBlocks5((ConsoleColor)0, (ConsoleColor)0, 0.0f);
+
 			for (int y = 0; y < ScreenHeight; ++y)
 			{
 				//map screen space to ndc space
