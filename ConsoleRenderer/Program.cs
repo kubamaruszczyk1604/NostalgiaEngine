@@ -99,6 +99,12 @@ namespace NostalgiaEngineApplication
             engine.Start(oscilloscope);
         }
 
+		static void SnakeDemo(Engine engine)
+		{
+			Snake snake = new Snake();
+			engine.Start(snake);
+		}
+
         static void Main(string[] args)
         {
 
@@ -114,6 +120,7 @@ namespace NostalgiaEngineApplication
             //CubeDemo(engine);
             //TeapotDemo(engine);
             NightGardenDemo(engine);
+			//SnakeDemo(engine);
             //SortingDemo(engine);
             //ShooterDemo(engine);
 

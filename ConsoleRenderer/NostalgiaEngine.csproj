@@ -79,6 +79,7 @@
     <Compile Include="Demos\RasterizerDemos\NightGardenScene3D.cs" />
     <Compile Include="Demos\RasterizerDemos\RotatingCubeDemo.cs" />
     <Compile Include="Demos\RasterizerDemos\TeapotDemo.cs" />
+    <Compile Include="Demos\Snake\Snake.cs" />
     <Compile Include="Demos\SortingVis\BubleSortAlgo.cs" />
     <Compile Include="Demos\SortingVis\SortingVis.cs" />
     <Compile Include="Demos\TextureDisplay\AsciiImageViewer.cs" />

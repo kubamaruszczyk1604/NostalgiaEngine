@@ -223,7 +223,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 				ScanlineIntersectionManifest manifest;
 				tr.ComputeScanlineIntersection(u, out manifest);
 
-				//go from normailzed device coordinates to screen space
+				//go from normailzed device coordinates to normalized screen space
 				float y0 = (-manifest.Y0 + 1.0f) * 0.5f;
 				float y1 = (-manifest.Y1 + 1.0f) * 0.5f;
 
