@@ -45,8 +45,8 @@ namespace NostalgiaEngine.Core
     public class NEColorSample
     {
         private static readonly int MAX_COL_COUNT = 10;
-        public short BitMask { get; private set; }
-        public char Character { get; private set; }
+        public short BitMask { get; set; }
+        public char Character { get; set; }
 
         public override string ToString()
         {
