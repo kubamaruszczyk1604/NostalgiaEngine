@@ -119,8 +119,8 @@ namespace NostalgiaEngineApplication
             //NoiseDemo(engine);
             //CubeDemo(engine);
             //TeapotDemo(engine);
-            //NightGardenDemo(engine);
-			SnakeDemo(engine);
+            NightGardenDemo(engine);
+			//SnakeDemo(engine);
             //SortingDemo(engine);
             //ShooterDemo(engine);
 
