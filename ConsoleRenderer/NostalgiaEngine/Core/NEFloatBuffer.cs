@@ -162,13 +162,13 @@ namespace NostalgiaEngine.Core
         {
             var data = Data;
 
-            u = NEMath.Clamp(u, 0.0f, 1.0f);
-            v = NEMath.Clamp(v, 0.0f, 1.0f);
+			u = NEMath.Clamp(u, 0.0f, 1.0f);
+			v = NEMath.Clamp(v, 0.0f, 1.0f);
 
-            int x = (int)Math.Floor(u * (float)Width);
+			int x = (int)(u * (float)Width);
             if (x >= (Width - 1)) x = Width - 1;
 
-            int y = (int)Math.Floor(v * (float)Height);
+            int y = (int)(v * (float)Height);
             if (y >= (Height - 1)) y = Height - 1;
             int index = y * Width + x;
             float col = data[index];

@@ -112,7 +112,8 @@ namespace NostalgiaEngine.Core
         public bool TryUpdate(int x, int y, float val)
         {
             int i = Width * y + x;//  XY2I(x, y);
-            if (val <= DATA[i])
+			float current = DATA[i];
+			if (val <= current)
             {
                 DATA[i] = val;
                 return true;
