@@ -75,11 +75,12 @@ namespace NostalgiaEngine.Demos
 
 
             NEColorPalette pal = NEColorPalette.FromFile("RasterizerDemoResources/palette.txt");
-            pal.MultiplyBy(2.8f);
+            pal.MultiplyBy(3.6f);
             NEColorManagement.SetPalette(pal);
 
-            AddLight(new DirectionalLight(new NEVector4(-1.0f, 1.0f, 1.0f)));
-            ToggleHeadlamp();
+            //AddLight(new DirectionalLight(new NEVector4(-1.0f, 1.0f, 1.0f)));
+			AddLight(new DirectionalLight(new NEVector4(-1.0f, 0.06f, 0.01f)));
+			ToggleHeadlamp();
             //TogglePalette();
 
             return base.OnLoad();
@@ -113,7 +114,8 @@ namespace NostalgiaEngine.Demos
             {
                 Exit();
             }
-            NEScreenBuffer.Clear();
+
+			NEScreenBuffer.Clear();
             base.OnUpdate(deltaTime);
         }
 

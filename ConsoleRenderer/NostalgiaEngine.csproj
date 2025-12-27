@@ -97,6 +97,7 @@
     <Compile Include="Extensions\WebcamInConsole\ConsoleCamera.cs" />
     <Compile Include="NostalgiaEngine\Core\NELight.cs" />
     <Compile Include="NostalgiaEngine\Core\NEDebug.cs" />
+    <Compile Include="NostalgiaEngine\Core\NERenderTexture.cs" />
     <Compile Include="NostalgiaEngine\Core\NESceneobject.cs" />
     <Compile Include="NostalgiaEngine\Core\NEMaterial.cs" />
     <Compile Include="NostalgiaEngine\Core\NEStaticResources.cs" />

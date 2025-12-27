@@ -197,7 +197,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 		private void ProcessModel(float dt, Model model)
 		{
 			model.Transform.CalculateWorld();
-			// NEMatrix4x4 MVP = MainCamera.Projection * MainCamera.View * model.Transform.World;
+			NEMatrix4x4 MVP = MainCamera.Projection * MainCamera.View * model.Transform.World;
 			model.VBO.PrepareForRender(MainCamera);
 			m_RenderedTriangleCount += model.VBO.TrianglesReadyToRender.Count;
 		}

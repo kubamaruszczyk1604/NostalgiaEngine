@@ -73,7 +73,7 @@ namespace TextureDisplay
         {
             ScreenWidth = 200;
             ScreenHeight = 150;
-            PixelWidth = 4;
+			PixelWidth = 4;
             PixelHeight = 4;
             m_Col = 0;
             

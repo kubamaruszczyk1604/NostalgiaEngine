@@ -42,7 +42,7 @@ namespace NostalgiaEngine.Core
     }
 
 
-    public class NEColorSample
+    public struct NEColorSample
     {
         private static readonly int MAX_COL_COUNT = 10;
         public short BitMask { get; set; }
@@ -74,30 +74,34 @@ namespace NostalgiaEngine.Core
 
         static public NEColorSample MakeColFromBlocks10(ConsoleColor col1, ConsoleColor col2, float t)
         {
-            //if (t == float.NaN) t = 0.0f;
-            int BG1 = (int)col1;
-            int FG1 = ((int)col1) << 4;
-            int BG2 = (int)col2;
-            int FG2 = ((int)col2) << 4;
+			//if (t == float.NaN) t = 0.0f;
+			int c1 = (int)col1;
+			int c2 = (int)col2;
 
-            int[] pairs = new int[] { BG1 | FG2, BG2 | FG1 };
-            float tFract = t >= 1.0f? 1.0f: t - (float)Math.Floor(t);
-            tFract = tFract <= 0 ? 0.01f:tFract; //clamp
+			int pair1 = c1 | (c2 << 4);
+			int pair2 = c2 | (c1 << 4);
+
+			float tFract = t >= 1.0f ? 1.0f : NEMath.Frac(t);
+			tFract = tFract <= 0 ? 0.01f : tFract; //clamp
             //tFract = Math.Abs(tFract); // repeat
             int index = (int)(tFract * (float)MAX_COL_COUNT);
-            index = index >= (MAX_COL_COUNT - 1) ? (MAX_COL_COUNT - 1) : index;
+			int maxIndex = MAX_COL_COUNT - 1;
+			if(index > maxIndex)
+			{
+				index = maxIndex;
+			}
 
             NEColorSample sample = new NEColorSample();
-            if(index%2 == 0)
+            if((index & 1) == 0)
             {
-                index /= 2;
+                index >>= 1;
                 //add: col is first pair
-                sample.BitMask = (short)pairs[1];
+                sample.BitMask = (short)pair2;
             }
             else
             {
-                index = (MAX_COL_COUNT/2)-1 - (int)(index/2);
-                sample.BitMask = (short)pairs[0];
+                index = (MAX_COL_COUNT >> 1) - 1 - (index >> 1);
+                sample.BitMask = (short)pair1;
             }
 
             sample.Character = (char)NECHAR_RAMPS.BLOCK_RAMP5[index];
@@ -105,58 +109,55 @@ namespace NostalgiaEngine.Core
             return sample;
         }
 
-        //static public NEColorSample MakeCol10F(ConsoleColor col1, ConsoleColor col2, float t)
-        //{
-        //    float tFract = t >= 1.0f ? 1.0f : t - (float)Math.Floor(t);
-        //    tFract = NEMathHelper.Clamp(tFract, 0.0f, 1.0f);
+		//static public NEColorSample MakeCol10F(ConsoleColor col1, ConsoleColor col2, float t)
+		//{
+		//    float tFract = t >= 1.0f ? 1.0f : t - (float)Math.Floor(t);
+		//    tFract = NEMathHelper.Clamp(tFract, 0.0f, 1.0f);
 
 
-        //    int index = (int)(tFract * 10.0f);
-        //    if (index > 9) index = 9;
+		//    int index = (int)(tFract * 10.0f);
+		//    if (index > 9) index = 9;
 
-        //    NEColorSample sample = new NEColorSample();
-        //    sample.BitMask = (short)((int)col1 << 4 | ((int)col2));
-
-
-
-        //    sample.Character = (char)NECHAR_RAMPS.CHAR_RAMP_10[index];
-
-        //    return sample;
-        //}
+		//    NEColorSample sample = new NEColorSample();
+		//    sample.BitMask = (short)((int)col1 << 4 | ((int)col2));
 
 
-        static public NEColorSample MakeCol(ConsoleColor col1, ConsoleColor col2, float t, int[] charRamp)
+
+		//    sample.Character = (char)NECHAR_RAMPS.CHAR_RAMP_10[index];
+
+		//    return sample;
+		//}
+
+
+		static public NEColorSample MakeCol(ConsoleColor col1, ConsoleColor col2, float t, int[] charRamp)
+		{
+			//float tFract = t >= 1.0f ? 1.0f : t - (float)Math.Floor(t);
+			float tFract = t >= 1.0f ? 1.0f : NEMath.Frac(t);
+			tFract = NEMath.Clamp(tFract, 0.0f, 1.0f);
+
+			int rampLastIndex = charRamp.Length - 1;
+			int index = (int)(tFract * charRamp.Length);
+			if (index > rampLastIndex) index = rampLastIndex;
+
+			NEColorSample sample = new NEColorSample();
+			sample.BitMask = (short)((int)col1 << 4 | ((int)col2));
+			sample.Character = (char)charRamp[index];
+
+			return sample;
+		}
+
+
+		static public NEColorSample MakeColFromBlocks5(ConsoleColor col1, ConsoleColor col2, float t)
         {
-            float tFract = t >= 1.0f ? 1.0f : t - (float)Math.Floor(t);
+
+			float tFract = t >= 1.0f ? 1.0f : NEMath.Frac(t);
             tFract = NEMath.Clamp(tFract, 0.0f, 1.0f);
-
-            int rampLastIndex = charRamp.Length - 1; 
-            int index = (int)(tFract * charRamp.Length);
-            if (index > rampLastIndex) index = rampLastIndex;
-
-            NEColorSample sample = new NEColorSample();
-            sample.BitMask = (short)((int)col1 << 4 | ((int)col2));
-            sample.Character = (char)charRamp[index];
-
-            return sample;
-        }
-
-
-        static public NEColorSample MakeColFromBlocks5(ConsoleColor col1, ConsoleColor col2, float t)
-        {
-
-
-            float tFract = t >= 1.0f ? 1.0f : t - (float)Math.Floor(t);
-            tFract = NEMath.Clamp(tFract, 0.0f, 1.0f);
-
 
             int index = (int)(tFract * 5.0f);
             if (index > 4) index = 4;
 
             NEColorSample sample = new NEColorSample();
             sample.BitMask = (short)((int)col1 << 4 | ((int)col2));
-
-
 
             sample.Character = (char)NECHAR_RAMPS.BLOCK_RAMP5[index];
 

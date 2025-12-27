@@ -4,6 +4,8 @@ using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 using System.Threading;
 using System.Collections.Generic;
+using System.Text;
+
 namespace NostalgiaEngine.Core
 {
     public class NEScreenBuffer
@@ -251,7 +253,33 @@ namespace NostalgiaEngine.Core
 
         }
 
-        static public void Reallign()
+		public static bool SaveAsTxt(string filename)
+		{
+			try
+			{
+				Encoding cp437 = Encoding.GetEncoding(437);
+				using (StreamWriter writer = new StreamWriter(filename, false, Encoding.UTF8))
+				{
+					for (int y = 0; y < m_sHeight; y++)
+					{
+						byte[] line = new byte[m_sWidth];
+						for (int x = 0; x < m_sWidth; x++)
+						{
+							int index = y * m_sWidth + x;
+							line[x] = m_Bufer[m_WriteBufferPtr][index].Char.AsciiChar;				
+						}
+						writer.WriteLine(cp437.GetString(line));
+					}
+				}
+			}
+			catch
+			{
+				return false;
+			}
+			return true;
+		}
+
+		static public void Reallign()
         {
             Console.SetWindowSize(m_sWidth + 2, m_sHeight + 4);
         }

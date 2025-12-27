@@ -91,9 +91,14 @@ namespace NostalgiaEngine.Core
             return (float)Math.Sign(a);
         }
 
+		static public float Frac(float t)
+		{
+			int i = (int)t;
+			if (t < i) i--;
+			return t - i;
+		}
 
-
-        static public NEVector2 FindNormal(NEVector2 p1, NEVector2 p2)
+		static public NEVector2 FindNormal(NEVector2 p1, NEVector2 p2)
         {
             NEVector2 dir = p2 - p1;
             float tx = dir.X;

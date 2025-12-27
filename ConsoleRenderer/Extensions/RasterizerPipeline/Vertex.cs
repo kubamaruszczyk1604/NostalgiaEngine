@@ -27,6 +27,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             m_Position = new NEVector4(x, y, z, 1.0f);
             m_UVs = new NEVector2(0.0f, 0.0f);
             m_ZDividedFlag = false;
+			Vert2Camera = new NEVector4(0.0f, 0.0f, 1.0f, 0.0f);
         }
 
         public Vertex(float x, float y, float z, float u, float v)
@@ -34,7 +35,8 @@ namespace NostalgiaEngine.RasterizerPipeline
             m_Position = new NEVector4(x, y, z, 1.0f);
             m_UVs = new NEVector2(u, v);
             m_ZDividedFlag = false;
-        }
+			Vert2Camera = new NEVector4(0.0f, 0.0f, 1.0f, 0.0f);
+		}
 
         public static void Swap(ref Vertex v1, ref Vertex v2)
         {
@@ -53,7 +55,15 @@ namespace NostalgiaEngine.RasterizerPipeline
             m_Position = v.Position;
             m_UVs = v.UV;
         }
+		public void SetPosition(NEVector4 pos)
+		{
+			m_Position = pos;
+		}
 
+		public void SetVert2Camera(NEVector4 vert2Camera)
+		{
+			Vert2Camera = vert2Camera;
+		}
         //public void ZDivide()
         //{
         //    if (m_ZDividedFlag) return;
