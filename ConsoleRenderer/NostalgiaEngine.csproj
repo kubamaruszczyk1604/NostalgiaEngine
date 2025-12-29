@@ -131,7 +131,7 @@
     <Compile Include="NostalgiaEngine\Core\NEMathHelper.cs" />
     <Compile Include="NostalgiaEngine\Core\NEInput.cs" />
     <Compile Include="NostalgiaEngine\Core\InputSimulator.cs" />
-    <Compile Include="NostalgiaEngine\Core\NEColorSample.cs" />
+    <Compile Include="NostalgiaEngine\Core\NECharacterPixel.cs" />
     <Compile Include="NostalgiaEngine\GUI\FileExplorer.cs" />
     <Compile Include="NostalgiaEngine\GUI\ConsoleSounds.cs" />
     <Compile Include="NostalgiaEngine\GUI\OpenDialog.cs" />

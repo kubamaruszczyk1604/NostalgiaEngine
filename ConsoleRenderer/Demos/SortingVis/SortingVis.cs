@@ -62,7 +62,7 @@ namespace NostalgiaEngine.Demos
                     float intensity = ((float)barLen) / ScreenHeight;
                     int col = ((iBar == m_Algorithm.SwappedIndex0)|| (iBar == m_Algorithm.SwappedIndex0+1))&&!m_Algorithm.Done ? 2 : 9;
                     if (col == 2 && m_Algorithm.Swapped) col = 13;
-                    NEColorSample sample = NEColorSample.MakeColFromBlocks5(0, (ConsoleColor)col, 1.0f);
+                    NECharacterCell sample = NECharacterCell.MakeColFromBlocks5(0, (byte)col, 1.0f);
                     for (int i = 0; i < barWidth; ++i)
                     {
                         NEScreenBuffer.PutChar(sample.Character, sample.BitMask, iBar * barWidth + i, ScreenHeight-1 - y);

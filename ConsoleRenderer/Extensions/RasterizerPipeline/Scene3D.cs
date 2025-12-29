@@ -20,6 +20,8 @@ namespace NostalgiaEngine.RasterizerPipeline
 		private float m_ScrHeightReciprocal;
 		private float m_ScrWidthReciprocal;
 
+		protected NERenderTexture m_RenderTexture;
+
 		protected Skybox SceneSkybox { get; set; }
 		protected Camera MainCamera { get; set; }
 		protected List<Model> Models;
@@ -57,6 +59,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 		public override bool OnLoad()
 		{
 			m_DepthBuffer = new NEDepthBuffer(ScreenWidth, ScreenHeight);
+			m_RenderTexture = new NERenderTexture(ScreenWidth, ScreenHeight);
 			m_ScrHeightReciprocal = 1.0f / ScreenHeight;
 			m_ScrWidthReciprocal = 1.0f / ScreenWidth;
 			return base.OnLoad();
@@ -123,9 +126,9 @@ namespace NostalgiaEngine.RasterizerPipeline
 			base.OnExit();
 		}
 
-		protected virtual NEColorSample OnSkyboxSample(NEVector4 direction, float sampledValue)
+		protected virtual NECharacterCell OnSkyboxSample(NEVector4 direction, float sampledValue)
 		{
-			return NEColorSample.MakeCol((ConsoleColor)0, (ConsoleColor)6, sampledValue, NECHAR_RAMPS.CHAR_RAMP_FULL);
+			return NECharacterCell.Make(0, 6, sampledValue, NECHAR_RAMPS.CHAR_RAMP_FULL);
 		}
 
 		protected void TogglePalette()
@@ -211,11 +214,13 @@ namespace NostalgiaEngine.RasterizerPipeline
 				if (!tr.IsColScanlineInTriangle(u)) continue;
 
 				float directionalLightsSum = 0;// 
+				NEVector4 lightDir = new NEVector4(0.0f, -1.0f, 0.0f, 0.0f);
 				for (int l = 0; l < m_Lights.Count; ++l)
 				{
 					if (m_Lights[l].LightType != NELightType.Directional) continue;
 					float intensity = NEVector4.Dot3(tr.NormalWorld, ((DirectionalLight)m_Lights[l]).Direction);
 					directionalLightsSum += NEMath.Clamp(intensity, 0.0f, 1.0f);
+					//lightDir = ((DirectionalLight)m_Lights[l]).Direction;
 				}
 
 				directionalLightsSum = NEMath.Clamp(directionalLightsSum, 0.0f, 1.0f);
@@ -280,6 +285,12 @@ namespace NostalgiaEngine.RasterizerPipeline
 							float coneMask = NEMath.Clamp(NEVector4.Dot3(vDir, new NEVector4(u * MainCamera.InverseAspectRatio, v, -1.0f).Normalized), 0.0f, 1.0f);
 							dotHeadlamp *= coneMask;
 						}
+						//bool shadow = false;
+						//{
+						//	NEVector4 fragWorldPosBottom = manifest.bottom_P0.VertWorldSpace * (1.0f - manifest.bottom_t) + manifest.bottom_P1.VertWorldSpace * manifest.bottom_t;
+						//	NEVector4 fragWorlPosTop = manifest.top_P0.VertWorldSpace * (1.0f - manifest.top_t) + manifest.top_P1.VertWorldSpace * manifest.top_t;
+						//	NEVector4 fragWorldPos = fragWorlPosTop * (1.0f - t) + fragWorldPosBottom * t;
+						//}
 
 						float fragWBottom = (1.0f - manifest.bottom_t) * manifest.bottom_P0.W + manifest.bottom_t * manifest.bottom_P1.W;
 						float fragWTop = (1.0f - manifest.top_t) * manifest.top_P0.W + manifest.top_t * manifest.top_P1.W;
@@ -306,9 +317,16 @@ namespace NostalgiaEngine.RasterizerPipeline
 
 						int fullCol = (model.Color == -1) ? tr.ColorAttrib : model.Color;
 						int lowCol = model.UnlitColor;
-						var col = NEColorSample.MakeCol((ConsoleColor)lowCol, (ConsoleColor)fullCol, diffuse, NECHAR_RAMPS.CHAR_RAMP_FULL);
+
+						m_RenderTexture.Write(x, y, (byte)lowCol, (byte)fullCol, diffuse);
+
+						NEColorSample sample = m_RenderTexture.GetPixel(x, y);
+						var col = NECharacterCell.Make(sample.minCol, sample.maxCol, sample.t, NECHAR_RAMPS.CHAR_RAMP_FULL);
+						//var col = m_RenderTexture.SampleCell(((float)x) / ((float)ScreenWidth), ((float)y) / ((float)ScreenHeight));
+						//var col = NECharacterCell.Make((byte)lowCol, (byte)fullCol, diffuse, NECHAR_RAMPS.CHAR_RAMP_FULL);
 						//var col = NEColorSample.MakeCol10((ConsoleColor)0, (ConsoleColor)14, 1.0f-NEMathHelper.Pow(fragmentDepth,20));
 						//var col = m_Texture.Sample(teX, 1.0f - teY, dot);
+
 						NEScreenBuffer.PutChar(col.Character, col.BitMask, x, fillStart + y);
 					}
 				}

@@ -65,6 +65,7 @@ namespace NostalgiaEngine.Raycaster
 		{
 			ScreenWidth = 240;
 			ScreenHeight = 150;
+
 			PixelWidth = 4;
 			PixelHeight = 4;
 
@@ -205,8 +206,8 @@ namespace NostalgiaEngine.Raycaster
 			float mountain =(0.3f + (float)Math.Sin(rayAngle * 10 + m_PlayerRotation * 4) * 0.1f);
 			float skySampleU = xNormalized + m_PlayerRotation * 0.4f;
 
-			NEColorSample floorSample = NEColorSample.MakeColFromBlocks5(ConsoleColor.Black, (ConsoleColor)7, 0.2f);// Math.Abs(py) -Math.Abs(px * 0.1f));
-			NEColorSample blColorSample = NEColorSample.MakeColFromBlocks5((ConsoleColor)0, (ConsoleColor)0, 0.0f);
+			NECharacterCell floorSample = NECharacterCell.MakeColFromBlocks5(0, 7, 0.2f);// Math.Abs(py) -Math.Abs(px * 0.1f));
+			NECharacterCell blColorSample = NECharacterCell.MakeColFromBlocks5(0, 0, 0.0f);
 
 			for (int y = 0; y < ScreenHeight; ++y)
 			{
@@ -215,7 +216,7 @@ namespace NostalgiaEngine.Raycaster
 				float py = pixelY / ((float)ScreenHeight);
 				py *= m_Fov;
 
-				NEColorSample ceilSample;
+				NECharacterCell ceilSample;
 				if (py < mountain)
 				{
 					ceilSample = blColorSample;
@@ -223,7 +224,7 @@ namespace NostalgiaEngine.Raycaster
 				else
 				{
 					float dd = m_Sky.Sample(skySampleU, py);
-					ceilSample = NEColorSample.MakeColFromBlocks5((ConsoleColor)12, (ConsoleColor)4, dd * (Math.Abs(py) - 0.71f));
+					ceilSample = NECharacterCell.MakeColFromBlocks5(12, 4, dd * (Math.Abs(py) - 0.71f));
 				}
 
 				if (!hit)
@@ -278,7 +279,7 @@ namespace NostalgiaEngine.Raycaster
 					float luma = m_Wall.Sample(u, v);
 					// NEColorSample csample = m_WallTex.Sample(u, v, intensity*luma);
 
-					NEColorSample csample = NEColorSample.MakeCol(ConsoleColor.Black, ConsoleColor.White, luma * luma * luma * intensity, NECHAR_RAMPS.CHAR_RAMP_FULL);
+					NECharacterCell csample = NECharacterCell.Make(0, 15, luma * luma * luma * intensity, NECHAR_RAMPS.CHAR_RAMP_FULL);
 
 					char wallChar = csample.Character;
 					short wallCol = csample.BitMask;
@@ -366,7 +367,7 @@ namespace NostalgiaEngine.Raycaster
 					for (int y = 0; y < height; ++y)
 					{
 						float v = (float)y / height;
-						NEColorSample s = sprite.Texture.Sample(u, v, 1.0f);
+						NECharacterCell s = sprite.Texture.SampleCell(u, v, 1.0f);
 
 						if (s.Character != 't')
 						{

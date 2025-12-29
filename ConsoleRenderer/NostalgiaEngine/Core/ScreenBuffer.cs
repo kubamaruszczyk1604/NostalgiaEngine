@@ -163,12 +163,12 @@ namespace NostalgiaEngine.Core
         {
 
             int index = m_sWidth * (y) + x;
-            if (index >= m_Bufer[m_WriteBufferPtr].Length)
-            {
-                index = 0;
-                //throw new Exception("DLUGOSC JEST: " + index.ToString());
-            }
-            m_Bufer[m_WriteBufferPtr][index].Attributes = color;
+			if (index >= m_Bufer[m_WriteBufferPtr].Length)
+			{
+				index = 0;
+				//throw new Exception("DLUGOSC JEST: " + index.ToString());
+			}
+			m_Bufer[m_WriteBufferPtr][index].Attributes = color;
             m_Bufer[m_WriteBufferPtr][index].Char.AsciiChar = (byte)c;
 
         }

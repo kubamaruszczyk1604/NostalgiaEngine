@@ -85,7 +85,7 @@ namespace NostalgiaEngine.Demos
         }
 
         //this makes the skybox prettier, but it's optional
-        protected override NEColorSample OnSkyboxSample(NEVector4 direction, float sampledValue)
+        protected override NECharacterCell OnSkyboxSample(NEVector4 direction, float sampledValue)
         {
             // direction is the direction vector used to sample the skybox
             // sampledValue is the intensity value sampled from the skybox (in range from 0 to 1)
@@ -97,7 +97,7 @@ namespace NostalgiaEngine.Demos
                 color0 = 6;
                 color1 = 12;
             }
-            return NEColorSample.MakeColFromBlocks10((ConsoleColor)color0, (ConsoleColor)color1, sampledValue);
+            return NECharacterCell.MakeFromBlocks10((ConsoleColor)color0, (ConsoleColor)color1, sampledValue);
         }
 
 

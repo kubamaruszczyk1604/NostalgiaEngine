@@ -27,22 +27,23 @@ namespace NostalgiaEngine.Core
             }
             return ret;
         }
+
         static public int[] CoppyWithAppendBlocks(int[] sourceCharRamp, int[] setToAppend)
         {
-
             int[] ret = new int[sourceCharRamp.Length + setToAppend.Length];
             Array.Copy(sourceCharRamp, ret, sourceCharRamp.Length);
             Array.Copy(setToAppend, 0, ret, sourceCharRamp.Length, setToAppend.Length);
             return ret;
+
         }
 
-        static public int[] CHAR_RAMP_FULL = String2BlockArray(@" `.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@");
+        static public readonly int[] CHAR_RAMP_FULL = String2BlockArray(@" `.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@");
 
-        static public int[] CHAR_RAMP_FULL_EXT = CoppyWithAppendBlocks(CHAR_RAMP_FULL, new int[] { (int)NEBlock.Middle, (int)NEBlock.Strong, (int)NEBlock.Solid });
+        static public readonly int[] CHAR_RAMP_FULL_EXT = CoppyWithAppendBlocks(CHAR_RAMP_FULL, new int[] { (int)NEBlock.Middle, (int)NEBlock.Strong, (int)NEBlock.Solid });
     }
 
 
-    public struct NEColorSample
+    public struct NECharacterCell
     {
         private static readonly int MAX_COL_COUNT = 10;
         public short BitMask { get; set; }
@@ -64,15 +65,15 @@ namespace NostalgiaEngine.Core
             return (short)(((short)col) << 4);
         }
 
-        static public NEColorSample MakeTransparent()
+        static public NECharacterCell MakeTransparent()
         {
-            var s = new NEColorSample();
+            var s = new NECharacterCell();
             s.BitMask = 16;
             s.Character = 't';
             return s;
         }
 
-        static public NEColorSample MakeColFromBlocks10(ConsoleColor col1, ConsoleColor col2, float t)
+        static public NECharacterCell MakeFromBlocks10(ConsoleColor col1, ConsoleColor col2, float t)
         {
 			//if (t == float.NaN) t = 0.0f;
 			int c1 = (int)col1;
@@ -91,7 +92,7 @@ namespace NostalgiaEngine.Core
 				index = maxIndex;
 			}
 
-            NEColorSample sample = new NEColorSample();
+            NECharacterCell sample = new NECharacterCell();
             if((index & 1) == 0)
             {
                 index >>= 1;
@@ -129,7 +130,7 @@ namespace NostalgiaEngine.Core
 		//}
 
 
-		static public NEColorSample MakeCol(ConsoleColor col1, ConsoleColor col2, float t, int[] charRamp)
+		static public NECharacterCell Make(byte col1, byte col2, float t, int[] charRamp)
 		{
 			//float tFract = t >= 1.0f ? 1.0f : t - (float)Math.Floor(t);
 			float tFract = t >= 1.0f ? 1.0f : NEMath.Frac(t);
@@ -139,24 +140,23 @@ namespace NostalgiaEngine.Core
 			int index = (int)(tFract * charRamp.Length);
 			if (index > rampLastIndex) index = rampLastIndex;
 
-			NEColorSample sample = new NEColorSample();
-			sample.BitMask = (short)((int)col1 << 4 | ((int)col2));
+			NECharacterCell sample = new NECharacterCell();
+			sample.BitMask = (short)((int)col1 << 4 | (int)col2);
 			sample.Character = (char)charRamp[index];
 
 			return sample;
 		}
 
 
-		static public NEColorSample MakeColFromBlocks5(ConsoleColor col1, ConsoleColor col2, float t)
+		static public NECharacterCell MakeColFromBlocks5(byte col1, byte col2, float t)
         {
-
 			float tFract = t >= 1.0f ? 1.0f : NEMath.Frac(t);
             tFract = NEMath.Clamp(tFract, 0.0f, 1.0f);
 
             int index = (int)(tFract * 5.0f);
             if (index > 4) index = 4;
 
-            NEColorSample sample = new NEColorSample();
+            NECharacterCell sample = new NECharacterCell();
             sample.BitMask = (short)((int)col1 << 4 | ((int)col2));
 
             sample.Character = (char)NECHAR_RAMPS.BLOCK_RAMP5[index];
@@ -164,8 +164,5 @@ namespace NostalgiaEngine.Core
             return sample;
         }
     }
-
-
-
 
 }

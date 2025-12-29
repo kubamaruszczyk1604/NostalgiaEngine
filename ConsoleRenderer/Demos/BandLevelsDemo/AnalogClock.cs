@@ -110,7 +110,7 @@ namespace NostalgiaEngine.Demos
                     //uvTex.X += 0.5f;
                     //uvTex.Y += 0.5f;
                     float luma = m_LumaBuffer.Sample(uvTex.X, uvTex.Y);
-                    NEColorSample cs = NEColorSample.MakeColFromBlocks5((ConsoleColor)0, (ConsoleColor)7, (luma)*yNormRev);
+                    NECharacterCell cs = NECharacterCell.MakeColFromBlocks5(0, 7, (luma)*yNormRev);
 
                     NEVector2 uvs = new NEVector2(u, yNorm) * 2.0f;
                     uvs.X -= 1;
@@ -124,7 +124,7 @@ namespace NostalgiaEngine.Demos
                         float d = (circleL - low) / (high - low);
                         float brightness = NEMath.Sin(d * 3.14f);
                         brightness *= brightness * brightness;
-                        cs = NEColorSample.MakeCol((ConsoleColor)0, (ConsoleColor)10,brightness + 0.25f, NECHAR_RAMPS.CHAR_RAMP_FULL);
+                        cs = NECharacterCell.Make(0, 10, brightness + 0.25f, NECHAR_RAMPS.CHAR_RAMP_FULL);
                     }
 
 
@@ -132,15 +132,15 @@ namespace NostalgiaEngine.Demos
 
                     if (DrawArm(uvs, hours, 0.46f, 0.02f))
                     {
-                        cs = NEColorSample.MakeColFromBlocks5((ConsoleColor)0, (ConsoleColor)10, 0.55f);
+                        cs = NECharacterCell.MakeColFromBlocks5(0, 10, 0.55f);
                     }
                     if (DrawArm(uvs, minutes, 0.72f, 0.02f))
                     {
-                        cs = NEColorSample.MakeColFromBlocks5((ConsoleColor)0, (ConsoleColor)10, 0.7f);
+                        cs = NECharacterCell.MakeColFromBlocks5(0, 10, 0.7f);
                     }
                     if (DrawArm(uvs, seconds, 0.72f, 0.007f))
                     {
-                        cs = NEColorSample.MakeColFromBlocks5((ConsoleColor)0, (ConsoleColor)10, 1);
+                        cs = NECharacterCell.MakeColFromBlocks5(0, 10, 1);
                     }
 
                     NEScreenBuffer.PutChar(cs.Character, cs.BitMask, x, y);

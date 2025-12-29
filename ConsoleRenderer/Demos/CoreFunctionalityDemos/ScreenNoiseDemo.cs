@@ -41,7 +41,7 @@ namespace NostalgiaEngine.Demos
             {
                 for (int y = 0; y < ScreenHeight; ++y)
                 {
-                    NEColorSample col = NEColorSample.MakeCol(0, (ConsoleColor)15, (float)m_Random.NextDouble(), NECHAR_RAMPS.CHAR_RAMP_10);
+                    NECharacterCell col = NECharacterCell.Make(0, 15, (float)m_Random.NextDouble(), NECHAR_RAMPS.CHAR_RAMP_10);
                     NEScreenBuffer.PutChar(col.Character, col.BitMask, x, y);
                 }
             }

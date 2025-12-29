@@ -324,7 +324,7 @@ namespace NostalgiaEngine.Demos
                 int sigX = (int)(((data.X + 1.0f) * 0.5f) * (ScreenWidth - 2));
                 int sigY = (int)(((-data.Y + 1.0f) * 0.5f) * (ScreenHeight - 2));
                 //NEColorSample sample = NEColorSample.MakeColFromBlocks5(0, (ConsoleColor)10, dv);
-                NEColorSample sample = NEColorSample.MakeCol(0, (ConsoleColor)10, dv, NECHAR_RAMPS.CHAR_RAMP_FULL_EXT);
+                NECharacterCell sample = NECharacterCell.Make(0, 10, dv, NECHAR_RAMPS.CHAR_RAMP_FULL_EXT);
                 NEScreenBuffer.PutChar(sample.Character, sample.BitMask, sigX, sigY);
             }
         }

@@ -8,20 +8,19 @@ namespace NostalgiaEngine.Demos
     {
         public override bool OnLoad()
         {
-            ScreenWidth = 280;
-            ScreenHeight = 170;
-            //ScreenWidth = 350;
-            //ScreenHeight = 230;
-            PixelWidth = 4;
+			ScreenWidth = 280;
+			ScreenHeight = 170;
+			//ScreenWidth = 320;
+			//ScreenHeight = 200;
+			PixelWidth = 4;
             PixelHeight = 4;
 
-            //ScreenWidth = 110;
-            //ScreenHeight = 80;
-            //PixelWidth = 8;
-            //PixelHeight = 8;
+			//ScreenWidth = 110;
+			//ScreenHeight = 80;
+			//PixelWidth = 8;
+			//PixelHeight = 8;
 
-
-            SceneSkybox = new Skybox("RasterizerDemoResources/skybox1");
+			SceneSkybox = new Skybox("RasterizerDemoResources/skybox1");
             Mesh floorMesh = GeometryGenerator.CreateHorizontalQuad(15.0f, 15.0f, new NEVector4(0.0f, 0.0f, 0.0f), 7);
             Mesh cubeMesh = GeometryGenerator.GenerateCube2(1.0f, 1.0f, 1.0f, NEVector4.Zero, 4);
             Mesh teapotMesh = NEObjLoader.LoadObj("RasterizerDemoResources/teapot.obj",14);
@@ -129,7 +128,7 @@ namespace NostalgiaEngine.Demos
             base.OnDrawPerColumn(x);
         }
 
-        protected override NEColorSample OnSkyboxSample(NEVector4 direction, float sampledValue)
+        protected override NECharacterCell OnSkyboxSample(NEVector4 direction, float sampledValue)
         {
             int low = 0;
             int high = 8;
@@ -138,7 +137,7 @@ namespace NostalgiaEngine.Demos
                 low = 6;
                 high = 12;
             }
-            return NEColorSample.MakeColFromBlocks10((ConsoleColor)low, (ConsoleColor)high, sampledValue);
+            return NECharacterCell.MakeFromBlocks10((ConsoleColor)low, (ConsoleColor)high, sampledValue);
         }
 
 

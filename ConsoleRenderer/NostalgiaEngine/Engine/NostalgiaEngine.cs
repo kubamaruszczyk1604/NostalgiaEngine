@@ -23,6 +23,7 @@ namespace NostalgiaEngine.Core
         private float m_Delta;
         private Thread m_TaskbarUpdateWorker;
         private bool m_SuspendTaskbarFlag;
+		private bool m_callOnColumnDraw;
         
         public static Engine Instance { get; private set; }
         public string Title { get; set; }
@@ -49,6 +50,7 @@ namespace NostalgiaEngine.Core
             TitleBarAppend = "";
             //m_TaskbarUpdateWorker = new Thread(new ThreadStart(UpdateTaskbar));
             m_SuspendTaskbarFlag = false;
+			m_callOnColumnDraw = false;
             
         }
 
@@ -69,6 +71,7 @@ namespace NostalgiaEngine.Core
             }
 
         }
+
         private bool InitializeScreen(NEScene scene)
         {
             scene.ScreenWidth = scene.ScreenWidth > 10 ? scene.ScreenWidth : DEFAULT_SCR_W;
@@ -82,6 +85,12 @@ namespace NostalgiaEngine.Core
             return NEScreenBuffer.Initialize((short)ScreenWidth, (short)ScreenHeight, (short)PixelWidth, (short)PixelHeight,scene.ParallelScreenDraw);
         }
 
+		private bool CheckShouldCallOnColumn(NEScene scene)
+		{
+			var sceneType = scene.GetType();
+			return sceneType.GetMethod("OnDrawPerColumn").DeclaringType == sceneType;
+		}
+
         public bool PushScene(NEScene scene)
         {
             NEInput.FlushKeyboard();
@@ -91,6 +100,7 @@ namespace NostalgiaEngine.Core
             if (loadOK && screenOK )
             {
                 m_CurrentScene = scene;
+				m_callOnColumnDraw = CheckShouldCallOnColumn(m_CurrentScene);
                 m_SceneStack.Push(scene);
                 scene.OnInitializeSuccess();
                 return true;
@@ -119,7 +129,8 @@ namespace NostalgiaEngine.Core
                 {
                     InitializeScreen(m_CurrentScene);
                     m_CurrentScene.OnResume();
-                }
+					m_callOnColumnDraw = CheckShouldCallOnColumn(m_CurrentScene);
+				}
                 return false;
             }
 
@@ -137,13 +148,14 @@ namespace NostalgiaEngine.Core
             }
             m_CurrentScene = m_SceneStack.Peek();
             m_CurrentScene.OnResume();
-            InitializeScreen(m_CurrentScene);
+			m_callOnColumnDraw = CheckShouldCallOnColumn(m_CurrentScene);
+			InitializeScreen(m_CurrentScene);
         }
 
         public void Start(NEScene scene)
         {
             Console.Clear();
-            NEInput.FlushKeyboard();
+			NEInput.FlushKeyboard();
             NEColorManagement.SetNostalgiaPalette();
             if (!PushScene(scene))
             {
@@ -154,38 +166,58 @@ namespace NostalgiaEngine.Core
             m_Running = true;
             m_TaskbarUpdateWorker = new Thread(new ThreadStart(UpdateTaskbar));
             m_TaskbarUpdateWorker.Start();
-            while (m_Running)
-            {
-                
+
+			int workerCount = Environment.ProcessorCount;
+			int batchSize = (ScreenWidth + workerCount - 1) / workerCount;
+
+			while (m_Running)
+            {       
                 NEFrameTimer.Update();
                 m_Delta = NEFrameTimer.GetDeltaTime();
                 m_CurrentScene.OnUpdate(NEFrameTimer.GetDeltaTime());
 
-                var sceneType = m_CurrentScene.GetType();
                 //Execute OnDrawPerColumn() only if scene child class implements it.
-                if (sceneType.GetMethod("OnDrawPerColumn").DeclaringType == sceneType)
-                {
-                    var resetEvent = new ManualResetEvent(false); // Will be reset when buffer is ready to be swaped
+                if (m_callOnColumnDraw)
+				{
 
-                    //For each column..
-                    for (int x = 0; x < ScreenWidth; ++x)
-                    {
-                        //m_CurrentScene.OnDrawPerColumn(x);
-                        // Queue new task
-                        ThreadPool.QueueUserWorkItem(
-                           new WaitCallback(
-                         delegate (object state)
-                         {
-                             object[] array = state as object[];
-                             int column = Convert.ToInt32(array[0]);
+					var resetEvent = new ManualResetEvent(false); // Will be reset when buffer is ready to be swaped
+					int remaining = workerCount;
+					for (int w = 0; w < workerCount; ++w)
+					{
+						int xStart = w * batchSize;
+						int xEnd = xStart + batchSize;
+						xEnd = (xEnd >= ScreenWidth) ? ScreenWidth - 1 : xEnd;
+						ThreadPool.QueueUserWorkItem(_ =>
+						{
+							for (int x = xStart; x < xEnd; ++x)
+							{
+								m_CurrentScene.OnDrawPerColumn(x);
+							}
+								
+							if (Interlocked.Decrement(ref remaining) == 0)
+								resetEvent.Set();
+						});
+					}
+					//For each column..
+					//for (int x = 0; x < ScreenWidth; ++x)
+					//{
+					//    //m_CurrentScene.OnDrawPerColumn(x);
+					//    // Queue new task
+					//    ThreadPool.QueueUserWorkItem(
+					//       new WaitCallback(
+					//     delegate (object state)
+					//     {
+					//         object[] array = state as object[];
+					//         int column = Convert.ToInt32(array[0]);
 
-                             m_CurrentScene.OnDrawPerColumn(column);
+					//         m_CurrentScene.OnDrawPerColumn(column);
 
-                             if (column >= ScreenWidth - 1) resetEvent.Set();
-                         }), new object[] { x });
-                    }
+					//         if (column >= ScreenWidth - 1) resetEvent.Set();
+					//     }), new object[] { x });
+					//}
 
-                    resetEvent.WaitOne();
+
+					resetEvent.WaitOne();
 
                 }
 
@@ -201,6 +233,9 @@ namespace NostalgiaEngine.Core
             Console.Title = Title;
             Console.Clear();
             NEScreenBuffer.SetDefaultConsole();
+			Console.BackgroundColor = ConsoleColor.Black;
+			Console.ForegroundColor = ConsoleColor.Gray;
+			Console.Clear();
             Console.WriteLine(PostMessage);
             //NEInput.BlockUntilKeyPress(NEKey.Enter);
         }

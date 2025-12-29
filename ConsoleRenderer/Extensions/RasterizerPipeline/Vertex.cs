@@ -19,8 +19,9 @@ namespace NostalgiaEngine.RasterizerPipeline
         public float U { get { return m_UVs.X; } }
         public float V { get { return m_UVs.Y; } }
         public NEVector4 Vert2Camera { get; set; }
+		public NEVector4 VertWorldSpace { get; set; }
 
-        public  bool m_ZDividedFlag;
+		public  bool m_ZDividedFlag;
 
         public Vertex(float x, float y, float z)
         {
@@ -28,6 +29,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             m_UVs = new NEVector2(0.0f, 0.0f);
             m_ZDividedFlag = false;
 			Vert2Camera = new NEVector4(0.0f, 0.0f, 1.0f, 0.0f);
+			VertWorldSpace = m_Position;
         }
 
         public Vertex(float x, float y, float z, float u, float v)
@@ -36,6 +38,7 @@ namespace NostalgiaEngine.RasterizerPipeline
             m_UVs = new NEVector2(u, v);
             m_ZDividedFlag = false;
 			Vert2Camera = new NEVector4(0.0f, 0.0f, 1.0f, 0.0f);
+			VertWorldSpace = m_Position;
 		}
 
         public static void Swap(ref Vertex v1, ref Vertex v2)

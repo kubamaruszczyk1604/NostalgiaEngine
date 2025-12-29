@@ -348,8 +348,8 @@ namespace NostalgiaEngine.Demos
 		{
 			NEScreenBuffer.ClearColor(2);
 			base.OnDraw();
-			NEColorSample sampleA = NEColorSample.MakeColFromBlocks5((ConsoleColor)1, (ConsoleColor)2, 0.2f);
-			NEColorSample sampleB = NEColorSample.MakeColFromBlocks5((ConsoleColor)1, (ConsoleColor)2, 0.4f);
+			NECharacterCell sampleA = NECharacterCell.MakeColFromBlocks5(1, 2, 0.2f);
+			NECharacterCell sampleB = NECharacterCell.MakeColFromBlocks5(1, 2, 0.4f);
 
 			uint yOffset = 1;
 			uint xOffset = 3;
@@ -368,7 +368,7 @@ namespace NostalgiaEngine.Demos
 					ref CellValue cell = ref m_Board[index];
 					if (cell == CellValue.Empty)
 					{
-						NEColorSample sample = sampleA;
+						NECharacterCell sample = sampleA;
 						if ((y + x) % 2 == 0)
 						{
 							sample = sampleB;
@@ -377,7 +377,7 @@ namespace NostalgiaEngine.Demos
 					}
 					else
 					{
-						NEColorSample sample2 = NEColorSample.MakeColFromBlocks5(0, (ConsoleColor)3, 1.0f);
+						NECharacterCell sample2 = NECharacterCell.MakeColFromBlocks5(0, 3, 1.0f);
 						NEScreenBuffer.PutChar(sample2.Character, sample2.BitMask, (int)x, (int)y);
 					}
 				}

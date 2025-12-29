@@ -6,60 +6,65 @@ using System.Threading.Tasks;
 
 namespace NostalgiaEngine.Core
 {
-	class NERenderTexture: NETexture
+	public struct NEColorSample
 	{
-		struct DATA_CELL
-		{
-			public int minCol;
-			public int maxCol;
-			public float t;
-		}
+		public byte minCol;
+		public byte maxCol;
+		public float t;
+	} 
 
-		private DATA_CELL[] m_Data;
+	public class NERenderTexture: NETexture
+	{
+		private NEColorSample[] m_Data;
 		public NERenderTexture(int width, int height)
 		{
 			Width = width;
 			Height = height;
-			m_Data = new DATA_CELL[Width * Height];
+			m_Data = new NEColorSample[Width * Height];
 			for(int i = 0; i < m_Data.Length; ++i)
 			{
-				ref DATA_CELL cell = ref m_Data[i];
+				ref NEColorSample cell = ref m_Data[i];
 			}
 		}
 
+		public void Write(int x, int y, byte minCol, byte maxCol, float t)
+		{
+			int index = y * Width + x;
+			ref NEColorSample cell = ref m_Data[index];
+			cell.minCol = minCol;
+			cell.maxCol = maxCol;
+			cell.t = t;
+		}
 
-		public override NEColorSample Sample(float u, float v, float intensity)
+		public override NEColorSample GetPixel(int x, int y)
+		{
+			int index = y * Width + x;
+			return m_Data[index];
+		}
+		public override NEColorSample Sample(float u, float v)
 		{
 
-			if (SampleMode == NESampleMode.Clamp)
+			int index = ComputeDataIndex(u, v, m_Data.Length);
+			if(index == -1)
 			{
-				if (u < 0.0f || u > 1.0f)
-				{
-					return NEColorSample.MakeCol(ConsoleColor.Black, 0, intensity, NECHAR_RAMPS.CHAR_RAMP_FULL_EXT);
-				}
-
-				//get fractional part of u
-				u -= (int)u;
-			}
-			else if (SampleMode == NESampleMode.Repeat)
-			{
-				//get fractional part of u
-				u -= (int)u;
-				u = u < 0 ? 1.0f - NEMath.Abs(u) : u;
+				return new NEColorSample();
 			}
 
-			v -= (int)v;
-			v = v < 0 ? 1.0f - NEMath.Abs(v) : v;
+			return m_Data[index]; 
+		}
 
-			int x = (int)Math.Round(u * (float)Width);
-			if (x >= (Width - 1)) x = Width - 1;
+		public override NECharacterCell SampleCell(float u, float v, float intensity = 1.0f)
+		{
+			NEColorSample cell = Sample(u, v);
 
-			int y = (int)Math.Round(v * (float)Height);
-			if (y >= (Height - 1)) y = Height - 1;
-			int index = y * Width + x;
-			ref DATA_CELL cell = ref m_Data[index];
+			return NECharacterCell.Make(cell.minCol, cell.maxCol, cell.t * intensity, NECHAR_RAMPS.CHAR_RAMP_FULL);
+		}
 
-			return NEColorSample.MakeCol((ConsoleColor)cell.minCol, (ConsoleColor)cell.minCol, cell.t, NECHAR_RAMPS.CHAR_RAMP_FULL_EXT);
+		public override NECharacterCell SampleCell(float u, float v, int[] charRamp, float intensity = 1.0f)
+		{
+			NEColorSample cell = Sample(u, v);
+
+			return NECharacterCell.Make(cell.minCol, cell.maxCol, cell.t * intensity, charRamp);
 		}
 	}
 }

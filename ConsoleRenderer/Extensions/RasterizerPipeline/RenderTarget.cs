@@ -64,10 +64,10 @@ namespace NostalgiaEngine.RasterizerPipeline
             return DATA[i].CamDistance;
         }
 
-        public NEColorSample GetColorSample(int x, int y, int[] charRamp, float intensityModifier = 1.0f)
+        public NECharacterCell GetColorSample(int x, int y, int[] charRamp, float intensityModifier = 1.0f)
         {
             int i = Width * y + x;
-            return NEColorSample.MakeCol((ConsoleColor)DATA[i].BKG, (ConsoleColor)DATA[i].FG, DATA[i].T * intensityModifier, charRamp);
+            return NECharacterCell.Make(DATA[i].BKG, DATA[i].FG, DATA[i].T * intensityModifier, charRamp);
         }
 
     }

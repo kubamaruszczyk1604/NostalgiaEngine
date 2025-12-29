@@ -186,14 +186,14 @@ namespace NostalgiaEngine.Extensions
                     val *= bestPair.CalculateLerpCoeff();
                     val = NEMath.Pow(val, m_OutputGamma);
                     //val *= val;
-                    NEColorSample sample;
+                    NECharacterCell sample;
                     if (m_Color)
                     {
-                        sample = NEColorSample.MakeCol((ConsoleColor)bestPair.CI0, (ConsoleColor)bestPair.CI1, val, NECHAR_RAMPS.CHAR_RAMP_FULL);
+                        sample = NECharacterCell.Make(bestPair.CI0, bestPair.CI1, val, NECHAR_RAMPS.CHAR_RAMP_FULL);
                     }
                     else
                     {
-                        sample = NEColorSample.MakeCol((ConsoleColor)0, (ConsoleColor)1, val, NECHAR_RAMPS.CHAR_RAMP_FULL);
+                        sample = NECharacterCell.Make(0, 1, val, NECHAR_RAMPS.CHAR_RAMP_FULL);
                     }
                     NEScreenBuffer.PutChar(sample.Character, sample.BitMask, x, y);
 

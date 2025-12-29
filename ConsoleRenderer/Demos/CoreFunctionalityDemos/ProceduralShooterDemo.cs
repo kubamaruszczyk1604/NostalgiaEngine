@@ -96,7 +96,7 @@ namespace NostalgiaEngine.Demos
 					interp = 0.8f;
 					c2 = ConsoleColor.Black;
 				}
-				NEColorSample col = NEColorSample.MakeColFromBlocks10(c1, c2, interp);
+				NECharacterCell col = NECharacterCell.MakeFromBlocks10(c1, c2, interp);
 				NEScreenBuffer.PutChar(col.Character, col.BitMask, x, y);
 
 				float shipSize = 0.2f;
@@ -108,7 +108,7 @@ namespace NostalgiaEngine.Demos
 					interp = m_ShipSprite.Texture.Sample(u, v);
 					if (interp < 0.99f)//white is transparent
 					{
-						col = NEColorSample.MakeCol(0, (ConsoleColor)15, interp, NECHAR_RAMPS.CHAR_RAMP_FULL);
+						col = NECharacterCell.Make(0, 15, interp, NECHAR_RAMPS.CHAR_RAMP_FULL);
 						NEScreenBuffer.PutChar(col.Character, col.BitMask, x, y);
 					}
 				}
@@ -124,7 +124,7 @@ namespace NostalgiaEngine.Demos
 						interp = p.Texture.Sample(u, v);
 						if (interp > 0.001f)//black is transparent
 						{
-							col = NEColorSample.MakeCol((ConsoleColor)12, (ConsoleColor)14, interp, NECHAR_RAMPS.CHAR_RAMP_FULL);
+							col = NECharacterCell.Make(12, 14, interp, NECHAR_RAMPS.CHAR_RAMP_FULL);
 							NEScreenBuffer.PutChar(col.Character, col.BitMask, x, y);
 						}
 					}

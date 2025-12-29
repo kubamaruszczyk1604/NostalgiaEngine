@@ -11,7 +11,7 @@ namespace NostalgiaEngine.RasterizerPipeline
     public class Model: NESceneObject
     {
         public Mesh Mesh { get; set; }
-        public NEColorTexture16 ColorTexture { get; set; }
+        public NETexture ColorTexture { get; set; }
         public NEFloatBuffer LumaTexture { get; set; }
         public CullMode FaceCull { get; set; }
         public VertexBuffer VBO {get; private set;}
@@ -23,7 +23,7 @@ namespace NostalgiaEngine.RasterizerPipeline
         //public float GlowIntensity { get; set; }
 
 
-        public Model(Mesh mesh, CullMode faceCull = CullMode.Back, NEColorTexture16 colorTexture = null, NEFloatBuffer lumaTexture = null):base()
+        public Model(Mesh mesh, CullMode faceCull = CullMode.Back, NETexture colorTexture = null, NEFloatBuffer lumaTexture = null):base()
         {
             Mesh = mesh;
             ColorTexture = colorTexture;

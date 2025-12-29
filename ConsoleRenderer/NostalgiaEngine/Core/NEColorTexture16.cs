@@ -10,10 +10,10 @@ namespace NostalgiaEngine.Core
     public class NEColorTexture16: NETexture
     {
 
-        public int[] DATA { get { return m_Data; } }
+        public byte[] DATA { get { return m_Data; } }
         public static string LastErrorMessage { get; private set; }
 
-        private int[] m_Data;
+        private byte[] m_Data;
 
         private NEColorTexture16()
         {
@@ -23,7 +23,7 @@ namespace NostalgiaEngine.Core
         private bool ReadFromFile(string path)
         {
             int h = 0;
-            List<int> data = new List<int>();
+            List<byte> data = new List<byte>();
            
             try
             {
@@ -36,7 +36,7 @@ namespace NostalgiaEngine.Core
                        string[] vals = line.Split(',');
                        for(int i =0; i < vals.Length;++i)
                        {
-                            data.Add(int.Parse(vals[i]));
+                            data.Add(byte.Parse(vals[i]));
                        }
                        if(lastW == -1)
                         {
@@ -89,58 +89,72 @@ namespace NostalgiaEngine.Core
             return null;
         }
 
-        public override NEColorSample Sample(float u, float v, float intensity)
+		public override NEColorSample Sample(float u, float v)
+		{
+
+			// u = NEMathHelper.Abs(u);
+			//v = NEMathHelper.Abs(v);
+
+			NEColorSample cs = new NEColorSample();
+			int index = ComputeDataIndex(u, v, m_Data.Length);
+			if(index == -1)
+			{
+				return cs;
+			}
+			
+			cs.minCol = 0;
+			cs.maxCol = (m_Data != null) ? m_Data[index] : (byte)13;
+			cs.t = 1.0f;
+
+			return cs;
+		}
+
+		public override NEColorSample GetPixel(int x, int y)
+		{
+			int index = y * Width + x;
+			NEColorSample sample = new NEColorSample();
+			sample.minCol = 0;
+			sample.maxCol = m_Data[index];
+			sample.t = 1.0f;
+
+			return sample;
+		}
+
+		public override NECharacterCell SampleCell(float u, float v, float intensity)
         {
-            // u = NEMathHelper.Abs(u);
-            //v = NEMathHelper.Abs(v);
-            
-            
-            if (SampleMode == NESampleMode.Clamp)
-            {
-                if (u < 0.0f || u > 1.0f )
-                {
-                    return NEColorSample.MakeCol(ConsoleColor.Black, 0, intensity, NECHAR_RAMPS.CHAR_RAMP_FULL_EXT);
-                }
-
-				//get fractional part of u
-				u -= (int)u;
-            }
-            else if(SampleMode == NESampleMode.Repeat)
-            {
-				//get fractional part of u
-                u -= (int)u;
-                u = u < 0 ? 1.0f - NEMath.Abs(u) : u;
-            }
-
-            v -= (int)v;
-            v = v < 0 ? 1.0f - NEMath.Abs(v) : v;
-
-            int x = (int)Math.Round(u * (float)Width);
-            if (x >= (Width - 1)) x = Width - 1; 
-
-            int y = (int)Math.Round(v * (float)Height);
-            if (y >= (Height - 1)) y = Height - 1;
-            int index = y * Width + x;
-            int col = m_Data != null?m_Data[index]:13;
+			// u = NEMathHelper.Abs(u);
+			//v = NEMathHelper.Abs(v);
+			NEColorSample cs = Sample(u, v);
+			byte col = cs.maxCol;
             if (col == 16)
             {
-                return NEColorSample.MakeTransparent();
+                return NECharacterCell.MakeTransparent();
             }
 
-            return NEColorSample.MakeCol(ConsoleColor.Black, (ConsoleColor)col, intensity, NECHAR_RAMPS.CHAR_RAMP_FULL_EXT);
+            return NECharacterCell.Make(cs.minCol, col, cs.t * intensity, NECHAR_RAMPS.CHAR_RAMP_FULL_EXT);
         }
 
-        public NEColorSample SampleFromBlocks10(float u, float v, float intensity)
-        {
-            // u = NEMathHelper.Abs(u);
-            //v = NEMathHelper.Abs(v);
+		public override NECharacterCell SampleCell(float u, float v, int[] charRamp, float intensity)
+		{
 
+			NEColorSample cs = Sample(u, v);
+			byte col = cs.maxCol;
+			if (col == 16)
+			{
+				return NECharacterCell.MakeTransparent();
+			}
+
+			return NECharacterCell.Make(cs.minCol, col, cs.t * intensity, charRamp);
+		}
+
+		public NECharacterCell SampleFromBlocks10(float u, float v, float intensity)
+        {
 
             if (SampleMode == NESampleMode.Clamp)
             {
                 if (u < 0.0f || u > 1.0f)
                 {
-                    return NEColorSample.MakeColFromBlocks10(ConsoleColor.Black, 0, intensity);
+                    return NECharacterCell.MakeFromBlocks10(ConsoleColor.Black, 0, intensity);
                 }
                 u -= (int)u;
             }
@@ -162,10 +176,10 @@ namespace NostalgiaEngine.Core
             int col = m_Data != null ? m_Data[index] : 13;
             if (col == 16)
             {
-                return NEColorSample.MakeTransparent();
+                return NECharacterCell.MakeTransparent();
             }
 
-            return NEColorSample.MakeColFromBlocks10(ConsoleColor.Black, (ConsoleColor)col, intensity);
+            return NECharacterCell.MakeFromBlocks10(ConsoleColor.Black, (ConsoleColor)col, intensity);
         }
 
     }

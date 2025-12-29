@@ -46,7 +46,9 @@ namespace NostalgiaEngine.RasterizerPipeline
 			{
 				// ProcessedVertices.Add(mesh.Vertices[i].Duplicate());
 				ProcessedVertices.Add(m_VertexPool.RequestAndSet(mesh.Vertices[i]));
+				ProcessedVertices[i].VertWorldSpace = model.Transform.World * ProcessedVertices[i].Position;
 				ProcessedVertices[i].Position = MVP * ProcessedVertices[i].Position;
+				
 				// ProcessedVertices[i].Vert2Camera = -ProcessedVertices[i].Position.Normalized;
 
 			}

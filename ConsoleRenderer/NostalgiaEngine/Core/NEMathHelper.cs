@@ -257,7 +257,47 @@ namespace NostalgiaEngine.Core
             b = a;
         }
 
-    }
+		public static bool CheckRayTriangleHit(NEVector4 O, NEVector4 D,
+			NEVector4 V0, NEVector4 V1, NEVector4 V2,
+			float tMin = 1e-4f,
+			float tMax = float.PositiveInfinity,
+			bool cullBackfaces = false)
+		{
+			const float EPS = 1e-8f;
+
+			NEVector4 e1 = V1 - V0;
+			NEVector4 e2 = V2 - V0;
+
+			NEVector4 p = NEVector4.Cross3(D, e2);
+			//p.W = 1;
+			float det = NEVector4.Dot3(e1, p);
+
+			if (cullBackfaces)
+			{
+				if (det < EPS) return false;
+			}
+			else
+			{
+				if (Math.Abs(det) < EPS) return false;
+			}
+
+			float invDet = 1.0f / det;
+
+			NEVector4 tvec = O - V0;
+			float u = NEVector4.Dot3(tvec, p) * invDet;
+			if (u < 0.0f || u > 1.0f) return false;
+
+			NEVector4 q = NEVector4.Cross3(tvec, e1);
+			//q.W = 1.0f;
+			float v = NEVector4.Dot3(D, q) * invDet;
+			if (v < 0.0f || (u + v) > 1.0f) return false;
+
+			float t = NEVector4.Dot3(e2, q) * invDet;
+
+			return (t >= tMin && t <= tMax);
+		
+	}
+}
 
     public struct PlaneIntersectionManifest
     {

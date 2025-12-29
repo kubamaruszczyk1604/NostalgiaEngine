@@ -152,11 +152,11 @@ namespace TextureDisplay
                         float v = ((float)y) / ((float)ScreenHeight);
 
                         float luma = 1.0f;
-                        NEColorSample sample;
+                        NECharacterCell sample;
                         if (m_LumaBuffer != null)
                         {
                             luma = m_LumaBuffer.Sample(du, v);
-                            sample = m_MainTex.Sample(du, v, luma);
+                            sample = m_MainTex.SampleCell(du, v, luma);
                         }
                         else
                         {
