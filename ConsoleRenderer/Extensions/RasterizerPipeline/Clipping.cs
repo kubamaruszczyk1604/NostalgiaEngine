@@ -56,7 +56,8 @@ namespace NostalgiaEngine.RasterizerPipeline
             NEPlane plane = clPlane.Plane;
             List<Vertex> vertices = vbo.ProcessedVertices;
             List<Triangle> newTriangles = new List<Triangle>(4);
-            int outCount = CheckBoundry(inTriangle, vbo, clPlane);
+			InsOuts ind = CheckBoundry(inTriangle, vbo, clPlane);
+			int outCount = ind.OUT_CNT;
             if (outCount == 0)
             {
                 newTriangles.Add(inTriangle);
@@ -69,7 +70,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 
             if (outCount == 1)
             {
-                int vOutI = OUTS[0]; int vIn0I = INS[0]; int vIn1I = INS[1];
+                int vOutI = ind.OUTS[0]; int vIn0I = ind.INS[0]; int vIn1I = ind.INS[1];
 
                 PlaneIntersectionManifest m1 = NEPlane.IntersectionWithLineSegment(vertices[vOutI].Position, vertices[vIn0I].Position, plane);
                 Vertex new0 = Vertex.Lerp(vertices[vOutI], vertices[vIn0I], m1.MagnitudeNormalized, vbo);
@@ -88,7 +89,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 
             if (outCount == 2)
             {
-                int vOut0I = OUTS[0]; int vOut1I = OUTS[1]; int vInI = INS[0];
+                int vOut0I = ind.OUTS[0]; int vOut1I = ind.OUTS[1]; int vInI = ind.INS[0];
 
                 PlaneIntersectionManifest m1 = NEPlane.IntersectionWithLineSegment(vertices[vOut0I].Position, vertices[vInI].Position, plane);
                 Vertex new0 = Vertex.Lerp(vertices[vOut0I], vertices[vInI], m1.MagnitudeNormalized, vbo);
@@ -121,50 +122,106 @@ namespace NostalgiaEngine.RasterizerPipeline
         }
 
 
+		struct InsOuts
+		{
+			public int[] INS;
+			public int[] OUTS;
+			public int OUT_CNT;
+		}
 
-        static int[] INS = new int[3];
-        static int[] OUTS = new int[3];
-        static private int CheckBoundry(Triangle triangle, VertexBuffer mesh, ClipPlane plane)
-        {
-            bool checkGreater = plane.RejectCriteria == RejectCriteria.GreaterThan;
-            int inI = 0; int outI = 0;
-            Vertex A = mesh.ProcessedVertices[triangle.Indices[0]];
-            Vertex B = mesh.ProcessedVertices[triangle.Indices[1]];
-            Vertex C = mesh.ProcessedVertices[triangle.Indices[2]];
+		static private InsOuts CheckBoundry(Triangle triangle, VertexBuffer mesh, ClipPlane plane)
+		{
+			bool checkGreater = plane.RejectCriteria == RejectCriteria.GreaterThan;
+			int inI = 0; int outI = 0;
+			Vertex A = mesh.ProcessedVertices[triangle.Indices[0]];
+			Vertex B = mesh.ProcessedVertices[triangle.Indices[1]];
+			Vertex C = mesh.ProcessedVertices[triangle.Indices[2]];
 
-            if ((A.Position.Data[(int)plane.Axis] < plane.Treshold) ^ checkGreater)
-            {
-                OUTS[outI] = triangle.Indices[0];
-                outI++;
-            }
-            else
-            {
-                INS[inI] = triangle.Indices[0];
-                inI++;
-            }
+			InsOuts ind = new InsOuts();
+			ind.INS = new int[3];
+			ind.OUTS = new int[3];
 
-            if ((B.Position.Data[(int)plane.Axis] < plane.Treshold) ^ checkGreater)
-            {
-                OUTS[outI] = triangle.Indices[1];
-                outI++;
-            }
-            else
-            {
-                INS[inI] = triangle.Indices[1];
-                inI++;
-            }
+			if ((A.Position.Data[(int)plane.Axis] < plane.Treshold) ^ checkGreater)
+			{
+				ind.OUTS[outI] = triangle.Indices[0];
+				outI++;
+			}
+			else
+			{
+				ind.INS[inI] = triangle.Indices[0];
+				inI++;
+			}
 
-            if ((C.Position.Data[(int)plane.Axis] < plane.Treshold) ^ checkGreater)
-            {
-                OUTS[outI] = triangle.Indices[2];
-                outI++;
-            }
-            else
-            {
-                INS[inI] = triangle.Indices[2];
-                inI++;
-            }
-            return outI;
-        }
+			if ((B.Position.Data[(int)plane.Axis] < plane.Treshold) ^ checkGreater)
+			{
+				ind.OUTS[outI] = triangle.Indices[1];
+				outI++;
+			}
+			else
+			{
+				ind.INS[inI] = triangle.Indices[1];
+				inI++;
+			}
+
+			if ((C.Position.Data[(int)plane.Axis] < plane.Treshold) ^ checkGreater)
+			{
+				ind.OUTS[outI] = triangle.Indices[2];
+				outI++;
+			}
+			else
+			{
+				ind.INS[inI] = triangle.Indices[2];
+				inI++;
+			}
+
+			ind.OUT_CNT = outI;
+
+			return ind;
+		}
+
+		//static int[] INS = new int[3];
+		//static int[] OUTS = new int[3];
+		//static private int CheckBoundry(Triangle triangle, VertexBuffer mesh, ClipPlane plane)
+  //      {
+  //          bool checkGreater = plane.RejectCriteria == RejectCriteria.GreaterThan;
+  //          int inI = 0; int outI = 0;
+  //          Vertex A = mesh.ProcessedVertices[triangle.Indices[0]];
+  //          Vertex B = mesh.ProcessedVertices[triangle.Indices[1]];
+  //          Vertex C = mesh.ProcessedVertices[triangle.Indices[2]];
+
+  //          if ((A.Position.Data[(int)plane.Axis] < plane.Treshold) ^ checkGreater)
+  //          {
+  //              OUTS[outI] = triangle.Indices[0];
+  //              outI++;
+  //          }
+  //          else
+  //          {
+  //              INS[inI] = triangle.Indices[0];
+  //              inI++;
+  //          }
+
+  //          if ((B.Position.Data[(int)plane.Axis] < plane.Treshold) ^ checkGreater)
+  //          {
+  //              OUTS[outI] = triangle.Indices[1];
+  //              outI++;
+  //          }
+  //          else
+  //          {
+  //              INS[inI] = triangle.Indices[1];
+  //              inI++;
+  //          }
+
+  //          if ((C.Position.Data[(int)plane.Axis] < plane.Treshold) ^ checkGreater)
+  //          {
+  //              OUTS[outI] = triangle.Indices[2];
+  //              outI++;
+  //          }
+  //          else
+  //          {
+  //              INS[inI] = triangle.Indices[2];
+  //              inI++;
+  //          }
+  //          return outI;
+  //      }
     }
 }

@@ -9,9 +9,9 @@ namespace NostalgiaEngine.RasterizerPipeline
 		public int[] Indices { get; private set; }
 		public int[] LeftSortedIndices { get; private set; }
 
-		public NEEdge AB { get; private set; }
-		public NEEdge AC { get; private set; }
-		public NEEdge BC { get; private set; }
+		public NEEdge AB;
+		public NEEdge AC;
+		public NEEdge BC;
 
 		public Vertex A { get; private set; }
 		public Vertex B { get; private set; }
@@ -126,13 +126,13 @@ namespace NostalgiaEngine.RasterizerPipeline
 			B = VBO.ProcessedVertices[LeftSortedIndices[1]];
 			C = VBO.ProcessedVertices[LeftSortedIndices[2]];
 
-			AB = new NEEdge();
+			//AB = new NEEdge();
 			NEMath.Find2DLineEquation(A.Position.XY, B.Position.XY, out AB.a, out AB.c);
 
-			AC = new NEEdge();
+			//AC = new NEEdge();
 			NEMath.Find2DLineEquation(A.Position.XY, C.Position.XY, out AC.a, out AC.c);
 
-			BC = new NEEdge();
+			//BC = new NEEdge();
 			NEMath.Find2DLineEquation(B.Position.XY, C.Position.XY, out BC.a, out BC.c);
 		}
 
@@ -261,7 +261,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 		}
 	}
 
-	public class NEEdge
+	public struct NEEdge
 	{
 		public float a; //gradient
 		public float c; //intercept

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NostalgiaEngine.Core;
+using System.Threading;
+
 namespace NostalgiaEngine.RasterizerPipeline
 {
 	public class Scene3D : NEScene
@@ -91,10 +93,30 @@ namespace NostalgiaEngine.RasterizerPipeline
 			Engine.Instance.TitleBarAppend = "Rendered Triangles: " + m_RenderedTriangleCount.ToString();
 			m_RenderedTriangleCount = 0;
 
-			for (int i = 0; i < Models.Count; ++i)
+			var opts = new ParallelOptions
 			{
-				ProcessModel(deltaTime, Models[i]);
-			}
+				MaxDegreeOfParallelism = Environment.ProcessorCount
+			};
+
+			Parallel.ForEach(System.Collections.Concurrent.Partitioner.Create(0, Models.Count, 1),
+				opts, 
+				range =>
+				{
+					for (int i = range.Item1; i < range.Item2; i++)
+					{
+						ProcessModel(deltaTime, Models[i]);
+					}
+						
+				});
+			//Parallel.ForEach(Models, opts, model =>
+			//{
+			//	ProcessModel(deltaTime, model);
+			//});
+
+			//for (int i = 0; i < Models.Count; ++i)
+			//{
+			//	ProcessModel(deltaTime, Models[i]);
+			//}
 		}
 
 		public override void OnDrawPerColumn(int x)

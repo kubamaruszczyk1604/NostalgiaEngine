@@ -40,28 +40,29 @@ namespace NostalgiaEngine.RasterizerPipeline
 			Mesh mesh = AssociatedModel.Mesh;
 			ClearProcessedData();
 			Model model = AssociatedModel;
-
 			NEMatrix4x4 MVP = camera.Projection * camera.View * model.Transform.World;
 			for (int i = 0; i < mesh.Vertices.Count; ++i)
 			{
 				// ProcessedVertices.Add(mesh.Vertices[i].Duplicate());
 				ProcessedVertices.Add(m_VertexPool.RequestAndSet(mesh.Vertices[i]));
-				ProcessedVertices[i].VertWorldSpace = model.Transform.World * ProcessedVertices[i].Position;
+				//ProcessedVertices[i].VertWorldSpace = model.Transform.World * ProcessedVertices[i].Position;
 				ProcessedVertices[i].Position = MVP * ProcessedVertices[i].Position;
 				
 				// ProcessedVertices[i].Vert2Camera = -ProcessedVertices[i].Position.Normalized;
 
 			}
+
 			int currentTriangle = 0;
 			NEMatrix4x4 normalTransformMat = camera.RotationInv * model.Transform.RotationMat;
 			//Projection space
 			for (int i = 0; i < mesh.Triangles.Count; ++i)
 			{
 				Triangle tri = mesh.Triangles[i];
+				tri = RequestFromPool(tri);
 				tri.NormalView = normalTransformMat * tri.NormalModel;
 				tri.NormalWorld = model.Transform.RotationMat * tri.NormalModel;
 				// tri = new Triangle(tri, model.VBO);
-				tri = RequestFromPool(tri);
+				//tri = RequestFromPool(tri);
 				if (CullTest(tri, model.FaceCull)) continue;
 				List<Triangle> nearClipped = Clipping.ClipTriangleAgainstPlane(tri, this, ClipPlane.Near);
 				foreach (Triangle triangle in nearClipped)
@@ -71,7 +72,6 @@ namespace NostalgiaEngine.RasterizerPipeline
 				}
 
 			}
-
 			for (int i = 0; i < TempTriangleList.Count; ++i)
 			{
 				Triangle triangle = TempTriangleList[i];

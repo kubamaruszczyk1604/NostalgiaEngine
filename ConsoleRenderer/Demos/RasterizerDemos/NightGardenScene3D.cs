@@ -40,10 +40,21 @@ namespace NostalgiaEngine.Demos
             bunnyModel.Transform.ScaleY = 10.5f;
             bunnyModel.Transform.ScaleZ = 10.5f;
             bunnyModel.Transform.LocalPosition = new NEVector4(5.0f, -0.4f, -1.0f, 1.0f);
-            
-            Models.Add(floorModel);
-            Models.Add(bunnyModel);
 
+			//for (int i = 0; i < 15; ++i)
+			//{
+			//	Model bunnyModel2 = new Model(bunnyMesh, CullMode.None);
+			//	bunnyModel2.Transform.ScaleX = 10.5f;
+			//	bunnyModel2.Transform.ScaleY = 10.5f;
+			//	bunnyModel2.Transform.ScaleZ = 10.5f;
+			//	bunnyModel2.Transform.LocalPosition = new NEVector4(-5.0f + i, -0.4f, -2.0f, 1.0f);
+			//	Models.Add(bunnyModel2);
+
+			//}
+
+
+			Models.Add(floorModel);
+            Models.Add(bunnyModel);
 
             MakeTree(new NEVector4(-3.2f, 0.0f, 1.0f), cubeMesh, treeTexture);
             MakeTree(new NEVector4(3.5f, 0.0f, 5.0f), cubeMesh, treeTexture);
