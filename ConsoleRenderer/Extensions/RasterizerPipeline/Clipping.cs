@@ -133,9 +133,9 @@ namespace NostalgiaEngine.RasterizerPipeline
 		{
 			bool checkGreater = plane.RejectCriteria == RejectCriteria.GreaterThan;
 			int inI = 0; int outI = 0;
-			Vertex A = mesh.ProcessedVertices[triangle.Indices[0]];
-			Vertex B = mesh.ProcessedVertices[triangle.Indices[1]];
-			Vertex C = mesh.ProcessedVertices[triangle.Indices[2]];
+			Vertex A = mesh.ProcessedVertices[triangle.I0];
+			Vertex B = mesh.ProcessedVertices[triangle.I1];
+			Vertex C = mesh.ProcessedVertices[triangle.I2];
 
 			InsOuts ind = new InsOuts();
 			ind.INS = new int[3];
@@ -143,34 +143,34 @@ namespace NostalgiaEngine.RasterizerPipeline
 
 			if ((A.Position.Data[(int)plane.Axis] < plane.Treshold) ^ checkGreater)
 			{
-				ind.OUTS[outI] = triangle.Indices[0];
+				ind.OUTS[outI] = triangle.I0;
 				outI++;
 			}
 			else
 			{
-				ind.INS[inI] = triangle.Indices[0];
+				ind.INS[inI] = triangle.I0;
 				inI++;
 			}
 
 			if ((B.Position.Data[(int)plane.Axis] < plane.Treshold) ^ checkGreater)
 			{
-				ind.OUTS[outI] = triangle.Indices[1];
+				ind.OUTS[outI] = triangle.I1;
 				outI++;
 			}
 			else
 			{
-				ind.INS[inI] = triangle.Indices[1];
+				ind.INS[inI] = triangle.I1;
 				inI++;
 			}
 
 			if ((C.Position.Data[(int)plane.Axis] < plane.Treshold) ^ checkGreater)
 			{
-				ind.OUTS[outI] = triangle.Indices[2];
+				ind.OUTS[outI] = triangle.I2;
 				outI++;
 			}
 			else
 			{
-				ind.INS[inI] = triangle.Indices[2];
+				ind.INS[inI] = triangle.I2;
 				inI++;
 			}
 

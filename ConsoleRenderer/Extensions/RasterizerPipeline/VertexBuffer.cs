@@ -90,6 +90,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 				List<Triangle> FarClipped = Clipping.ClipTrianglesAgainstPlane(TopClipped, this, ClipPlane.Far);
 
 				TrianglesReadyToRender.AddRange(FarClipped);
+				//TrianglesReadyToRender.Add(triangle);
 			}
 
 			for (int i = 0; i < ProcessedVertices.Count; ++i)
@@ -149,9 +150,9 @@ namespace NostalgiaEngine.RasterizerPipeline
 		{
 			if (cullMode == CullMode.None) return false;
 
-			NEVector4 vA = -triangle.VBO.ProcessedVertices[triangle.Indices[0]].Position;
-			NEVector4 vB = -triangle.VBO.ProcessedVertices[triangle.Indices[1]].Position;
-			NEVector4 vC = -triangle.VBO.ProcessedVertices[triangle.Indices[2]].Position;
+			NEVector4 vA = -triangle.VBO.ProcessedVertices[triangle.I0].Position;
+			NEVector4 vB = -triangle.VBO.ProcessedVertices[triangle.I1].Position;
+			NEVector4 vC = -triangle.VBO.ProcessedVertices[triangle.I2].Position;
 
 			float dotA = NEVector4.Dot3(vA, triangle.NormalView);
 			float dotB = NEVector4.Dot3(vB, triangle.NormalView);

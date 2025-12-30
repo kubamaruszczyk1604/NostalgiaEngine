@@ -207,6 +207,8 @@ namespace NostalgiaEngine.Core
 			if (!m_MultiThreadEnabled)
 			{
 				WriteConsoleOutput(m_ConsoleHandle, m_Bufer[m_DrawBufferPtr], m_ScrBottomRight, m_ScrTopLeft, ref m_ConsoleRect);
+				//m_DrawBufferPtr = m_WriteBufferPtr;
+				//m_WriteBufferPtr = 1 - m_WriteBufferPtr;
 				return;
 			}
 
