@@ -51,21 +51,21 @@ namespace NostalgiaEngine.RasterizerPipeline
         }
 
 
-        static public List<Triangle> ClipTriangleAgainstPlane(Triangle inTriangle, VertexBuffer vbo, ClipPlane clPlane)
+        static public void ClipTriangleAgainstPlane(Triangle inTriangle, VertexBuffer vbo, ClipPlane clPlane, List<Triangle> outTriangles)
         {
             NEPlane plane = clPlane.Plane;
             List<Vertex> vertices = vbo.ProcessedVertices;
-            List<Triangle> newTriangles = new List<Triangle>(4);
+            //List<Triangle> newTriangles = new List<Triangle>(4);
 			InsOuts ind = CheckBoundry(inTriangle, vbo, clPlane);
 			int outCount = ind.OUT_CNT;
             if (outCount == 0)
             {
-                newTriangles.Add(inTriangle);
-                return newTriangles;
+                outTriangles.Add(inTriangle);
+                return;
             }
             if (outCount == 3)
             {
-                return newTriangles;
+                return;
             }
 
             if (outCount == 1)
@@ -81,9 +81,9 @@ namespace NostalgiaEngine.RasterizerPipeline
                 vertices.Add(new1);
                 int v0 = vertices.Count - 2;
                 int v1 = vertices.Count - 1;
-                VertsToTris(vbo, inTriangle, v0, v1, vIn0I, vIn1I, newTriangles);
+                VertsToTris(vbo, inTriangle, v0, v1, vIn0I, vIn1I, outTriangles);
 
-                return newTriangles;
+                return;
 
             }
 
@@ -100,22 +100,22 @@ namespace NostalgiaEngine.RasterizerPipeline
                 vertices.Add(new1);
                 int v0 = vertices.Count - 2;
                 int v1 = vertices.Count - 1;
-                VertsToTris(vbo, inTriangle, v0, v1, vInI, newTriangles);
+                VertsToTris(vbo, inTriangle, v0, v1, vInI, outTriangles);
 
-                return newTriangles;
+                return;
             }
 
-            return newTriangles;
+            //return newTriangles;
         }
 
-        static public List<Triangle> ClipTrianglesAgainstPlane(List<Triangle> inTriangles, VertexBuffer mesh, ClipPlane clPlane)
+		static public List<Triangle> ClipTrianglesAgainstPlane(List<Triangle> inTriangles, VertexBuffer mesh, ClipPlane clPlane, List<Triangle> output)
         {
-            List<Triangle> output = new List<Triangle>(inTriangles.Count * 2); // in worst case scenario, each input triangle 
-                                                                               // will produce two new triangles, hence count*2
-
+			//List<Triangle> output = new List<Triangle>(inTriangles.Count * 2); // in worst case scenario, each input triangle 
+			//                                                                   // will produce two new triangles, hence count*2
+	
             for(int i =0; i < inTriangles.Count;++i)
             {
-                output.AddRange(ClipTriangleAgainstPlane(inTriangles[i], mesh, clPlane));
+                ClipTriangleAgainstPlane(inTriangles[i], mesh, clPlane, output);
             }
 
             return output;

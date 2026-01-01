@@ -1,9 +1,5 @@
-﻿using System;
+﻿using NostalgiaEngine.Core;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NostalgiaEngine.Core;
 
 namespace NostalgiaEngine.RasterizerPipeline
 {
@@ -19,6 +15,9 @@ namespace NostalgiaEngine.RasterizerPipeline
 		private VertexPool m_VertexPool;
 		private TrianglePool m_TrianglePool;
 
+		List<Triangle> m_clippedTrianglesTempBuffer1;
+		List<Triangle> m_clippedTrianglesTempBuffer2;
+
 		public VertexBuffer(Model model)
 		{
 			AssociatedModel = model;
@@ -32,6 +31,9 @@ namespace NostalgiaEngine.RasterizerPipeline
 
 			m_TrianglePool = new TrianglePool();
 			m_TrianglePool.Allocate(AssociatedModel.Mesh.Triangles.Count * 2);
+
+			m_clippedTrianglesTempBuffer1 = new List<Triangle>(80);
+			m_clippedTrianglesTempBuffer2 = new List<Triangle>(80);
 
 		}
 
@@ -48,11 +50,11 @@ namespace NostalgiaEngine.RasterizerPipeline
 				//ProcessedVertices[i].VertWorldSpace = model.Transform.World * ProcessedVertices[i].Position;
 				ProcessedVertices[i].Position = MVP * ProcessedVertices[i].Position;
 				
-				// ProcessedVertices[i].Vert2Camera = -ProcessedVertices[i].Position.Normalized;
+				//ProcessedVertices[i].Vert2Camera = -ProcessedVertices[i].Position.Normalized;
 
 			}
 
-			int currentTriangle = 0;
+			//int currentTriangle = 0;
 			NEMatrix4x4 normalTransformMat = camera.RotationInv * model.Transform.RotationMat;
 			//Projection space
 			for (int i = 0; i < mesh.Triangles.Count; ++i)
@@ -64,33 +66,40 @@ namespace NostalgiaEngine.RasterizerPipeline
 				// tri = new Triangle(tri, model.VBO);
 				//tri = RequestFromPool(tri);
 				if (CullTest(tri, model.FaceCull)) continue;
-				List<Triangle> nearClipped = Clipping.ClipTriangleAgainstPlane(tri, this, ClipPlane.Near);
-				foreach (Triangle triangle in nearClipped)
-				{
-					TempTriangleList.Add(triangle);
-					currentTriangle++;
-				}
+				Clipping.ClipTriangleAgainstPlane(tri, this, ClipPlane.Near, TempTriangleList);
+				//foreach (Triangle triangle in nearClipped)
+				//{
+				//	TempTriangleList.Add(triangle);
+				//	//currentTriangle++;
+				//}
 
 			}
+			//for (int i = 0; i < TempTriangleList.Count; ++i)
+			//{
+			//	Triangle triangle = TempTriangleList[i];
+			//	triangle.ZDivide();
+			//	triangle.CalculateEdges();
+			//}
+
 			for (int i = 0; i < TempTriangleList.Count; ++i)
 			{
 				Triangle triangle = TempTriangleList[i];
 				triangle.ZDivide();
 				triangle.CalculateEdges();
-			}
-
-			for (int i = 0; i < TempTriangleList.Count; ++i)
-			{
-				Triangle triangle = TempTriangleList[i];
 				if (IsOutsideFrustum(triangle)) continue;
-				List<Triangle> LeftClipped = Clipping.ClipTriangleAgainstPlane(triangle, this, ClipPlane.Left);
-				List<Triangle> RightClipped = Clipping.ClipTrianglesAgainstPlane(LeftClipped, this, ClipPlane.Right);
-				List<Triangle> BottomClipped = Clipping.ClipTrianglesAgainstPlane(RightClipped, this, ClipPlane.Bottom);
-				List<Triangle> TopClipped = Clipping.ClipTrianglesAgainstPlane(BottomClipped, this, ClipPlane.Top);
-				List<Triangle> FarClipped = Clipping.ClipTrianglesAgainstPlane(TopClipped, this, ClipPlane.Far);
+				Clipping.ClipTriangleAgainstPlane(triangle, this, ClipPlane.Left, m_clippedTrianglesTempBuffer1);
+				m_clippedTrianglesTempBuffer2.Clear();
+				Clipping.ClipTrianglesAgainstPlane(m_clippedTrianglesTempBuffer1, this, ClipPlane.Right, m_clippedTrianglesTempBuffer2);
+				m_clippedTrianglesTempBuffer1.Clear();
+				Clipping.ClipTrianglesAgainstPlane(m_clippedTrianglesTempBuffer2, this, ClipPlane.Bottom, m_clippedTrianglesTempBuffer1);
+				m_clippedTrianglesTempBuffer2.Clear();
+				Clipping.ClipTrianglesAgainstPlane(m_clippedTrianglesTempBuffer1, this, ClipPlane.Top, m_clippedTrianglesTempBuffer2);
+				Clipping.ClipTrianglesAgainstPlane(m_clippedTrianglesTempBuffer2, this, ClipPlane.Far, TrianglesReadyToRender);
 
-				TrianglesReadyToRender.AddRange(FarClipped);
-				//TrianglesReadyToRender.Add(triangle);
+				//TrianglesReadyToRender.AddRange(clippedTriangles1);
+				m_clippedTrianglesTempBuffer1.Clear();
+				m_clippedTrianglesTempBuffer2.Clear();
+				////TrianglesReadyToRender.Add(triangle);
 			}
 
 			for (int i = 0; i < ProcessedVertices.Count; ++i)
