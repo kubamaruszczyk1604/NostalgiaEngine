@@ -19,10 +19,12 @@ namespace NostalgiaEngine.Core
         public NEVector2 XZ { get { return new NEVector2(X, Z); } }
         public NEVector2 YZ { get { return new NEVector2(Y, Z); } }
         public float Length { get { return CalculateLength(this); } }
-        public NEVector4 Normalized { get { return Normalize(this); } }
+		public float LengthFast { get { return CalculateLengthFast(this); } }
+		public NEVector4 Normalized { get { return Normalize(this); } }
+		public NEVector4 NormalizedFast { get { return NormalizeFast(this); } }
 
 
-        static public readonly NEVector4 Up =  new NEVector4(0.0f, 1.0f, 0.0f);
+		static public readonly NEVector4 Up =  new NEVector4(0.0f, 1.0f, 0.0f);
         static public readonly NEVector4 Down = new NEVector4(0.0f, -1.0f, 0.0f);
         static public readonly NEVector4 Left = new NEVector4(-1.0f, 0.0f, 0.0f);
         static public readonly NEVector4 Right = new NEVector4(1.0f, 0.0f, 0.0f);
@@ -54,22 +56,39 @@ namespace NostalgiaEngine.Core
             W = 0.0f;
         }
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static bool Compare(NEVector4 lhs, NEVector4 rhs)
         {
             return ((lhs.X == rhs.X) && (lhs.Y == rhs.Y) && (lhs.Z == rhs.Z) && (lhs.W == rhs.W));
         }
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static float CalculateLength(NEVector4 v)
         {
-            return (float)Math.Sqrt(v.X * v.X + v.Y * v.Y + v.Z * v.Z + v.W * v.W);
-        }
+			return (float)Math.Sqrt(v.X * v.X + v.Y * v.Y + v.Z * v.Z + v.W * v.W);
+		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static float CalculateLengthFast(NEVector4 v)
+		{
+			return 1.0f/NEMath.InvSqrtFast(v.X * v.X + v.Y * v.Y + v.Z * v.Z + v.W * v.W);
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static NEVector4 Normalize(NEVector4 v)
         {
             float l = 1.0f/CalculateLength(v);
             return new NEVector4(v.X * l, v.Y * l, v.Z * l, v.W * l);
         }
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static NEVector4 NormalizeFast(NEVector4 v)
+		{
+			float l = NEMath.InvSqrtFast(v.X * v.X + v.Y * v.Y + v.Z * v.Z + v.W * v.W);
+			return new NEVector4(v.X * l, v.Y * l, v.Z * l, v.W * l);
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		/// <summary>
 		/// Checks if both coplanar vectors left and right are pointing left and right on the plane with the normal "up" 
 		/// </summary>
@@ -86,16 +105,19 @@ namespace NostalgiaEngine.Core
 
         }
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static float Dot(NEVector4 v1, NEVector4 v2)
         {
             return v1.X * v2.X + v1.Y * v2.Y + v1.Z * v2.Z + v1.W * v2.W;
         }
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static float Dot3(NEVector4 v1, NEVector4 v2)
         {
             return v1.X * v2.X + v1.Y * v2.Y + v1.Z * v2.Z;
         }
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static NEVector4 Cross3(NEVector4 a, NEVector4 b)
         {
             float x = a.Y * b.Z - a.Z * b.Y;
@@ -104,16 +126,19 @@ namespace NostalgiaEngine.Core
             return new NEVector4(x, y, z, 0.0f);
         }
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static NEVector4 Abs(NEVector4 a)
         {
             return new NEVector4(Math.Abs(a.X), Math.Abs(a.Y), Math.Abs(a.Z), Math.Abs(a.W));
         }
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static NEVector4 Lerp(NEVector4 a, NEVector4 b, float t)
         {
             return a + (b - a) * t;
         }
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static NEVector4 LerpInvW(NEVector4 a, NEVector4 b, float t)
         {
             a.W = 1.0f / a.W;
@@ -123,31 +148,37 @@ namespace NostalgiaEngine.Core
             return output;
         }
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		static public NEVector4 operator +(NEVector4 lhs, NEVector4 rhs)
         {
             return new NEVector4(lhs.X + rhs.X, lhs.Y + rhs.Y, lhs.Z + rhs.Z, lhs.W + rhs.W);
         }
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		static public NEVector4 operator -(NEVector4 lhs, NEVector4 rhs)
         {
             return new NEVector4(lhs.X - rhs.X, lhs.Y - rhs.Y, lhs.Z - rhs.Z, lhs.W - rhs.W);
         }
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		static public NEVector4 operator -(NEVector4 lhs)
         {
             return new NEVector4(-lhs.X , -lhs.Y , -lhs.Z , -lhs.W);
         }
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		static public NEVector4 operator *(NEVector4 lhs, float rhs)
         {
             return new NEVector4(lhs.X * rhs, lhs.Y * rhs, lhs.Z * rhs, lhs.W * rhs);
         }
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		static public NEVector4 operator *(NEVector4 lhs, NEVector4 rhs)
         {
             return new NEVector4(lhs.X * rhs.X, lhs.Y * rhs.Y, lhs.Z * rhs.Z, lhs.W * rhs.W);
         }
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		static public NEVector4 operator /(NEVector4 lhs, float rhs)
         {
             return new NEVector4(lhs.X / rhs, lhs.Y / rhs, lhs.Z / rhs, lhs.W / rhs);

@@ -51,7 +51,7 @@ namespace NostalgiaEngine.RasterizerPipeline
         }
 
 
-        static public void ClipTriangleAgainstPlane(Triangle inTriangle, VertexBuffer vbo, ClipPlane clPlane, List<Triangle> outTriangles)
+        static unsafe public void ClipTriangleAgainstPlane(Triangle inTriangle, VertexBuffer vbo, ClipPlane clPlane, List<Triangle> outTriangles)
         {
             NEPlane plane = clPlane.Plane;
             List<Vertex> vertices = vbo.ProcessedVertices;
@@ -122,14 +122,14 @@ namespace NostalgiaEngine.RasterizerPipeline
         }
 
 
-		struct InsOuts
+		unsafe struct InsOuts
 		{
-			public int[] INS;
-			public int[] OUTS;
+			public fixed int INS[3];
+			public fixed int OUTS[3];
 			public int OUT_CNT;
 		}
 
-		static private InsOuts CheckBoundry(Triangle triangle, VertexBuffer mesh, ClipPlane plane)
+		static unsafe private InsOuts CheckBoundry(Triangle triangle, VertexBuffer mesh, ClipPlane plane)
 		{
 			bool checkGreater = plane.RejectCriteria == RejectCriteria.GreaterThan;
 			int inI = 0; int outI = 0;
@@ -138,8 +138,8 @@ namespace NostalgiaEngine.RasterizerPipeline
 			Vertex C = mesh.ProcessedVertices[triangle.I2];
 
 			InsOuts ind = new InsOuts();
-			ind.INS = new int[3];
-			ind.OUTS = new int[3];
+			//ind.INS = new int[3];
+			//ind.OUTS = new int[3];
 
 			if ((A.Position.Data[(int)plane.Axis] < plane.Treshold) ^ checkGreater)
 			{

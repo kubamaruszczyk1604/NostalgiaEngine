@@ -3,23 +3,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
+
 namespace NostalgiaEngine.Core
 {
 
     public class NEMath
     {
-
-        static public float Min(float a, float b)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		static public float Min(float a, float b)
         {
             return (a < b) ? a : b;
         }
 
-        static public float Max(float a, float b)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		static public float Max(float a, float b)
         {
             return (a > b) ? a : b;
         }
 
-        static public float Clamp(float val, float low, float high)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		static public float Clamp(float val, float low, float high)
         {
             val = (val < low) ? low : val;
             val = (val > high) ? high : val;
@@ -31,34 +35,40 @@ namespace NostalgiaEngine.Core
 
         }
 
-        static public float Abs(float a)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		static public float Abs(float a)
         {
             return Math.Abs(a);
         }
 
-        static public int Abs(int a)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		static public int Abs(int a)
         {
             return Math.Abs(a);
         }
 
-        static public int Min(int a, int b)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		static public int Min(int a, int b)
         {
             return (a < b) ? a : b;
         }
 
-        static public int Max(int a, int b)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		static public int Max(int a, int b)
         {
             return (a > b) ? a : b;
         }
 
-        static public int Clamp(int val, int low, int high)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		static public int Clamp(int val, int low, int high)
         {
             val = (val < low) ? low : val;
             val = (val >= high) ? high : val;
             return val;
         }
 
-        static public uint Clamp(uint val, uint low, uint high)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		static public uint Clamp(uint val, uint low, uint high)
         {
             val = (val < low) ? low : val;
             val = (val > high) ? high : val;
@@ -66,31 +76,37 @@ namespace NostalgiaEngine.Core
             return val;
         }
 
-        static public float Pow(float number, float power)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		static public float Pow(float number, float power)
         { 
             return (float)Math.Pow(number, power);
         }
 
-        static public float Sin(float a)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		static public float Sin(float a)
         {
             return  (float)Math.Sin(a);
         }
 
-        static public float Cos(float a)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		static public float Cos(float a)
         {
             return (float)Math.Cos(a);
         }
 
-        static public float Tan(float a)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		static public float Tan(float a)
         {
             return (float)Math.Tan(a);
         }
 
-        static public float Sign(float a)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		static public float Sign(float a)
         {
             return (float)Math.Sign(a);
         }
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		static public float Frac(float t)
 		{
 			int i = (int)t;
@@ -98,6 +114,7 @@ namespace NostalgiaEngine.Core
 			return t - i;
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		static public NEVector2 FindNormal(NEVector2 p1, NEVector2 p2)
         {
             NEVector2 dir = p2 - p1;
@@ -107,7 +124,8 @@ namespace NostalgiaEngine.Core
             return dir;
         }
 
-        static public NEVector2 FindNormal(NEVector2 dir)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		static public NEVector2 FindNormal(NEVector2 dir)
         {
             float tx = dir.X;
             dir.X = -dir.Y;
@@ -115,15 +133,15 @@ namespace NostalgiaEngine.Core
             return dir;
         }
 
-
-        /// <summary>
-        /// Finds terms "a" and "c" of the straight line (y = ax + c) passing through points p1 and p2
-        /// </summary>
-        /// <param name="p1">point 1</param>
-        /// <param name="p2">point 2</param>
-        /// <param name="a">gradient</param>
-        /// <param name="c">intersection height with y axis </param>
-        static public void Find2DLineEquation(NEVector2 p1, NEVector2 p2, out float a, out float c)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		/// <summary>
+		/// Finds terms "a" and "c" of the straight line (y = ax + c) passing through points p1 and p2
+		/// </summary>
+		/// <param name="p1">point 1</param>
+		/// <param name="p2">point 2</param>
+		/// <param name="a">gradient</param>
+		/// <param name="c">intersection height with y axis </param>
+		static public void Find2DLineEquation(NEVector2 p1, NEVector2 p2, out float a, out float c)
         {
             //gradient
             float den = p2.X - p1.X;
@@ -134,7 +152,8 @@ namespace NostalgiaEngine.Core
            
         }
 
-        static public bool FindRayEquation(NEVector4 p0, NEVector4 p1, out NEVector4 dir, out float length)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		static public bool FindRayEquation(NEVector4 p0, NEVector4 p1, out NEVector4 dir, out float length)
         {
             length = 0.0f;
             dir = NEVector4.Zero;
@@ -143,8 +162,9 @@ namespace NostalgiaEngine.Core
                 return false;
             }
             NEVector4 diff = p1 - p0;
-            length = diff.Length;
-            dir = diff.Normalized;
+            length = diff.LengthFast;
+			float recipLen = 1.0f / length;
+			dir = diff * recipLen;// diff.Normalized;
             
             return true;
 
@@ -214,9 +234,9 @@ namespace NostalgiaEngine.Core
            return NEVector4.Cross3(p - l0, l1 - l0).Length / (l1 - l0).Length;
         }
 
-        
 
-        static public NEVector2 Abs(NEVector2 a)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		static public NEVector2 Abs(NEVector2 a)
         {
             a.X = Math.Abs(a.X);
             a.Y = Math.Abs(a.Y);
@@ -224,7 +244,8 @@ namespace NostalgiaEngine.Core
             return a;
         }
 
-        static public void Rotate(ref NEVector2 v, float theta)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		static public void Rotate(ref NEVector2 v, float theta)
         {
             float s = (float)Math.Sin(theta);
             float c = (float)Math.Cos(theta);
@@ -235,27 +256,46 @@ namespace NostalgiaEngine.Core
             v.Y = ty;
         }
 
-
-        static public void Swap(ref float a, ref float b)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		static public void Swap(ref float a, ref float b)
         {
             float temp = a;
             a = b;
             b = temp;
         }
 
-        private void Swap(ref int a, ref int b)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private void Swap(ref int a, ref int b)
         {
             int tmp = a;
             a = b;
             b = tmp;
         }
 
-        public void Swap(ref NEVector2 a, ref NEVector2 b)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Swap(ref NEVector2 a, ref NEVector2 b)
         {
             NEVector2 temp = a;
             a = b;
             b = a;
         }
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static unsafe float InvSqrtFast(float number)
+		{
+			const float threehalfs = 1.5f;
+
+			float x2 = number * 0.5f;
+			float y = number;
+
+			int i = *(int*)&y;
+			i = 0x5f3759df - (i >> 1); 
+			y = *(float*)&i;
+
+			y = y * (threehalfs - (x2 * y * y));
+
+			return y;
+		}
 
 		public static bool CheckRayTriangleHit(NEVector4 O, NEVector4 D,
 			NEVector4 V0, NEVector4 V1, NEVector4 V2,

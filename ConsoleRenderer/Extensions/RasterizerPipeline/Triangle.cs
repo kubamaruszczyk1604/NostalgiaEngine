@@ -1,4 +1,5 @@
 ﻿using NostalgiaEngine.Core;
+using System.Runtime.CompilerServices;
 
 namespace NostalgiaEngine.RasterizerPipeline
 {
@@ -110,6 +111,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 			NormalWorld = normalWorld;
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void ZDivide()
 		{
 			VBO.ProcessedVertices[I0].ZDivide();
@@ -125,6 +127,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 		//    C = VBO.ProcessedVertices[LeftSortedIndices[2]];
 		//}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void CalculateEdges()
 		{
 			SortX(out LS0, out LS1, out LS2);
@@ -142,28 +145,30 @@ namespace NostalgiaEngine.RasterizerPipeline
 			NEMath.Find2DLineEquation(B.Position.XY, C.Position.XY, out BC.a, out BC.c);
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public bool IsColScanlineInTriangle(float x)
 		{
 			return ((x >= A.X) && (x <= C.X));
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+
+
 		public void FindIntersectionHeights(float x, out float y0, out float y1)
 		{
-			y0 = 0;
-			y1 = 0;
+			y1 = AC.a * x + AC.c;
 
 			if (x <= B.X)
 			{
 				y0 = AB.a * x + AB.c;
-				y1 = AC.a * x + AC.c;
 			}
 			else
 			{
 				y0 = BC.a * x + BC.c;
-				y1 = AC.a * x + AC.c;
 			}
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void ComputeScanlineIntersection(float x, out ScanlineIntersectionManifest manifest)
 		{
 			//manifest = new ScanlineIntersectionManifest();
@@ -226,6 +231,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 			}
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private void SortX(out int left, out int middle, out int right)
 		{
 			left = I0;
@@ -248,6 +254,8 @@ namespace NostalgiaEngine.RasterizerPipeline
 			}
 		}
 
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private void SwapInt(ref int a, ref int b)
 		{
 			int tmp = a;
@@ -255,6 +263,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 			b = tmp;
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private void CalculateNormal()
 		{
 			NEVector4 a = (ParentMesh.Vertices[I1].Position - ParentMesh.Vertices[I0].Position).Normalized;
