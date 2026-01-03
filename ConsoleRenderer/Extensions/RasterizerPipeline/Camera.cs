@@ -25,11 +25,12 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         public Camera(int width, int height, float fovRad, float near, float far)
         {
-            float dimLow = width;
-            float dimHigh = height;
-            if (dimLow > dimHigh) NEMath.Swap(ref dimLow, ref dimHigh);
-            float aspectRatio = dimLow / dimHigh;
-            AspectRatio = aspectRatio;
+            //float dimLow = width;
+            //float dimHigh = height;
+            //if (dimLow > dimHigh) NEMath.Swap(ref dimLow, ref dimHigh);
+            //float aspectRatio = dimLow / dimHigh;
+			float aspectRatio = (float)height / (float)width;
+			AspectRatio = aspectRatio;
             Transform = new Transform();
             Projection = NEMatrix4x4.CreatePerspectiveProjection(aspectRatio, fovRad, near, far);
             Near = near;
@@ -38,6 +39,17 @@ namespace NostalgiaEngine.RasterizerPipeline
             InverseFar = 1.0f / Far;
             InverseAspectRatio = 1.0f / AspectRatio;
         }
+
+		public void UpdateWitdhHeight(int width, int height)
+		{
+			//float dimLow = width;
+			//float dimHigh = height;
+			//if (dimLow > dimHigh) NEMath.Swap(ref dimLow, ref dimHigh);
+			float aspectRatio = (float)height/ (float)width;
+			AspectRatio = aspectRatio;
+			Projection = NEMatrix4x4.CreatePerspectiveProjection(aspectRatio, FovRad, Near, Far);
+			InverseAspectRatio = 1.0f / AspectRatio;
+		}
 
         public void UpdateTransform()
         {

@@ -234,6 +234,68 @@ namespace NostalgiaEngine.Core
            return NEVector4.Cross3(p - l0, l1 - l0).Length / (l1 - l0).Length;
         }
 
+		public static bool AABBInsidePlane(NEAABB aabb, NEPlane plane)
+		{
+			NEVector4 v = new NEVector4();
+
+			// Pick most positive AABB vertex relative to normal
+			v.X = (plane.N.X >= 0) ? aabb.Max.X : aabb.Min.X;
+			v.Y = (plane.N.Y >= 0) ? aabb.Max.Y : aabb.Min.Y;
+			v.Z = (plane.N.Z >= 0) ? aabb.Max.Z : aabb.Min.Z;
+
+			NEVector4 diff = v  - plane.P;
+
+			float dot = NEVector4.Dot3(diff, plane.N);
+			return dot >= 0.0f;
+		}
+
+		public static void BuildViewFrustumPlanes(float fovRad, float aspect, float near, float far, ref NEPlane[] planes)
+		{
+			float t = Tan(fovRad * 0.5f);
+			float sx = t * aspect;
+			float sy = t;
+
+			planes[0].P = new NEVector4(0.0f, 0.0f, 0.0f, 1.0f);
+			planes[0].N = new NEVector4(1.0f, 0.0f, sx, 0.0f);
+
+			planes[1].P = new NEVector4(0.0f, 0.0f, 0.0f, 1.0f);
+			planes[1].N = new NEVector4(-1.0f, 0.0f, sx, 0.0f);
+
+			planes[2].P = new NEVector4(0.0f, 0.0f, 0.0f, 1.0f);
+			planes[2].N = new NEVector4(0.0f, 1.0f, sy ,0.0f);
+
+			planes[3].P = new NEVector4(0.0f, 0.0f, 0.0f, 1.0f);
+			planes[3].N = new NEVector4(0.0f, -1.0f, sy, 0.0f);
+
+			planes[4].P = new NEVector4(0.0f, 0.0f, near, 1.0f);
+			planes[4].N = new NEVector4(0.0f, 0.0f, 1.0f, 0.0f);
+
+			planes[5].P = new NEVector4(0.0f, 0.0f, far, 1.0f);
+			planes[5].N = new NEVector4(0.0f, 0.0f, -1.0f, 0.0f);
+
+		}
+
+		public static void BuildViewFrustumPlanes(float fovRad, float aspect, ref NEPlane[] planes)
+		{
+
+			float t = Tan(fovRad * 0.5f);
+			float sx= t * aspect;
+			float sy = t;
+
+			planes[0].P = new NEVector4(0.0f, 0.0f, 0.0f, 1.0f);
+			planes[0].N = new NEVector4(1.0f, 0.0f, sx, 0.0f);
+
+			planes[1].P = new NEVector4(0.0f, 0.0f, 0.0f, 1.0f);
+			planes[1].N = new NEVector4(-1.0f, 0.0f, sx, 0.0f);
+
+			planes[2].P = new NEVector4(0.0f, 0.0f, 0.0f, 1.0f);
+			planes[2].N = new NEVector4(0.0f, 1.0f, sy, 0.0f);
+
+			planes[3].P = new NEVector4(0.0f, 0.0f, 0.0f, 1.0f);
+			planes[3].N = new NEVector4(0.0f, -1.0f, sy, 0.0f);
+
+		}
+
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		static public NEVector2 Abs(NEVector2 a)

@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace NostalgiaEngine.Core
 {
-    public class NEPlane
+    public struct NEPlane
     {
-        public NEVector4 P { get; set; }
-        public NEVector4 N { get; set; }
+		public NEVector4 P;
+		public NEVector4 N;
 
 
         public NEPlane(NEVector4 point, NEVector4 normal)
@@ -53,4 +53,6 @@ namespace NostalgiaEngine.Core
 
 
     }
+
+
 }

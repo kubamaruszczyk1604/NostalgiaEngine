@@ -95,6 +95,7 @@
     <Compile Include="Extensions\RasterizerPipeline\VertexPool.cs" />
     <Compile Include="Extensions\WebcamInConsole\ColorPair.cs" />
     <Compile Include="Extensions\WebcamInConsole\ConsoleCamera.cs" />
+    <Compile Include="NostalgiaEngine\Core\NEAABB.cs" />
     <Compile Include="NostalgiaEngine\Core\NELight.cs" />
     <Compile Include="NostalgiaEngine\Core\NEDebug.cs" />
     <Compile Include="NostalgiaEngine\Core\NERenderTexture.cs" />

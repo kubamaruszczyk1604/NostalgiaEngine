@@ -18,6 +18,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 		List<Triangle> m_clippedTrianglesTempBuffer1;
 		List<Triangle> m_clippedTrianglesTempBuffer2;
 
+
 		public VertexBuffer(Model model)
 		{
 			AssociatedModel = model;
@@ -37,12 +38,28 @@ namespace NostalgiaEngine.RasterizerPipeline
 
 		}
 
-		public void PrepareForRender(Camera camera)
+		public bool PrepareForRender(Camera camera)
 		{
 			Mesh mesh = AssociatedModel.Mesh;
 			ClearProcessedData();
 			Model model = AssociatedModel;
-			NEMatrix4x4 MVP = camera.Projection * camera.View * model.Transform.World;
+			NEMatrix4x4 ModelView = camera.View * model.Transform.World;
+			NEAABB aabb = mesh.AABB.GetTransformed(ref ModelView);
+
+			bool inFrustum = aabb.Max.Z >= camera.Near && aabb.Min.Z <= camera.Far;
+
+			NEPlane[] frustumSidePlanes = new NEPlane[4];
+			NEMath.BuildViewFrustumPlanes(camera.FovRad, camera.InverseAspectRatio, ref frustumSidePlanes);
+			for(int i = 0; i < frustumSidePlanes.Length; ++i)
+			{
+				inFrustum = inFrustum && NEMath.AABBInsidePlane(aabb, frustumSidePlanes[i]);
+			}
+			if (!inFrustum)
+			{
+				return false;
+			}
+
+			NEMatrix4x4 MVP = camera.Projection * ModelView;
 			for (int i = 0; i < mesh.Vertices.Count; ++i)
 			{
 				// ProcessedVertices.Add(mesh.Vertices[i].Duplicate());
@@ -106,6 +123,8 @@ namespace NostalgiaEngine.RasterizerPipeline
 			{
 				ProcessedVertices[i].Vert2Camera = -ProcessedVertices[i].Position.Normalized;
 			}
+
+			return true;
 
 		}
 

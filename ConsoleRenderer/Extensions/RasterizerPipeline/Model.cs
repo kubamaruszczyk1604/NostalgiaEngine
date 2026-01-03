@@ -18,10 +18,9 @@ namespace NostalgiaEngine.RasterizerPipeline
 
         public int Color { get; set; }
         public int UnlitColor { get; set; }
-        //public float AmbientIntensity { get; set; }
-        //public float DiffuseIntensity { get; set; }
-        //public float GlowIntensity { get; set; }
-
+		//public float AmbientIntensity { get; set; }
+		//public float DiffuseIntensity { get; set; }
+		//public float GlowIntensity { get; set; }
 
         public Model(Mesh mesh, CullMode faceCull = CullMode.Back, NETexture colorTexture = null, NEFloatBuffer lumaTexture = null):base()
         {

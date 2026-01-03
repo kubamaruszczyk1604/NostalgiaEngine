@@ -186,14 +186,20 @@ namespace NostalgiaEngine.Core
 					{
 						int xStart = w * batchSize;
 						int xEnd = xStart + batchSize;
-						xEnd = (xEnd >= ScreenWidth) ? ScreenWidth - 1 : xEnd;
+						xEnd = (xEnd > ScreenWidth) ? ScreenWidth : xEnd;
+						if (xStart >= xEnd)
+						{
+							if (Interlocked.Decrement(ref remaining) == 0)
+								resetEvent.Set();
+							continue;
+						}
 						ThreadPool.QueueUserWorkItem(_ =>
 						{
 							for (int x = xStart; x < xEnd; ++x)
 							{
 								m_CurrentScene.OnDrawPerColumn(x);
 							}
-								
+
 							if (Interlocked.Decrement(ref remaining) == 0)
 								resetEvent.Set();
 						});
@@ -201,19 +207,19 @@ namespace NostalgiaEngine.Core
 					//For each column..
 					//for (int x = 0; x < ScreenWidth; ++x)
 					//{
-					//    //m_CurrentScene.OnDrawPerColumn(x);
-					//    // Queue new task
-					//    ThreadPool.QueueUserWorkItem(
-					//       new WaitCallback(
-					//     delegate (object state)
-					//     {
-					//         object[] array = state as object[];
-					//         int column = Convert.ToInt32(array[0]);
+					//	//m_CurrentScene.OnDrawPerColumn(x);
+					//	// Queue new task
+					//	ThreadPool.QueueUserWorkItem(
+					//	   new WaitCallback(
+					//	 delegate (object state)
+					//	 {
+					//		 object[] array = state as object[];
+					//		 int column = Convert.ToInt32(array[0]);
 
-					//         m_CurrentScene.OnDrawPerColumn(column);
+					//		 m_CurrentScene.OnDrawPerColumn(column);
 
-					//         if (column >= ScreenWidth - 1) resetEvent.Set();
-					//     }), new object[] { x });
+					//		 if (column >= ScreenWidth - 1) resetEvent.Set();
+					//	 }), new object[] { x });
 					//}
 
 

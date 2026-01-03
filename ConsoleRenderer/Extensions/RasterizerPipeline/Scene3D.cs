@@ -27,6 +27,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 		protected Skybox SceneSkybox { get; set; }
 		protected Camera MainCamera { get; set; }
 		protected List<Model> Models;
+		private List<Model> ModelsToRender;
 
 		protected bool HeadlampOn { get; set; }
 		protected bool TexturingOn { get; set; }
@@ -37,6 +38,8 @@ namespace NostalgiaEngine.RasterizerPipeline
 		}
 
 		protected NEVector4 GlobalLightDirection { get; set; }
+
+		private readonly object _lock = new object();
 
 		public Scene3D() : base()
 		{
@@ -49,6 +52,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 			m_ScrWidthReciprocal = 1.0f / ScreenWidth;
 
 			Models = new List<Model>();
+			ModelsToRender = new List<Model>(200);
 			SceneSkybox = new Skybox();
 			MainCamera = new Camera(ScreenWidth, ScreenHeight, 1.05f, 0.1f, 100.0f);
 			MainCamera.Transform.LocalPosition = new NEVector4(0.0f, 0.0f, -2.0f);
@@ -64,6 +68,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 			m_RenderTexture = new NERenderTexture(ScreenWidth, ScreenHeight);
 			m_ScrHeightReciprocal = 1.0f / ScreenHeight;
 			m_ScrWidthReciprocal = 1.0f / ScreenWidth;
+			MainCamera.UpdateWitdhHeight(ScreenWidth, ScreenHeight);
 			return base.OnLoad();
 		}
 
@@ -85,7 +90,7 @@ namespace NostalgiaEngine.RasterizerPipeline
 		public override void OnUpdate(float deltaTime)
 		{
 			base.OnUpdate(deltaTime);
-
+			ModelsToRender.Clear();
 			m_DepthBuffer.Clear();
 			MainCamera.UpdateTransform();
 			if (SceneSkybox == null) SceneSkybox = new Skybox();
@@ -93,20 +98,30 @@ namespace NostalgiaEngine.RasterizerPipeline
 			Engine.Instance.TitleBarAppend = "Rendered Triangles: " + m_RenderedTriangleCount.ToString();
 			m_RenderedTriangleCount = 0;
 
+
 			var opts = new ParallelOptions
 			{
 				MaxDegreeOfParallelism = Environment.ProcessorCount
 			};
 
 			Parallel.ForEach(System.Collections.Concurrent.Partitioner.Create(0, Models.Count, 1),
-				opts, 
+				opts,
 				range =>
 				{
+					List<Model> modelsToRender = new List<Model>(range.Item2 - range.Item1 + 1);
 					for (int i = range.Item1; i < range.Item2; i++)
 					{
-						ProcessModel(deltaTime, Models[i]);
+						bool visible = ProcessModel(deltaTime, Models[i]);
+						if (visible)
+						{
+							modelsToRender.Add(Models[i]);
+						}
 					}
-						
+					lock (_lock)
+					{
+						ModelsToRender.AddRange(modelsToRender);
+					}
+
 				});
 			//Parallel.ForEach(Models, opts, model =>
 			//{
@@ -115,19 +130,22 @@ namespace NostalgiaEngine.RasterizerPipeline
 
 			//for (int i = 0; i < Models.Count; ++i)
 			//{
-			//	ProcessModel(deltaTime, Models[i]);
+			//	bool visible = ProcessModel(deltaTime, Models[i]);
+			//	if (visible)
+			//	{
+			//		ModelsToRender.Add(Models[i]);
+			//	}
 			//}
 		}
-
 		public override void OnDrawPerColumn(int x)
 		{
 			float xNorm = ((float)x) * m_ScrWidthReciprocal;
 			float u = 2.0f * xNorm - 1.0f;
 
 
-			for (int i = 0; i < Models.Count; ++i)
+			for (int i = 0; i < ModelsToRender.Count; ++i)
 			{
-				RenderModel(x, u, Models[i]);
+				RenderModel(x, u, ModelsToRender[i]);
 			}
 			if (SceneSkybox.Available) RenderSkybox(x, u);
 			base.OnDrawPerColumn(x);
@@ -219,12 +237,18 @@ namespace NostalgiaEngine.RasterizerPipeline
 			}
 		}
 
-		private void ProcessModel(float dt, Model model)
+		private bool ProcessModel(float dt, Model model)
 		{
 			model.Transform.CalculateWorld();
 			NEMatrix4x4 MVP = MainCamera.Projection * MainCamera.View * model.Transform.World;
-			model.VBO.PrepareForRender(MainCamera);
-			m_RenderedTriangleCount += model.VBO.TrianglesReadyToRender.Count;
+			bool visible = model.VBO.PrepareForRender(MainCamera);
+			if (visible)
+			{
+				m_RenderedTriangleCount += model.VBO.TrianglesReadyToRender.Count;
+			}
+
+			return visible;
+			
 		}
 
 		private void RenderModel(int x, float u, Model model)

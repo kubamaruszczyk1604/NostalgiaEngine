@@ -13,29 +13,33 @@ namespace NostalgiaEngine.RasterizerPipeline
         public List<Vertex> Vertices { get; private set; }
         public List<Triangle> Triangles { get; private set; }
 
+		public NEAABB AABB;
 
-        public Mesh()
+		public Mesh()
         {
             Vertices = new List<Vertex>(100);
             Triangles = new List<Triangle>(100);
         }
 
-
-
         public void AddVertex(Vertex v)
         {
             Vertices.Add(v);
+			AABB.Update(v.Position);
         }
 
         public void AddVertex(float x, float y, float z)
         {
-            Vertices.Add(new Vertex(x, y, z));
+			Vertex vert = new Vertex(x, y, z);
+			Vertices.Add(vert);
+			AABB.Update(vert.Position);
         }
 
         public void AddVertex(float x, float y, float z, float u, float v)
         {
-            Vertices.Add(new Vertex(x, y, z, u, v));
-        }
+			Vertex vert = new Vertex(x, y, z, u, v);
+			Vertices.Add(vert);
+			AABB.Update(vert.Position);
+		}
 
         public void AddTriangle(int i0, int i1, int i2)
         {
@@ -50,33 +54,33 @@ namespace NostalgiaEngine.RasterizerPipeline
             NEVector4 vB = vertices[iB].Position - vertices[iPt].Position;
             NEVector4 vC = vertices[iC].Position - vertices[iPt].Position;
 
-            int winnerIndex = -1;
-            NEVector4 winnerVec = vA;
+            int passIndex = -1;
+            NEVector4 passVec = vA;
             //first round
             if(NEVector4.CompareLeft(vA,vB,n))
             {
-                winnerIndex = iA;
-                winnerVec = vA;
+                passIndex = iA;
+                passVec = vA;
             }
             else
             {
-                winnerIndex = iB;
-                winnerVec = vB;
+                passIndex = iB;
+                passVec = vB;
             }
 
             //second round
-            if (NEVector4.CompareLeft(winnerVec, vC, n))
+            if (NEVector4.CompareLeft(passVec, vC, n))
             {
                 //winnerIndex = iA;
                 //winnerVec = vA;
             }
             else
             {
-                winnerIndex = iC;
-                winnerVec = vC;
+                passIndex = iC;
+                passVec = vC;
             }
 
-            return winnerIndex;
+            return passIndex;
         }
 
         static public int GetLeftmost(List<Vertex> vertices, NEVector4 n, int iPt, int iA, int iB)
